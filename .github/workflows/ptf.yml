@@ -1,0 +1,28 @@
+name: EPİAŞ PTF Sinyal
+
+on:
+  schedule:
+    - cron: '*/30 10-15 * * *'  # Her 30 dakika, 13:00-18:00 Türkiye saati
+  workflow_dispatch:  # Manuel çalıştırma
+
+jobs:
+  ptf-sinyal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Python kur
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Paketleri kur
+        run: pip install eptr2 twilio
+
+      - name: Scripti çalıştır
+        env:
+          EPIAS_KULLANICI: ${{ secrets.EPIAS_KULLANICI }}
+          EPIAS_SIFRE: ${{ secrets.EPIAS_SIFRE }}
+          TWILIO_SID: ${{ secrets.TWILIO_SID }}
+          TWILIO_TOKEN: ${{ secrets.TWILIO_TOKEN }}
+        run: python main.py
