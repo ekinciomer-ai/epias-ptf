@@ -9,6 +9,7 @@ TWILIO_SID      = os.environ.get("TWILIO_SID", "")
 TWILIO_TOKEN    = os.environ.get("TWILIO_TOKEN", "")
 TWILIO_NUMARA   = "whatsapp:+14155238886"
 KENDI_NUMARA    = "whatsapp:+905438703340"
+IKINCI_NUMARA   = "whatsapp:+905443977380"
 GITHUB_TOKEN    = os.environ.get("GH_TOKEN", "")
 REPO            = "ekinciomer-ai/epias-ptf"
 
@@ -78,6 +79,9 @@ print(mesaj)
 Client(TWILIO_SID, TWILIO_TOKEN).messages.create(
     body=mesaj, from_=TWILIO_NUMARA, to=KENDI_NUMARA)
 print("WhatsApp gonderildi!")
+Client(TWILIO_SID, TWILIO_TOKEN).messages.create(
+    body=mesaj, from_=TWILIO_NUMARA, to=IKINCI_NUMARA)
+print("Ikinci WhatsApp gonderildi!")
 
 # Gönderim tarihini kaydet
 import base64
