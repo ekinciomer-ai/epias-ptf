@@ -25,4 +25,5 @@ jobs:
           EPIAS_SIFRE: ${{ secrets.EPIAS_SIFRE }}
           TWILIO_SID: ${{ secrets.TWILIO_SID }}
           TWILIO_TOKEN: ${{ secrets.TWILIO_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: python main.py
