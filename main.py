@@ -9,7 +9,7 @@ TWILIO_SID      = os.environ.get("TWILIO_SID", "")
 TWILIO_TOKEN    = os.environ.get("TWILIO_TOKEN", "")
 TWILIO_NUMARA   = "whatsapp:+14155238886"
 KENDI_NUMARA    = "whatsapp:+905438703340"
-GITHUB_TOKEN    = os.environ.get("GITHUB_TOKEN", "")
+GITHUB_TOKEN    = os.environ.get("GH_TOKEN", "")
 REPO            = "ekinciomer-ai/epias-ptf"
 
 bugun = datetime.date.today().strftime("%Y-%m-%d")
