@@ -1,4 +1,4 @@
-import datetime, os
+import datetime, os, json
 from eptr2 import EPTR2
 from twilio.rest import Client
 
@@ -9,12 +9,36 @@ TWILIO_SID      = os.environ.get("TWILIO_SID", "")
 TWILIO_TOKEN    = os.environ.get("TWILIO_TOKEN", "")
 TWILIO_NUMARA   = "whatsapp:+14155238886"
 KENDI_NUMARA    = "whatsapp:+905438703340"
+GITHUB_TOKEN    = os.environ.get("GITHUB_TOKEN", "")
+REPO            = "ekinciomer-ai/epias-ptf"
 
+bugun = datetime.date.today().strftime("%Y-%m-%d")
 yarin = (datetime.date.today() + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
 
+# Bugün daha önce mesaj gönderildi mi kontrol et
+import urllib.request, urllib.error
+try:
+    url = f"https://api.github.com/repos/{REPO}/contents/son_gonderim.json"
+    req = urllib.request.Request(url, headers={
+        "Authorization": f"token {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github.v3+json"
+    })
+    with urllib.request.urlopen(req) as resp:
+        data = json.loads(resp.read())
+        icerik = json.loads(__import__("base64").b64decode(data["content"]).decode())
+        if icerik.get("tarih") == bugun:
+            print(f"Bugün ({bugun}) zaten mesaj gönderildi, atlanıyor.")
+            exit(0)
+        sha = data["sha"]
+except urllib.error.HTTPError as e:
+    if e.code == 404:
+        sha = None
+    else:
+        raise
+
+# Veri çek
 eptr = EPTR2(username=EPIAS_KULLANICI, password=EPIAS_SIFRE)
 sonuc = eptr.call("mcp", start_date=yarin, end_date=yarin, postprocess=False)
-
 items = sonuc.get("items", [])
 
 if not items:
@@ -54,3 +78,23 @@ print(mesaj)
 Client(TWILIO_SID, TWILIO_TOKEN).messages.create(
     body=mesaj, from_=TWILIO_NUMARA, to=KENDI_NUMARA)
 print("WhatsApp gonderildi!")
+
+# Gönderim tarihini kaydet
+import base64
+yeni_icerik = base64.b64encode(json.dumps({"tarih": bugun}).encode()).decode()
+guncelleme = {"message": f"Gonderim: {bugun}", "content": yeni_icerik}
+if sha:
+    guncelleme["sha"] = sha
+
+req2 = urllib.request.Request(
+    f"https://api.github.com/repos/{REPO}/contents/son_gonderim.json",
+    data=json.dumps(guncelleme).encode(),
+    headers={
+        "Authorization": f"token {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github.v3+json",
+        "Content-Type": "application/json"
+    },
+    method="PUT"
+)
+urllib.request.urlopen(req2)
+print(f"Gonderim tarihi kaydedildi: {bugun}")
