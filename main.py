@@ -73,7 +73,8 @@ except Exception as e:
 
 if not items:
     print("Veri boş.")
-    whatsapp_gonder(f"⏳ EPİAŞ PTF\nHenüz veri yayınlanmadı.\nSaat: {datetime.datetime.now().strftime('%H:%M')}\nYarım saat sonra tekrar denenecek.")
+   saat_tr = (datetime.datetime.utcnow() + datetime.timedelta(hours=3)).strftime('%H:%M')
+whatsapp_gonder(f"⏳ EPİAŞ PTF\nHenüz veri yayınlanmadı.\nSaat: {saat_tr}\nYarım saat sonra tekrar denenecek.")
     exit(0)
 
 # Veri geldi, mesajı hazırla
