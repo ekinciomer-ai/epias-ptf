@@ -15,6 +15,7 @@ REPO            = "ekinciomer-ai/epias-ptf"
 
 bugun = datetime.date.today().strftime("%Y-%m-%d")
 yarin = (datetime.date.today() + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+saat_tr = (datetime.datetime.utcnow() + datetime.timedelta(hours=3)).strftime("%H:%M")
 
 def whatsapp_gonder(mesaj):
     client = Client(TWILIO_SID, TWILIO_TOKEN)
@@ -55,44 +56,40 @@ def dosya_yaz(dosya, icerik, sha=None):
     )
     urllib.request.urlopen(req)
 
-# Bugün zaten mesaj gönderildi mi?
 gonderim, sha = dosya_oku("son_gonderim.json")
 if gonderim and gonderim.get("tarih") == bugun:
-    print(f"Bugün zaten mesaj gönderildi, atlanıyor.")
+    print("Bugün zaten mesaj gönderildi, atlanıyor.")
     exit(0)
 
-# Veriyi çekmeyi dene
 try:
     eptr = EPTR2(username=EPIAS_KULLANICI, password=EPIAS_SIFRE)
     sonuc = eptr.call("mcp", start_date=yarin, end_date=yarin, postprocess=False)
     items = sonuc.get("items", [])
 except Exception as e:
     print(f"Veri henüz yok: {e}")
-    whatsapp_gonder(f"⏳ EPİAŞ PTF\nHenüz veri yayınlanmadı.\nSaat: {datetime.datetime.now().strftime('%H:%M')}\nYarım saat sonra tekrar denenecek.")
+    whatsapp_gonder(f"EPiAS PTF\nHenuz veri yayinlanmadi.\nSaat: {saat_tr}\nYarim saat sonra tekrar denenecek.")
     exit(0)
 
 if not items:
-    print("Veri boş.")
-   saat_tr = (datetime.datetime.utcnow() + datetime.timedelta(hours=3)).strftime('%H:%M')
-whatsapp_gonder(f"⏳ EPİAŞ PTF\nHenüz veri yayınlanmadı.\nSaat: {saat_tr}\nYarım saat sonra tekrar denenecek.")
+    print("Veri bos.")
+    whatsapp_gonder(f"EPiAS PTF\nHenuz veri yayinlanmadi.\nSaat: {saat_tr}\nYarim saat sonra tekrar denenecek.")
     exit(0)
 
-# Veri geldi, mesajı hazırla
 fiyatlar  = [item["price"] for item in items]
 ortalama  = sum(fiyatlar) / len(fiyatlar)
 minimum   = min(fiyatlar)
 maksimum  = max(fiyatlar)
 esik_alti = sum(1 for f in fiyatlar if f < ESIK_FIYAT)
 
-sinyal = "✅ ÇALIŞMA VAR" if ortalama < ESIK_FIYAT else "🔴 ÇALIŞMA YOK"
+sinyal = "CALISMA VAR" if ortalama < ESIK_FIYAT else "CALISMA YOK"
 durum  = f"Ort. {ortalama:.0f} TL - esik ({ESIK_FIYAT} TL) {'ALTINDA' if ortalama < ESIK_FIYAT else 'UZERINDE'}"
 
 satirlar = []
 for item in items:
-    emoji = "🟢" if item["price"] < ESIK_FIYAT else "🔴"
-    satirlar.append(f"{emoji} {item['hour']}  {item['price']:>8.2f} TL")
+    isaret = "✅" if item["price"] < ESIK_FIYAT else "❌"
+    satirlar.append(f"{isaret} {item['hour']}  {item['price']:>8.2f} TL")
 
-mesaj = f"""EPİAŞ PTF SİNYALİ
+mesaj = f"""EPiAS PTF SiNYALi
 Tarih: {yarin}
 --------------------------
 {sinyal}
@@ -108,7 +105,5 @@ Saatlik PTF:
 {chr(10).join(satirlar)}"""
 
 whatsapp_gonder(mesaj)
-
-# Gönderim tarihini kaydet
 dosya_yaz("son_gonderim.json", {"tarih": bugun}, sha)
 print(f"Tamamlandi: {bugun}")
