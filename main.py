@@ -92,12 +92,14 @@ if gonderim and gonderim.get("tarih") == bugun:
 # Veriyi çek — önce yarın, olmazsa bugün
 items = []
 hedef_str = ""
+hedef_tarih = yarin
 for tarih in [yarin, bugun]:
     try:
         eptr  = EPTR2(username=EPIAS_KULLANICI, password=EPIAS_SIFRE)
         sonuc = eptr.call("mcp", start_date=tarih, end_date=tarih, postprocess=False)
         items = sonuc.get("items", [])
         if items:
+            hedef_tarih = tarih
             dt = datetime.date.fromisoformat(tarih)
             hedef_str = f"{dt.strftime('%d.%m.%Y')} {GUNLER[dt.weekday()]}"
             print(f"Veri bulundu: {tarih}")
@@ -118,23 +120,24 @@ except:
 
 kur = btc_try / btc_usd if btc_usd > 0 and btc_try > 0 else 1
 
-# Önce karlı saat sayısını bul (SAATLIK_BTC için)
+# Önce karlı saat sayısını bul
 karli_saat_on = 0
 for item in items:
-    ptf_tl    = item["price"] / 1000
-    yekdem_tl = YEKDEM / 1000
+    ptf_tl     = item["price"] / 1000
+    yekdem_tl  = YEKDEM / 1000
     maliyet_tl = (ptf_tl + yekdem_tl) * 1.05 * TOPLAM_KW
-    btc_gelir_tl = (GUNLUK_BTC / 24) * btc_try if btc_try > 0 else 0
-    if btc_gelir_tl > maliyet_tl:
+    btc_gelir  = (GUNLUK_BTC / 24) * btc_try if btc_try > 0 else 0
+    if btc_gelir > maliyet_tl:
         karli_saat_on += 1
 
-# Saatlik BTC karlı saate göre böl
 SAATLIK_BTC = GUNLUK_BTC / karli_saat_on if karli_saat_on > 0 else GUNLUK_BTC / 24
 
 # Asıl saatlik hesap
 satirlar = []
 toplam_kar = toplam_maliyet = toplam_btc_gelir = 0
 karli_saat = 0
+karli_saatler = []
+zarарli_saatler = []
 
 for item in items:
     saat      = item["hour"]
@@ -149,8 +152,10 @@ for item in items:
     toplam_btc_gelir += btc_gelir_tl
     if kar > 0:
         karli_saat += 1
+        karli_saatler.append(saat[:2])
         satirlar.append(f"✅ {saat[:2]} | {ptf_kurus:.0f} | {maliyet_tl:.0f} | {btc_gelir_tl:.0f} | +{kar:.0f}")
     else:
+        zarарli_saatler.append(saat[:2])
         satirlar.append(f"❌ {saat[:2]} | {ptf_kurus:.0f} | {maliyet_tl:.0f} | {btc_gelir_tl:.0f} | {kar:.0f}")
 
 gunluk_kwh     = karli_saat * TOPLAM_KW
@@ -159,7 +164,7 @@ gunluk_btc_usd = GUNLUK_BTC * btc_usd if btc_usd > 0 else 0
 gunluk_kar_usd = toplam_kar / kur
 maliyet_usd    = toplam_maliyet / kur
 
-# Sinyal mesajı (mesaj3)
+# Sinyal mesajı
 satirlar_sinyal = []
 for row_start in range(0, 24, 6):
     satir = ""
@@ -180,7 +185,7 @@ mesaj3 = f"""⚡ {hedef_str}
 ──────────────────────
 {chr(10).join(satirlar_sinyal)}"""
 
-# Karlılık tablosu (mesaj1)
+# Karlılık tablosu
 mesaj1 = f"""EPiAS KARLILIK {hedef_str}
 BTC:{btc_try:,.0f}TL|{btc_usd:,.0f}$
 YEKDEM:{YEKDEM}kr/MWh
@@ -206,7 +211,7 @@ ay_kar_usd     = ay_data["toplam_kar_tl"] / kur
 ay_maliyet_usd = ay_data["toplam_maliyet_tl"] / kur
 ay_btc_usd     = ay_data["toplam_btc"] * btc_usd if btc_usd > 0 else 0
 
-# Özet mesajı (mesaj2)
+# Özet mesajı
 mesaj2 = f"""GUNLUK OZET {hedef_str}
 BTC:{GUNLUK_BTC:.5f}BTC
 Gelir:{gunluk_btc_tl:,.0f}TL|{gunluk_btc_usd:,.0f}$
@@ -229,6 +234,18 @@ for numara in [KENDI_NUMARA, IKINCI_NUMARA]:
     client.messages.create(body=mesaj1, from_=TWILIO_NUMARA, to=numara)
     client.messages.create(body=mesaj2, from_=TWILIO_NUMARA, to=numara)
 print("WhatsApp gonderildi!")
+
+# Sinyal dosyasını GitHub'a yaz
+su_an_saat = (datetime.datetime.utcnow() + datetime.timedelta(hours=3)).hour
+sinyal_data = {
+    "tarih": hedef_tarih,
+    "guncelleme": saat_tr,
+    "karli_saatler": karli_saatler,
+    "zarарli_saatler": zarарli_saatler
+}
+sinyal_sha_data, sinyal_sha = dosya_oku("sinyal.json")
+dosya_yaz("sinyal.json", sinyal_data, sinyal_sha)
+print("Sinyal yazildi.")
 
 dosya_yaz("son_gonderim.json", {"tarih": bugun}, sha)
 dosya_yaz(f"aylik_{ay_key}.json", ay_data, ay_sha)
