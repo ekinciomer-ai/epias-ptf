@@ -12,17 +12,21 @@ IKINCI_NUMARA   = "whatsapp:+905443977380"
 GH_TOKEN        = os.environ.get("GH_TOKEN", "")
 REPO            = "ekinciomer-ai/epias-ptf"
 
-# Sabit değerler
-CIHAZ_SAYISI    = 29
-CIHAZ_HASHRATE  = 310        # TH/s
-CIHAZ_GUC       = 6000       # Watt
-HAVUZ_KOMISYON  = 0.025      # %2.5
-YEKDEM          = 602.51     # TL/MWh (Mayıs 2026)
-TOPLAM_GUC_MW   = (CIHAZ_SAYISI * CIHAZ_GUC) / 1_000_000  # MW = 0.174
+CIHAZ_SAYISI  = 29
+CIHAZ_GUC_W   = 6000
+YEKDEM        = 602.51
+TOPLAM_GUC_MW = (CIHAZ_SAYISI * CIHAZ_GUC_W) / 1_000_000
+GUNLUK_BTC    = 0.0037
+SAATLIK_BTC   = GUNLUK_BTC / 24
 
-bugun = datetime.date.today().strftime("%Y-%m-%d")
-yarin = (datetime.date.today() + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+bugun   = datetime.date.today().strftime("%Y-%m-%d")
+yarin   = (datetime.date.today() + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+ay_key  = datetime.date.today().strftime("%Y-%m")
 saat_tr = (datetime.datetime.utcnow() + datetime.timedelta(hours=3)).strftime("%H:%M")
+
+GUNLER  = ["Pazartesi","Sali","Carsamba","Persembe","Cuma","Cumartesi","Pazar"]
+yarin_dt  = datetime.date.today() + datetime.timedelta(days=1)
+yarin_str = f"{yarin_dt.strftime('%d.%m.%Y')} {GUNLER[yarin_dt.weekday()]}"
 
 def whatsapp_gonder(mesaj):
     client = Client(TWILIO_SID, TWILIO_TOKEN)
@@ -63,118 +67,134 @@ def dosya_yaz(dosya, icerik, sha=None):
     )
     urllib.request.urlopen(req)
 
-def btc_verisi_cek():
-    # BTC/TL fiyatı
+def btc_cek():
     url = "https://api.binance.com/api/v3/ticker/price?symbol=BTCTRY"
-    req = urllib.request.Request(url)
-    with urllib.request.urlopen(req, timeout=10) as resp:
-        data = json.loads(resp.read())
-        btc_try = float(data["price"])
-
-    # Network hashrate ve blok ödülü
-    url2 = "https://blockchain.info/q/hashrate"
-    req2 = urllib.request.Request(url2)
-    with urllib.request.urlopen(req2, timeout=10) as resp2:
-        network_hash_ghs = float(resp2.read())  # GH/s
-        network_hash_ths = network_hash_ghs / 1000  # TH/s
-
-    blok_odulu = 3.125  # BTC (halving sonrası)
-
-    return btc_try, network_hash_ths, blok_odulu
-
-def saatlik_btc_geliri(btc_try, network_hash_ths, blok_odulu):
-    # Toplam hashrate TH/s
-    toplam_hash = CIHAZ_SAYISI * CIHAZ_HASHRATE  # 8990 TH/s
-    # Saatte kaç blok: 6 blok/saat
-    blok_per_saat = 6
-    # Saatlik BTC kazanç
-    btc_kazanc = (toplam_hash / network_hash_ths) * blok_odulu * blok_per_saat
-    # Havuz komisyonu düş
-    net_btc = btc_kazanc * (1 - HAVUZ_KOMISYON)
-    # TL cinsinden
-    net_tl = net_btc * btc_try
-    return net_tl, net_btc
+    with urllib.request.urlopen(url, timeout=10) as r:
+        btc_try = float(json.loads(r.read())["price"])
+    url2 = "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT"
+    with urllib.request.urlopen(url2, timeout=10) as r:
+        btc_usd = float(json.loads(r.read())["price"])
+    return btc_try, btc_usd
 
 # Bugün mesaj gönderildi mi?
 gonderim, sha = dosya_oku("son_gonderim.json")
 if gonderim and gonderim.get("tarih") == bugun:
-    print("Bugün zaten mesaj gönderildi, atlanıyor.")
+    print("Bugun zaten gonderildi.")
     exit(0)
 
-# EPİAŞ verisi çek
-try:
-    eptr = EPTR2(username=EPIAS_KULLANICI, password=EPIAS_SIFRE)
-    sonuc = eptr.call("mcp", start_date=yarin, end_date=yarin, postprocess=False)
-    items = sonuc.get("items", [])
-except Exception as e:
-    print(f"Veri henüz yok: {e}")
-    whatsapp_gonder(f"EPiAS PTF\nHenuz veri yayinlanmadi.\nSaat: {saat_tr}\nYarim saat sonra tekrar denenecek.")
-    exit(0)
+# Veriyi çek — önce yarın, olmazsa bugün dene
+items = []
+hedef_tarih = yarin
+hedef_str   = yarin_str
+
+for tarih in [yarin, bugun]:
+    try:
+        eptr  = EPTR2(username=EPIAS_KULLANICI, password=EPIAS_SIFRE)
+        sonuc = eptr.call("mcp", start_date=tarih, end_date=tarih, postprocess=False)
+        items = sonuc.get("items", [])
+        if items:
+            hedef_tarih = tarih
+            dt = datetime.date.fromisoformat(tarih)
+            hedef_str = f"{dt.strftime('%d.%m.%Y')} {GUNLER[dt.weekday()]}"
+            print(f"Veri bulundu: {tarih}")
+            break
+    except Exception as e:
+        print(f"{tarih} verisi yok: {e}")
 
 if not items:
-    print("Veri bos.")
+    print("Veri henuz yayinlanmadi.")
     whatsapp_gonder(f"EPiAS PTF\nHenuz veri yayinlanmadi.\nSaat: {saat_tr}\nYarim saat sonra tekrar denenecek.")
     exit(0)
 
-# BTC verisi çek
+# BTC fiyatı çek
 try:
-    btc_try, network_hash_ths, blok_odulu = btc_verisi_cek()
-    btc_tl_str = f"{btc_try:,.0f}"
-    network_eh = network_hash_ths / 1_000_000
+    btc_try, btc_usd = btc_cek()
 except Exception as e:
     print(f"BTC verisi alinamadi: {e}")
-    btc_try = 0
-    network_hash_ths = 900_000_000  # 900 EH/s varsayılan
-    blok_odulu = 3.125
-    btc_tl_str = "?"
-    network_eh = 900
+    btc_try, btc_usd = 0, 0
 
 # Saatlik karlılık hesabı
-satirlar = []
+satirlar   = []
 toplam_kar = 0
+toplam_maliyet = 0
+toplam_btc_gelir = 0
 karli_saat = 0
 
 for item in items:
-    saat       = item["hour"]
-    ptf_raw    = item["price"]  # kuruş/MWh
-    ptf_tl     = ptf_raw / 1000  # TL/MWh
+    saat      = item["hour"]
+    ptf_kurus = item["price"]
+    ptf_tl    = ptf_kurus / 1000
 
-    # Elektrik maliyeti (TL) — saatlik, 29 cihaz için
-    maliyet_mwh = (ptf_tl + YEKDEM) * 1.05
-    maliyet_tl  = maliyet_mwh * TOPLAM_GUC_MW
+    maliyet_tl   = (ptf_tl + YEKDEM) * 1.05 * TOPLAM_GUC_MW
+    btc_gelir_tl = SAATLIK_BTC * btc_try if btc_try > 0 else 0
+    kar          = btc_gelir_tl - maliyet_tl
 
-    # BTC kazanç (TL) — saatlik
-    if btc_try > 0:
-        btc_gelir_tl, _ = saatlik_btc_geliri(btc_try, network_hash_ths, blok_odulu)
-    else:
-        btc_gelir_tl = 0
+    toplam_kar       += kar
+    toplam_maliyet   += maliyet_tl
+    toplam_btc_gelir += btc_gelir_tl
 
-    kar = btc_gelir_tl - maliyet_tl
-    toplam_kar += kar
     if kar > 0:
         karli_saat += 1
-        emoji = "✅"
+        satirlar.append(f"✅ {saat} | {ptf_kurus:.0f} | {maliyet_tl:.0f}TL | {btc_gelir_tl:.0f}TL | +{kar:.0f}TL")
     else:
-        emoji = "❌"
+        satirlar.append(f"❌ {saat} | {ptf_kurus:.0f} | {maliyet_tl:.0f}TL | {btc_gelir_tl:.0f}TL | {kar:.0f}TL")
 
-    satirlar.append(
-        f"{emoji} {saat} | {ptf_tl:.3f} TL/MWh | {maliyet_tl:.0f}TL | {btc_gelir_tl:.0f}TL | {kar:+.0f}TL"
-    )
+gunluk_btc_tl  = GUNLUK_BTC * btc_try if btc_try > 0 else 0
+gunluk_btc_usd = GUNLUK_BTC * btc_usd if btc_usd > 0 else 0
+gunluk_kar_usd = toplam_kar / (btc_try / btc_usd) if btc_try > 0 and btc_usd > 0 else 0
+maliyet_usd    = toplam_maliyet / (btc_try / btc_usd) if btc_try > 0 and btc_usd > 0 else 0
+gunluk_kwh     = TOPLAM_GUC_MW * 1000 * 24
+
+# Aylık birikim güncelle
+ay_data, ay_sha = dosya_oku(f"aylik_{ay_key}.json")
+if not ay_data:
+    ay_data = {"ay": ay_key, "gun_sayisi": 0, "toplam_btc": 0, "toplam_btc_tl": 0,
+               "toplam_maliyet_tl": 0, "toplam_kar_tl": 0, "toplam_kwh": 0}
+
+ay_data["gun_sayisi"]      += 1
+ay_data["toplam_btc"]      += GUNLUK_BTC
+ay_data["toplam_btc_tl"]   += gunluk_btc_tl
+ay_data["toplam_maliyet_tl"] += toplam_maliyet
+ay_data["toplam_kar_tl"]   += toplam_kar
+ay_data["toplam_kwh"]      += gunluk_kwh
+
+ay_btc_usd = ay_data["toplam_btc"] * btc_usd if btc_usd > 0 else 0
+ay_kar_usd = ay_data["toplam_kar_tl"] / (btc_try / btc_usd) if btc_try > 0 and btc_usd > 0 else 0
+ay_maliyet_usd = ay_data["toplam_maliyet_tl"] / (btc_try / btc_usd) if btc_try > 0 and btc_usd > 0 else 0
 
 mesaj = f"""EPiAS KARLILIK ANALiZi
-Tarih: {yarin}
-BTC: {btc_tl_str} TL
-Network: {network_eh:.0f} EH/s
+Tarih: {hedef_str}
+BTC: {btc_try:,.0f} TL | {btc_usd:,.0f} $
 YEKDEM: {YEKDEM} TL/MWh
----------------------------------
-Saat|PTF TL/MWh|Maliyet|BTC|Kar
----------------------------------
+------------------------------
+Saat | PTF(kr) | Maliyet | BTC | Kar
+------------------------------
 {chr(10).join(satirlar)}
----------------------------------
-Karli saat: {karli_saat}/24
-Gunluk tahmini kar: {toplam_kar:+,.0f} TL"""
+------------------------------
+Karli     : {karli_saat}/24 saat
+Gunluk kar: {toplam_kar:+,.0f} TL | {gunluk_kar_usd:+,.0f} $
+Toplam guc: {CIHAZ_SAYISI * CIHAZ_GUC_W / 1000:.0f} kW/saat
+Gunluk tuk: {gunluk_kwh:,.0f} kWh/gun
+------------------------------
+GUNLUK OZET
+------------------------------
+BTC uretim   : {GUNLUK_BTC:.5f} BTC
+BTC gelir    : {gunluk_btc_tl:,.0f} TL | {gunluk_btc_usd:,.0f} $
+Enerji maliyet: {toplam_maliyet:,.0f} TL | {maliyet_usd:,.0f} $
+Gunluk kar   : {toplam_kar:+,.0f} TL | {gunluk_kar_usd:+,.0f} $
+------------------------------
+{ay_key} TOPLAM ({ay_data['gun_sayisi']} gun)
+------------------------------
+BTC uretim   : {ay_data['toplam_btc']:.5f} BTC
+BTC gelir    : {ay_data['toplam_btc_tl']:,.0f} TL | {ay_btc_usd:,.0f} $
+Enerji maliyet: {ay_data['toplam_maliyet_tl']:,.0f} TL | {ay_maliyet_usd:,.0f} $
+Aylik kar    : {ay_data['toplam_kar_tl']:+,.0f} TL | {ay_kar_usd:+,.0f} $
+Toplam tuk   : {ay_data['toplam_kwh']:,.0f} kWh"""
 
 print(mesaj)
 whatsapp_gonder(mesaj)
+
+# Kaydet
 dosya_yaz("son_gonderim.json", {"tarih": bugun}, sha)
+dosya_yaz(f"aylik_{ay_key}.json", ay_data, ay_sha)
 print(f"Tamamlandi: {bugun}")
