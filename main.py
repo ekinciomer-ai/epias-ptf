@@ -38,9 +38,12 @@ except urllib.error.HTTPError as e:
         raise
 
 # Veri çek
-eptr = EPTR2(username=EPIAS_KULLANICI, password=EPIAS_SIFRE)
-sonuc = eptr.call("mcp", start_date=yarin, end_date=yarin, postprocess=False)
-items = sonuc.get("items", [])
+try:
+    sonuc = eptr.call("mcp", start_date=yarin, end_date=yarin, postprocess=False)
+    items = sonuc.get("items", [])
+except Exception as e:
+    print(f"Veri henüz yayınlanmadı: {e}")
+    exit(0)
 
 if not items:
     print("Veri henüz yayınlanmadı, sonra tekrar denenecek.")
