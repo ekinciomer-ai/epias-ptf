@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, session, redirect, render_template_string, request, Response
-import hashlib, json, os, urllib.request, urllib.parse
+import hashlib, json, os, urllib.request
 import datetime
 
 app = Flask(__name__)
@@ -31,7 +31,7 @@ ICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
 
 def github_oku(dosya):
     try:
-        with urllib.request.urlopen(f"{GITHUB_RAW}/{dosya}", timeout=10) as r:
+        with urllib.request.urlopen(f"{GITHUB_RAW}/{dosya}", timeout=15) as r:
             return json.loads(r.read())
     except:
         return None
@@ -92,7 +92,6 @@ def f2pool_workers():
     return result.get("workers", []) if result else []
 
 def cihaz_durum(info):
-    """Anlık hashrate'e göre durum belirle"""
     anlik = info.get("hash_rate", 0)
     h1    = info.get("h1_hash_rate", 0)
     h24   = info.get("h24_hash_rate", 0)
@@ -245,6 +244,31 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 .tooltip-time{color:#94a3b8;font-size:9px;}
 .tooltip-val{color:#4ade80;font-weight:800;font-size:13px;}
 
+/* OSOS */
+.osos-tabs{display:flex;gap:6px;background:rgba(255,255,255,0.04);padding:4px;border-radius:12px;margin-bottom:14px;overflow-x:auto;}
+.osos-tabs::-webkit-scrollbar{display:none;}
+.osos-tab{flex:1;min-width:90px;padding:10px 12px;font-size:11px;font-weight:700;color:#64748b;border:none;background:transparent;border-radius:8px;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.osos-tab.active{background:linear-gradient(135deg,#16a34a,#22c55e);color:white;box-shadow:0 4px 12px rgba(22,163,74,0.4);}
+
+.osos-info{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px;margin-bottom:12px;display:flex;align-items:center;gap:12px;}
+.osos-info-ico{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;}
+.osos-info.ges .osos-info-ico{background:linear-gradient(135deg,#f59e0b,#fbbf24);}
+.osos-info.tuketim .osos-info-ico{background:linear-gradient(135deg,#dc2626,#ef4444);}
+.osos-info.karma .osos-info-ico{background:linear-gradient(135deg,#7c3aed,#a78bfa);}
+.osos-info-title{font-size:16px;font-weight:900;}
+.osos-info-sub{font-size:11px;color:#94a3b8;margin-top:2px;}
+
+.osos-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.osos-stat{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:12px 10px;text-align:center;}
+.osos-stat-lbl{font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:4px;}
+.osos-stat-val{font-size:18px;font-weight:900;}
+.osos-stat-sub{font-size:10px;color:#94a3b8;margin-top:2px;}
+
+.osos-day-list{display:flex;gap:6px;overflow-x:auto;padding:4px 0 12px;margin-bottom:12px;}
+.osos-day-list::-webkit-scrollbar{display:none;}
+.osos-day-btn{padding:8px 12px;font-size:11px;font-weight:700;color:#94a3b8;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:10px;cursor:pointer;white-space:nowrap;font-family:inherit;}
+.osos-day-btn.active{background:linear-gradient(135deg,#16a34a,#22c55e);color:white;border-color:transparent;}
+
 .guncelleme{font-size:11px;color:#334155;text-align:center;margin-top:14px;}
 .empty-state{text-align:center;padding:40px 20px;color:#475569;font-size:13px;}
 .tab-content{display:none;}
@@ -320,7 +344,38 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 </div>
 
 <div class="tab-content" id="t-osos">
-<div class="empty-state">OSOS verisi yakında<br><br>Raspberry Pi kurulduktan sonra aktif olacak.</div>
+<div class="osos-tabs">
+<button class="osos-tab active" onclick="ososAbone('tekyildiz_1', this)">☀️ Tekyildiz 1</button>
+<button class="osos-tab" onclick="ososAbone('tekyildiz_2', this)">⚡ Tekyildiz 2</button>
+<button class="osos-tab" onclick="ososAbone('aksaray_3', this)">🏭 Aksaray 3</button>
+</div>
+
+<div class="osos-info" id="osos-info">
+<div class="osos-info-ico" id="osos-info-ico">☀️</div>
+<div><div class="osos-info-title" id="osos-info-title">—</div><div class="osos-info-sub" id="osos-info-sub">—</div></div>
+</div>
+
+<div class="osos-stats">
+<div class="osos-stat"><div class="osos-stat-lbl">Toplam Çekiş</div><div class="osos-stat-val" style="color:#f87171" id="osos-cekis">—</div><div class="osos-stat-sub">kWh</div></div>
+<div class="osos-stat"><div class="osos-stat-lbl">Toplam Veriş</div><div class="osos-stat-val" style="color:#4ade80" id="osos-veris">—</div><div class="osos-stat-sub">kWh</div></div>
+<div class="osos-stat"><div class="osos-stat-lbl">Net</div><div class="osos-stat-val" id="osos-net">—</div><div class="osos-stat-sub">kWh</div></div>
+</div>
+
+<div class="section-title" style="margin:12px 0 8px">📊 Günlük Grafik (Son 30 gün)</div>
+<div class="chart-wrap" style="margin-bottom:12px">
+<canvas class="chart-canvas" id="osos-chart" style="height:160px"></canvas>
+<div class="tooltip" id="osos-tt"><div class="tooltip-time" id="osos-tt-time"></div><div class="tooltip-val" id="osos-tt-val"></div></div>
+</div>
+
+<div class="section-title" style="margin:12px 0 8px">📅 Günleri Seçin (Saatlik Detay)</div>
+<div class="osos-day-list" id="osos-day-list"></div>
+
+<div class="aylik-wrap">
+<table class="aylik-table" id="osos-saatlik">
+<thead><tr><th class="saat-head">Saat</th><th style="color:#f87171">Çekiş</th><th style="color:#4ade80">Veriş</th><th class="saat-head">Net</th></tr></thead>
+<tbody id="osos-saatlik-body"><tr><td colspan="4" class="empty-state">Gün seçin</td></tr></tbody>
+</table>
+</div>
 </div>
 
 <div class="guncelleme" id="guncelleme"></div>
@@ -339,19 +394,16 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 <div class="modal-stat"><div class="modal-stat-lbl">24h Ort.</div><div class="modal-stat-val" style="color:#a78bfa" id="m-h24">—</div><div class="modal-stat-sub">TH/s</div></div>
 <div class="modal-stat"><div class="modal-stat-lbl">Durum</div><div class="modal-stat-val" id="m-durum">—</div><div class="modal-stat-sub" id="m-son">—</div></div>
 </div>
-
 <div class="section-title" style="margin:14px 0 8px">💰 Tahmini Kazanç</div>
 <div class="modal-stats">
 <div class="modal-stat"><div class="modal-stat-lbl">Bugün BTC</div><div class="modal-stat-val" style="color:#fbbf24" id="m-btc">—</div><div class="modal-stat-sub" id="m-tl">—</div></div>
 <div class="modal-stat"><div class="modal-stat-lbl">Bugün USD</div><div class="modal-stat-val" style="color:#4ade80" id="m-usd">—</div><div class="modal-stat-sub">$</div></div>
 </div>
-
 <div class="section-title" style="margin:14px 0 8px">⏱️ Çalışma Saati</div>
 <div class="modal-stats">
 <div class="modal-stat"><div class="modal-stat-lbl">Bugün</div><div class="modal-stat-val" style="color:#22c55e" id="m-bugun-saat">—</div><div class="modal-stat-sub">saat</div></div>
 <div class="modal-stat"><div class="modal-stat-lbl">Son 24h</div><div class="modal-stat-val" style="color:#22c55e" id="m-24h-saat">—</div><div class="modal-stat-sub">saat</div></div>
 </div>
-
 <div class="chart-wrap">
 <div class="chart-title">📊 24 Saatlik Hashrate Grafiği</div>
 <canvas class="chart-canvas" id="chart"></canvas>
@@ -363,12 +415,15 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 <script>
 const ZARARLI_ESIK = 2200;
 let chartData = null;
+let ososData = null;
+let secilenAbone = 'tekyildiz_1';
 
 function sekme(ad, btn) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('t-' + ad).classList.add('active');
+  if (ad === 'osos') ososYukle();
 }
 
 function renkSinif(v) {
@@ -420,12 +475,11 @@ function durumBilgisi(durum) {
   return {label:'Kapalı', cls:'badge-off', ico:'❌', renk:'#f87171'};
 }
 
-function cihazRender(workers, toplamHash, btcTry, btcUsd) {
+function cihazRender(workers) {
   if (!workers || workers.length === 0) {
     document.getElementById('cihaz-grid').innerHTML = '<div class="empty-state" style="grid-column:1/-1">Cihaz yok</div>';
     return;
   }
-  
   let calisan = 0, uyuyan = 0, kapali = 0, toplam = 0;
   workers.forEach(w => {
     if (w.durum === 'calisiyor') calisan++;
@@ -433,12 +487,10 @@ function cihazRender(workers, toplamHash, btcTry, btcUsd) {
     else kapali++;
     toplam += w.anlik;
   });
-  
   document.getElementById('cihaz-aktif').textContent = calisan;
   document.getElementById('cihaz-uyku').textContent = uyuyan;
   document.getElementById('cihaz-kapali').textContent = kapali;
   document.getElementById('cihaz-toplam').textContent = Math.round(toplam);
-  
   let html = '';
   workers.sort((a,b) => a.name.localeCompare(b.name)).forEach(w => {
     const d = durumBilgisi(w.durum);
@@ -459,7 +511,6 @@ function cihazDetay(name) {
   });
   document.getElementById('modal').classList.add('active');
   chartData = null;
-  
   fetch('/api/cihaz/' + name).then(r => r.json()).then(d => {
     if (d.anlik !== undefined) {
       document.getElementById('m-anlik').textContent = Math.round(d.anlik);
@@ -476,18 +527,16 @@ function cihazDetay(name) {
       document.getElementById('m-24h-saat').textContent = (d.h24_saat || 0).toFixed(1);
       if (d.history) {
         chartData = d.history;
-        cizGrafik();
+        cizGrafik('chart', chartData, 'tooltip');
       }
     }
   });
 }
 
-function kapatModal() {
-  document.getElementById('modal').classList.remove('active');
-}
+function kapatModal() { document.getElementById('modal').classList.remove('active'); }
 
-function cizGrafik() {
-  const canvas = document.getElementById('chart');
+function cizGrafik(canvasId, data, tooltipId) {
+  const canvas = document.getElementById(canvasId);
   const ctx = canvas.getContext('2d');
   const W = canvas.width = canvas.offsetWidth * 2;
   const H = canvas.height = canvas.offsetHeight * 2;
@@ -495,28 +544,23 @@ function cizGrafik() {
   const w = W / 2;
   const h = H / 2;
   ctx.clearRect(0, 0, w, h);
-  
-  const entries = Object.entries(chartData);
+  const entries = Array.isArray(data) ? data : Object.entries(data);
   if (entries.length === 0) return;
-  const values = entries.map(e => e[1] / 1e12);
+  const values = Array.isArray(data) ? data.map(e => e.value) : entries.map(e => e[1]/1e12);
   const max = Math.max(...values, 1);
   
   ctx.strokeStyle = 'rgba(255,255,255,0.05)';
   ctx.lineWidth = 1;
   for (let i = 0; i <= 4; i++) {
     const y = h * i / 4;
-    ctx.beginPath();
-    ctx.moveTo(30, y);
-    ctx.lineTo(w, y);
-    ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(40, y); ctx.lineTo(w, y); ctx.stroke();
   }
-  
   ctx.fillStyle = '#64748b';
   ctx.font = '9px Inter';
   ctx.textAlign = 'right';
   for (let i = 0; i <= 4; i++) {
     const v = max - (max * i / 4);
-    ctx.fillText(Math.round(v), 26, h * i / 4 + 4);
+    ctx.fillText(Math.round(v), 36, h * i / 4 + 4);
   }
   
   const gradient = ctx.createLinearGradient(0, 0, 0, h);
@@ -524,70 +568,148 @@ function cizGrafik() {
   gradient.addColorStop(1, 'rgba(34,197,94,0)');
   
   ctx.beginPath();
-  entries.forEach((e, i) => {
-    const x = 30 + (w - 30) * i / (entries.length - 1);
-    const y = h - (e[1]/1e12 / max) * h;
+  values.forEach((v, i) => {
+    const x = 40 + (w - 40) * i / (values.length - 1);
+    const y = h - (v / max) * h;
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   });
-  ctx.lineTo(w, h);
-  ctx.lineTo(30, h);
-  ctx.closePath();
-  ctx.fillStyle = gradient;
-  ctx.fill();
+  ctx.lineTo(w, h); ctx.lineTo(40, h); ctx.closePath();
+  ctx.fillStyle = gradient; ctx.fill();
   
   ctx.beginPath();
-  entries.forEach((e, i) => {
-    const x = 30 + (w - 30) * i / (entries.length - 1);
-    const y = h - (e[1]/1e12 / max) * h;
+  values.forEach((v, i) => {
+    const x = 40 + (w - 40) * i / (values.length - 1);
+    const y = h - (v / max) * h;
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   });
-  ctx.strokeStyle = '#22c55e';
-  ctx.lineWidth = 2;
-  ctx.stroke();
+  ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 2; ctx.stroke();
 }
 
-// Tooltip
-document.getElementById('chart').addEventListener('mousemove', tooltipHandle);
-document.getElementById('chart').addEventListener('touchmove', tooltipTouch);
-document.getElementById('chart').addEventListener('mouseleave', () => {
-  document.getElementById('tooltip').style.display = 'none';
-});
+document.getElementById('chart').addEventListener('mousemove', (e) => tooltipShow(e, 'chart', 'tooltip', chartData));
+document.getElementById('chart').addEventListener('touchmove', (e) => { e.preventDefault(); const t = e.touches[0]; tooltipShow(t, 'chart', 'tooltip', chartData); });
+document.getElementById('chart').addEventListener('mouseleave', () => { document.getElementById('tooltip').style.display = 'none'; });
 
-function tooltipTouch(e) {
-  e.preventDefault();
-  const t = e.touches[0];
-  tooltipShow(t.clientX, t.clientY);
-}
-
-function tooltipHandle(e) {
-  tooltipShow(e.clientX, e.clientY);
-}
-
-function tooltipShow(clientX, clientY) {
-  if (!chartData) return;
-  const canvas = document.getElementById('chart');
+function tooltipShow(e, canvasId, tooltipId, data) {
+  if (!data) return;
+  const canvas = document.getElementById(canvasId);
   const rect = canvas.getBoundingClientRect();
-  const x = clientX - rect.left;
+  const x = e.clientX - rect.left;
   const w = canvas.offsetWidth;
-  const entries = Object.entries(chartData);
+  const entries = Array.isArray(data) ? data : Object.entries(data);
   if (entries.length === 0) return;
-  
-  const i = Math.round((x - 15) / (w - 15) * (entries.length - 1));
+  const i = Math.round((x - 20) / (w - 20) * (entries.length - 1));
   if (i < 0 || i >= entries.length) return;
-  
-  const e = entries[i];
-  const tt = document.getElementById('tooltip');
-  const dt = new Date(e[0]);
-  const saatStr = String(dt.getHours()).padStart(2,'0') + ':' + String(dt.getMinutes()).padStart(2,'0');
-  
-  document.getElementById('tt-time').textContent = saatStr;
-  document.getElementById('tt-val').textContent = Math.round(e[1]/1e12) + ' TH/s';
-  
+  const tt = document.getElementById(tooltipId);
+  if (Array.isArray(data)) {
+    document.getElementById(tooltipId.replace('tooltip','tt') + '-time').textContent = entries[i].label;
+    document.getElementById(tooltipId.replace('tooltip','tt') + '-val').textContent = Math.round(entries[i].value).toLocaleString('tr-TR') + ' kWh';
+  } else {
+    const dt = new Date(entries[i][0]);
+    const saatStr = String(dt.getHours()).padStart(2,'0') + ':' + String(dt.getMinutes()).padStart(2,'0');
+    document.getElementById('tt-time').textContent = saatStr;
+    document.getElementById('tt-val').textContent = Math.round(entries[i][1]/1e12) + ' TH/s';
+  }
   tt.style.display = 'block';
-  tt.style.left = (clientX - rect.left + 10) + 'px';
-  tt.style.top = (clientY - rect.top - 40) + 'px';
+  tt.style.left = (e.clientX - rect.left + 10) + 'px';
+  tt.style.top = (e.clientY - rect.top - 40) + 'px';
+}
+
+// OSOS
+function ososYukle() {
+  if (ososData) { ososRender(); return; }
+  document.getElementById('osos-info-title').textContent = 'Yükleniyor...';
+  fetch('/api/osos').then(r => r.json()).then(d => {
+    ososData = d;
+    ososRender();
+  });
+}
+
+function ososAbone(key, btn) {
+  document.querySelectorAll('.osos-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  secilenAbone = key;
+  ososRender();
+}
+
+function ososRender() {
+  if (!ososData || !ososData[secilenAbone]) return;
+  const a = ososData[secilenAbone];
+  
+  // Bilgi kartı
+  const tipIco = a.tip === 'ges' ? '☀️' : (a.tip === 'tuketim' ? '🏭' : '⚡');
+  const tipText = a.tip === 'ges' ? 'GES (Sadece Üretim)' : (a.tip === 'tuketim' ? 'Tüketim Tesisi' : 'GES + Tüketim');
+  document.getElementById('osos-info').className = 'osos-info ' + a.tip;
+  document.getElementById('osos-info-ico').textContent = tipIco;
+  document.getElementById('osos-info-title').textContent = a.ad;
+  document.getElementById('osos-info-sub').textContent = tipText + ' · Çarpan: ' + a.carpan;
+  
+  // Toplam istatistikler
+  let toplamCekis = 0, toplamVeris = 0;
+  const gunler = Object.keys(a.veri).sort();
+  gunler.forEach(g => {
+    Object.values(a.veri[g]).forEach(s => {
+      toplamCekis += s.cekis || 0;
+      toplamVeris += s.veris || 0;
+    });
+  });
+  document.getElementById('osos-cekis').textContent = Math.round(toplamCekis).toLocaleString('tr-TR');
+  document.getElementById('osos-veris').textContent = Math.round(toplamVeris).toLocaleString('tr-TR');
+  const net = toplamCekis - toplamVeris;
+  document.getElementById('osos-net').textContent = Math.round(net).toLocaleString('tr-TR');
+  document.getElementById('osos-net').style.color = net > 0 ? '#f87171' : '#4ade80';
+  
+  // Son 30 gün grafiği (net = veris - cekis)
+  const son30 = gunler.slice(-30);
+  const grafikData = son30.map(g => {
+    let c = 0, v = 0;
+    Object.values(a.veri[g]).forEach(s => { c += s.cekis || 0; v += s.veris || 0; });
+    const value = a.tip === 'ges' ? v : (a.tip === 'tuketim' ? c : Math.abs(v - c));
+    const tarih = new Date(g);
+    return { label: tarih.getDate() + '.' + (tarih.getMonth()+1).toString().padStart(2,'0'), value: value };
+  });
+  cizGrafik('osos-chart', grafikData, 'osos-tt');
+  
+  // Gün listesi (son 14 gün)
+  const son14 = gunler.slice(-14).reverse();
+  let dayHtml = '';
+  son14.forEach(g => {
+    const tarih = new Date(g);
+    const lbl = tarih.getDate() + '.' + (tarih.getMonth()+1).toString().padStart(2,'0');
+    dayHtml += '<button class="osos-day-btn" onclick="ososGunSec(\\'' + g + '\\', this)">' + lbl + '</button>';
+  });
+  document.getElementById('osos-day-list').innerHTML = dayHtml;
+  
+  // İlk günü otomatik seç
+  if (son14.length > 0) {
+    const ilkBtn = document.querySelector('.osos-day-btn');
+    if (ilkBtn) ososGunSec(son14[0], ilkBtn);
+  }
+}
+
+function ososGunSec(tarih, btn) {
+  document.querySelectorAll('.osos-day-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const a = ososData[secilenAbone];
+  const gun = a.veri[tarih] || {};
+  let tbody = '';
+  let tC = 0, tV = 0;
+  for (let s = 0; s < 24; s++) {
+    const ss = String(s).padStart(2,'0');
+    const d = gun[ss] || {cekis:0, veris:0};
+    const net = d.cekis - d.veris;
+    tC += d.cekis; tV += d.veris;
+    tbody += '<tr><td class="saat-cell">' + ss + '</td>'
+      + '<td class="l4">' + (d.cekis ? Math.round(d.cekis).toLocaleString('tr-TR') : '—') + '</td>'
+      + '<td class="l0">' + (d.veris ? Math.round(d.veris).toLocaleString('tr-TR') : '—') + '</td>'
+      + '<td class="saat-cell" style="color:' + (net > 0 ? '#f87171' : '#4ade80') + '">' + Math.round(net).toLocaleString('tr-TR') + '</td></tr>';
+  }
+  tbody += '<tr style="border-top:2px solid rgba(34,197,94,0.4)"><td class="saat-cell" style="background:linear-gradient(180deg,#16a34a,#15803d);color:white">TOP</td>'
+    + '<td class="l4" style="font-weight:900">' + Math.round(tC).toLocaleString('tr-TR') + '</td>'
+    + '<td class="l0" style="font-weight:900">' + Math.round(tV).toLocaleString('tr-TR') + '</td>'
+    + '<td class="saat-cell" style="font-weight:900;color:' + ((tC-tV) > 0 ? '#f87171' : '#4ade80') + '">' + Math.round(tC-tV).toLocaleString('tr-TR') + '</td></tr>';
+  document.getElementById('osos-saatlik-body').innerHTML = tbody;
 }
 
 let toplamHashGlobal = 0, btcTryGlobal = 0, btcUsdGlobal = 0;
@@ -605,8 +727,6 @@ function yukle() {
     if (d.btc) {
       document.getElementById('btc-tl').textContent = d.btc.tl;
       document.getElementById('btc-usd').textContent = '$' + d.btc.usd + ' USD';
-      btcTryGlobal = d.btc_try || 0;
-      btcUsdGlobal = d.btc_usd || 0;
     }
     if (d.f2pool) {
       document.getElementById('bugun-btc').textContent = d.f2pool.bugun_btc;
@@ -614,7 +734,6 @@ function yukle() {
       document.getElementById('dun-btc').textContent = d.f2pool.dun_btc;
       document.getElementById('dun-tl').textContent = '~' + d.f2pool.dun_tl + ' TL';
       document.getElementById('toplam-hash').innerHTML = d.f2pool.hash + ' <span style="font-size:14px;color:#64748b">TH/s</span>';
-      toplamHashGlobal = parseInt(d.f2pool.hash.replace(/,/g,'')) || 0;
     }
     if (d.aylik) {
       document.getElementById('ay-kar').textContent = '+' + d.aylik.kar;
@@ -677,27 +796,28 @@ def cikis():
     session.clear()
     return redirect("/giris")
 
+@app.route("/api/osos")
+def osos():
+    if "kullanici" not in session:
+        return jsonify({"hata":"yetkisiz"}), 401
+    data = github_oku("osos_gecmis.json")
+    return jsonify(data or {})
+
 @app.route("/api/cihaz/<name>")
 def cihaz_detay(name):
     if "kullanici" not in session:
         return jsonify({"hata":"yetkisiz"}), 401
-    
     workers = f2pool_workers()
     worker = next((w for w in workers if w["hash_rate_info"]["name"] == name), None)
     if not worker:
         return jsonify({"hata":"bulunamadi"}), 404
-    
     info = worker["hash_rate_info"]
     anlik = info.get("hash_rate", 0) / 1e12
     h1    = info.get("h1_hash_rate", 0) / 1e12
     h24   = info.get("h24_hash_rate", 0) / 1e12
     durum = cihaz_durum(info)
-    
-    # Geçmiş hashrate
     legacy = f2pool_legacy(f"bitcoin/{F2POOL_USER}/{name}")
     history = legacy.get("hashrate_history", {}) if legacy else {}
-    
-    # Çalışma saati hesabı (10 dk aralıklarla, 6 nokta = 1 saat)
     bugun_str = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
     bugun_count = 0
     h24_count = 0
@@ -706,49 +826,31 @@ def cihaz_detay(name):
             h24_count += 1
             if ts.startswith(bugun_str):
                 bugun_count += 1
-    bugun_saat = bugun_count / 6  # 10dk * 6 = 1 saat
+    bugun_saat = bugun_count / 6
     h24_saat   = h24_count / 6
-    
-    # Tahmini günlük kazanç (cihaz oranı × toplam günlük BTC tahmini)
     hash_info = f2pool_hashrate()
-    toplam_anlik = hash_info["anlik"]
     bugun_tahmini = f2pool_bugun_tahmini()
-    
-    # Oran: cihaz 24h hashrate / toplam 24h hashrate
     toplam_h24 = hash_info["h24"]
     cihaz_oran = h24 / toplam_h24 if toplam_h24 > 0 else 0
     cihaz_btc  = bugun_tahmini * cihaz_oran
-    
     sinyal = github_oku("sinyal.json")
     btc_try = sinyal.get("btc_try", 0) if sinyal else 0
     btc_usd = sinyal.get("btc_usd", 0) if sinyal else 0
-    
-    sonuc = {
-        "name": name,
-        "anlik": anlik, "h1": h1, "h24": h24,
-        "durum": durum,
+    return jsonify({
+        "name": name, "anlik": anlik, "h1": h1, "h24": h24, "durum": durum,
         "last_share": datetime.datetime.fromtimestamp(worker["last_share_at"]).strftime("%d.%m %H:%M") if worker.get("last_share_at") else "—",
-        "history": history,
-        "bugun_saat": bugun_saat,
-        "h24_saat":   h24_saat,
-        "gunluk_btc": cihaz_btc,
-        "gunluk_tl":  cihaz_btc * btc_try,
-        "gunluk_usd": cihaz_btc * btc_usd
-    }
-    return jsonify(sonuc)
+        "history": history, "bugun_saat": bugun_saat, "h24_saat": h24_saat,
+        "gunluk_btc": cihaz_btc, "gunluk_tl": cihaz_btc * btc_try, "gunluk_usd": cihaz_btc * btc_usd
+    })
 
 @app.route("/api/ozet")
 def ozet():
     if "kullanici" not in session:
         return jsonify({"hata":"yetkisiz"}), 401
-
     sonuc = {}
     sinyal = github_oku("sinyal.json")
     btc_try = sinyal.get("btc_try", 0) if sinyal else 0
     btc_usd = sinyal.get("btc_usd", 0) if sinyal else 0
-    sonuc["btc_try"] = btc_try
-    sonuc["btc_usd"] = btc_usd
-
     if sinyal:
         su_an = (datetime.datetime.utcnow() + datetime.timedelta(hours=3)).strftime("%H")
         karli = su_an in sinyal.get("karli_saatler", [])
@@ -758,7 +860,6 @@ def ozet():
     else:
         sonuc["sinyal"] = {"veri_var": False, "karli": False, "mesaj": ""}
         sonuc["btc"] = {"tl": "—", "usd": "—"}
-
     transactions = f2pool_son_gunler(30)
     dun_btc = 0
     if transactions:
@@ -766,7 +867,6 @@ def ozet():
         dun_btc = en_son["changed_balance"]
     bugun_tahmini = f2pool_bugun_tahmini()
     hash_info = f2pool_hashrate()
-
     sonuc["f2pool"] = {
         "bugun_btc": f"{bugun_tahmini:.5f}",
         "bugun_tl":  f"{bugun_tahmini * btc_try:,.0f}",
@@ -774,8 +874,6 @@ def ozet():
         "dun_tl":    f"{dun_btc * btc_try:,.0f}",
         "hash":      f"{hash_info['h24']:,.0f}"
     }
-
-    # Aylık toplam
     ay_baslangic = datetime.date.today().replace(day=1)
     aylik_toplam_btc = 0
     aylik_gun_sayisi = 0
@@ -784,24 +882,20 @@ def ozet():
         if tarih >= ay_baslangic:
             aylik_toplam_btc += t["changed_balance"]
             aylik_gun_sayisi += 1
-
     ay_key = datetime.date.today().strftime("%Y-%m")
     ay_dosya = github_oku(f"aylik_{ay_key}.json")
     aylik_maliyet = ay_dosya.get("toplam_maliyet_tl", 0) if ay_dosya else 0
     aylik_gelir = aylik_toplam_btc * btc_try
     aylik_kar = aylik_gelir - aylik_maliyet
-
     sonuc["aylik"] = {
         "ay": ay_key, "gun": aylik_gun_sayisi,
         "btc": f"{aylik_toplam_btc:.5f}",
         "tl":  f"{aylik_gelir:,.0f}",
         "kar": f"{aylik_kar:,.0f}"
     }
-
     aylik_ptf = github_oku("aylik_ptf.json")
     if aylik_ptf:
         sonuc["aylik_ptf"] = aylik_ptf.get(ay_key, {})
-
     gunluk = []
     sorted_tx = sorted(transactions, key=lambda t: t["mining_extra"]["mining_date"], reverse=True)
     for t in sorted_tx[:31]:
@@ -810,8 +904,6 @@ def ozet():
         ths = t["mining_extra"]["hash_rate"] / 1e12
         gunluk.append({"tarih": tarih, "btc": f"{btc:.5f}", "hash": f"{ths:,.0f}", "tl": f"{btc * btc_try:,.0f}"})
     sonuc["gunluk_liste"] = gunluk
-
-    # Cihazlar (durum bilgisi ile)
     workers = f2pool_workers()
     worker_list = []
     for w in workers:
@@ -825,7 +917,6 @@ def ozet():
             "last_share": datetime.datetime.fromtimestamp(w["last_share_at"]).strftime("%d.%m %H:%M") if w.get("last_share_at") else "—"
         })
     sonuc["workers"] = worker_list
-
     return jsonify(sonuc)
 
 if __name__ == "__main__":
