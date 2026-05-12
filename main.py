@@ -291,7 +291,8 @@ sinyal_data = {
     "btc_usd": btc_usd,
     "gunluk_btc": GUNLUK_BTC,
     "gunluk_kar_tl": round(toplam_kar, 2),
-    "gunluk_maliyet_tl": round(toplam_maliyet, 2)
+    "gunluk_maliyet_tl": round(toplam_maliyet, 2),
+    "ptf_saatlik": [item["price"] for item in items]
 }
 sinyal_sha_data, sinyal_sha = dosya_oku("sinyal.json")
 dosya_yaz("sinyal.json", sinyal_data, sinyal_sha)
