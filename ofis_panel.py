@@ -6,24 +6,26 @@ app = Flask(__name__)
 app.secret_key = "otocoin-ofis-2026"
 
 KULLANICILAR = {
-    "admin1":    {"sifre": hashlib.sha256("admin1".encode()).hexdigest(),    "rol": "yonetici"},
-    "admin2":    {"sifre": hashlib.sha256("admin2".encode()).hexdigest(),    "rol": "yonetici"},
-    "kullanici1":{"sifre": hashlib.sha256("kullanici1".encode()).hexdigest(),"rol": "izleyici"},
-    "kullanici2":{"sifre": hashlib.sha256("kullanici2".encode()).hexdigest(),"rol": "izleyici"},
+    "admin1":    {"sifre": hashlib.sha256("admin1".encode()).hexdigest(),    "rol": "yonetici", "ad": "Admin 1"},
+    "admin2":    {"sifre": hashlib.sha256("admin2".encode()).hexdigest(),    "rol": "yonetici", "ad": "Admin 2"},
+    "kullanici1":{"sifre": hashlib.sha256("kullanici1".encode()).hexdigest(),"rol": "izleyici", "ad": "Kullanıcı 1"},
+    "kullanici2":{"sifre": hashlib.sha256("kullanici2".encode()).hexdigest(),"rol": "izleyici", "ad": "Kullanıcı 2"},
 }
 
-GITHUB_RAW = "https://raw.githubusercontent.com/ekinciomer-ai/epias-ptf/main"
+GITHUB_RAW   = "https://raw.githubusercontent.com/ekinciomer-ai/epias-ptf/main"
+F2POOL_TOKEN = os.environ.get("F2POOL_TOKEN", "")
+F2POOL_USER  = "mehmetas"
 
 MANIFEST = json.dumps({
     "name": "Otocoin", "short_name": "Otocoin",
     "description": "Aksaray Enerji Yonetim Paneli",
     "start_url": "/", "display": "standalone",
-    "background_color": "#0f172a", "theme_color": "#16a34a",
+    "background_color": "#050917", "theme_color": "#16a34a",
     "icons": [{"src": "/icon.svg", "sizes": "any", "type": "image/svg+xml"}]
 })
 
 ICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-<rect width="512" height="512" rx="100" fill="#0f172a"/>
+<rect width="512" height="512" rx="100" fill="#050917"/>
 <rect x="60" y="80" width="392" height="300" rx="20" fill="#14532d" stroke="#16a34a" stroke-width="8"/>
 <line x1="60" y1="180" x2="452" y2="180" stroke="#16a34a" stroke-width="4" opacity="0.6"/>
 <line x1="60" y1="280" x2="452" y2="280" stroke="#16a34a" stroke-width="4" opacity="0.6"/>
@@ -32,8 +34,75 @@ ICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
 <rect x="216" y="380" width="80" height="30" rx="6" fill="#166534"/>
 <rect x="156" y="408" width="200" height="16" rx="8" fill="#16a34a"/>
 <polygon points="290,110 220,270 262,270 222,400 320,210 272,210 310,110" fill="#ffffff" opacity="0.95"/>
-<text x="256" y="478" font-size="56" text-anchor="middle" fill="#22c55e" font-family="Arial" font-weight="900" letter-spacing="4">OTOCOIN</text>
 </svg>"""
+
+def github_oku(dosya):
+    try:
+        with urllib.request.urlopen(f"{GITHUB_RAW}/{dosya}", timeout=10) as r:
+            return json.loads(r.read())
+    except:
+        return None
+
+def f2pool_son_gunler(gun=30):
+    try:
+        now = datetime.datetime.now(datetime.timezone.utc)
+        bas = int((now - datetime.timedelta(days=gun)).replace(hour=0, minute=0, second=0, microsecond=0).timestamp())
+        bit = int(now.timestamp())
+        data = json.dumps({
+            "currency": "bitcoin", "mining_user_name": F2POOL_USER,
+            "type": "revenue", "start_time": bas, "end_time": bit
+        }).encode()
+        req = urllib.request.Request(
+            "https://api.f2pool.com/v2/assets/transactions/list",
+            data=data,
+            headers={"Content-Type":"application/json", "F2P-API-SECRET":F2POOL_TOKEN},
+            method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=10) as r:
+            result = json.loads(r.read())
+        return result.get("transactions", [])
+    except:
+        return []
+
+def f2pool_bugun_tahmini():
+    try:
+        data = json.dumps({
+            "currency": "bitcoin", "mining_user_name": F2POOL_USER,
+            "calculate_estimated_income": True
+        }).encode()
+        req = urllib.request.Request(
+            "https://api.f2pool.com/v2/assets/balance",
+            data=data,
+            headers={"Content-Type":"application/json", "F2P-API-SECRET":F2POOL_TOKEN},
+            method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=10) as r:
+            result = json.loads(r.read())
+        return result.get("balance_info", {}).get("estimated_today_income", 0)
+    except:
+        return 0
+
+def f2pool_hashrate():
+    try:
+        data = json.dumps({
+            "currency": "bitcoin", "mining_user_name": F2POOL_USER
+        }).encode()
+        req = urllib.request.Request(
+            "https://api.f2pool.com/v2/hash_rate/info",
+            data=data,
+            headers={"Content-Type":"application/json", "F2P-API-SECRET":F2POOL_TOKEN},
+            method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=10) as r:
+            result = json.loads(r.read())
+        info = result.get("info", {})
+        return {
+            "anlik": info.get("hash_rate", 0) / 1e12,
+            "h1":    info.get("h1_hash_rate", 0) / 1e12,
+            "h24":   info.get("h24_hash_rate", 0) / 1e12
+        }
+    except:
+        return {"anlik": 0, "h1": 0, "h24": 0}
 
 LOGIN_HTML = """<!DOCTYPE html>
 <html lang="tr">
@@ -44,40 +113,37 @@ LOGIN_HTML = """<!DOCTYPE html>
 <link rel="manifest" href="/manifest.json">
 <title>Otocoin</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, sans-serif; background: #0f172a; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-.kart { background: #1e293b; border-radius: 20px; padding: 36px 28px; width: 100%; max-width: 360px; }
-.logo-wrap { text-align: center; margin-bottom: 24px; }
-.logo-circle { width: 80px; height: 80px; background: linear-gradient(135deg, #16a34a, #22c55e); border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 40px; margin-bottom: 12px; }
-h1 { font-size: 24px; font-weight: 800; color: white; }
-.alt { font-size: 13px; color: #64748b; margin-top: 4px; }
-.form { margin-top: 28px; }
-label { font-size: 13px; color: #94a3b8; display: block; margin-bottom: 6px; }
-input { width: 100%; padding: 13px 14px; background: #0f172a; border: 1px solid #334155; border-radius: 12px; color: white; font-size: 15px; margin-bottom: 16px; outline: none; }
-input:focus { border-color: #16a34a; }
-button { width: 100%; padding: 14px; background: #16a34a; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; }
-.hata { background: #7f1d1d; color: #fca5a5; padding: 10px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 16px; text-align: center; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: #050917; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.card { background: linear-gradient(180deg, #0a0e1a 0%, #050917 100%); border: 1px solid #1e293b; border-radius: 28px; padding: 40px 32px; width: 100%; max-width: 380px; box-shadow: 0 0 80px rgba(34,197,94,0.15); }
+.logo-wrap { text-align: center; margin-bottom: 28px; }
+.logo { width: 80px; height: 80px; background: linear-gradient(135deg, #16a34a 0%, #22c55e 50%, #4ade80 100%); border-radius: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 42px; margin-bottom: 14px; box-shadow: 0 8px 30px rgba(34,197,94,0.5); }
+h1 { font-size: 28px; font-weight: 900; color: white; letter-spacing: -0.5px; }
+.alt { font-size: 13px; color: #64748b; margin-top: 6px; font-weight: 500; }
+label { font-size: 12px; color: #94a3b8; display: block; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+input { width: 100%; padding: 14px 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; color: white; font-size: 15px; margin-bottom: 18px; outline: none; font-family: inherit; }
+input:focus { border-color: #22c55e; background: rgba(255,255,255,0.06); }
+button { width: 100%; padding: 15px; background: linear-gradient(135deg, #16a34a, #22c55e); color: white; border: none; border-radius: 14px; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 8px 24px rgba(22,163,74,0.4); font-family: inherit; letter-spacing: 0.3px; }
+.error { background: rgba(220,38,38,0.15); border: 1px solid rgba(220,38,38,0.3); color: #fca5a5; padding: 12px 16px; border-radius: 12px; font-size: 13px; margin-bottom: 18px; text-align: center; }
 </style>
 </head>
 <body>
-<div class="kart">
+<div class="card">
   <div class="logo-wrap">
-    <div class="logo-circle">⚡</div>
+    <div class="logo">⚡</div>
     <h1>Otocoin</h1>
     <div class="alt">Aksaray Enerji Yönetim Sistemi</div>
   </div>
-  {% if hata %}<div class="hata">{{ hata }}</div>{% endif %}
-  <div class="form">
-    <form method="POST" action="/giris">
-      <label>Kullanıcı Adı</label>
-      <input type="text" name="kullanici" autocomplete="username">
-      <label>Şifre</label>
-      <input type="password" name="sifre" autocomplete="current-password">
-      <button type="submit">Giriş Yap</button>
-    </form>
-  </div>
+  {% if hata %}<div class="error">{{ hata }}</div>{% endif %}
+  <form method="POST" action="/giris">
+    <label>Kullanıcı Adı</label>
+    <input type="text" name="kullanici" autocomplete="username">
+    <label>Şifre</label>
+    <input type="password" name="sifre" autocomplete="current-password">
+    <button type="submit">Giriş Yap</button>
+  </form>
 </div>
-<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js');}</script>
 </body>
 </html>"""
 
@@ -86,171 +152,290 @@ PANEL_HTML = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#16a34a">
+<meta name="theme-color" content="#050917">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Otocoin">
 <link rel="manifest" href="/manifest.json">
 <title>Otocoin</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, sans-serif; background: #0f172a; color: white; min-height: 100vh; padding-bottom: 20px; }
-.header { background: #1e293b; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #334155; position: sticky; top: 0; z-index: 10; }
-.logo-sm { width: 32px; height: 32px; background: linear-gradient(135deg, #16a34a, #22c55e); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-.h-title { font-size: 18px; font-weight: 800; margin-left: 8px; }
-.user-name { font-size: 11px; color: #94a3b8; }
-.rol-badge { font-size: 10px; padding: 2px 8px; border-radius: 8px; background: #1d4ed8; color: #93c5fd; font-weight: 700; display: inline-block; }
-.cikis-btn { background: none; border: 1px solid #334155; color: #94a3b8; padding: 5px 10px; border-radius: 8px; font-size: 12px; cursor: pointer; margin-left: 8px; }
-.icerik { padding: 14px; }
-.sinyal-kart { border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; border: 1px solid; }
-.sinyal-kart.yesil { background: #14532d; border-color: #16a34a; }
-.sinyal-kart.kirmizi { background: #7f1d1d; border-color: #dc2626; }
-.sinyal-kart.gri { background: #1e293b; border-color: #334155; }
-.s-icon { font-size: 30px; }
-.s-baslik { font-size: 15px; font-weight: 800; }
-.s-alt { font-size: 11px; color: #94a3b8; margin-top: 2px; }
-.ozet-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px; }
-.ozet-kart { background: #1e293b; border-radius: 12px; padding: 12px; }
-.ozet-kart .baslik { font-size: 10px; color: #64748b; margin-bottom: 6px; text-transform: uppercase; }
-.ozet-kart .deger { font-size: 18px; font-weight: 800; }
-.ozet-kart .alt { font-size: 11px; color: #64748b; margin-top: 2px; }
-.bolum-baslik { font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; }
-.ptf-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-bottom: 12px; }
-.ptf-saat { background: #1e293b; border-radius: 8px; padding: 6px 4px; text-align: center; border: 1px solid #334155; }
-.ptf-saat.karli { border-color: #16a34a; background: #14532d; }
-.ptf-saat.zarарli { border-color: #dc2626; background: #7f1d1d; }
-.ptf-no { font-size: 10px; color: #64748b; }
-.ptf-fiyat { font-size: 10px; font-weight: 700; margin-top: 2px; }
-.ptf-saat.karli .ptf-fiyat { color: #86efac; }
-.ptf-saat.zarарli .ptf-fiyat { color: #fca5a5; }
-.aylik-kart { background: #1e293b; border-radius: 12px; padding: 14px; margin-bottom: 10px; }
-.aylik-satir { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #334155; }
-.aylik-satir:last-child { border-bottom: none; }
-.aylik-lbl { font-size: 12px; color: #94a3b8; }
-.aylik-val { font-size: 13px; font-weight: 700; }
-.guncelleme { font-size: 11px; color: #334155; text-align: center; margin-top: 12px; }
+body { background: linear-gradient(180deg, #0a0e1a 0%, #050917 100%); font-family: 'Inter', -apple-system, sans-serif; color: white; min-height: 100vh; padding-bottom: 20px; }
+.header { padding: 18px 20px 16px; padding-top: calc(18px + env(safe-area-inset-top)); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(10,14,26,0.9); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-logo { width: 38px; height: 38px; background: linear-gradient(135deg, #16a34a 0%, #22c55e 50%, #4ade80 100%); border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 16px rgba(34,197,94,0.4); }
+.brand-text { font-size: 18px; font-weight: 900; letter-spacing: -0.3px; }
+.user-pill { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.05); padding: 6px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.08); text-decoration: none; }
+.user-avatar { width: 22px; height: 22px; background: linear-gradient(135deg, #3b82f6, #6366f1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 700; }
+.user-name { color: #cbd5e1; font-size: 11px; font-weight: 600; }
+.tabs { display: flex; padding: 12px 20px 0; gap: 6px; overflow-x: auto; border-bottom: 1px solid rgba(255,255,255,0.04); background: rgba(10,14,26,0.7); backdrop-filter: blur(20px); position: sticky; top: 73px; z-index: 90; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { display: flex; align-items: center; gap: 6px; padding: 10px 14px; font-size: 12px; font-weight: 600; color: #64748b; border-bottom: 2px solid transparent; white-space: nowrap; cursor: pointer; margin-bottom: -1px; transition: all 0.2s; }
+.tab.active { color: #22c55e; border-bottom-color: #22c55e; }
+.tab-ico { font-size: 14px; }
+.content { padding: 16px 16px 24px; }
+.status-card { background: linear-gradient(135deg, rgba(22,163,74,0.2) 0%, rgba(22,163,74,0.05) 100%); border: 1px solid rgba(22,163,74,0.3); border-radius: 20px; padding: 18px; margin-bottom: 14px; position: relative; overflow: hidden; }
+.status-card.zarar { background: linear-gradient(135deg, rgba(220,38,38,0.2) 0%, rgba(220,38,38,0.05) 100%); border-color: rgba(220,38,38,0.3); }
+.status-card.gri { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.06); }
+.status-card::before { content: ''; position: absolute; top: -40px; right: -40px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(34,197,94,0.4) 0%, transparent 70%); }
+.status-row { display: flex; align-items: center; gap: 14px; position: relative; z-index: 1; }
+.status-icon { width: 52px; height: 52px; background: linear-gradient(135deg, #16a34a, #22c55e); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 8px 20px rgba(22,163,74,0.4); }
+.status-card.zarar .status-icon { background: linear-gradient(135deg, #dc2626, #ef4444); box-shadow: 0 8px 20px rgba(220,38,38,0.4); }
+.status-card.gri .status-icon { background: rgba(255,255,255,0.1); box-shadow: none; }
+.status-title { font-size: 18px; font-weight: 900; letter-spacing: -0.3px; }
+.status-sub { color: rgba(255,255,255,0.6); font-size: 11px; margin-top: 2px; font-weight: 500; }
+.status-pulse { width: 10px; height: 10px; background: #22c55e; border-radius: 50%; margin-left: auto; animation: pulse 2s infinite; }
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); } 50% { box-shadow: 0 0 0 8px rgba(34,197,94,0); } }
+.kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
+.kpi-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 14px; position: relative; }
+.kpi-card.highlight { background: linear-gradient(135deg, rgba(59,130,246,0.15) 0%, rgba(59,130,246,0.05) 100%); border-color: rgba(59,130,246,0.25); }
+.kpi-label { display: flex; align-items: center; gap: 6px; font-size: 10px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.kpi-value { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; line-height: 1; }
+.kpi-sub { font-size: 11px; color: #94a3b8; margin-top: 4px; font-weight: 500; }
+.section-header { display: flex; align-items: center; justify-content: space-between; margin: 14px 0 10px; }
+.section-title { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+.day-toggle { display: flex; gap: 4px; background: rgba(255,255,255,0.05); padding: 3px; border-radius: 10px; }
+.day-btn { padding: 6px 12px; font-size: 11px; font-weight: 600; color: #64748b; border-radius: 8px; cursor: pointer; border: none; background: transparent; font-family: inherit; }
+.day-btn.active { background: linear-gradient(135deg, #16a34a, #22c55e); color: white; }
+.ptf-hourly { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.ptf-cell { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 6px; text-align: center; }
+.ptf-cell.karli { background: linear-gradient(135deg, rgba(22,163,74,0.2), rgba(22,163,74,0.05)); border-color: rgba(22,163,74,0.3); }
+.ptf-cell.zarar { background: linear-gradient(135deg, rgba(220,38,38,0.2), rgba(220,38,38,0.05)); border-color: rgba(220,38,38,0.3); }
+.ptf-saat { font-size: 11px; font-weight: 700; color: #cbd5e1; }
+.ptf-price { font-size: 13px; font-weight: 800; margin-top: 2px; }
+.ptf-cell.karli .ptf-price { color: #4ade80; }
+.ptf-cell.zarar .ptf-price { color: #f87171; }
+.f2-summary { background: linear-gradient(135deg, rgba(245,158,11,0.15) 0%, rgba(245,158,11,0.05) 100%); border: 1px solid rgba(245,158,11,0.25); border-radius: 18px; padding: 16px; margin-bottom: 14px; }
+.f2-icon-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.f2-icon { width: 44px; height: 44px; background: linear-gradient(135deg, #f59e0b, #fbbf24); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.f2-title { font-size: 15px; font-weight: 800; }
+.f2-subtitle { color: #94a3b8; font-size: 11px; margin-top: 1px; }
+.f2-big { font-size: 26px; font-weight: 900; }
+.f2-big span { color: #fbbf24; }
+.f2-small { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+.daily-item { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 10px 12px; margin-bottom: 6px; }
+.daily-date { font-size: 11px; color: #94a3b8; font-weight: 600; min-width: 80px; }
+.daily-btc { font-size: 13px; font-weight: 800; }
+.daily-hash { font-size: 10px; color: #64748b; margin-top: 1px; }
+.daily-tl { margin-left: auto; text-align: right; }
+.daily-tl-val { font-size: 13px; font-weight: 800; color: #4ade80; }
+.guncelleme { font-size: 11px; color: #334155; text-align: center; margin-top: 14px; }
+.empty-state { text-align: center; padding: 40px 20px; color: #475569; font-size: 13px; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.cikis-link { background: none; border: 1px solid rgba(255,255,255,0.1); color: #f87171; padding: 6px 12px; border-radius: 10px; font-size: 11px; cursor: pointer; margin-left: 8px; font-family: inherit; }
 </style>
 </head>
 <body>
 <div class="header">
-  <div style="display:flex;align-items:center">
-    <div class="logo-sm">⚡</div>
-    <div class="h-title">Otocoin</div>
+  <div class="brand">
+    <div class="brand-logo">⚡</div>
+    <div class="brand-text">Otocoin</div>
   </div>
-  <div style="display:flex;align-items:center">
-    <div style="text-align:right">
+  <div style="display:flex;align-items:center;gap:8px">
+    <div class="user-pill">
+      <div class="user-avatar">{{ kullanici[:2].upper() }}</div>
       <div class="user-name">{{ kullanici }}</div>
-      <span class="rol-badge">{{ rol }}</span>
     </div>
-    <form action="/cikis" method="GET" style="margin-left:8px">
-      <button type="submit" class="cikis-btn">Çıkış</button>
-    </form>
+    <a href="/cikis" class="cikis-link">Çıkış</a>
   </div>
 </div>
-<div class="icerik">
-  <div class="sinyal-kart gri" id="sinyal-kart">
-    <div class="s-icon" id="sinyal-icon">⏳</div>
-    <div>
-      <div class="s-baslik" id="sinyal-baslik">Yükleniyor...</div>
-      <div class="s-alt" id="sinyal-alt"></div>
+
+<div class="tabs">
+  <div class="tab active" onclick="sekme('ozet')"><span class="tab-ico">🏠</span>Özet</div>
+  <div class="tab" onclick="sekme('epias')"><span class="tab-ico">⚡</span>EPİAŞ</div>
+  <div class="tab" onclick="sekme('f2pool')"><span class="tab-ico">₿</span>F2Pool</div>
+  <div class="tab" onclick="sekme('cihazlar')"><span class="tab-ico">🖥️</span>Cihazlar</div>
+  <div class="tab" onclick="sekme('osos')"><span class="tab-ico">🔋</span>OSOS</div>
+</div>
+
+<div class="content">
+
+  <div class="tab-content active" id="t-ozet">
+    <div class="status-card gri" id="status-card">
+      <div class="status-row">
+        <div class="status-icon" id="status-icon">⏳</div>
+        <div>
+          <div class="status-title" id="status-title">Yükleniyor...</div>
+          <div class="status-sub" id="status-sub"></div>
+        </div>
+      </div>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card highlight">
+        <div class="kpi-label">💰 BTC Fiyatı</div>
+        <div class="kpi-value" id="btc-tl">—</div>
+        <div class="kpi-sub" id="btc-usd">—</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">📊 Bugünkü Tahmini</div>
+        <div class="kpi-value" id="bugun-btc">—</div>
+        <div class="kpi-sub" id="bugun-tl">—</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">₿ Dünkü Kazanç</div>
+        <div class="kpi-value" id="dun-btc">—</div>
+        <div class="kpi-sub" id="dun-tl">—</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">📈 Aylık Net Kar</div>
+        <div class="kpi-value" id="ay-kar" style="color:#4ade80">—</div>
+        <div class="kpi-sub" id="ay-gun">—</div>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">⚡ Toplam Hashrate</div>
+      <div class="kpi-value" id="toplam-hash" style="color:#60a5fa">—</div>
+      <div class="kpi-sub">24 saatlik ortalama</div>
     </div>
   </div>
-  <div class="ozet-grid">
-    <div class="ozet-kart">
-      <div class="baslik">💰 BTC Fiyatı</div>
-      <div class="deger" id="btc-tl">—</div>
-      <div class="alt" id="btc-usd">—</div>
+
+  <div class="tab-content" id="t-epias">
+    <div class="section-header">
+      <div class="section-title">📊 PTF Saatlik</div>
+      <div class="day-toggle">
+        <button class="day-btn active" onclick="ptfGun('bugun', this)">Bugün</button>
+        <button class="day-btn" onclick="ptfGun('yarin', this)">Yarın</button>
+      </div>
     </div>
-    <div class="ozet-kart">
-      <div class="baslik">₿ Dünkü Kazanç</div>
-      <div class="deger" id="btc-kazanc">—</div>
-      <div class="alt" id="btc-kazanc-tl">—</div>
+    <div class="ptf-hourly" id="ptf-grid">
+      <div class="empty-state" style="grid-column:1/-1">Yükleniyor...</div>
     </div>
-    <div class="ozet-kart">
-      <div class="baslik">⚡ Günlük Kar</div>
-      <div class="deger" id="gunluk-kar">—</div>
-      <div class="alt" id="gunluk-kar-usd">—</div>
-    </div>
-    <div class="ozet-kart">
-      <div class="baslik">🔋 Enerji Maliyeti</div>
-      <div class="deger" id="enerji-maliyet">—</div>
-      <div class="alt" id="enerji-maliyet-usd">—</div>
+    <div class="kpi-grid" style="margin-top:14px">
+      <div class="kpi-card highlight">
+        <div class="kpi-label">✅ Karlı Saat</div>
+        <div class="kpi-value" id="ptf-karli-saat" style="color:#4ade80">—</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">📈 Günlük Kar</div>
+        <div class="kpi-value" id="ptf-kar" style="color:#4ade80">—</div>
+        <div class="kpi-sub">TL</div>
+      </div>
     </div>
   </div>
-  <div class="bolum-baslik">📊 Yarınki PTF Saatlik</div>
-  <div class="ptf-grid" id="ptf-grid">
-    <div style="grid-column:1/-1;text-align:center;color:#475569;padding:20px;font-size:13px">Yükleniyor...</div>
+
+  <div class="tab-content" id="t-f2pool">
+    <div class="f2-summary">
+      <div class="f2-icon-wrap">
+        <div class="f2-icon">₿</div>
+        <div>
+          <div class="f2-title" id="f2-title">Aylık Toplam</div>
+          <div class="f2-subtitle" id="f2-subtitle">—</div>
+        </div>
+      </div>
+      <div class="f2-big" id="f2-big">—<span> BTC</span></div>
+      <div class="f2-small" id="f2-small">—</div>
+    </div>
+    <div class="section-title">📅 Günlük Üretim</div>
+    <div id="daily-list" style="margin-top:8px">
+      <div class="empty-state">Yükleniyor...</div>
+    </div>
   </div>
-  <div class="bolum-baslik">📅 Aylık Özet</div>
-  <div class="aylik-kart" id="aylik-kart">
-    <div style="text-align:center;color:#475569;font-size:13px">Yükleniyor...</div>
+
+  <div class="tab-content" id="t-cihazlar">
+    <div class="empty-state">Saha bilgisayarına bağlantı kuruluyor...<br><br>Cihaz yönetimi saha panelinden yapılacak.</div>
   </div>
+
+  <div class="tab-content" id="t-osos">
+    <div class="empty-state">OSOS verisi yakında<br><br>Raspberry Pi kurulduktan sonra aktif olacak.</div>
+  </div>
+
   <div class="guncelleme" id="guncelleme"></div>
 </div>
+
 <script>
-function yukle() {
-  fetch('/api/ozet')
-    .then(r => r.json())
-    .then(d => {
-      const kart = document.getElementById('sinyal-kart');
-      const icon = document.getElementById('sinyal-icon');
-      const baslik = document.getElementById('sinyal-baslik');
-      const alt = document.getElementById('sinyal-alt');
-      if (d.sinyal) {
-        kart.className = 'sinyal-kart ' + (d.sinyal.karli ? 'yesil' : 'kirmizi');
-        icon.textContent = d.sinyal.karli ? '✅' : '❌';
-        baslik.textContent = d.sinyal.karli ? 'ÇALIŞMA VAR' : 'ÇALIŞMA YOK';
-        alt.textContent = d.sinyal.mesaj || '';
-      }
-      if (d.btc) {
-        document.getElementById('btc-tl').textContent = d.btc.tl_str + ' TL';
-        document.getElementById('btc-usd').textContent = d.btc.usd_str + ' $';
-      }
-      if (d.f2pool) {
-        document.getElementById('btc-kazanc').textContent = d.f2pool.btc + ' BTC';
-        document.getElementById('btc-kazanc-tl').textContent = d.f2pool.tl_str + ' TL';
-      }
-      if (d.karlilik) {
-        document.getElementById('gunluk-kar').textContent = d.karlilik.kar_tl;
-        document.getElementById('gunluk-kar-usd').textContent = d.karlilik.kar_usd;
-        document.getElementById('enerji-maliyet').textContent = d.karlilik.maliyet_tl;
-        document.getElementById('enerji-maliyet-usd').textContent = d.karlilik.maliyet_usd;
-      }
-      if (d.ptf && d.ptf.length > 0) {
-        let html = '';
-        d.ptf.forEach(p => {
-          const cls = p.karli ? 'karli' : 'zarарli';
-          html += `<div class="ptf-saat ${cls}"><div class="ptf-no">${p.saat}</div><div class="ptf-fiyat">${p.ptf}</div></div>`;
-        });
-        document.getElementById('ptf-grid').innerHTML = html;
-      }
-      if (d.aylik) {
-        const a = d.aylik;
-        document.getElementById('aylik-kart').innerHTML = `
-          <div class="aylik-satir"><span class="aylik-lbl">Ay / Gün</span><span class="aylik-val">${a.ay} / ${a.gun_sayisi} gün</span></div>
-          <div class="aylik-satir"><span class="aylik-lbl">₿ BTC Üretim</span><span class="aylik-val">${a.btc} BTC</span></div>
-          <div class="aylik-satir"><span class="aylik-lbl">💰 BTC Gelir</span><span class="aylik-val">${a.gelir_tl} TL | ${a.gelir_usd} $</span></div>
-          <div class="aylik-satir"><span class="aylik-lbl">⚡ Enerji Maliyeti</span><span class="aylik-val">${a.maliyet_tl} TL</span></div>
-          <div class="aylik-satir"><span class="aylik-lbl" style="color:#22c55e">📈 Net Kar</span><span class="aylik-val" style="color:#22c55e">${a.kar_tl} TL | ${a.kar_usd} $</span></div>
-          <div class="aylik-satir"><span class="aylik-lbl">🔋 Toplam Tüketim</span><span class="aylik-val">${a.kwh} kWh</span></div>`;
-      }
-      const now = new Date();
-      document.getElementById('guncelleme').textContent = 'Güncellendi: ' + now.toLocaleTimeString('tr-TR');
-    });
+function sekme(ad) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  event.target.closest('.tab').classList.add('active');
+  document.getElementById('t-' + ad).classList.add('active');
 }
+
+let ptfBugun = [], ptfYarin = [], karliBugun = [], karliYarin = [];
+
+function ptfGun(gun, btn) {
+  document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  ptfRender(gun);
+}
+
+function ptfRender(gun) {
+  const veri = gun === 'bugun' ? ptfBugun : ptfYarin;
+  const karli = gun === 'bugun' ? karliBugun : karliYarin;
+  let html = '';
+  for (let i = 0; i < 24; i++) {
+    const ptf = veri[i] || 0;
+    const isKarli = karli.includes(String(i).padStart(2,'0'));
+    const cls = ptf > 0 ? (isKarli ? 'karli' : 'zarar') : 'karli';
+    html += `<div class="ptf-cell ${cls}"><div class="ptf-saat">${String(i).padStart(2,'0')}</div><div class="ptf-price">${ptf}</div></div>`;
+  }
+  document.getElementById('ptf-grid').innerHTML = html;
+}
+
+function yukle() {
+  fetch('/api/ozet').then(r => r.json()).then(d => {
+    if (d.sinyal) {
+      const kart = document.getElementById('status-card');
+      const ico = document.getElementById('status-icon');
+      kart.className = 'status-card ' + (d.sinyal.veri_var ? (d.sinyal.karli ? '' : 'zarar') : 'gri');
+      ico.textContent = d.sinyal.veri_var ? (d.sinyal.karli ? '✓' : '✕') : '⏳';
+      document.getElementById('status-title').textContent = d.sinyal.veri_var ? (d.sinyal.karli ? 'ÇALIŞMA VAR' : 'ÇALIŞMA YOK') : 'Veri Bekleniyor';
+      document.getElementById('status-sub').textContent = d.sinyal.mesaj || '';
+    }
+    if (d.btc) {
+      document.getElementById('btc-tl').textContent = d.btc.tl;
+      document.getElementById('btc-usd').textContent = '$' + d.btc.usd + ' USD';
+    }
+    if (d.f2pool) {
+      document.getElementById('bugun-btc').textContent = d.f2pool.bugun_btc;
+      document.getElementById('bugun-tl').textContent = '~' + d.f2pool.bugun_tl + ' TL';
+      document.getElementById('dun-btc').textContent = d.f2pool.dun_btc;
+      document.getElementById('dun-tl').textContent = '~' + d.f2pool.dun_tl + ' TL';
+      document.getElementById('toplam-hash').innerHTML = d.f2pool.hash + ' <span style="font-size:14px;color:#64748b">TH/s</span>';
+    }
+    if (d.aylik) {
+      document.getElementById('ay-kar').textContent = '+' + d.aylik.kar;
+      document.getElementById('ay-gun').textContent = 'TL | ' + d.aylik.gun + ' gün';
+      document.getElementById('f2-title').textContent = d.aylik.ay + ' Toplam';
+      document.getElementById('f2-subtitle').textContent = d.aylik.gun + ' gün üretim';
+      document.getElementById('f2-big').innerHTML = d.aylik.btc + '<span> BTC</span>';
+      document.getElementById('f2-small').textContent = '~' + d.aylik.tl + ' TL';
+    }
+    if (d.ptf_bugun) {
+      ptfBugun = d.ptf_bugun.fiyatlar || [];
+      karliBugun = d.ptf_bugun.karli || [];
+      document.getElementById('ptf-karli-saat').innerHTML = karliBugun.length + '<span style="font-size:14px;color:#64748b">/24</span>';
+      document.getElementById('ptf-kar').textContent = '+' + (d.ptf_bugun.kar || '—');
+      ptfRender('bugun');
+    }
+    if (d.ptf_yarin) {
+      ptfYarin = d.ptf_yarin.fiyatlar || [];
+      karliYarin = d.ptf_yarin.karli || [];
+    }
+    if (d.gunluk_liste) {
+      let html = '';
+      d.gunluk_liste.forEach(g => {
+        html += `<div class="daily-item">
+          <div class="daily-date">${g.tarih}</div>
+          <div>
+            <div class="daily-btc">${g.btc} BTC</div>
+            <div class="daily-hash">${g.hash} TH/s</div>
+          </div>
+          <div class="daily-tl"><div class="daily-tl-val">${g.tl} TL</div></div>
+        </div>`;
+      });
+      document.getElementById('daily-list').innerHTML = html || '<div class="empty-state">Veri yok</div>';
+    }
+    document.getElementById('guncelleme').textContent = 'Güncellendi: ' + new Date().toLocaleTimeString('tr-TR');
+  });
+}
+
 yukle();
 setInterval(yukle, 60000);
 if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
 </script>
 </body>
 </html>"""
-
-def github_oku(dosya):
-    try:
-        url = f"{GITHUB_RAW}/{dosya}"
-        with urllib.request.urlopen(url, timeout=10) as r:
-            return json.loads(r.read())
-    except:
-        return None
 
 @app.route("/manifest.json")
 def manifest():
@@ -293,80 +478,84 @@ def ozet():
         return jsonify({"hata":"yetkisiz"}), 401
 
     sonuc = {}
-
-    # Sinyal ve BTC - GitHub'dan
     sinyal = github_oku("sinyal.json")
+    btc_try = sinyal.get("btc_try", 0) if sinyal else 0
+    btc_usd = sinyal.get("btc_usd", 0) if sinyal else 0
+    kur     = btc_try / btc_usd if btc_usd > 0 and btc_try > 0 else 1
+
+    # Sinyal
     if sinyal:
         su_an = (datetime.datetime.utcnow() + datetime.timedelta(hours=3)).strftime("%H")
         karli = su_an in sinyal.get("karli_saatler", [])
         sonuc["sinyal"] = {
+            "veri_var": True,
             "karli": karli,
             "mesaj": f"Saat {su_an}:00 — {'karlı' if karli else 'zararlı'} | {sinyal.get('tarih','')}"
         }
-        # BTC fiyatı sinyal.json'dan
-        btc_try = sinyal.get("btc_try", 0)
-        btc_usd = sinyal.get("btc_usd", 0)
-        if btc_try > 0:
-            sonuc["btc"] = {
-                "tl_str": f"{btc_try:,.0f}",
-                "usd_str": f"{btc_usd:,.0f}"
-            }
-        else:
-            sonuc["btc"] = {"tl_str": "—", "usd_str": "—"}
-
-        # Günlük BTC kazanç
-        gunluk_btc = sinyal.get("gunluk_btc", 0)
-        gunluk_kar = sinyal.get("gunluk_kar_tl", 0)
-        gunluk_mal = sinyal.get("gunluk_maliyet_tl", 0)
-        kur = btc_try / btc_usd if btc_usd > 0 and btc_try > 0 else 1
-
-        sonuc["f2pool"] = {
-            "btc": f"{gunluk_btc:.5f}",
-            "tl_str": f"{gunluk_btc * btc_try:,.0f}"
-        }
-        sonuc["karlilik"] = {
-            "kar_tl": f"{gunluk_kar:+,.0f} TL",
-            "kar_usd": f"{gunluk_kar/kur:+,.0f} $",
-            "maliyet_tl": f"{gunluk_mal:,.0f} TL",
-            "maliyet_usd": f"{gunluk_mal/kur:,.0f} $"
-        }
-
-        # PTF saatlik
-        karli_saatler = sinyal.get("karli_saatler", [])
-        ptf_list = []
-        for i in range(24):
-            saat_str = f"{i:02d}"
-            ptf_list.append({
-                "saat": saat_str,
-                "ptf": "✅" if saat_str in karli_saatler else "❌",
-                "karli": saat_str in karli_saatler
-            })
-        sonuc["ptf"] = ptf_list
+        sonuc["btc"] = {"tl": f"{btc_try:,.0f}", "usd": f"{btc_usd:,.0f}"}
     else:
-        sonuc["sinyal"] = {"karli": False, "mesaj": "Sinyal alınamadı"}
-        sonuc["btc"] = {"tl_str": "—", "usd_str": "—"}
+        sonuc["sinyal"] = {"veri_var": False, "karli": False, "mesaj": ""}
+        sonuc["btc"] = {"tl": "—", "usd": "—"}
 
-    # Aylık veri - GitHub'dan
+    # F2Pool - dünkü ve bugünkü
+    transactions = f2pool_son_gunler(7)
+    dun_btc = 0
+    if transactions:
+        en_son = max(transactions, key=lambda t: t["mining_extra"]["mining_date"])
+        dun_btc = en_son["changed_balance"]
+
+    bugun_tahmini = f2pool_bugun_tahmini()
+    hash_info = f2pool_hashrate()
+
+    sonuc["f2pool"] = {
+        "bugun_btc": f"{bugun_tahmini:.5f}",
+        "bugun_tl":  f"{bugun_tahmini * btc_try:,.0f}",
+        "dun_btc":   f"{dun_btc:.5f}",
+        "dun_tl":    f"{dun_btc * btc_try:,.0f}",
+        "hash":      f"{hash_info['h24']:,.0f}"
+    }
+
+    # Aylık veri
     ay_key = datetime.date.today().strftime("%Y-%m")
     ay = github_oku(f"aylik_{ay_key}.json")
     if ay:
-        btc_try_fiyat = sinyal.get("btc_try", 0) if sinyal else 0
-        btc_usd_fiyat = sinyal.get("btc_usd", 0) if sinyal else 0
-        kur = btc_try_fiyat / btc_usd_fiyat if btc_usd_fiyat > 0 else 1
         sonuc["aylik"] = {
-            "ay": ay_key,
-            "gun_sayisi": ay.get("gun_sayisi", 0),
+            "ay":  ay_key,
+            "gun": ay.get("gun_sayisi", 0),
             "btc": f"{ay.get('toplam_btc', 0):.5f}",
-            "gelir_tl": f"{ay.get('toplam_btc_tl', 0):,.0f}",
-            "gelir_usd": f"{ay.get('toplam_btc', 0) * btc_usd_fiyat:,.0f}",
-            "maliyet_tl": f"{ay.get('toplam_maliyet_tl', 0):,.0f}",
-            "kar_tl": f"{ay.get('toplam_kar_tl', 0):+,.0f}",
-            "kar_usd": f"{ay.get('toplam_kar_tl', 0) / kur:+,.0f}",
-            "kwh": f"{ay.get('toplam_kwh', 0):,.0f}"
+            "tl":  f"{ay.get('toplam_btc_tl', 0):,.0f}",
+            "kar": f"{ay.get('toplam_kar_tl', 0):,.0f}"
         }
+
+    # PTF bugün/yarın
+    if sinyal:
+        karli_saatler = sinyal.get("karli_saatler", [])
+        # Şimdilik sadece bugün, yarın için ptf_yarin.json oluşturulacak
+        sonuc["ptf_bugun"] = {
+            "karli": karli_saatler,
+            "fiyatlar": ["—"] * 24,  # main.py'den gelmesi gerekiyor
+            "kar": f"{sinyal.get('gunluk_kar_tl', 0):,.0f}"
+        }
+
+    # Günlük liste
+    gunluk = []
+    sorted_tx = sorted(transactions, key=lambda t: t["mining_extra"]["mining_date"], reverse=True)
+    for t in sorted_tx[:10]:
+        tarih = datetime.datetime.fromtimestamp(
+            t["mining_extra"]["mining_date"],
+            tz=datetime.timezone.utc
+        ).strftime("%d.%m.%Y")
+        btc = t["changed_balance"]
+        ths = t["mining_extra"]["hash_rate"] / 1e12
+        gunluk.append({
+            "tarih": tarih,
+            "btc":   f"{btc:.5f}",
+            "hash":  f"{ths:,.0f}",
+            "tl":    f"{btc * btc_try:,.0f}"
+        })
+    sonuc["gunluk_liste"] = gunluk
 
     return jsonify(sonuc)
 
 if __name__ == "__main__":
-    print("Otocoin Ofis Paneli baslatiliyor: http://0.0.0.0:8081")
-    app.run(host="0.0.0.0", port=8081, debug=False)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8081)), debug=False)
