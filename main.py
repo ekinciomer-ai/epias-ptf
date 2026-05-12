@@ -287,7 +287,12 @@ sinyal_data = {
     "tarih": hedef_tarih,
     "guncelleme": saat_tr,
     "karli_saatler": karli_saatler,
-    "zarарli_saatler": zarарli_saatler
+    "zarарli_saatler": zarарli_saatler,
+    "btc_try": btc_try,
+    "btc_usd": btc_usd,
+    "gunluk_btc": GUNLUK_BTC,
+    "gunluk_kar_tl": round(toplam_kar, 2),
+    "gunluk_maliyet_tl": round(toplam_maliyet, 2)
 }
 sinyal_sha_data, sinyal_sha = dosya_oku("sinyal.json")
 dosya_yaz("sinyal.json", sinyal_data, sinyal_sha)
