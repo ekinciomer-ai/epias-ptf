@@ -293,6 +293,7 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 <div class="tab" onclick="sekme('f2pool', this)">₿ F2Pool</div>
 <div class="tab" onclick="sekme('cihazlar', this)">🖥️ Cihazlar</div>
 <div class="tab" onclick="sekme('osos', this)">🔋 OSOS</div>
+<div class="tab" onclick="sekme('inverter', this)">🌞 İnverter</div>
 </div>
 <div class="content">
 
@@ -402,6 +403,99 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 </div>
 </div>
 
+<!-- ====================== İNVERTER SEKMESİ ====================== -->
+<div class="tab-content" id="t-inverter">
+
+<!-- TESİS SEKMELERİ -->
+<div class="osos-tabs">
+<button class="osos-tab active" onclick="invTesis('all', this)">⚡ Tümü</button>
+<button class="osos-tab" onclick="invTesis('NE=59224704', this)">☀️ Tek Yıldız 1</button>
+<button class="osos-tab" onclick="invTesis('NE=73686040', this)">☀️ Tek Yıldız 2</button>
+</div>
+
+<!-- TESİS ÖZET KARTI -->
+<div class="osos-info ges" id="inv-info">
+<div class="osos-info-ico">☀️</div>
+<div style="flex:1">
+<div class="osos-info-title" id="inv-info-title">Yükleniyor...</div>
+<div class="osos-info-sub" id="inv-info-sub">—</div>
+</div>
+<div style="text-align:right">
+<div style="font-size:20px;font-weight:900;color:#fbbf24" id="inv-info-power">—</div>
+<div style="font-size:10px;color:#94a3b8">kW anlık</div>
+</div>
+</div>
+
+<!-- İSTATİSTİKLER -->
+<div class="osos-stats">
+<div class="osos-stat"><div class="osos-stat-lbl">Anlık Güç</div><div class="osos-stat-val" style="color:#4ade80" id="inv-anlik">—</div><div class="osos-stat-sub">kW</div></div>
+<div class="osos-stat"><div class="osos-stat-lbl">Bugünkü Üretim</div><div class="osos-stat-val" style="color:#fbbf24" id="inv-bugun">—</div><div class="osos-stat-sub">kWh</div></div>
+<div class="osos-stat"><div class="osos-stat-lbl">Toplam Üretim</div><div class="osos-stat-val" style="color:#60a5fa" id="inv-toplam">—</div><div class="osos-stat-sub">MWh</div></div>
+</div>
+
+<!-- ALT SEKMELER -->
+<div class="osos-section-tabs">
+<button class="osos-sec-tab active" onclick="invSec('saatlik', this)">📅 Saatlik</button>
+<button class="osos-sec-tab" onclick="invSec('aylik', this)">📊 Aylık</button>
+<button class="osos-sec-tab" onclick="invSec('yillik', this)">🗓️ Yıllık</button>
+<button class="osos-sec-tab" onclick="invSec('inverterler', this)">🖥️ İnverterler</button>
+</div>
+
+<!-- SAATLİK -->
+<div class="osos-sec-content active" id="inv-sec-saatlik">
+<div class="chart-wrap" style="margin-bottom:12px">
+<div class="chart-title">📊 Son 30 Gün Üretim (kWh)</div>
+<canvas class="chart-canvas" id="inv-chart" style="height:160px"></canvas>
+<div class="tooltip" id="inv-tt"><div class="tooltip-time" id="inv-tt-time"></div><div class="tooltip-val" id="inv-tt-val"></div></div>
+</div>
+<div class="section-title" style="margin:12px 0 8px">📅 Gün Seçin</div>
+<div class="osos-day-list" id="inv-day-list"></div>
+<div class="aylik-wrap">
+<table class="aylik-table">
+<thead><tr><th class="saat-head">Saat</th><th style="color:#fbbf24">Güç (kW)</th><th style="color:#4ade80">Üretim (kWh)</th><th class="saat-head">Radyasyon</th></tr></thead>
+<tbody id="inv-saatlik-body"><tr><td colspan="4" class="empty-state">Gün seçin</td></tr></tbody>
+</table>
+</div>
+</div>
+
+<!-- AYLIK -->
+<div class="osos-sec-content" id="inv-sec-aylik">
+<div class="chart-wrap" style="margin-bottom:12px">
+<div class="chart-title">📊 Bu Ayın Günlük Üretimi</div>
+<canvas class="chart-canvas" id="inv-aylik-chart" style="height:160px"></canvas>
+<div class="tooltip" id="inv-aylik-tt"><div class="tooltip-time" id="inv-aylik-tt-time"></div><div class="tooltip-val" id="inv-aylik-tt-val"></div></div>
+</div>
+<div id="inv-aylik-liste"><div class="empty-state">Yükleniyor...</div></div>
+</div>
+
+<!-- YILLIK -->
+<div class="osos-sec-content" id="inv-sec-yillik">
+<div class="chart-wrap" style="margin-bottom:12px">
+<div class="chart-title">📊 Yıllık Üretim (Aylık)</div>
+<canvas class="chart-canvas" id="inv-yillik-chart" style="height:160px"></canvas>
+<div class="tooltip" id="inv-yillik-tt"><div class="tooltip-time" id="inv-yillik-tt-time"></div><div class="tooltip-val" id="inv-yillik-tt-val"></div></div>
+</div>
+<div id="inv-yillik-liste"><div class="empty-state">Yükleniyor...</div></div>
+</div>
+
+<!-- İNVERTERLER -->
+<div class="osos-sec-content" id="inv-sec-inverterler">
+<div class="cihaz-ozet">
+<div class="cihaz-ozet-card"><div class="cihaz-ozet-val" style="color:#4ade80" id="inv-sayisi-aktif">—</div><div class="cihaz-ozet-lbl">Çalışan</div></div>
+<div class="cihaz-ozet-card"><div class="cihaz-ozet-val" style="color:#fbbf24" id="inv-sayisi-bekleme">—</div><div class="cihaz-ozet-lbl">Bekleme</div></div>
+<div class="cihaz-ozet-card"><div class="cihaz-ozet-val" style="color:#f87171" id="inv-sayisi-kapali">—</div><div class="cihaz-ozet-lbl">Kapalı</div></div>
+<div class="cihaz-ozet-card"><div class="cihaz-ozet-val" style="color:#60a5fa" id="inv-sayisi-toplam">—</div><div class="cihaz-ozet-lbl">Toplam kW</div></div>
+</div>
+<div class="section-header">
+<div class="section-title">🖥️ İnverter Listesi</div>
+<div style="font-size:10px;color:#64748b">Detay için dokunun</div>
+</div>
+<div class="cihaz-grid" id="inv-grid"><div class="empty-state" style="grid-column:1/-1">Yükleniyor...</div></div>
+</div>
+
+</div>
+<!-- ====================== İNVERTER SEKME SONU ====================== -->
+
 <div class="guncelleme" id="guncelleme"></div>
 </div>
 
@@ -435,6 +529,30 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 </div>
 </div>
 </div>
+
+<!-- ====================== İNVERTER DETAY MODAL ====================== -->
+<div class="modal-overlay" id="inv-modal" onclick="if(event.target.id==='inv-modal')kapatInvModal()">
+<div class="modal">
+<button class="modal-close" onclick="kapatInvModal()">✕</button>
+<div class="modal-header">
+<div class="modal-icon" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)">☀️</div>
+<div><div class="modal-title" id="im-title">—</div><div class="modal-sub" id="im-sub">—</div></div>
+</div>
+<div class="modal-stats">
+<div class="modal-stat"><div class="modal-stat-lbl">Anlık Güç</div><div class="modal-stat-val" style="color:#4ade80" id="im-anlik">—</div><div class="modal-stat-sub">kW</div></div>
+<div class="modal-stat"><div class="modal-stat-lbl">Bugün Üretim</div><div class="modal-stat-val" style="color:#fbbf24" id="im-bugun">—</div><div class="modal-stat-sub">kWh</div></div>
+<div class="modal-stat"><div class="modal-stat-lbl">Toplam Üretim</div><div class="modal-stat-val" style="color:#60a5fa" id="im-toplam">—</div><div class="modal-stat-sub">MWh</div></div>
+<div class="modal-stat"><div class="modal-stat-lbl">Durum</div><div class="modal-stat-val" id="im-durum">—</div><div class="modal-stat-sub" id="im-sicaklik">—</div></div>
+</div>
+<div class="section-title" style="margin:14px 0 8px">⚙️ Teknik Bilgiler</div>
+<div class="modal-stats">
+<div class="modal-stat"><div class="modal-stat-lbl">Verimlilik</div><div class="modal-stat-val" style="color:#a78bfa" id="im-verim">—</div><div class="modal-stat-sub">%</div></div>
+<div class="modal-stat"><div class="modal-stat-lbl">Sıcaklık</div><div class="modal-stat-val" style="color:#fb923c" id="im-temp">—</div><div class="modal-stat-sub">°C</div></div>
+<div class="modal-stat"><div class="modal-stat-lbl">Frekans</div><div class="modal-stat-val" style="color:#60a5fa" id="im-freq">—</div><div class="modal-stat-sub">Hz</div></div>
+<div class="modal-stat"><div class="modal-stat-lbl">Aktif Süre</div><div class="modal-stat-val" style="color:#22c55e" id="im-aktif">—</div><div class="modal-stat-sub">saat</div></div>
+</div>
+</div>
+</div>
 """
 print("HTML kısmı ok")
 
@@ -451,6 +569,7 @@ function sekme(ad, btn) {
   btn.classList.add('active');
   document.getElementById('t-' + ad).classList.add('active');
   if (ad === 'osos') ososYukle();
+  if (ad === 'inverter') invYukle();
 }
 
 function renkSinif(v) {
@@ -844,6 +963,338 @@ function yukle() {
 }
 yukle();
 setInterval(yukle, 60000);
+
+// ====================== İNVERTER (Huawei FusionSolar) ======================
+let invData = null;
+let invSecilenTesis = 'all';
+
+function invYukle() {
+  if (invData) { invRender(); return; }
+  document.getElementById('inv-info-title').textContent = 'Yükleniyor...';
+  fetch('/api/inverter').then(r => r.json()).then(d => {
+    if (d.hata) {
+      document.getElementById('inv-info-title').textContent = 'Veri yok';
+      document.getElementById('inv-info-sub').textContent = d.hata;
+      return;
+    }
+    invData = d;
+    invRender();
+  }).catch(e => {
+    document.getElementById('inv-info-title').textContent = 'Bağlantı hatası';
+  });
+}
+
+function invTesis(code, btn) {
+  document.querySelectorAll('#t-inverter > .osos-tabs .osos-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  invSecilenTesis = code;
+  invRender();
+}
+
+function invSec(sec, btn) {
+  document.querySelectorAll('#t-inverter .osos-sec-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#t-inverter .osos-sec-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('inv-sec-' + sec).classList.add('active');
+  if (sec === 'aylik') setTimeout(invAylikRender, 50);
+  if (sec === 'yillik') setTimeout(invYillikRender, 50);
+  if (sec === 'saatlik') setTimeout(invSaatlikRender, 50);
+}
+
+function invRender() {
+  if (!invData) return;
+  const tesisler = invData.stations || [];
+  let aktifTesisler = tesisler;
+  let inverters = invData.inverters || [];
+
+  if (invSecilenTesis !== 'all') {
+    aktifTesisler = tesisler.filter(t => t.code === invSecilenTesis);
+    inverters = inverters.filter(i => i.stationCode === invSecilenTesis);
+  }
+
+  // Toplam hesaplama
+  let anlik = 0, bugun = 0, toplam = 0, kapasite = 0;
+  aktifTesisler.forEach(t => {
+    anlik += t.current_power_kW || 0;
+    bugun += t.day_energy_kWh || 0;
+    toplam += t.lifetime_kWh || 0;
+    kapasite += (t.capacity_MW || 0) * 1000;
+  });
+
+  // Info kartı
+  if (invSecilenTesis === 'all') {
+    document.getElementById('inv-info-title').textContent = 'Tüm Tesisler';
+    document.getElementById('inv-info-sub').textContent = 
+      tesisler.length + ' tesis · ' + inverters.length + ' inverter · ' + (kapasite/1000).toFixed(2) + ' MW kurulu';
+  } else {
+    const t = aktifTesisler[0];
+    document.getElementById('inv-info-title').textContent = t ? t.name : '—';
+    document.getElementById('inv-info-sub').textContent = 
+      (t ? t.inverter_count + ' inverter · ' + t.capacity_MW.toFixed(3) + ' MW · ' + (t.address || '') : '—');
+  }
+
+  const oran = kapasite > 0 ? (anlik / kapasite * 100) : 0;
+  document.getElementById('inv-info-power').textContent = Math.round(anlik);
+
+  document.getElementById('inv-anlik').textContent = Math.round(anlik).toLocaleString('tr-TR');
+  document.getElementById('inv-bugun').textContent = Math.round(bugun).toLocaleString('tr-TR');
+  document.getElementById('inv-toplam').textContent = (toplam / 1000).toFixed(1);
+
+  // Alt sekmeler
+  invSaatlikRender();
+  invAylikRender();
+  invYillikRender();
+  invListeRender(inverters);
+}
+
+function invSaatlikRender() {
+  if (!invData) return;
+  const monthly = invData.monthly || {};
+  
+  // Birden fazla tesis toplam
+  const gunler = {};
+  Object.entries(monthly).forEach(([code, m]) => {
+    if (invSecilenTesis !== 'all' && code !== invSecilenTesis) return;
+    Object.entries(m.daily || {}).forEach(([gun, v]) => {
+      gunler[gun] = (gunler[gun] || 0) + (v.production_kWh || 0);
+    });
+  });
+
+  // Son 30 gün grafiği
+  const son30 = Object.keys(gunler).sort().slice(-30);
+  const chartData = son30.map(g => {
+    const tarih = new Date(g);
+    return { label: tarih.getDate() + '.' + (tarih.getMonth()+1).toString().padStart(2,'0'),
+             value: gunler[g], tarih: g };
+  });
+  cizGrafikLine('inv-chart', chartData);
+
+  // Gün listesi (son 14)
+  const son14 = Object.keys(gunler).sort().slice(-14).reverse();
+  let dayHtml = '';
+  son14.forEach((g, i) => {
+    const tarih = new Date(g);
+    const lbl = tarih.getDate() + '.' + (tarih.getMonth()+1).toString().padStart(2,'0');
+    dayHtml += '<button class="osos-day-btn' + (i === 0 ? ' active' : '') + '" onclick="invGunSec(\\'' + g + '\\', this)">' + lbl + '</button>';
+  });
+  document.getElementById('inv-day-list').innerHTML = dayHtml;
+
+  if (son14.length > 0) {
+    invGunSec(son14[0], document.querySelector('#inv-day-list .osos-day-btn'));
+  }
+}
+
+function invGunSec(tarih, btn) {
+  document.querySelectorAll('#inv-day-list .osos-day-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  const daily = invData.daily || {};
+  // Tesisleri birleştir
+  const saatler = {};
+  Object.entries(daily).forEach(([code, d]) => {
+    if (invSecilenTesis !== 'all' && code !== invSecilenTesis) return;
+    if (d.date !== tarih) return;
+    Object.entries(d.hourly || {}).forEach(([saat, v]) => {
+      if (!saatler[saat]) saatler[saat] = { power_kW: 0, production_kWh: 0, radiation: 0, sayim: 0 };
+      saatler[saat].power_kW += v.power_kW || 0;
+      saatler[saat].production_kWh += v.production_kWh || 0;
+      saatler[saat].radiation += v.radiation || 0;
+      saatler[saat].sayim++;
+    });
+  });
+
+  let tbody = '';
+  let toplamUretim = 0;
+  for (let s = 0; s < 24; s++) {
+    const ss = String(s).padStart(2, '0');
+    const d = saatler[ss] || { power_kW: 0, production_kWh: 0, radiation: 0, sayim: 0 };
+    const rad = d.sayim ? (d.radiation / d.sayim) : 0;
+    toplamUretim += d.production_kWh;
+    const cls = d.production_kWh > 500 ? 'l3' : (d.production_kWh > 200 ? 'l2' : (d.production_kWh > 0 ? 'l1' : 'l0'));
+    tbody += '<tr><td class="saat-cell">' + ss + ':00</td>'
+      + '<td class="' + cls + '">' + (d.power_kW ? d.power_kW.toFixed(1) : '—') + '</td>'
+      + '<td class="' + cls + '">' + (d.production_kWh ? d.production_kWh.toFixed(1) : '—') + '</td>'
+      + '<td class="l2">' + (rad ? rad.toFixed(2) : '—') + '</td></tr>';
+  }
+  tbody += '<tr style="border-top:2px solid rgba(34,197,94,0.4)">'
+    + '<td class="saat-cell" style="background:linear-gradient(180deg,#16a34a,#15803d);color:white">TOP</td>'
+    + '<td>—</td>'
+    + '<td class="l0" style="font-weight:900">' + Math.round(toplamUretim).toLocaleString('tr-TR') + '</td>'
+    + '<td>—</td></tr>';
+  document.getElementById('inv-saatlik-body').innerHTML = tbody;
+}
+
+function invAylikRender() {
+  if (!invData) return;
+  const monthly = invData.monthly || {};
+
+  // Birleşik günlük üretim
+  const gunler = {};
+  Object.entries(monthly).forEach(([code, m]) => {
+    if (invSecilenTesis !== 'all' && code !== invSecilenTesis) return;
+    Object.entries(m.daily || {}).forEach(([gun, v]) => {
+      gunler[gun] = (gunler[gun] || 0) + (v.production_kWh || 0);
+    });
+  });
+
+  const sorted = Object.keys(gunler).sort();
+  // Bu ay
+  const buAy = new Date().toISOString().substring(0, 7);
+  const buAyGunler = sorted.filter(g => g.startsWith(buAy));
+
+  const chartData = buAyGunler.map(g => {
+    const tarih = new Date(g);
+    return { label: tarih.getDate().toString(), value: gunler[g], tarih: g };
+  });
+  cizGrafikLine('inv-aylik-chart', chartData);
+
+  // Aylık özet
+  const aylar = {};
+  Object.keys(gunler).forEach(g => {
+    const ay = g.substring(0, 7);
+    if (!aylar[ay]) aylar[ay] = { uretim: 0, gun: 0 };
+    aylar[ay].uretim += gunler[g];
+    aylar[ay].gun++;
+  });
+
+  let html = '';
+  Object.keys(aylar).sort().reverse().forEach(ay => {
+    const a = aylar[ay];
+    const ortalama = a.gun ? a.uretim / a.gun : 0;
+    html += '<div class="ay-card">'
+      + '<div class="ay-name">' + ay + '<br><span style="font-size:9px;color:#64748b;font-weight:600">' + a.gun + ' gün</span></div>'
+      + '<div class="ay-veris">↑ ' + Math.round(a.uretim).toLocaleString('tr-TR') + '</div>'
+      + '<div class="ay-net" style="color:#fbbf24">Ø ' + Math.round(ortalama).toLocaleString('tr-TR') + '</div>'
+      + '<div class="ay-tik ok">☀️</div>'
+      + '<div></div>'
+      + '</div>';
+  });
+  document.getElementById('inv-aylik-liste').innerHTML = html || '<div class="empty-state">Veri yok</div>';
+}
+
+function invYillikRender() {
+  if (!invData) return;
+  const monthly = invData.monthly || {};
+
+  // Aylık birikim
+  const aylar = {};
+  Object.entries(monthly).forEach(([code, m]) => {
+    if (invSecilenTesis !== 'all' && code !== invSecilenTesis) return;
+    Object.entries(m.daily || {}).forEach(([gun, v]) => {
+      const ay = gun.substring(0, 7);
+      aylar[ay] = (aylar[ay] || 0) + (v.production_kWh || 0);
+    });
+  });
+
+  // Yıl bazlı toplam
+  const yillar = {};
+  Object.entries(aylar).forEach(([ay, uretim]) => {
+    const yil = ay.substring(0, 4);
+    if (!yillar[yil]) yillar[yil] = { uretim: 0, ay: 0, aylar: {} };
+    yillar[yil].uretim += uretim;
+    yillar[yil].ay++;
+    yillar[yil].aylar[ay.substring(5)] = uretim;
+  });
+
+  // Grafik: bu yıl aylık
+  const buYil = new Date().getFullYear().toString();
+  const buYilAylar = Object.keys(aylar).filter(a => a.startsWith(buYil)).sort();
+  const chartData = buYilAylar.map(a => {
+    const ayAd = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+    const ayNo = parseInt(a.substring(5, 7)) - 1;
+    return { label: ayAd[ayNo], value: aylar[a], tarih: a };
+  });
+  cizGrafikLine('inv-yillik-chart', chartData);
+
+  let html = '';
+  Object.keys(yillar).sort().reverse().forEach(yil => {
+    const y = yillar[yil];
+    html += '<div class="yillik-card">'
+      + '<div class="yillik-title">📅 ' + yil + ' Yılı (' + y.ay + ' ay)</div>'
+      + '<div class="yillik-grid">'
+      + '<div class="yillik-stat"><div class="yillik-lbl">Toplam Üretim</div><div class="yillik-val" style="color:#fbbf24">' + Math.round(y.uretim).toLocaleString('tr-TR') + '</div><div class="yillik-lbl">kWh</div></div>'
+      + '<div class="yillik-stat"><div class="yillik-lbl">Aylık Ort.</div><div class="yillik-val" style="color:#4ade80">' + Math.round(y.uretim / y.ay).toLocaleString('tr-TR') + '</div><div class="yillik-lbl">kWh/ay</div></div>'
+      + '<div class="yillik-stat"><div class="yillik-lbl">MWh</div><div class="yillik-val" style="color:#60a5fa">' + (y.uretim / 1000).toFixed(1) + '</div><div class="yillik-lbl">toplam</div></div>'
+      + '</div></div>';
+  });
+  document.getElementById('inv-yillik-liste').innerHTML = html || '<div class="empty-state">Veri yok</div>';
+}
+
+function invListeRender(inverters) {
+  if (!inverters) inverters = invData.inverters || [];
+  let calisan = 0, bekleme = 0, kapali = 0, toplam = 0;
+
+  inverters.forEach(inv => {
+    const power = inv.activePower_kW || 0;
+    toplam += power;
+    if (power > 0.5) calisan++;
+    else if (inv.runState === 0) kapali++;
+    else bekleme++;
+  });
+
+  document.getElementById('inv-sayisi-aktif').textContent = calisan;
+  document.getElementById('inv-sayisi-bekleme').textContent = bekleme;
+  document.getElementById('inv-sayisi-kapali').textContent = kapali;
+  document.getElementById('inv-sayisi-toplam').textContent = Math.round(toplam);
+
+  let html = '';
+  const sorted = [...inverters].sort((a, b) => {
+    if (a.stationName !== b.stationName) return a.stationName.localeCompare(b.stationName);
+    return a.devName.localeCompare(b.devName);
+  });
+
+  sorted.forEach(inv => {
+    const power = inv.activePower_kW || 0;
+    const aktif = power > 0.5;
+    let cls = '', badge = '', lbl = '';
+    if (aktif) { cls = ''; badge = 'badge-on'; lbl = 'Çalışıyor'; }
+    else if (inv.runState === 0) { cls = 'kapali'; badge = 'badge-off'; lbl = 'Kapalı'; }
+    else { cls = 'uyuyor'; badge = 'badge-sleep'; lbl = 'Bekleme'; }
+
+    const stationKisa = inv.stationName.replace(' GES', '');
+
+    html += '<div class="cihaz-card ' + cls + '" onclick="invDetay(\\'' + inv.devId + '\\')">'
+      + '<div class="cihaz-row1">'
+      + '<div class="cihaz-no" style="font-size:14px">' + inv.devName + '</div>'
+      + '<div class="cihaz-badge ' + badge + '">' + lbl + '</div>'
+      + '</div>'
+      + '<div class="cihaz-hash" style="color:#fbbf24">' + power.toFixed(1) + ' <span style="font-size:11px;color:#64748b">kW</span></div>'
+      + '<div class="cihaz-sub">Bugün: ' + Math.round(inv.dayEnergy_kWh || 0) + ' kWh · ' + stationKisa + '</div>'
+      + '</div>';
+  });
+  document.getElementById('inv-grid').innerHTML = html || '<div class="empty-state" style="grid-column:1/-1">İnverter yok</div>';
+}
+
+function invDetay(devId) {
+  if (!invData) return;
+  const inv = (invData.inverters || []).find(i => String(i.devId) === String(devId));
+  if (!inv) return;
+
+  document.getElementById('im-title').textContent = inv.devName;
+  document.getElementById('im-sub').textContent = inv.stationName;
+  document.getElementById('im-anlik').textContent = (inv.activePower_kW || 0).toFixed(2);
+  document.getElementById('im-bugun').textContent = Math.round(inv.dayEnergy_kWh || 0).toLocaleString('tr-TR');
+  document.getElementById('im-toplam').textContent = ((inv.totalEnergy_kWh || 0) / 1000).toFixed(1);
+
+  const power = inv.activePower_kW || 0;
+  let dStr = '🟢 Çalışıyor';
+  if (power < 0.5 && inv.runState === 0) dStr = '🔴 Kapalı';
+  else if (power < 0.5) dStr = '🟡 Bekleme';
+  document.getElementById('im-durum').textContent = dStr;
+  document.getElementById('im-sicaklik').textContent = inv.temperature ? inv.temperature.toFixed(1) + ' °C' : '—';
+
+  document.getElementById('im-verim').textContent = inv.efficiency ? (inv.efficiency * 100).toFixed(1) : '—';
+  document.getElementById('im-temp').textContent = inv.temperature ? inv.temperature.toFixed(1) : '—';
+  document.getElementById('im-freq').textContent = inv.gridFrequency ? inv.gridFrequency.toFixed(2) : '—';
+  document.getElementById('im-aktif').textContent = inv.activeHours ? inv.activeHours.toFixed(1) : '—';
+
+  document.getElementById('inv-modal').classList.add('active');
+}
+
+function kapatInvModal() { document.getElementById('inv-modal').classList.remove('active'); }
+
+// ====================== İNVERTER SONU ======================
+
 if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
 </script>
 </body></html>"""
