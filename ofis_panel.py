@@ -275,30 +275,6 @@ body { background: linear-gradient(180deg, #0a0e1a 0%, #050917 100%); font-famil
     </div>
   </div>
 
-  <div class="tab-content" id="t-epias">
-    <div class="section-header">
-  <div class="section-title">📊 Saatlik PTF</div>
-  <div class="day-toggle">
-    <button class="day-btn active" onclick="ptfGun('bugun', this)">Bugün</button>
-    <button class="day-btn" onclick="ptfGun('yarin', this)">Yarın</button>
-  </div>
-</div>
-<div class="ptf-hourly" id="ptf-grid">
-  <div class="empty-state" style="grid-column:1/-1">Yükleniyor...</div>
-</div>
-
-<div class="kpi-grid" style="margin-top:14px">
-  <div class="kpi-card highlight">
-    <div class="kpi-label">✅ Karlı Saat</div>
-    <div class="kpi-value" id="ptf-karli-saat" style="color:#4ade80">—</div>
-  </div>
-  <div class="kpi-card">
-    <div class="kpi-label">📈 Günlük Kar</div>
-    <div class="kpi-value" id="ptf-kar" style="color:#4ade80">—</div>
-    <div class="kpi-sub">TL</div>
-  </div>
-</div>
-
     <div class="section-header">
       <div class="section-title">📅 Aylık PTF Tablosu</div>
       <div style="font-size:10px;color:#64748b">⏸ Kapalı saatler mor</div>
