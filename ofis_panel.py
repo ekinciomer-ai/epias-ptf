@@ -1038,62 +1038,15 @@ def ozet():
     return jsonify(sonuc)
 
 
-@app.route("/api/fusion-test")
-def fusion_test():
-    """Railway'den Huawei FusionSolar'a DNS ve HTTP erisilebilirlik testi."""
-    import socket
-    import json as _json
-    result = {"runner": "Railway"}
-
-    # Lokasyon bilgisi
-    try:
-        req = urllib.request.Request("https://ipinfo.io/json",
-                                     headers={"User-Agent": "Mozilla/5.0"})
-        with urllib.request.urlopen(req, timeout=5) as r:
-            info = _json.loads(r.read())
-            result["location"] = {
-                "ip": info.get("ip"),
-                "country": info.get("country"),
-                "city": info.get("city"),
-                "org": info.get("org"),
-            }
-    except Exception as e:
-        result["location"] = f"FAIL: {e}"
-
-    # DNS testleri
-    result["dns"] = {}
-    for host in ["sg5.fusionsolar.huawei.com",
-                 "eu5.fusionsolar.huawei.com",
-                 "intl.fusionsolar.huawei.com"]:
-        try:
-            ip = socket.gethostbyname(host)
-            result["dns"][host] = f"OK: {ip}"
-        except Exception as e:
-            result["dns"][host] = f"FAIL: {e}"
-
-    # eu5'e GERCEK login dene (asil hesap bilgileriyle)
-    fusion_user = os.environ.get("FUSION_USER", "aksaray_api10")
-    fusion_pass = os.environ.get("FUSION_PASS", "Ae2026api!")
-
-    for region in ["eu5", "sg5"]:
-        url = f"https://{region}.fusionsolar.huawei.com/thirdData/login"
-        try:
-            req = urllib.request.Request(
-                url,
-                data=_json.dumps({"userName": fusion_user,
-                                  "systemCode": fusion_pass}).encode(),
-                headers={"Content-Type": "application/json"},
-                method="POST"
-            )
-            with urllib.request.urlopen(req, timeout=15) as r:
-                body = r.read().decode()[:300]
-                result[f"login_{region}"] = f"HTTP {r.status}: {body}"
-        except urllib.error.HTTPError as e:
-            result[f"login_{region}"] = f"HTTPError {e.code}: {e.read().decode()[:200]}"
-        except Exception as e:
-            result[f"login_{region}"] = f"FAIL: {type(e).__name__}: {e}"
-
-    return jsonify(result)
+@app.route("/api/inverter")
+def inverter():
+    """Huawei FusionSolar inverter verisi - Raspberry Pi'den gelen fusion_data.json okur."""
+    if "kullanici" not in session:
+        return jsonify({"hata": "yetkisiz"}), 401
+    data = github_oku("fusion_data.json")
+    if not data:
+        return jsonify({"hata": "Veri yok - Raspberry Pi henuz baglanmadi"}), 200
+    return jsonify(data)
 
 
 if __name__ == "__main__":
