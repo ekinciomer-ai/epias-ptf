@@ -1040,4 +1040,32 @@ def ozet():
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)), debug=False)
 
+@app.route("/api/fusion-test")
+def fusion_test():
+    """Railway'den Huawei'ye DNS testi"""
+    import urllib.request, socket, json
+    result = {}
+    
+    # DNS testi
+    try:
+        ip = socket.gethostbyname("sg5.fusionsolar.huawei.com")
+        result["dns"] = f"✅ OK: {ip}"
+    except Exception as e:
+        result["dns"] = f"❌ FAIL: {e}"
+    
+    # HTTP testi
+    try:
+        req = urllib.request.Request(
+            "https://sg5.fusionsolar.huawei.com/thirdData/login",
+            data=json.dumps({"userName": "x", "systemCode": "x"}).encode(),
+            headers={"Content-Type": "application/json"},
+            method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=10) as r:
+            result["http"] = f"✅ Status: {r.status}"
+    except Exception as e:
+        result["http"] = f"❌ {e}"
+    
+    return jsonify(result)
+
 
