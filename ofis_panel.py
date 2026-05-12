@@ -1071,18 +1071,27 @@ def fusion_test():
         except Exception as e:
             result["dns"][host] = f"FAIL: {e}"
 
-    # HTTP testi (sg5 login)
-    try:
-        req = urllib.request.Request(
-            "https://sg5.fusionsolar.huawei.com/thirdData/login",
-            data=_json.dumps({"userName": "x", "systemCode": "x"}).encode(),
-            headers={"Content-Type": "application/json"},
-            method="POST"
-        )
-        with urllib.request.urlopen(req, timeout=15) as r:
-            result["http_sg5"] = f"Status {r.status}: {r.read().decode()[:200]}"
-    except Exception as e:
-        result["http_sg5"] = f"FAIL: {type(e).__name__}: {e}"
+    # eu5'e GERCEK login dene (asil hesap bilgileriyle)
+    fusion_user = os.environ.get("FUSION_USER", "aksaray_api10")
+    fusion_pass = os.environ.get("FUSION_PASS", "Ae2026api!")
+
+    for region in ["eu5", "sg5"]:
+        url = f"https://{region}.fusionsolar.huawei.com/thirdData/login"
+        try:
+            req = urllib.request.Request(
+                url,
+                data=_json.dumps({"userName": fusion_user,
+                                  "systemCode": fusion_pass}).encode(),
+                headers={"Content-Type": "application/json"},
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=15) as r:
+                body = r.read().decode()[:300]
+                result[f"login_{region}"] = f"HTTP {r.status}: {body}"
+        except urllib.error.HTTPError as e:
+            result[f"login_{region}"] = f"HTTPError {e.code}: {e.read().decode()[:200]}"
+        except Exception as e:
+            result[f"login_{region}"] = f"FAIL: {type(e).__name__}: {e}"
 
     return jsonify(result)
 
