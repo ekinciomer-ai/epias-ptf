@@ -16,6 +16,7 @@ GITHUB_RAW   = "https://raw.githubusercontent.com/ekinciomer-ai/epias-ptf/main"
 F2POOL_TOKEN = os.environ.get("F2POOL_TOKEN", "")
 F2POOL_USER  = "mehmetas"
 ZARARLI_ESIK = 2200
+DOGRULAMA_TOLERANS = 50  # kWh tolerans
 
 MANIFEST = json.dumps({
     "name": "Otocoin", "short_name": "Otocoin",
@@ -78,29 +79,20 @@ def f2pool_hashrate():
     })
     if result:
         info = result.get("info", {})
-        return {
-            "anlik": info.get("hash_rate", 0) / 1e12,
-            "h1":    info.get("h1_hash_rate", 0) / 1e12,
-            "h24":   info.get("h24_hash_rate", 0) / 1e12
-        }
+        return {"anlik": info.get("hash_rate", 0)/1e12, "h1": info.get("h1_hash_rate", 0)/1e12, "h24": info.get("h24_hash_rate", 0)/1e12}
     return {"anlik": 0, "h1": 0, "h24": 0}
 
 def f2pool_workers():
-    result = f2pool_post("hash_rate/worker/list", {
-        "currency": "bitcoin", "mining_user_name": F2POOL_USER
-    })
+    result = f2pool_post("hash_rate/worker/list", {"currency": "bitcoin", "mining_user_name": F2POOL_USER})
     return result.get("workers", []) if result else []
 
 def cihaz_durum(info):
     anlik = info.get("hash_rate", 0)
-    h1    = info.get("h1_hash_rate", 0)
-    h24   = info.get("h24_hash_rate", 0)
-    if anlik > 0:
-        return "calisiyor"
-    elif h1 > 0:
-        return "yavasliyor"
-    elif h24 > 0:
-        return "uyuyor"
+    h1 = info.get("h1_hash_rate", 0)
+    h24 = info.get("h24_hash_rate", 0)
+    if anlik > 0: return "calisiyor"
+    elif h1 > 0: return "yavasliyor"
+    elif h24 > 0: return "uyuyor"
     return "kapali"
 
 LOGIN_HTML = """<!DOCTYPE html>
@@ -131,6 +123,7 @@ button{width:100%;padding:15px;background:linear-gradient(135deg,#16a34a,#22c55e
 </form>
 </div>
 </body></html>"""
+print("Bölüm 1 yazıldı")
 
 PANEL_HTML = """<!DOCTYPE html>
 <html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -170,7 +163,6 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 .kpi-sub{font-size:11px;color:#94a3b8;margin-top:4px;}
 .section-header{display:flex;align-items:center;justify-content:space-between;margin:14px 0 10px;}
 .section-title{font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;}
-
 .aylik-wrap{overflow-x:auto;margin-top:8px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);background:#050917;}
 .aylik-table{width:100%;border-collapse:collapse;font-size:10px;}
 .aylik-table th{background:linear-gradient(180deg,#1e293b,#0f172a);color:#94a3b8;font-weight:700;font-size:9px;padding:8px 4px;text-align:center;position:sticky;top:0;z-index:2;}
@@ -186,7 +178,6 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 .l4{color:#f87171;}
 .l5{color:#dc2626;font-weight:900;}
 .aylik-table td.kapali-cell{color:#c4b5fd!important;background:linear-gradient(135deg,rgba(124,58,237,0.3),rgba(124,58,237,0.15))!important;border:1px solid rgba(168,85,247,0.6);font-weight:900;}
-
 .f2-summary{background:linear-gradient(135deg,rgba(245,158,11,0.15) 0%,rgba(245,158,11,0.05) 100%);border:1px solid rgba(245,158,11,0.25);border-radius:18px;padding:16px;margin-bottom:14px;}
 .f2-icon-wrap{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
 .f2-icon{width:44px;height:44px;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;}
@@ -201,14 +192,12 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 .daily-hash{font-size:10px;color:#64748b;margin-top:1px;}
 .daily-tl{margin-left:auto;text-align:right;}
 .daily-tl-val{font-size:13px;font-weight:800;color:#4ade80;}
-
 .cihaz-ozet{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px;}
 .cihaz-ozet-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:10px 6px;text-align:center;}
 .cihaz-ozet-val{font-size:18px;font-weight:900;}
 .cihaz-ozet-lbl{font-size:9px;color:#64748b;margin-top:2px;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;}
-
 .cihaz-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
-.cihaz-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:12px;cursor:pointer;border-left:3px solid #22c55e;transition:all 0.2s;}
+.cihaz-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:12px;cursor:pointer;border-left:3px solid #22c55e;}
 .cihaz-card:active{transform:scale(0.97);}
 .cihaz-card.uyuyor{border-left-color:#fbbf24;}
 .cihaz-card.yavasliyor{border-left-color:#f59e0b;}
@@ -222,7 +211,6 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 .badge-off{background:rgba(239,68,68,0.15);color:#f87171;}
 .cihaz-hash{font-size:14px;font-weight:800;color:#60a5fa;}
 .cihaz-sub{font-size:10px;color:#64748b;margin-top:2px;}
-
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.active{display:flex;}
 .modal{background:linear-gradient(180deg,#0a0e1a,#050917);border:1px solid #1e293b;border-radius:24px;padding:24px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;position:relative;}
@@ -236,7 +224,6 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 .modal-stat-lbl{font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:4px;}
 .modal-stat-val{font-size:16px;font-weight:900;}
 .modal-stat-sub{font-size:10px;color:#94a3b8;margin-top:2px;}
-
 .chart-wrap{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;position:relative;}
 .chart-title{font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;}
 .chart-canvas{width:100%;height:200px;display:block;}
@@ -248,8 +235,7 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 .osos-tabs{display:flex;gap:6px;background:rgba(255,255,255,0.04);padding:4px;border-radius:12px;margin-bottom:14px;overflow-x:auto;}
 .osos-tabs::-webkit-scrollbar{display:none;}
 .osos-tab{flex:1;min-width:90px;padding:10px 12px;font-size:11px;font-weight:700;color:#64748b;border:none;background:transparent;border-radius:8px;cursor:pointer;font-family:inherit;white-space:nowrap;}
-.osos-tab.active{background:linear-gradient(135deg,#16a34a,#22c55e);color:white;box-shadow:0 4px 12px rgba(22,163,74,0.4);}
-
+.osos-tab.active{background:linear-gradient(135deg,#16a34a,#22c55e);color:white;}
 .osos-info{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px;margin-bottom:12px;display:flex;align-items:center;gap:12px;}
 .osos-info-ico{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;}
 .osos-info.ges .osos-info-ico{background:linear-gradient(135deg,#f59e0b,#fbbf24);}
@@ -257,22 +243,42 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 .osos-info.karma .osos-info-ico{background:linear-gradient(135deg,#7c3aed,#a78bfa);}
 .osos-info-title{font-size:16px;font-weight:900;}
 .osos-info-sub{font-size:11px;color:#94a3b8;margin-top:2px;}
-
 .osos-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
 .osos-stat{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:12px 10px;text-align:center;}
 .osos-stat-lbl{font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:4px;}
 .osos-stat-val{font-size:18px;font-weight:900;}
 .osos-stat-sub{font-size:10px;color:#94a3b8;margin-top:2px;}
-
+.osos-section-tabs{display:flex;gap:4px;background:rgba(0,0,0,0.3);padding:4px;border-radius:10px;margin:14px 0 12px;}
+.osos-sec-tab{flex:1;padding:8px 12px;font-size:11px;font-weight:700;color:#64748b;border:none;background:transparent;border-radius:8px;cursor:pointer;font-family:inherit;}
+.osos-sec-tab.active{background:linear-gradient(135deg,#3b82f6,#6366f1);color:white;}
 .osos-day-list{display:flex;gap:6px;overflow-x:auto;padding:4px 0 12px;margin-bottom:12px;}
 .osos-day-list::-webkit-scrollbar{display:none;}
 .osos-day-btn{padding:8px 12px;font-size:11px;font-weight:700;color:#94a3b8;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:10px;cursor:pointer;white-space:nowrap;font-family:inherit;}
 .osos-day-btn.active{background:linear-gradient(135deg,#16a34a,#22c55e);color:white;border-color:transparent;}
 
+.ay-card{display:grid;grid-template-columns:80px 1fr 1fr 1fr 30px;gap:8px;align-items:center;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:11px;}
+.ay-name{font-weight:800;color:#cbd5e1;font-size:12px;}
+.ay-cekis{color:#f87171;font-weight:700;text-align:right;}
+.ay-veris{color:#4ade80;font-weight:700;text-align:right;}
+.ay-net{color:#fbbf24;font-weight:800;text-align:right;}
+.ay-tik{text-align:center;font-size:14px;}
+.ay-tik.ok{color:#4ade80;}
+.ay-tik.hata{color:#f87171;}
+.ay-tik.bekliyor{color:#64748b;}
+
+.yillik-card{background:linear-gradient(135deg,rgba(59,130,246,0.15) 0%,rgba(59,130,246,0.05) 100%);border:1px solid rgba(59,130,246,0.25);border-radius:16px;padding:16px;margin-bottom:14px;}
+.yillik-title{font-size:13px;font-weight:800;color:#93c5fd;margin-bottom:10px;}
+.yillik-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.yillik-stat{text-align:center;}
+.yillik-lbl{font-size:9px;color:#64748b;text-transform:uppercase;font-weight:700;}
+.yillik-val{font-size:18px;font-weight:900;margin-top:4px;}
+
 .guncelleme{font-size:11px;color:#334155;text-align:center;margin-top:14px;}
 .empty-state{text-align:center;padding:40px 20px;color:#475569;font-size:13px;}
 .tab-content{display:none;}
 .tab-content.active{display:block;}
+.osos-sec-content{display:none;}
+.osos-sec-content.active{display:block;}
 </style></head><body>
 <div class="header">
 <div class="brand"><div class="brand-logo">⚡</div><div class="brand-text">Otocoin</div></div>
@@ -361,20 +367,38 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 <div class="osos-stat"><div class="osos-stat-lbl">Net</div><div class="osos-stat-val" id="osos-net">—</div><div class="osos-stat-sub">kWh</div></div>
 </div>
 
-<div class="section-title" style="margin:12px 0 8px">📊 Günlük Grafik (Son 30 gün)</div>
+<div class="osos-section-tabs">
+<button class="osos-sec-tab active" onclick="ososSec('saatlik', this)">📅 Saatlik</button>
+<button class="osos-sec-tab" onclick="ososSec('aylik', this)">📊 Aylık</button>
+<button class="osos-sec-tab" onclick="ososSec('yillik', this)">🗓️ Yıllık</button>
+</div>
+
+<!-- SAATLİK -->
+<div class="osos-sec-content active" id="osos-sec-saatlik">
 <div class="chart-wrap" style="margin-bottom:12px">
+<div class="chart-title">📊 Son 30 Gün</div>
 <canvas class="chart-canvas" id="osos-chart" style="height:160px"></canvas>
 <div class="tooltip" id="osos-tt"><div class="tooltip-time" id="osos-tt-time"></div><div class="tooltip-val" id="osos-tt-val"></div></div>
 </div>
-
-<div class="section-title" style="margin:12px 0 8px">📅 Günleri Seçin (Saatlik Detay)</div>
+<div class="section-title" style="margin:12px 0 8px">📅 Gün Seçin</div>
 <div class="osos-day-list" id="osos-day-list"></div>
-
 <div class="aylik-wrap">
-<table class="aylik-table" id="osos-saatlik">
+<table class="aylik-table">
 <thead><tr><th class="saat-head">Saat</th><th style="color:#f87171">Çekiş</th><th style="color:#4ade80">Veriş</th><th class="saat-head">Net</th></tr></thead>
 <tbody id="osos-saatlik-body"><tr><td colspan="4" class="empty-state">Gün seçin</td></tr></tbody>
 </table>
+</div>
+</div>
+
+<!-- AYLIK -->
+<div class="osos-sec-content" id="osos-sec-aylik">
+<div style="font-size:10px;color:#64748b;margin-bottom:8px;text-align:right">✅ Endeks doğrulandı · ⏳ Bekliyor · ❌ Fark var</div>
+<div id="aylik-liste"><div class="empty-state">Yükleniyor...</div></div>
+</div>
+
+<!-- YILLIK -->
+<div class="osos-sec-content" id="osos-sec-yillik">
+<div id="yillik-liste"><div class="empty-state">Yükleniyor...</div></div>
 </div>
 </div>
 
@@ -411,7 +435,10 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 </div>
 </div>
 </div>
+"""
+print("HTML kısmı ok")
 
+PANEL_HTML += """
 <script>
 const ZARARLI_ESIK = 2200;
 let chartData = null;
@@ -527,7 +554,7 @@ function cihazDetay(name) {
       document.getElementById('m-24h-saat').textContent = (d.h24_saat || 0).toFixed(1);
       if (d.history) {
         chartData = d.history;
-        cizGrafik('chart', chartData, 'tooltip');
+        cizGrafikLine('chart', d.history);
       }
     }
   });
@@ -535,7 +562,7 @@ function cihazDetay(name) {
 
 function kapatModal() { document.getElementById('modal').classList.remove('active'); }
 
-function cizGrafik(canvasId, data, tooltipId) {
+function cizGrafikLine(canvasId, data) {
   const canvas = document.getElementById(canvasId);
   const ctx = canvas.getContext('2d');
   const W = canvas.width = canvas.offsetWidth * 2;
@@ -544,23 +571,25 @@ function cizGrafik(canvasId, data, tooltipId) {
   const w = W / 2;
   const h = H / 2;
   ctx.clearRect(0, 0, w, h);
-  const entries = Array.isArray(data) ? data : Object.entries(data);
+  
+  const isArray = Array.isArray(data);
+  const entries = isArray ? data : Object.entries(data);
   if (entries.length === 0) return;
-  const values = Array.isArray(data) ? data.map(e => e.value) : entries.map(e => e[1]/1e12);
+  const values = isArray ? data.map(e => e.value) : entries.map(e => e[1]/1e12);
   const max = Math.max(...values, 1);
   
   ctx.strokeStyle = 'rgba(255,255,255,0.05)';
   ctx.lineWidth = 1;
   for (let i = 0; i <= 4; i++) {
     const y = h * i / 4;
-    ctx.beginPath(); ctx.moveTo(40, y); ctx.lineTo(w, y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(45, y); ctx.lineTo(w, y); ctx.stroke();
   }
   ctx.fillStyle = '#64748b';
   ctx.font = '9px Inter';
   ctx.textAlign = 'right';
   for (let i = 0; i <= 4; i++) {
     const v = max - (max * i / 4);
-    ctx.fillText(Math.round(v), 36, h * i / 4 + 4);
+    ctx.fillText(Math.round(v).toLocaleString('tr-TR'), 41, h * i / 4 + 4);
   }
   
   const gradient = ctx.createLinearGradient(0, 0, 0, h);
@@ -569,17 +598,17 @@ function cizGrafik(canvasId, data, tooltipId) {
   
   ctx.beginPath();
   values.forEach((v, i) => {
-    const x = 40 + (w - 40) * i / (values.length - 1);
+    const x = 45 + (w - 45) * i / (values.length - 1);
     const y = h - (v / max) * h;
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   });
-  ctx.lineTo(w, h); ctx.lineTo(40, h); ctx.closePath();
+  ctx.lineTo(w, h); ctx.lineTo(45, h); ctx.closePath();
   ctx.fillStyle = gradient; ctx.fill();
   
   ctx.beginPath();
   values.forEach((v, i) => {
-    const x = 40 + (w - 40) * i / (values.length - 1);
+    const x = 45 + (w - 45) * i / (values.length - 1);
     const y = h - (v / max) * h;
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
@@ -587,36 +616,32 @@ function cizGrafik(canvasId, data, tooltipId) {
   ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 2; ctx.stroke();
 }
 
-document.getElementById('chart').addEventListener('mousemove', (e) => tooltipShow(e, 'chart', 'tooltip', chartData));
-document.getElementById('chart').addEventListener('touchmove', (e) => { e.preventDefault(); const t = e.touches[0]; tooltipShow(t, 'chart', 'tooltip', chartData); });
+document.getElementById('chart').addEventListener('mousemove', (e) => tooltipDevice(e));
+document.getElementById('chart').addEventListener('touchmove', (e) => { e.preventDefault(); tooltipDevice(e.touches[0]); });
 document.getElementById('chart').addEventListener('mouseleave', () => { document.getElementById('tooltip').style.display = 'none'; });
 
-function tooltipShow(e, canvasId, tooltipId, data) {
-  if (!data) return;
-  const canvas = document.getElementById(canvasId);
+function tooltipDevice(e) {
+  if (!chartData) return;
+  const canvas = document.getElementById('chart');
   const rect = canvas.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const w = canvas.offsetWidth;
-  const entries = Array.isArray(data) ? data : Object.entries(data);
+  const entries = Object.entries(chartData);
   if (entries.length === 0) return;
-  const i = Math.round((x - 20) / (w - 20) * (entries.length - 1));
+  const i = Math.round((x - 22) / (w - 22) * (entries.length - 1));
   if (i < 0 || i >= entries.length) return;
-  const tt = document.getElementById(tooltipId);
-  if (Array.isArray(data)) {
-    document.getElementById(tooltipId.replace('tooltip','tt') + '-time').textContent = entries[i].label;
-    document.getElementById(tooltipId.replace('tooltip','tt') + '-val').textContent = Math.round(entries[i].value).toLocaleString('tr-TR') + ' kWh';
-  } else {
-    const dt = new Date(entries[i][0]);
-    const saatStr = String(dt.getHours()).padStart(2,'0') + ':' + String(dt.getMinutes()).padStart(2,'0');
-    document.getElementById('tt-time').textContent = saatStr;
-    document.getElementById('tt-val').textContent = Math.round(entries[i][1]/1e12) + ' TH/s';
-  }
+  const dt = new Date(entries[i][0]);
+  document.getElementById('tt-time').textContent = String(dt.getHours()).padStart(2,'0') + ':' + String(dt.getMinutes()).padStart(2,'0');
+  document.getElementById('tt-val').textContent = Math.round(entries[i][1]/1e12) + ' TH/s';
+  const tt = document.getElementById('tooltip');
   tt.style.display = 'block';
   tt.style.left = (e.clientX - rect.left + 10) + 'px';
   tt.style.top = (e.clientY - rect.top - 40) + 'px';
 }
 
 // OSOS
+let ososChartData = null;
+
 function ososYukle() {
   if (ososData) { ososRender(); return; }
   document.getElementById('osos-info-title').textContent = 'Yükleniyor...';
@@ -633,11 +658,17 @@ function ososAbone(key, btn) {
   ososRender();
 }
 
+function ososSec(sec, btn) {
+  document.querySelectorAll('.osos-sec-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.osos-sec-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('osos-sec-' + sec).classList.add('active');
+}
+
 function ososRender() {
   if (!ososData || !ososData[secilenAbone]) return;
   const a = ososData[secilenAbone];
   
-  // Bilgi kartı
   const tipIco = a.tip === 'ges' ? '☀️' : (a.tip === 'tuketim' ? '🏭' : '⚡');
   const tipText = a.tip === 'ges' ? 'GES (Sadece Üretim)' : (a.tip === 'tuketim' ? 'Tüketim Tesisi' : 'GES + Tüketim');
   document.getElementById('osos-info').className = 'osos-info ' + a.tip;
@@ -645,7 +676,6 @@ function ososRender() {
   document.getElementById('osos-info-title').textContent = a.ad;
   document.getElementById('osos-info-sub').textContent = tipText + ' · Çarpan: ' + a.carpan;
   
-  // Toplam istatistikler
   let toplamCekis = 0, toplamVeris = 0;
   const gunler = Object.keys(a.veri).sort();
   gunler.forEach(g => {
@@ -660,16 +690,17 @@ function ososRender() {
   document.getElementById('osos-net').textContent = Math.round(net).toLocaleString('tr-TR');
   document.getElementById('osos-net').style.color = net > 0 ? '#f87171' : '#4ade80';
   
-  // Son 30 gün grafiği (net = veris - cekis)
+  // Son 30 gün grafiği
   const son30 = gunler.slice(-30);
   const grafikData = son30.map(g => {
     let c = 0, v = 0;
     Object.values(a.veri[g]).forEach(s => { c += s.cekis || 0; v += s.veris || 0; });
     const value = a.tip === 'ges' ? v : (a.tip === 'tuketim' ? c : Math.abs(v - c));
     const tarih = new Date(g);
-    return { label: tarih.getDate() + '.' + (tarih.getMonth()+1).toString().padStart(2,'0'), value: value };
+    return { label: tarih.getDate() + '.' + (tarih.getMonth()+1).toString().padStart(2,'0'), value: value, tarih: g };
   });
-  cizGrafik('osos-chart', grafikData, 'osos-tt');
+  ososChartData = grafikData;
+  cizGrafikLine('osos-chart', grafikData);
   
   // Gün listesi (son 14 gün)
   const son14 = gunler.slice(-14).reverse();
@@ -681,11 +712,69 @@ function ososRender() {
   });
   document.getElementById('osos-day-list').innerHTML = dayHtml;
   
-  // İlk günü otomatik seç
   if (son14.length > 0) {
     const ilkBtn = document.querySelector('.osos-day-btn');
     if (ilkBtn) ososGunSec(son14[0], ilkBtn);
   }
+  
+  // Aylık liste
+  ososAylikRender(a);
+  
+  // Yıllık liste
+  ososYillikRender(a);
+}
+
+function ososAylikRender(abone) {
+  if (!abone.aylar) {
+    document.getElementById('aylik-liste').innerHTML = '<div class="empty-state">Veri yok</div>';
+    return;
+  }
+  const aylar = abone.aylar;
+  const sorted = Object.keys(aylar).sort().reverse();
+  let html = '';
+  sorted.forEach(ay => {
+    const a = aylar[ay];
+    const net = a.cekis - a.veris;
+    let tikIco = '⏳', tikCls = 'bekliyor';
+    if (a.dogrulama === 'ok') { tikIco = '✅'; tikCls = 'ok'; }
+    else if (a.dogrulama === 'hata') { tikIco = '❌'; tikCls = 'hata'; }
+    html += '<div class="ay-card">'
+      + '<div class="ay-name">' + ay + '<br><span style="font-size:9px;color:#64748b;font-weight:600">' + a.gun_sayisi + ' gün</span></div>'
+      + '<div class="ay-cekis">↓ ' + Math.round(a.cekis).toLocaleString('tr-TR') + '</div>'
+      + '<div class="ay-veris">↑ ' + Math.round(a.veris).toLocaleString('tr-TR') + '</div>'
+      + '<div class="ay-net" style="color:' + (net > 0 ? '#f87171' : '#4ade80') + '">' + Math.round(net).toLocaleString('tr-TR') + '</div>'
+      + '<div class="ay-tik ' + tikCls + '" title="' + (a.dogrulama === 'hata' ? 'Endeks: ' + Math.round(a.endeks_cekis||0) + ' / ' + Math.round(a.endeks_veris||0) : '') + '">' + tikIco + '</div>'
+      + '</div>';
+  });
+  document.getElementById('aylik-liste').innerHTML = html;
+}
+
+function ososYillikRender(abone) {
+  if (!abone.aylar) {
+    document.getElementById('yillik-liste').innerHTML = '<div class="empty-state">Veri yok</div>';
+    return;
+  }
+  const yillar = {};
+  Object.entries(abone.aylar).forEach(([ay, v]) => {
+    const yil = ay.substring(0, 4);
+    if (!yillar[yil]) yillar[yil] = {cekis: 0, veris: 0, gun: 0};
+    yillar[yil].cekis += v.cekis;
+    yillar[yil].veris += v.veris;
+    yillar[yil].gun += v.gun_sayisi;
+  });
+  let html = '';
+  Object.keys(yillar).sort().reverse().forEach(yil => {
+    const y = yillar[yil];
+    const net = y.cekis - y.veris;
+    html += '<div class="yillik-card">'
+      + '<div class="yillik-title">📅 ' + yil + ' Yılı (' + y.gun + ' gün)</div>'
+      + '<div class="yillik-grid">'
+      + '<div class="yillik-stat"><div class="yillik-lbl">Çekiş</div><div class="yillik-val" style="color:#f87171">' + Math.round(y.cekis).toLocaleString('tr-TR') + '</div></div>'
+      + '<div class="yillik-stat"><div class="yillik-lbl">Veriş</div><div class="yillik-val" style="color:#4ade80">' + Math.round(y.veris).toLocaleString('tr-TR') + '</div></div>'
+      + '<div class="yillik-stat"><div class="yillik-lbl">Net (kWh)</div><div class="yillik-val" style="color:' + (net > 0 ? '#f87171' : '#4ade80') + '">' + Math.round(net).toLocaleString('tr-TR') + '</div></div>'
+      + '</div></div>';
+  });
+  document.getElementById('yillik-liste').innerHTML = html;
 }
 
 function ososGunSec(tarih, btn) {
@@ -711,8 +800,6 @@ function ososGunSec(tarih, btn) {
     + '<td class="saat-cell" style="font-weight:900;color:' + ((tC-tV) > 0 ? '#f87171' : '#4ade80') + '">' + Math.round(tC-tV).toLocaleString('tr-TR') + '</td></tr>';
   document.getElementById('osos-saatlik-body').innerHTML = tbody;
 }
-
-let toplamHashGlobal = 0, btcTryGlobal = 0, btcUsdGlobal = 0;
 
 function yukle() {
   fetch('/api/ozet').then(r => r.json()).then(d => {
@@ -801,7 +888,38 @@ def osos():
     if "kullanici" not in session:
         return jsonify({"hata":"yetkisiz"}), 401
     data = github_oku("osos_gecmis.json")
-    return jsonify(data or {})
+    if not data:
+        return jsonify({})
+    aysonu = github_oku("osos_aysonu.json") or {}
+    for key, abone in data.items():
+        aylar = {}
+        for gun, saatler in abone.get('veri', {}).items():
+            ay = gun[:7]
+            if ay not in aylar:
+                aylar[ay] = {"cekis": 0, "veris": 0, "gun_sayisi": 0}
+            for s, v in saatler.items():
+                aylar[ay]['cekis'] += v.get('cekis', 0)
+                aylar[ay]['veris'] += v.get('veris', 0)
+            aylar[ay]['gun_sayisi'] += 1
+        aysonu_abone = aysonu.get(key, {})
+        for ay, veri in aylar.items():
+            endeks = aysonu_abone.get(ay, {})
+            endeks_cekis = endeks.get('cekis_kwh', 0)
+            endeks_veris = endeks.get('veris_kwh', 0)
+            fark_c = abs(veri['cekis'] - endeks_cekis) if endeks_cekis > 0 else None
+            fark_v = abs(veri['veris'] - endeks_veris) if endeks_veris > 0 else None
+            cekis_ok = fark_c is None or fark_c < DOGRULAMA_TOLERANS
+            veris_ok = fark_v is None or fark_v < DOGRULAMA_TOLERANS
+            if (endeks_cekis > 0 or endeks_veris > 0) and cekis_ok and veris_ok:
+                veri['dogrulama'] = "ok"
+            elif (endeks_cekis > 0 or endeks_veris > 0) and not (cekis_ok and veris_ok):
+                veri['dogrulama'] = "hata"
+                veri['endeks_cekis'] = endeks_cekis
+                veri['endeks_veris'] = endeks_veris
+            else:
+                veri['dogrulama'] = "bekliyor"
+        abone['aylar'] = aylar
+    return jsonify(data)
 
 @app.route("/api/cihaz/<name>")
 def cihaz_detay(name):
