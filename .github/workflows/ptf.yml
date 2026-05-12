@@ -28,7 +28,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           F2POOL_TOKEN: ${{ secrets.F2POOL_TOKEN }}
           F2POOL_KULLANICI: ${{ secrets.F2POOL_KULLANICI }}
-          TWILIO_SID: ${{ secrets.TWILIO_SID }}
-          TWILIO_TOKEN: ${{ secrets.TWILIO_TOKEN }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: python main.py
