@@ -2,21 +2,23 @@ import datetime, os, json, urllib.request, urllib.error, base64
 from eptr2 import EPTR2
 from twilio.rest import Client
 
-EPIAS_KULLANICI = os.environ.get("EPIAS_KULLANICI", "")
-EPIAS_SIFRE     = os.environ.get("EPIAS_SIFRE", "")
-TWILIO_SID      = os.environ.get("TWILIO_SID", "")
-TWILIO_TOKEN    = os.environ.get("TWILIO_TOKEN", "")
-TWILIO_NUMARA   = "whatsapp:+14155238886"
-KENDI_NUMARA    = "whatsapp:+905438703340"
-IKINCI_NUMARA   = "whatsapp:+905443977380"
-GH_TOKEN        = os.environ.get("GH_TOKEN", "")
-REPO            = "ekinciomer-ai/epias-ptf"
+EPIAS_KULLANICI  = os.environ.get("EPIAS_KULLANICI", "")
+EPIAS_SIFRE      = os.environ.get("EPIAS_SIFRE", "")
+TWILIO_SID       = os.environ.get("TWILIO_SID", "")
+TWILIO_TOKEN     = os.environ.get("TWILIO_TOKEN", "")
+TWILIO_NUMARA    = "whatsapp:+14155238886"
+KENDI_NUMARA     = "whatsapp:+905438703340"
+IKINCI_NUMARA    = "whatsapp:+905443977380"
+GH_TOKEN         = os.environ.get("GH_TOKEN", "")
+F2POOL_TOKEN     = os.environ.get("F2POOL_TOKEN", "")
+F2POOL_KULLANICI = os.environ.get("F2POOL_KULLANICI", "mehmetas")
+REPO             = "ekinciomer-ai/epias-ptf"
 
 CIHAZ_SAYISI  = 29
 CIHAZ_GUC_W   = 6000
 YEKDEM        = 602.51
 TOPLAM_KW     = CIHAZ_SAYISI * CIHAZ_GUC_W / 1000  # 174 kW
-GUNLUK_BTC    = 0.0037
+GUNLUK_BTC_VARSAYILAN = 0.0037  # F2Pool bağlanamazsa kullanılır
 
 bugun   = datetime.date.today().strftime("%Y-%m-%d")
 yarin   = (datetime.date.today() + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
@@ -83,13 +85,51 @@ def btc_cek():
         pass
     return 0, 0
 
+def f2pool_dunku_btc():
+    """F2Pool'dan dünkü gerçek BTC kazancını çek"""
+    try:
+        now = datetime.datetime.now(datetime.timezone.utc)
+        dun_baslangic = int((now - datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0).timestamp())
+        dun_bitis     = int(now.replace(hour=0, minute=0, second=0, microsecond=0).timestamp())
+
+        data = json.dumps({
+            "currency": "bitcoin",
+            "mining_user_name": F2POOL_KULLANICI,
+            "type": "revenue",
+            "start_time": dun_baslangic,
+            "end_time": dun_bitis
+        }).encode()
+
+        req = urllib.request.Request(
+            "https://api.f2pool.com/v2/assets/transactions/list",
+            data=data,
+            headers={
+                "Content-Type": "application/json",
+                "F2P-API-SECRET": F2POOL_TOKEN
+            },
+            method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=10) as r:
+            result = json.loads(r.read())
+
+        transactions = result.get("transactions", [])
+        if transactions:
+            toplam_btc = sum(t.get("changed_balance", 0) for t in transactions)
+            hashrate   = transactions[0].get("mining_extra", {}).get("hash_rate", 0)
+            ths        = hashrate / 1_000_000_000_000 if hashrate else 0
+            print(f"F2Pool dunku BTC: {toplam_btc:.8f} BTC | Hashrate: {ths:.0f} TH/s")
+            return toplam_btc, ths
+    except Exception as e:
+        print(f"F2Pool verisi alinamadi: {e}")
+    return None, None
+
 # Bugün mesaj gönderildi mi?
 gonderim, sha = dosya_oku("son_gonderim.json")
 if gonderim and gonderim.get("tarih") == bugun:
     print("Bugun zaten gonderildi.")
     exit(0)
 
-# Veriyi çek — önce yarın, olmazsa bugün
+# EPİAŞ verisini çek — önce yarın, olmazsa bugün
 items = []
 hedef_str = ""
 hedef_tarih = yarin
@@ -102,7 +142,7 @@ for tarih in [yarin, bugun]:
             hedef_tarih = tarih
             dt = datetime.date.fromisoformat(tarih)
             hedef_str = f"{dt.strftime('%d.%m.%Y')} {GUNLER[dt.weekday()]}"
-            print(f"Veri bulundu: {tarih}")
+            print(f"EPiAS verisi bulundu: {tarih}")
             break
     except Exception as e:
         print(f"{tarih} verisi yok: {e}")
@@ -120,6 +160,12 @@ except:
 
 kur = btc_try / btc_usd if btc_usd > 0 and btc_try > 0 else 1
 
+# F2Pool'dan dünkü gerçek BTC kazancı
+f2_btc, f2_ths = f2pool_dunku_btc()
+GUNLUK_BTC = f2_btc if f2_btc and f2_btc > 0 else GUNLUK_BTC_VARSAYILAN
+f2_kaynak  = "F2Pool gercek" if f2_btc else "tahmini"
+print(f"Kullanilan gunluk BTC: {GUNLUK_BTC:.8f} ({f2_kaynak})")
+
 # Önce karlı saat sayısını bul
 karli_saat_on = 0
 for item in items:
@@ -132,10 +178,10 @@ for item in items:
 
 SAATLIK_BTC = GUNLUK_BTC / karli_saat_on if karli_saat_on > 0 else GUNLUK_BTC / 24
 
-# Asıl saatlik hesap
-satirlar = []
-toplam_kar = toplam_maliyet = toplam_btc_gelir = 0
-karli_saat = 0
+# Saatlik karlılık hesabı
+satirlar      = []
+toplam_kar    = toplam_maliyet = toplam_btc_gelir = 0
+karli_saat    = 0
 karli_saatler = []
 zarарli_saatler = []
 
@@ -147,8 +193,8 @@ for item in items:
     maliyet_tl   = (ptf_tl + yekdem_tl) * 1.05 * TOPLAM_KW
     btc_gelir_tl = SAATLIK_BTC * btc_try if btc_try > 0 else 0
     kar = btc_gelir_tl - maliyet_tl
-    toplam_kar     += kar
-    toplam_maliyet += maliyet_tl
+    toplam_kar       += kar
+    toplam_maliyet   += maliyet_tl
     toplam_btc_gelir += btc_gelir_tl
     if kar > 0:
         karli_saat += 1
@@ -164,7 +210,7 @@ gunluk_btc_usd = GUNLUK_BTC * btc_usd if btc_usd > 0 else 0
 gunluk_kar_usd = toplam_kar / kur
 maliyet_usd    = toplam_maliyet / kur
 
-# Sinyal mesajı
+# Sinyal mesajı (mesaj3)
 satirlar_sinyal = []
 for row_start in range(0, 24, 6):
     satir = ""
@@ -181,14 +227,15 @@ for row_start in range(0, 24, 6):
         satir += f"{i:02d}{isaret}"
     satirlar_sinyal.append(satir)
 
-mesaj3 = f"""⚡ {hedef_str}
+mesaj3 = f"""EPiAS {hedef_str}
 ──────────────────────
 {chr(10).join(satirlar_sinyal)}"""
 
-# Karlılık tablosu
+# Karlılık tablosu (mesaj1)
 mesaj1 = f"""EPiAS KARLILIK {hedef_str}
 BTC:{btc_try:,.0f}TL|{btc_usd:,.0f}$
 YEKDEM:{YEKDEM}kr/MWh
+Kaynak:{f2_kaynak}
 Saat|PTF|Maliyet|BTC|Kar
 {chr(10).join(satirlar)}
 Karli:{karli_saat}/24 Kar:{toplam_kar:+,.0f}TL|{gunluk_kar_usd:+,.0f}$
@@ -211,9 +258,9 @@ ay_kar_usd     = ay_data["toplam_kar_tl"] / kur
 ay_maliyet_usd = ay_data["toplam_maliyet_tl"] / kur
 ay_btc_usd     = ay_data["toplam_btc"] * btc_usd if btc_usd > 0 else 0
 
-# Özet mesajı
+# Özet mesajı (mesaj2)
 mesaj2 = f"""GUNLUK OZET {hedef_str}
-BTC:{GUNLUK_BTC:.5f}BTC
+BTC:{GUNLUK_BTC:.5f}BTC ({f2_kaynak})
 Gelir:{gunluk_btc_tl:,.0f}TL|{gunluk_btc_usd:,.0f}$
 Enerji:{toplam_maliyet:,.0f}TL|{maliyet_usd:,.0f}$
 Kar:{toplam_kar:+,.0f}TL|{gunluk_kar_usd:+,.0f}$
@@ -236,7 +283,6 @@ for numara in [KENDI_NUMARA, IKINCI_NUMARA]:
 print("WhatsApp gonderildi!")
 
 # Sinyal dosyasını GitHub'a yaz
-su_an_saat = (datetime.datetime.utcnow() + datetime.timedelta(hours=3)).hour
 sinyal_data = {
     "tarih": hedef_tarih,
     "guncelleme": saat_tr,
@@ -245,7 +291,6 @@ sinyal_data = {
 }
 sinyal_sha_data, sinyal_sha = dosya_oku("sinyal.json")
 dosya_yaz("sinyal.json", sinyal_data, sinyal_sha)
-print("Sinyal yazildi.")
 
 dosya_yaz("son_gonderim.json", {"tarih": bugun}, sha)
 dosya_yaz(f"aylik_{ay_key}.json", ay_data, ay_sha)
