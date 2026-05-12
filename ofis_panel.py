@@ -1034,12 +1034,10 @@ def ozet():
             "durum": cihaz_durum(info),
             "last_share": datetime.datetime.fromtimestamp(w["last_share_at"]).strftime("%d.%m %H:%M") if w.get("last_share_at") else "—"
         })
-    sonuc["workers"] = worker_list
-    return jsonify(sonuc)
+    1037      sonuc["workers"] = worker_list
+1038      return jsonify(sonuc)
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)), debug=False)
-
+# 👇 BURAYA TAŞI (endpoint'i)
 @app.route("/api/fusion-test")
 def fusion_test():
     """Railway'den Huawei'ye DNS testi"""
@@ -1068,4 +1066,7 @@ def fusion_test():
     
     return jsonify(result)
 
+# 👇 BU EN ALTTA OLMALI
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)), debug=False)
 
