@@ -532,10 +532,10 @@ def ozet():
         karli_saatler = sinyal.get("karli_saatler", [])
         # Şimdilik sadece bugün, yarın için ptf_yarin.json oluşturulacak
         sonuc["ptf_bugun"] = {
-            "karli": karli_saatler,
-            "fiyatlar": ["—"] * 24,  # main.py'den gelmesi gerekiyor
-            "kar": f"{sinyal.get('gunluk_kar_tl', 0):,.0f}"
-        }
+    "karli": karli_saatler,
+    "fiyatlar": sinyal.get("ptf_saatlik", ["—"] * 24),
+    "kar": f"{sinyal.get('gunluk_kar_tl', 0):,.0f}"
+}
 
     # Günlük liste
     gunluk = []
