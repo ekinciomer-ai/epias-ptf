@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, session, redirect, render_template_string, request, Response
-import hashlib, json, os, urllib.request
+import hashlib, json, os, urllib.request, urllib.parse
 import datetime
 
 app = Flask(__name__)
@@ -36,44 +36,56 @@ def github_oku(dosya):
     except:
         return None
 
-def f2pool_son_gunler(gun=30):
+def f2pool_post(endpoint, body):
     try:
-        now = datetime.datetime.now(datetime.timezone.utc)
-        bas = int((now - datetime.timedelta(days=gun)).replace(hour=0, minute=0, second=0, microsecond=0).timestamp())
-        bit = int(now.timestamp())
-        data = json.dumps({"currency": "bitcoin", "mining_user_name": F2POOL_USER,
-            "type": "revenue", "start_time": bas, "end_time": bit}).encode()
-        req = urllib.request.Request("https://api.f2pool.com/v2/assets/transactions/list",
+        data = json.dumps(body).encode()
+        req = urllib.request.Request(f"https://api.f2pool.com/v2/{endpoint}",
             data=data, headers={"Content-Type":"application/json", "F2P-API-SECRET":F2POOL_TOKEN}, method="POST")
         with urllib.request.urlopen(req, timeout=10) as r:
-            result = json.loads(r.read())
-        return result.get("transactions", [])
+            return json.loads(r.read())
     except:
-        return []
+        return None
+
+def f2pool_legacy(path):
+    try:
+        url = f"https://api.f2pool.com/{path}"
+        req = urllib.request.Request(url, headers={"F2P-API-SECRET":F2POOL_TOKEN})
+        with urllib.request.urlopen(req, timeout=10) as r:
+            return json.loads(r.read())
+    except:
+        return None
+
+def f2pool_son_gunler(gun=30):
+    now = datetime.datetime.now(datetime.timezone.utc)
+    bas = int((now - datetime.timedelta(days=gun)).replace(hour=0, minute=0, second=0, microsecond=0).timestamp())
+    bit = int(now.timestamp())
+    result = f2pool_post("assets/transactions/list", {
+        "currency": "bitcoin", "mining_user_name": F2POOL_USER,
+        "type": "revenue", "start_time": bas, "end_time": bit
+    })
+    return result.get("transactions", []) if result else []
 
 def f2pool_bugun_tahmini():
-    try:
-        data = json.dumps({"currency": "bitcoin", "mining_user_name": F2POOL_USER,
-            "calculate_estimated_income": True}).encode()
-        req = urllib.request.Request("https://api.f2pool.com/v2/assets/balance",
-            data=data, headers={"Content-Type":"application/json", "F2P-API-SECRET":F2POOL_TOKEN}, method="POST")
-        with urllib.request.urlopen(req, timeout=10) as r:
-            result = json.loads(r.read())
-        return result.get("balance_info", {}).get("estimated_today_income", 0)
-    except:
-        return 0
+    result = f2pool_post("assets/balance", {
+        "currency": "bitcoin", "mining_user_name": F2POOL_USER,
+        "calculate_estimated_income": True
+    })
+    return result.get("balance_info", {}).get("estimated_today_income", 0) if result else 0
 
 def f2pool_hashrate():
-    try:
-        data = json.dumps({"currency": "bitcoin", "mining_user_name": F2POOL_USER}).encode()
-        req = urllib.request.Request("https://api.f2pool.com/v2/hash_rate/info",
-            data=data, headers={"Content-Type":"application/json", "F2P-API-SECRET":F2POOL_TOKEN}, method="POST")
-        with urllib.request.urlopen(req, timeout=10) as r:
-            result = json.loads(r.read())
+    result = f2pool_post("hash_rate/info", {
+        "currency": "bitcoin", "mining_user_name": F2POOL_USER
+    })
+    if result:
         info = result.get("info", {})
         return {"h24": info.get("h24_hash_rate", 0) / 1e12}
-    except:
-        return {"h24": 0}
+    return {"h24": 0}
+
+def f2pool_workers():
+    result = f2pool_post("hash_rate/worker/list", {
+        "currency": "bitcoin", "mining_user_name": F2POOL_USER
+    })
+    return result.get("workers", []) if result else []
 
 LOGIN_HTML = """<!DOCTYPE html>
 <html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -143,7 +155,6 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 .section-header{display:flex;align-items:center;justify-content:space-between;margin:14px 0 10px;}
 .section-title{font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;}
 
-/* AYLIK TABLO */
 .aylik-wrap{overflow-x:auto;margin-top:8px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);background:#050917;}
 .aylik-table{width:100%;border-collapse:collapse;font-size:10px;}
 .aylik-table th{background:linear-gradient(180deg,#1e293b,#0f172a);color:#94a3b8;font-weight:700;font-size:9px;padding:8px 4px;text-align:center;position:sticky;top:0;z-index:2;}
@@ -174,6 +185,43 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 .daily-hash{font-size:10px;color:#64748b;margin-top:1px;}
 .daily-tl{margin-left:auto;text-align:right;}
 .daily-tl-val{font-size:13px;font-weight:800;color:#4ade80;}
+
+/* CİHAZLAR */
+.cihaz-ozet{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.cihaz-ozet-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:10px;text-align:center;}
+.cihaz-ozet-val{font-size:20px;font-weight:900;}
+.cihaz-ozet-lbl{font-size:10px;color:#64748b;margin-top:2px;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;}
+
+.cihaz-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.cihaz-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:12px;cursor:pointer;border-left:3px solid #22c55e;transition:all 0.2s;}
+.cihaz-card:active{transform:scale(0.97);}
+.cihaz-card.offline{border-left-color:#ef4444;opacity:0.6;}
+.cihaz-row1{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.cihaz-no{font-size:18px;font-weight:900;}
+.cihaz-badge{font-size:9px;font-weight:700;padding:3px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:0.5px;}
+.badge-on{background:rgba(34,197,94,0.15);color:#4ade80;}
+.badge-off{background:rgba(239,68,68,0.15);color:#f87171;}
+.cihaz-hash{font-size:14px;font-weight:800;color:#60a5fa;}
+.cihaz-sub{font-size:10px;color:#64748b;margin-top:2px;}
+
+/* CİHAZ DETAY MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.active{display:flex;}
+.modal{background:linear-gradient(180deg,#0a0e1a,#050917);border:1px solid #1e293b;border-radius:24px;padding:24px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;position:relative;}
+.modal-close{position:absolute;top:12px;right:12px;width:32px;height:32px;background:rgba(255,255,255,0.05);border:none;border-radius:50%;color:white;font-size:18px;cursor:pointer;}
+.modal-header{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+.modal-icon{width:50px;height:50px;background:linear-gradient(135deg,#3b82f6,#6366f1);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;}
+.modal-title{font-size:22px;font-weight:900;}
+.modal-sub{font-size:11px;color:#94a3b8;margin-top:2px;}
+.modal-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px;}
+.modal-stat{background:rgba(255,255,255,0.03);border-radius:10px;padding:10px;}
+.modal-stat-lbl{font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:4px;}
+.modal-stat-val{font-size:18px;font-weight:900;}
+
+.chart-wrap{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;}
+.chart-title{font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;}
+.chart-canvas{width:100%;height:200px;}
+
 .guncelleme{font-size:11px;color:#334155;text-align:center;margin-top:14px;}
 .empty-state{text-align:center;padding:40px 20px;color:#475569;font-size:13px;}
 .tab-content{display:none;}
@@ -199,39 +247,16 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 <div class="status-card gri" id="status-card">
 <div class="status-row">
 <div class="status-icon" id="status-icon">⏳</div>
-<div>
-<div class="status-title" id="status-title">Yükleniyor...</div>
-<div class="status-sub" id="status-sub"></div>
-</div>
+<div><div class="status-title" id="status-title">Yükleniyor...</div><div class="status-sub" id="status-sub"></div></div>
 </div>
 </div>
 <div class="kpi-grid">
-<div class="kpi-card highlight">
-<div class="kpi-label">💰 BTC Fiyatı</div>
-<div class="kpi-value" id="btc-tl">—</div>
-<div class="kpi-sub" id="btc-usd">—</div>
+<div class="kpi-card highlight"><div class="kpi-label">💰 BTC Fiyatı</div><div class="kpi-value" id="btc-tl">—</div><div class="kpi-sub" id="btc-usd">—</div></div>
+<div class="kpi-card"><div class="kpi-label">📊 Bugünkü Tahmini</div><div class="kpi-value" id="bugun-btc">—</div><div class="kpi-sub" id="bugun-tl">—</div></div>
+<div class="kpi-card"><div class="kpi-label">₿ Dünkü Kazanç</div><div class="kpi-value" id="dun-btc">—</div><div class="kpi-sub" id="dun-tl">—</div></div>
+<div class="kpi-card"><div class="kpi-label">📈 Aylık Net Kar</div><div class="kpi-value" id="ay-kar" style="color:#4ade80">—</div><div class="kpi-sub" id="ay-gun">—</div></div>
 </div>
-<div class="kpi-card">
-<div class="kpi-label">📊 Bugünkü Tahmini</div>
-<div class="kpi-value" id="bugun-btc">—</div>
-<div class="kpi-sub" id="bugun-tl">—</div>
-</div>
-<div class="kpi-card">
-<div class="kpi-label">₿ Dünkü Kazanç</div>
-<div class="kpi-value" id="dun-btc">—</div>
-<div class="kpi-sub" id="dun-tl">—</div>
-</div>
-<div class="kpi-card">
-<div class="kpi-label">📈 Aylık Net Kar</div>
-<div class="kpi-value" id="ay-kar" style="color:#4ade80">—</div>
-<div class="kpi-sub" id="ay-gun">—</div>
-</div>
-</div>
-<div class="kpi-card">
-<div class="kpi-label">⚡ Toplam Hashrate</div>
-<div class="kpi-value" id="toplam-hash" style="color:#60a5fa">—</div>
-<div class="kpi-sub">24 saatlik ortalama</div>
-</div>
+<div class="kpi-card"><div class="kpi-label">⚡ Toplam Hashrate</div><div class="kpi-value" id="toplam-hash" style="color:#60a5fa">—</div><div class="kpi-sub">24 saatlik ortalama</div></div>
 </div>
 
 <div class="tab-content" id="t-epias">
@@ -240,10 +265,7 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 <div style="font-size:10px;color:#64748b">⏸ Kapalı saatler mor</div>
 </div>
 <div class="aylik-wrap">
-<table class="aylik-table" id="aylik-table">
-<thead id="aylik-thead"></thead>
-<tbody id="aylik-tbody"></tbody>
-</table>
+<table class="aylik-table" id="aylik-table"><thead id="aylik-thead"></thead><tbody id="aylik-tbody"></tbody></table>
 </div>
 </div>
 
@@ -251,10 +273,7 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 <div class="f2-summary">
 <div class="f2-icon-wrap">
 <div class="f2-icon">₿</div>
-<div>
-<div class="f2-title" id="f2-title">Aylık Toplam</div>
-<div class="f2-subtitle" id="f2-subtitle">—</div>
-</div>
+<div><div class="f2-title" id="f2-title">Aylık Toplam</div><div class="f2-subtitle" id="f2-subtitle">—</div></div>
 </div>
 <div class="f2-big" id="f2-big">—<span> BTC</span></div>
 <div class="f2-small" id="f2-small">—</div>
@@ -264,7 +283,16 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 </div>
 
 <div class="tab-content" id="t-cihazlar">
-<div class="empty-state">Saha bilgisayarı bağlantısı yakında<br><br>Cihaz yönetimi saha panelinden yapılacak.</div>
+<div class="cihaz-ozet">
+<div class="cihaz-ozet-card"><div class="cihaz-ozet-val" style="color:#4ade80" id="cihaz-aktif">—</div><div class="cihaz-ozet-lbl">Aktif</div></div>
+<div class="cihaz-ozet-card"><div class="cihaz-ozet-val" style="color:#f87171" id="cihaz-offline">—</div><div class="cihaz-ozet-lbl">Offline</div></div>
+<div class="cihaz-ozet-card"><div class="cihaz-ozet-val" style="color:#60a5fa" id="cihaz-toplam">—</div><div class="cihaz-ozet-lbl">Toplam TH/s</div></div>
+</div>
+<div class="section-header">
+<div class="section-title">🖥️ Cihaz Listesi</div>
+<div style="font-size:10px;color:#64748b">Detay için dokunun</div>
+</div>
+<div class="cihaz-grid" id="cihaz-grid"><div class="empty-state" style="grid-column:1/-1">Yükleniyor...</div></div>
 </div>
 
 <div class="tab-content" id="t-osos">
@@ -272,6 +300,27 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 </div>
 
 <div class="guncelleme" id="guncelleme"></div>
+</div>
+
+<!-- CİHAZ DETAY MODAL -->
+<div class="modal-overlay" id="modal" onclick="if(event.target.id==='modal')kapatModal()">
+<div class="modal">
+<button class="modal-close" onclick="kapatModal()">✕</button>
+<div class="modal-header">
+<div class="modal-icon">🖥️</div>
+<div><div class="modal-title" id="m-title">—</div><div class="modal-sub" id="m-sub">—</div></div>
+</div>
+<div class="modal-stats">
+<div class="modal-stat"><div class="modal-stat-lbl">24h Hashrate</div><div class="modal-stat-val" style="color:#60a5fa" id="m-h24">—</div></div>
+<div class="modal-stat"><div class="modal-stat-lbl">Anlık</div><div class="modal-stat-val" style="color:#4ade80" id="m-h1">—</div></div>
+<div class="modal-stat"><div class="modal-stat-lbl">Durum</div><div class="modal-stat-val" id="m-durum">—</div></div>
+<div class="modal-stat"><div class="modal-stat-lbl">Son Bağlantı</div><div class="modal-stat-val" style="font-size:13px" id="m-son">—</div></div>
+</div>
+<div class="chart-wrap">
+<div class="chart-title">📊 24 Saatlik Hashrate Grafiği</div>
+<canvas class="chart-canvas" id="chart"></canvas>
+</div>
+</div>
 </div>
 
 <script>
@@ -293,10 +342,7 @@ function renkSinif(v) {
 }
 
 function aylikRender(aylikData) {
-  if (!aylikData) {
-    document.getElementById('aylik-tbody').innerHTML = '<tr><td colspan="32" class="empty-state">Veri yok</td></tr>';
-    return;
-  }
+  if (!aylikData) return;
   const gunler = Object.keys(aylikData).sort();
   if (gunler.length === 0) return;
   
@@ -331,6 +377,134 @@ function aylikRender(aylikData) {
   tbody += '<td class="saat-cell l2" style="font-weight:900">' + Math.round(ayOrt) + '</td></tr>';
   
   document.getElementById('aylik-tbody').innerHTML = tbody;
+}
+
+function cihazRender(workers) {
+  if (!workers || workers.length === 0) {
+    document.getElementById('cihaz-grid').innerHTML = '<div class="empty-state" style="grid-column:1/-1">Cihaz yok</div>';
+    return;
+  }
+  
+  let aktif = 0, offline = 0, toplam = 0;
+  workers.forEach(w => {
+    if (w.status === 1) { aktif++; toplam += w.h24; }
+    else offline++;
+  });
+  
+  document.getElementById('cihaz-aktif').textContent = aktif;
+  document.getElementById('cihaz-offline').textContent = offline;
+  document.getElementById('cihaz-toplam').textContent = Math.round(toplam);
+  
+  let html = '';
+  workers.sort((a,b) => a.name.localeCompare(b.name)).forEach(w => {
+    const cls = w.status === 1 ? '' : 'offline';
+    const badge = w.status === 1 ? 'badge-on">Aktif' : 'badge-off">Offline';
+    html += `<div class="cihaz-card ${cls}" onclick="cihazDetay('${w.name}')">
+      <div class="cihaz-row1">
+        <div class="cihaz-no">${w.name}</div>
+        <div class="cihaz-badge ${badge}</div>
+      </div>
+      <div class="cihaz-hash">${Math.round(w.h24)} <span style="font-size:11px;color:#64748b">TH/s</span></div>
+      <div class="cihaz-sub">${w.last_share}</div>
+    </div>`;
+  });
+  document.getElementById('cihaz-grid').innerHTML = html;
+}
+
+let secilenCihaz = null;
+
+function cihazDetay(name) {
+  secilenCihaz = name;
+  document.getElementById('m-title').textContent = 'Cihaz ' + name;
+  document.getElementById('m-sub').textContent = 'mehmetas.' + name;
+  document.getElementById('m-h24').textContent = '—';
+  document.getElementById('m-h1').textContent = '—';
+  document.getElementById('m-durum').textContent = '—';
+  document.getElementById('m-son').textContent = '—';
+  document.getElementById('modal').classList.add('active');
+  
+  fetch('/api/cihaz/' + name).then(r => r.json()).then(d => {
+    if (d.h24 !== undefined) {
+      document.getElementById('m-h24').textContent = Math.round(d.h24) + ' TH/s';
+      document.getElementById('m-h1').innerHTML = Math.round(d.h1) + ' <span style="font-size:11px;color:#64748b">TH/s</span>';
+      document.getElementById('m-durum').textContent = d.status === 1 ? '✅ Aktif' : '❌ Offline';
+      document.getElementById('m-durum').style.color = d.status === 1 ? '#4ade80' : '#f87171';
+      document.getElementById('m-son').textContent = d.last_share;
+      if (d.history) cizGrafik(d.history);
+    }
+  });
+}
+
+function kapatModal() {
+  document.getElementById('modal').classList.remove('active');
+}
+
+function cizGrafik(history) {
+  const canvas = document.getElementById('chart');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width = canvas.offsetWidth * 2;
+  const H = canvas.height = canvas.offsetHeight * 2;
+  ctx.scale(2, 2);
+  const w = W / 2;
+  const h = H / 2;
+  
+  ctx.clearRect(0, 0, w, h);
+  
+  const entries = Object.entries(history);
+  if (entries.length === 0) return;
+  
+  const values = entries.map(e => e[1] / 1e12);
+  const max = Math.max(...values, 1);
+  const min = 0;
+  
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = h * i / 4;
+    ctx.beginPath();
+    ctx.moveTo(30, y);
+    ctx.lineTo(w, y);
+    ctx.stroke();
+  }
+  
+  // Y label
+  ctx.fillStyle = '#64748b';
+  ctx.font = '9px Inter';
+  ctx.textAlign = 'right';
+  for (let i = 0; i <= 4; i++) {
+    const v = max - (max * i / 4);
+    ctx.fillText(Math.round(v), 26, h * i / 4 + 4);
+  }
+  
+  // Çizgi
+  const gradient = ctx.createLinearGradient(0, 0, 0, h);
+  gradient.addColorStop(0, 'rgba(34,197,94,0.4)');
+  gradient.addColorStop(1, 'rgba(34,197,94,0)');
+  
+  ctx.beginPath();
+  entries.forEach((e, i) => {
+    const x = 30 + (w - 30) * i / (entries.length - 1);
+    const y = h - ((e[1]/1e12 - min) / (max - min)) * h;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.lineTo(w, h);
+  ctx.lineTo(30, h);
+  ctx.closePath();
+  ctx.fillStyle = gradient;
+  ctx.fill();
+  
+  ctx.beginPath();
+  entries.forEach((e, i) => {
+    const x = 30 + (w - 30) * i / (entries.length - 1);
+    const y = h - ((e[1]/1e12 - min) / (max - min)) * h;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = '#22c55e';
+  ctx.lineWidth = 2;
+  ctx.stroke();
 }
 
 function yukle() {
@@ -370,6 +544,7 @@ function yukle() {
       });
       document.getElementById('daily-list').innerHTML = html || '<div class="empty-state">Veri yok</div>';
     }
+    if (d.workers) cihazRender(d.workers);
     document.getElementById('guncelleme').textContent = 'Güncellendi: ' + new Date().toLocaleTimeString('tr-TR');
   });
 }
@@ -414,6 +589,34 @@ def cikis():
     session.clear()
     return redirect("/giris")
 
+@app.route("/api/cihaz/<name>")
+def cihaz_detay(name):
+    if "kullanici" not in session:
+        return jsonify({"hata":"yetkisiz"}), 401
+    
+    # Worker bilgisi
+    workers = f2pool_workers()
+    worker = next((w for w in workers if w["hash_rate_info"]["name"] == name), None)
+    if not worker:
+        return jsonify({"hata":"bulunamadi"}), 404
+    
+    info = worker["hash_rate_info"]
+    sonuc = {
+        "name": name,
+        "h24": info.get("h24_hash_rate", 0) / 1e12,
+        "h1":  info.get("h1_hash_rate", 0) / 1e12,
+        "anlik": info.get("hash_rate", 0) / 1e12,
+        "status": worker.get("status", 0),
+        "last_share": datetime.datetime.fromtimestamp(worker["last_share_at"]).strftime("%d.%m %H:%M") if worker.get("last_share_at") else "—"
+    }
+    
+    # Geçmiş hashrate
+    legacy = f2pool_legacy(f"bitcoin/{F2POOL_USER}/{name}")
+    if legacy:
+        sonuc["history"] = legacy.get("hashrate_history", {})
+    
+    return jsonify(sonuc)
+
 @app.route("/api/ozet")
 def ozet():
     if "kullanici" not in session:
@@ -434,7 +637,7 @@ def ozet():
         sonuc["sinyal"] = {"veri_var": False, "karli": False, "mesaj": ""}
         sonuc["btc"] = {"tl": "—", "usd": "—"}
 
-    transactions = f2pool_son_gunler(7)
+    transactions = f2pool_son_gunler(30)
     dun_btc = 0
     if transactions:
         en_son = max(transactions, key=lambda t: t["mining_extra"]["mining_date"])
@@ -450,28 +653,57 @@ def ozet():
         "hash":      f"{hash_info['h24']:,.0f}"
     }
 
+    # Aylık toplam (F2Pool transactions üzerinden)
+    ay_baslangic = datetime.date.today().replace(day=1)
+    aylik_toplam_btc = 0
+    aylik_gun_sayisi = 0
+    for t in transactions:
+        tarih = datetime.datetime.fromtimestamp(t["mining_extra"]["mining_date"], tz=datetime.timezone.utc).date()
+        if tarih >= ay_baslangic:
+            aylik_toplam_btc += t["changed_balance"]
+            aylik_gun_sayisi += 1
+
     ay_key = datetime.date.today().strftime("%Y-%m")
-    ay = github_oku(f"aylik_{ay_key}.json")
-    if ay:
-        sonuc["aylik"] = {
-            "ay":  ay_key, "gun": ay.get("gun_sayisi", 0),
-            "btc": f"{ay.get('toplam_btc', 0):.5f}",
-            "tl":  f"{ay.get('toplam_btc_tl', 0):,.0f}",
-            "kar": f"{ay.get('toplam_kar_tl', 0):,.0f}"
-        }
+    ay_dosya = github_oku(f"aylik_{ay_key}.json")
+    aylik_maliyet = ay_dosya.get("toplam_maliyet_tl", 0) if ay_dosya else 0
+
+    aylik_gelir = aylik_toplam_btc * btc_try
+    aylik_kar = aylik_gelir - aylik_maliyet
+
+    sonuc["aylik"] = {
+        "ay": ay_key,
+        "gun": aylik_gun_sayisi,
+        "btc": f"{aylik_toplam_btc:.5f}",
+        "tl":  f"{aylik_gelir:,.0f}",
+        "kar": f"{aylik_kar:,.0f}"
+    }
 
     aylik_ptf = github_oku("aylik_ptf.json")
     if aylik_ptf:
         sonuc["aylik_ptf"] = aylik_ptf.get(ay_key, {})
 
+    # Günlük liste (son 30 gün)
     gunluk = []
     sorted_tx = sorted(transactions, key=lambda t: t["mining_extra"]["mining_date"], reverse=True)
-    for t in sorted_tx[:10]:
+    for t in sorted_tx[:31]:
         tarih = datetime.datetime.fromtimestamp(t["mining_extra"]["mining_date"], tz=datetime.timezone.utc).strftime("%d.%m.%Y")
         btc = t["changed_balance"]
         ths = t["mining_extra"]["hash_rate"] / 1e12
         gunluk.append({"tarih": tarih, "btc": f"{btc:.5f}", "hash": f"{ths:,.0f}", "tl": f"{btc * btc_try:,.0f}"})
     sonuc["gunluk_liste"] = gunluk
+
+    # Cihazlar
+    workers = f2pool_workers()
+    worker_list = []
+    for w in workers:
+        info = w["hash_rate_info"]
+        worker_list.append({
+            "name": info["name"],
+            "h24":  info.get("h24_hash_rate", 0) / 1e12,
+            "status": w.get("status", 0),
+            "last_share": datetime.datetime.fromtimestamp(w["last_share_at"]).strftime("%d.%m %H:%M") if w.get("last_share_at") else "—"
+        })
+    sonuc["workers"] = worker_list
 
     return jsonify(sonuc)
 
