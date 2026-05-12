@@ -48,8 +48,8 @@ def f2pool_post(endpoint, body):
 
 def f2pool_legacy(path):
     try:
-        url = f"https://api.f2pool.com/{path}"
-        req = urllib.request.Request(url, headers={"F2P-API-SECRET":F2POOL_TOKEN})
+        req = urllib.request.Request(f"https://api.f2pool.com/{path}",
+            headers={"F2P-API-SECRET":F2POOL_TOKEN})
         with urllib.request.urlopen(req, timeout=10) as r:
             return json.loads(r.read())
     except:
@@ -78,14 +78,31 @@ def f2pool_hashrate():
     })
     if result:
         info = result.get("info", {})
-        return {"h24": info.get("h24_hash_rate", 0) / 1e12}
-    return {"h24": 0}
+        return {
+            "anlik": info.get("hash_rate", 0) / 1e12,
+            "h1":    info.get("h1_hash_rate", 0) / 1e12,
+            "h24":   info.get("h24_hash_rate", 0) / 1e12
+        }
+    return {"anlik": 0, "h1": 0, "h24": 0}
 
 def f2pool_workers():
     result = f2pool_post("hash_rate/worker/list", {
         "currency": "bitcoin", "mining_user_name": F2POOL_USER
     })
     return result.get("workers", []) if result else []
+
+def cihaz_durum(info):
+    """Anlık hashrate'e göre durum belirle"""
+    anlik = info.get("hash_rate", 0)
+    h1    = info.get("h1_hash_rate", 0)
+    h24   = info.get("h24_hash_rate", 0)
+    if anlik > 0:
+        return "calisiyor"
+    elif h1 > 0:
+        return "yavasliyor"
+    elif h24 > 0:
+        return "uyuyor"
+    return "kapali"
 
 LOGIN_HTML = """<!DOCTYPE html>
 <html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -186,25 +203,27 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 .daily-tl{margin-left:auto;text-align:right;}
 .daily-tl-val{font-size:13px;font-weight:800;color:#4ade80;}
 
-/* CİHAZLAR */
-.cihaz-ozet{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
-.cihaz-ozet-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:10px;text-align:center;}
-.cihaz-ozet-val{font-size:20px;font-weight:900;}
-.cihaz-ozet-lbl{font-size:10px;color:#64748b;margin-top:2px;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;}
+.cihaz-ozet{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px;}
+.cihaz-ozet-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:10px 6px;text-align:center;}
+.cihaz-ozet-val{font-size:18px;font-weight:900;}
+.cihaz-ozet-lbl{font-size:9px;color:#64748b;margin-top:2px;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;}
 
 .cihaz-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
 .cihaz-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:12px;cursor:pointer;border-left:3px solid #22c55e;transition:all 0.2s;}
 .cihaz-card:active{transform:scale(0.97);}
-.cihaz-card.offline{border-left-color:#ef4444;opacity:0.6;}
+.cihaz-card.uyuyor{border-left-color:#fbbf24;}
+.cihaz-card.yavasliyor{border-left-color:#f59e0b;}
+.cihaz-card.kapali{border-left-color:#ef4444;opacity:0.7;}
 .cihaz-row1{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
 .cihaz-no{font-size:18px;font-weight:900;}
 .cihaz-badge{font-size:9px;font-weight:700;padding:3px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:0.5px;}
 .badge-on{background:rgba(34,197,94,0.15);color:#4ade80;}
+.badge-slow{background:rgba(245,158,11,0.15);color:#fbbf24;}
+.badge-sleep{background:rgba(245,158,11,0.1);color:#fcd34d;}
 .badge-off{background:rgba(239,68,68,0.15);color:#f87171;}
 .cihaz-hash{font-size:14px;font-weight:800;color:#60a5fa;}
 .cihaz-sub{font-size:10px;color:#64748b;margin-top:2px;}
 
-/* CİHAZ DETAY MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.active{display:flex;}
 .modal{background:linear-gradient(180deg,#0a0e1a,#050917);border:1px solid #1e293b;border-radius:24px;padding:24px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;position:relative;}
@@ -213,14 +232,18 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 .modal-icon{width:50px;height:50px;background:linear-gradient(135deg,#3b82f6,#6366f1);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;}
 .modal-title{font-size:22px;font-weight:900;}
 .modal-sub{font-size:11px;color:#94a3b8;margin-top:2px;}
-.modal-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px;}
+.modal-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;}
 .modal-stat{background:rgba(255,255,255,0.03);border-radius:10px;padding:10px;}
 .modal-stat-lbl{font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:4px;}
-.modal-stat-val{font-size:18px;font-weight:900;}
+.modal-stat-val{font-size:16px;font-weight:900;}
+.modal-stat-sub{font-size:10px;color:#94a3b8;margin-top:2px;}
 
-.chart-wrap{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;}
+.chart-wrap{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;position:relative;}
 .chart-title{font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;}
-.chart-canvas{width:100%;height:200px;}
+.chart-canvas{width:100%;height:200px;display:block;}
+.tooltip{position:absolute;background:rgba(0,0,0,0.9);border:1px solid rgba(34,197,94,0.5);border-radius:8px;padding:6px 10px;font-size:11px;pointer-events:none;display:none;z-index:10;}
+.tooltip-time{color:#94a3b8;font-size:9px;}
+.tooltip-val{color:#4ade80;font-weight:800;font-size:13px;}
 
 .guncelleme{font-size:11px;color:#334155;text-align:center;margin-top:14px;}
 .empty-state{text-align:center;padding:40px 20px;color:#475569;font-size:13px;}
@@ -284,9 +307,10 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 
 <div class="tab-content" id="t-cihazlar">
 <div class="cihaz-ozet">
-<div class="cihaz-ozet-card"><div class="cihaz-ozet-val" style="color:#4ade80" id="cihaz-aktif">—</div><div class="cihaz-ozet-lbl">Aktif</div></div>
-<div class="cihaz-ozet-card"><div class="cihaz-ozet-val" style="color:#f87171" id="cihaz-offline">—</div><div class="cihaz-ozet-lbl">Offline</div></div>
-<div class="cihaz-ozet-card"><div class="cihaz-ozet-val" style="color:#60a5fa" id="cihaz-toplam">—</div><div class="cihaz-ozet-lbl">Toplam TH/s</div></div>
+<div class="cihaz-ozet-card"><div class="cihaz-ozet-val" style="color:#4ade80" id="cihaz-aktif">—</div><div class="cihaz-ozet-lbl">Çalışan</div></div>
+<div class="cihaz-ozet-card"><div class="cihaz-ozet-val" style="color:#fbbf24" id="cihaz-uyku">—</div><div class="cihaz-ozet-lbl">Uyuyan</div></div>
+<div class="cihaz-ozet-card"><div class="cihaz-ozet-val" style="color:#f87171" id="cihaz-kapali">—</div><div class="cihaz-ozet-lbl">Kapalı</div></div>
+<div class="cihaz-ozet-card"><div class="cihaz-ozet-val" style="color:#60a5fa" id="cihaz-toplam">—</div><div class="cihaz-ozet-lbl">TH/s</div></div>
 </div>
 <div class="section-header">
 <div class="section-title">🖥️ Cihaz Listesi</div>
@@ -302,7 +326,6 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 <div class="guncelleme" id="guncelleme"></div>
 </div>
 
-<!-- CİHAZ DETAY MODAL -->
 <div class="modal-overlay" id="modal" onclick="if(event.target.id==='modal')kapatModal()">
 <div class="modal">
 <button class="modal-close" onclick="kapatModal()">✕</button>
@@ -311,20 +334,35 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 <div><div class="modal-title" id="m-title">—</div><div class="modal-sub" id="m-sub">—</div></div>
 </div>
 <div class="modal-stats">
-<div class="modal-stat"><div class="modal-stat-lbl">24h Hashrate</div><div class="modal-stat-val" style="color:#60a5fa" id="m-h24">—</div></div>
-<div class="modal-stat"><div class="modal-stat-lbl">Anlık</div><div class="modal-stat-val" style="color:#4ade80" id="m-h1">—</div></div>
-<div class="modal-stat"><div class="modal-stat-lbl">Durum</div><div class="modal-stat-val" id="m-durum">—</div></div>
-<div class="modal-stat"><div class="modal-stat-lbl">Son Bağlantı</div><div class="modal-stat-val" style="font-size:13px" id="m-son">—</div></div>
+<div class="modal-stat"><div class="modal-stat-lbl">Anlık</div><div class="modal-stat-val" style="color:#4ade80" id="m-anlik">—</div><div class="modal-stat-sub">TH/s</div></div>
+<div class="modal-stat"><div class="modal-stat-lbl">1 Saat Ort.</div><div class="modal-stat-val" style="color:#60a5fa" id="m-h1">—</div><div class="modal-stat-sub">TH/s</div></div>
+<div class="modal-stat"><div class="modal-stat-lbl">24h Ort.</div><div class="modal-stat-val" style="color:#a78bfa" id="m-h24">—</div><div class="modal-stat-sub">TH/s</div></div>
+<div class="modal-stat"><div class="modal-stat-lbl">Durum</div><div class="modal-stat-val" id="m-durum">—</div><div class="modal-stat-sub" id="m-son">—</div></div>
 </div>
+
+<div class="section-title" style="margin:14px 0 8px">💰 Tahmini Kazanç</div>
+<div class="modal-stats">
+<div class="modal-stat"><div class="modal-stat-lbl">Bugün BTC</div><div class="modal-stat-val" style="color:#fbbf24" id="m-btc">—</div><div class="modal-stat-sub" id="m-tl">—</div></div>
+<div class="modal-stat"><div class="modal-stat-lbl">Bugün USD</div><div class="modal-stat-val" style="color:#4ade80" id="m-usd">—</div><div class="modal-stat-sub">$</div></div>
+</div>
+
+<div class="section-title" style="margin:14px 0 8px">⏱️ Çalışma Saati</div>
+<div class="modal-stats">
+<div class="modal-stat"><div class="modal-stat-lbl">Bugün</div><div class="modal-stat-val" style="color:#22c55e" id="m-bugun-saat">—</div><div class="modal-stat-sub">saat</div></div>
+<div class="modal-stat"><div class="modal-stat-lbl">Son 24h</div><div class="modal-stat-val" style="color:#22c55e" id="m-24h-saat">—</div><div class="modal-stat-sub">saat</div></div>
+</div>
+
 <div class="chart-wrap">
 <div class="chart-title">📊 24 Saatlik Hashrate Grafiği</div>
 <canvas class="chart-canvas" id="chart"></canvas>
+<div class="tooltip" id="tooltip"><div class="tooltip-time" id="tt-time"></div><div class="tooltip-val" id="tt-val"></div></div>
 </div>
 </div>
 </div>
 
 <script>
 const ZARARLI_ESIK = 2200;
+let chartData = null;
 
 function sekme(ad, btn) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -345,12 +383,10 @@ function aylikRender(aylikData) {
   if (!aylikData) return;
   const gunler = Object.keys(aylikData).sort();
   if (gunler.length === 0) return;
-  
   let thead = '<tr><th class="saat-head">Saat</th>';
   gunler.forEach(g => { thead += '<th>' + g + '</th>'; });
   thead += '<th class="saat-head">Ort</th></tr>';
   document.getElementById('aylik-thead').innerHTML = thead;
-  
   let tbody = '';
   for (let saat = 0; saat < 24; saat++) {
     tbody += '<tr><td class="saat-cell">' + String(saat).padStart(2,'0') + '</td>';
@@ -363,7 +399,6 @@ function aylikRender(aylikData) {
     const ort = sayi ? toplam/sayi : 0;
     tbody += '<td class="saat-cell l2">' + Math.round(ort) + '</td></tr>';
   }
-  
   tbody += '<tr style="border-top:2px solid rgba(34,197,94,0.4)"><td class="saat-cell" style="background:linear-gradient(180deg,#16a34a,#15803d);color:white">Ort.</td>';
   let ayToplam = 0, ayCount = 0;
   gunler.forEach(g => {
@@ -375,62 +410,74 @@ function aylikRender(aylikData) {
   });
   const ayOrt = ayCount ? ayToplam/ayCount : 0;
   tbody += '<td class="saat-cell l2" style="font-weight:900">' + Math.round(ayOrt) + '</td></tr>';
-  
   document.getElementById('aylik-tbody').innerHTML = tbody;
 }
 
-function cihazRender(workers) {
+function durumBilgisi(durum) {
+  if (durum === 'calisiyor') return {label:'Çalışıyor', cls:'badge-on', ico:'✅', renk:'#4ade80'};
+  if (durum === 'yavasliyor') return {label:'Yavaşlıyor', cls:'badge-slow', ico:'⚠️', renk:'#fbbf24'};
+  if (durum === 'uyuyor') return {label:'Uyuyor', cls:'badge-sleep', ico:'😴', renk:'#fcd34d'};
+  return {label:'Kapalı', cls:'badge-off', ico:'❌', renk:'#f87171'};
+}
+
+function cihazRender(workers, toplamHash, btcTry, btcUsd) {
   if (!workers || workers.length === 0) {
     document.getElementById('cihaz-grid').innerHTML = '<div class="empty-state" style="grid-column:1/-1">Cihaz yok</div>';
     return;
   }
   
-  let aktif = 0, offline = 0, toplam = 0;
+  let calisan = 0, uyuyan = 0, kapali = 0, toplam = 0;
   workers.forEach(w => {
-    if (w.status === 1) { aktif++; toplam += w.h24; }
-    else offline++;
+    if (w.durum === 'calisiyor') calisan++;
+    else if (w.durum === 'uyuyor' || w.durum === 'yavasliyor') uyuyan++;
+    else kapali++;
+    toplam += w.anlik;
   });
   
-  document.getElementById('cihaz-aktif').textContent = aktif;
-  document.getElementById('cihaz-offline').textContent = offline;
+  document.getElementById('cihaz-aktif').textContent = calisan;
+  document.getElementById('cihaz-uyku').textContent = uyuyan;
+  document.getElementById('cihaz-kapali').textContent = kapali;
   document.getElementById('cihaz-toplam').textContent = Math.round(toplam);
   
   let html = '';
   workers.sort((a,b) => a.name.localeCompare(b.name)).forEach(w => {
-    const cls = w.status === 1 ? '' : 'offline';
-    const badge = w.status === 1 ? 'badge-on">Aktif' : 'badge-off">Offline';
-    html += `<div class="cihaz-card ${cls}" onclick="cihazDetay('${w.name}')">
-      <div class="cihaz-row1">
-        <div class="cihaz-no">${w.name}</div>
-        <div class="cihaz-badge ${badge}</div>
-      </div>
-      <div class="cihaz-hash">${Math.round(w.h24)} <span style="font-size:11px;color:#64748b">TH/s</span></div>
-      <div class="cihaz-sub">${w.last_share}</div>
-    </div>`;
+    const d = durumBilgisi(w.durum);
+    html += '<div class="cihaz-card ' + w.durum + '" onclick="cihazDetay(\\'' + w.name + '\\')">'
+      + '<div class="cihaz-row1"><div class="cihaz-no">' + w.name + '</div><div class="cihaz-badge ' + d.cls + '">' + d.label + '</div></div>'
+      + '<div class="cihaz-hash">' + Math.round(w.anlik) + ' <span style="font-size:11px;color:#64748b">TH/s anlık</span></div>'
+      + '<div class="cihaz-sub">24h ort: ' + Math.round(w.h24) + ' TH/s</div>'
+      + '</div>';
   });
   document.getElementById('cihaz-grid').innerHTML = html;
 }
 
-let secilenCihaz = null;
-
 function cihazDetay(name) {
-  secilenCihaz = name;
   document.getElementById('m-title').textContent = 'Cihaz ' + name;
   document.getElementById('m-sub').textContent = 'mehmetas.' + name;
-  document.getElementById('m-h24').textContent = '—';
-  document.getElementById('m-h1').textContent = '—';
-  document.getElementById('m-durum').textContent = '—';
-  document.getElementById('m-son').textContent = '—';
+  ['m-anlik','m-h1','m-h24','m-durum','m-son','m-btc','m-tl','m-usd','m-bugun-saat','m-24h-saat'].forEach(id => {
+    document.getElementById(id).textContent = '—';
+  });
   document.getElementById('modal').classList.add('active');
+  chartData = null;
   
   fetch('/api/cihaz/' + name).then(r => r.json()).then(d => {
-    if (d.h24 !== undefined) {
-      document.getElementById('m-h24').textContent = Math.round(d.h24) + ' TH/s';
-      document.getElementById('m-h1').innerHTML = Math.round(d.h1) + ' <span style="font-size:11px;color:#64748b">TH/s</span>';
-      document.getElementById('m-durum').textContent = d.status === 1 ? '✅ Aktif' : '❌ Offline';
-      document.getElementById('m-durum').style.color = d.status === 1 ? '#4ade80' : '#f87171';
+    if (d.anlik !== undefined) {
+      document.getElementById('m-anlik').textContent = Math.round(d.anlik);
+      document.getElementById('m-h1').textContent = Math.round(d.h1);
+      document.getElementById('m-h24').textContent = Math.round(d.h24);
+      const dr = durumBilgisi(d.durum);
+      document.getElementById('m-durum').textContent = dr.ico + ' ' + dr.label;
+      document.getElementById('m-durum').style.color = dr.renk;
       document.getElementById('m-son').textContent = d.last_share;
-      if (d.history) cizGrafik(d.history);
+      document.getElementById('m-btc').textContent = (d.gunluk_btc || 0).toFixed(6);
+      document.getElementById('m-tl').textContent = Math.round(d.gunluk_tl || 0).toLocaleString('tr-TR') + ' TL';
+      document.getElementById('m-usd').textContent = Math.round(d.gunluk_usd || 0).toLocaleString('tr-TR');
+      document.getElementById('m-bugun-saat').textContent = (d.bugun_saat || 0).toFixed(1);
+      document.getElementById('m-24h-saat').textContent = (d.h24_saat || 0).toFixed(1);
+      if (d.history) {
+        chartData = d.history;
+        cizGrafik();
+      }
     }
   });
 }
@@ -439,7 +486,7 @@ function kapatModal() {
   document.getElementById('modal').classList.remove('active');
 }
 
-function cizGrafik(history) {
+function cizGrafik() {
   const canvas = document.getElementById('chart');
   const ctx = canvas.getContext('2d');
   const W = canvas.width = canvas.offsetWidth * 2;
@@ -447,17 +494,13 @@ function cizGrafik(history) {
   ctx.scale(2, 2);
   const w = W / 2;
   const h = H / 2;
-  
   ctx.clearRect(0, 0, w, h);
   
-  const entries = Object.entries(history);
+  const entries = Object.entries(chartData);
   if (entries.length === 0) return;
-  
   const values = entries.map(e => e[1] / 1e12);
   const max = Math.max(...values, 1);
-  const min = 0;
   
-  // Grid
   ctx.strokeStyle = 'rgba(255,255,255,0.05)';
   ctx.lineWidth = 1;
   for (let i = 0; i <= 4; i++) {
@@ -468,7 +511,6 @@ function cizGrafik(history) {
     ctx.stroke();
   }
   
-  // Y label
   ctx.fillStyle = '#64748b';
   ctx.font = '9px Inter';
   ctx.textAlign = 'right';
@@ -477,7 +519,6 @@ function cizGrafik(history) {
     ctx.fillText(Math.round(v), 26, h * i / 4 + 4);
   }
   
-  // Çizgi
   const gradient = ctx.createLinearGradient(0, 0, 0, h);
   gradient.addColorStop(0, 'rgba(34,197,94,0.4)');
   gradient.addColorStop(1, 'rgba(34,197,94,0)');
@@ -485,7 +526,7 @@ function cizGrafik(history) {
   ctx.beginPath();
   entries.forEach((e, i) => {
     const x = 30 + (w - 30) * i / (entries.length - 1);
-    const y = h - ((e[1]/1e12 - min) / (max - min)) * h;
+    const y = h - (e[1]/1e12 / max) * h;
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   });
@@ -498,7 +539,7 @@ function cizGrafik(history) {
   ctx.beginPath();
   entries.forEach((e, i) => {
     const x = 30 + (w - 30) * i / (entries.length - 1);
-    const y = h - ((e[1]/1e12 - min) / (max - min)) * h;
+    const y = h - (e[1]/1e12 / max) * h;
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   });
@@ -506,6 +547,50 @@ function cizGrafik(history) {
   ctx.lineWidth = 2;
   ctx.stroke();
 }
+
+// Tooltip
+document.getElementById('chart').addEventListener('mousemove', tooltipHandle);
+document.getElementById('chart').addEventListener('touchmove', tooltipTouch);
+document.getElementById('chart').addEventListener('mouseleave', () => {
+  document.getElementById('tooltip').style.display = 'none';
+});
+
+function tooltipTouch(e) {
+  e.preventDefault();
+  const t = e.touches[0];
+  tooltipShow(t.clientX, t.clientY);
+}
+
+function tooltipHandle(e) {
+  tooltipShow(e.clientX, e.clientY);
+}
+
+function tooltipShow(clientX, clientY) {
+  if (!chartData) return;
+  const canvas = document.getElementById('chart');
+  const rect = canvas.getBoundingClientRect();
+  const x = clientX - rect.left;
+  const w = canvas.offsetWidth;
+  const entries = Object.entries(chartData);
+  if (entries.length === 0) return;
+  
+  const i = Math.round((x - 15) / (w - 15) * (entries.length - 1));
+  if (i < 0 || i >= entries.length) return;
+  
+  const e = entries[i];
+  const tt = document.getElementById('tooltip');
+  const dt = new Date(e[0]);
+  const saatStr = String(dt.getHours()).padStart(2,'0') + ':' + String(dt.getMinutes()).padStart(2,'0');
+  
+  document.getElementById('tt-time').textContent = saatStr;
+  document.getElementById('tt-val').textContent = Math.round(e[1]/1e12) + ' TH/s';
+  
+  tt.style.display = 'block';
+  tt.style.left = (clientX - rect.left + 10) + 'px';
+  tt.style.top = (clientY - rect.top - 40) + 'px';
+}
+
+let toplamHashGlobal = 0, btcTryGlobal = 0, btcUsdGlobal = 0;
 
 function yukle() {
   fetch('/api/ozet').then(r => r.json()).then(d => {
@@ -520,6 +605,8 @@ function yukle() {
     if (d.btc) {
       document.getElementById('btc-tl').textContent = d.btc.tl;
       document.getElementById('btc-usd').textContent = '$' + d.btc.usd + ' USD';
+      btcTryGlobal = d.btc_try || 0;
+      btcUsdGlobal = d.btc_usd || 0;
     }
     if (d.f2pool) {
       document.getElementById('bugun-btc').textContent = d.f2pool.bugun_btc;
@@ -527,6 +614,7 @@ function yukle() {
       document.getElementById('dun-btc').textContent = d.f2pool.dun_btc;
       document.getElementById('dun-tl').textContent = '~' + d.f2pool.dun_tl + ' TL';
       document.getElementById('toplam-hash').innerHTML = d.f2pool.hash + ' <span style="font-size:14px;color:#64748b">TH/s</span>';
+      toplamHashGlobal = parseInt(d.f2pool.hash.replace(/,/g,'')) || 0;
     }
     if (d.aylik) {
       document.getElementById('ay-kar').textContent = '+' + d.aylik.kar;
@@ -594,27 +682,59 @@ def cihaz_detay(name):
     if "kullanici" not in session:
         return jsonify({"hata":"yetkisiz"}), 401
     
-    # Worker bilgisi
     workers = f2pool_workers()
     worker = next((w for w in workers if w["hash_rate_info"]["name"] == name), None)
     if not worker:
         return jsonify({"hata":"bulunamadi"}), 404
     
     info = worker["hash_rate_info"]
-    sonuc = {
-        "name": name,
-        "h24": info.get("h24_hash_rate", 0) / 1e12,
-        "h1":  info.get("h1_hash_rate", 0) / 1e12,
-        "anlik": info.get("hash_rate", 0) / 1e12,
-        "status": worker.get("status", 0),
-        "last_share": datetime.datetime.fromtimestamp(worker["last_share_at"]).strftime("%d.%m %H:%M") if worker.get("last_share_at") else "—"
-    }
+    anlik = info.get("hash_rate", 0) / 1e12
+    h1    = info.get("h1_hash_rate", 0) / 1e12
+    h24   = info.get("h24_hash_rate", 0) / 1e12
+    durum = cihaz_durum(info)
     
     # Geçmiş hashrate
     legacy = f2pool_legacy(f"bitcoin/{F2POOL_USER}/{name}")
-    if legacy:
-        sonuc["history"] = legacy.get("hashrate_history", {})
+    history = legacy.get("hashrate_history", {}) if legacy else {}
     
+    # Çalışma saati hesabı (10 dk aralıklarla, 6 nokta = 1 saat)
+    bugun_str = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
+    bugun_count = 0
+    h24_count = 0
+    for ts, hr in history.items():
+        if hr > 0:
+            h24_count += 1
+            if ts.startswith(bugun_str):
+                bugun_count += 1
+    bugun_saat = bugun_count / 6  # 10dk * 6 = 1 saat
+    h24_saat   = h24_count / 6
+    
+    # Tahmini günlük kazanç (cihaz oranı × toplam günlük BTC tahmini)
+    hash_info = f2pool_hashrate()
+    toplam_anlik = hash_info["anlik"]
+    bugun_tahmini = f2pool_bugun_tahmini()
+    
+    # Oran: cihaz 24h hashrate / toplam 24h hashrate
+    toplam_h24 = hash_info["h24"]
+    cihaz_oran = h24 / toplam_h24 if toplam_h24 > 0 else 0
+    cihaz_btc  = bugun_tahmini * cihaz_oran
+    
+    sinyal = github_oku("sinyal.json")
+    btc_try = sinyal.get("btc_try", 0) if sinyal else 0
+    btc_usd = sinyal.get("btc_usd", 0) if sinyal else 0
+    
+    sonuc = {
+        "name": name,
+        "anlik": anlik, "h1": h1, "h24": h24,
+        "durum": durum,
+        "last_share": datetime.datetime.fromtimestamp(worker["last_share_at"]).strftime("%d.%m %H:%M") if worker.get("last_share_at") else "—",
+        "history": history,
+        "bugun_saat": bugun_saat,
+        "h24_saat":   h24_saat,
+        "gunluk_btc": cihaz_btc,
+        "gunluk_tl":  cihaz_btc * btc_try,
+        "gunluk_usd": cihaz_btc * btc_usd
+    }
     return jsonify(sonuc)
 
 @app.route("/api/ozet")
@@ -626,6 +746,8 @@ def ozet():
     sinyal = github_oku("sinyal.json")
     btc_try = sinyal.get("btc_try", 0) if sinyal else 0
     btc_usd = sinyal.get("btc_usd", 0) if sinyal else 0
+    sonuc["btc_try"] = btc_try
+    sonuc["btc_usd"] = btc_usd
 
     if sinyal:
         su_an = (datetime.datetime.utcnow() + datetime.timedelta(hours=3)).strftime("%H")
@@ -653,7 +775,7 @@ def ozet():
         "hash":      f"{hash_info['h24']:,.0f}"
     }
 
-    # Aylık toplam (F2Pool transactions üzerinden)
+    # Aylık toplam
     ay_baslangic = datetime.date.today().replace(day=1)
     aylik_toplam_btc = 0
     aylik_gun_sayisi = 0
@@ -666,13 +788,11 @@ def ozet():
     ay_key = datetime.date.today().strftime("%Y-%m")
     ay_dosya = github_oku(f"aylik_{ay_key}.json")
     aylik_maliyet = ay_dosya.get("toplam_maliyet_tl", 0) if ay_dosya else 0
-
     aylik_gelir = aylik_toplam_btc * btc_try
     aylik_kar = aylik_gelir - aylik_maliyet
 
     sonuc["aylik"] = {
-        "ay": ay_key,
-        "gun": aylik_gun_sayisi,
+        "ay": ay_key, "gun": aylik_gun_sayisi,
         "btc": f"{aylik_toplam_btc:.5f}",
         "tl":  f"{aylik_gelir:,.0f}",
         "kar": f"{aylik_kar:,.0f}"
@@ -682,7 +802,6 @@ def ozet():
     if aylik_ptf:
         sonuc["aylik_ptf"] = aylik_ptf.get(ay_key, {})
 
-    # Günlük liste (son 30 gün)
     gunluk = []
     sorted_tx = sorted(transactions, key=lambda t: t["mining_extra"]["mining_date"], reverse=True)
     for t in sorted_tx[:31]:
@@ -692,15 +811,17 @@ def ozet():
         gunluk.append({"tarih": tarih, "btc": f"{btc:.5f}", "hash": f"{ths:,.0f}", "tl": f"{btc * btc_try:,.0f}"})
     sonuc["gunluk_liste"] = gunluk
 
-    # Cihazlar
+    # Cihazlar (durum bilgisi ile)
     workers = f2pool_workers()
     worker_list = []
     for w in workers:
         info = w["hash_rate_info"]
         worker_list.append({
-            "name": info["name"],
-            "h24":  info.get("h24_hash_rate", 0) / 1e12,
-            "status": w.get("status", 0),
+            "name":  info["name"],
+            "anlik": info.get("hash_rate", 0) / 1e12,
+            "h1":    info.get("h1_hash_rate", 0) / 1e12,
+            "h24":   info.get("h24_hash_rate", 0) / 1e12,
+            "durum": cihaz_durum(info),
             "last_share": datetime.datetime.fromtimestamp(w["last_share_at"]).strftime("%d.%m %H:%M") if w.get("last_share_at") else "—"
         })
     sonuc["workers"] = worker_list
