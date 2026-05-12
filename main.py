@@ -89,9 +89,8 @@ def f2pool_dunku_btc():
     """F2Pool'dan dünkü gerçek BTC kazancını çek"""
     try:
         now = datetime.datetime.now(datetime.timezone.utc)
-        dun_baslangic = int((now - datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0).timestamp())
-        dun_bitis     = int(now.replace(hour=0, minute=0, second=0, microsecond=0).timestamp())
-
+        dun_baslangic = int((now - datetime.timedelta(days=2)).replace(hour=0, minute=0, second=0, microsecond=0).timestamp())
+        dun_bitis     = int((now - datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0).timestamp())
         data = json.dumps({
             "currency": "bitcoin",
             "mining_user_name": F2POOL_KULLANICI,
