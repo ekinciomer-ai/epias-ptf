@@ -1,0 +1,52 @@
+name: 🔍 Fusion DNS Diagnostic
+
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: DNS lookup tests
+        run: |
+          echo "============================================"
+          echo "🔍 FusionSolar DNS erişilebilirlik testi"
+          echo "============================================"
+
+          for host in sg5.fusionsolar.huawei.com \
+                     eu5.fusionsolar.huawei.com \
+                     intl.fusionsolar.huawei.com \
+                     uni001eu5.fusionsolar.huawei.com \
+                     uni002eu5.fusionsolar.huawei.com \
+                     uni005eu5.fusionsolar.huawei.com \
+                     na5.fusionsolar.huawei.com \
+                     la5.fusionsolar.huawei.com \
+                     region01eu5.fusionsolar.huawei.com; do
+            echo ""
+            echo "▶ Testing: $host"
+            getent hosts $host && echo "  ✅ DNS OK" || echo "  ❌ DNS FAIL"
+            timeout 5 bash -c "</dev/tcp/$host/443" 2>/dev/null && echo "  ✅ TCP 443 OK" || echo "  ❌ TCP FAIL"
+            curl -s -o /dev/null -w "  HTTP: %{http_code} | DNS: %{time_namelookup}s | Connect: %{time_connect}s\n" \
+                 --max-time 10 https://$host/ || echo "  ❌ CURL FAIL"
+          done
+
+      - name: Public IP & location of GitHub runner
+        run: |
+          echo ""
+          echo "============================================"
+          echo "🌍 GitHub Runner location"
+          echo "============================================"
+          curl -s https://ipinfo.io/ || echo "ipinfo.io failed"
+
+      - name: Test sg5 with curl directly
+        run: |
+          echo ""
+          echo "============================================"
+          echo "📡 sg5 login endpoint test"
+          echo "============================================"
+          curl -v --max-time 15 \
+               -X POST "https://sg5.fusionsolar.huawei.com/thirdData/login" \
+               -H "Content-Type: application/json" \
+               -d '{"userName":"test","systemCode":"test"}' \
+               2>&1 | head -50
