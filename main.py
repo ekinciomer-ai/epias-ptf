@@ -366,8 +366,8 @@ if not ayptf:
 if hedef_ay not in ayptf:
     ayptf[hedef_ay] = {}
 
-# Saatlik fiyatlari TL/kWh formatinda yaz (mevcut formatla ayni)
-ayptf[hedef_ay][hedef_gun] = [round(item["price"] / 1000, 2) for item in items]
+# Saatlik fiyatlari TL/MWh formatinda yaz (EPiAS'dan geldigi gibi)
+ayptf[hedef_ay][hedef_gun] = [round(item["price"], 2) for item in items]
 
 dosya_yaz("aylik_ptf.json", ayptf, ayptf_sha)
 print(f"aylik_ptf.json guncellendi: {hedef_ay}/{hedef_gun}")
