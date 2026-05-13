@@ -18,7 +18,7 @@ CIHAZ_SAYISI  = 29
 CIHAZ_GUC_W   = 6000
 YEKDEM        = 602.51
 TOPLAM_KW     = CIHAZ_SAYISI * CIHAZ_GUC_W / 1000  # 174 kW
-GUNLUK_BTC_VARSAYILAN = 0.0037  # F2Pool bağlanamazsa kullanılır
+GUNLUK_BTC_VARSAYILAN = 0.0037
 
 bugun   = datetime.date.today().strftime("%Y-%m-%d")
 yarin   = (datetime.date.today() + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
@@ -49,8 +49,8 @@ def dosya_oku(dosya):
         raise
 
 def dosya_yaz(dosya, icerik, sha=None):
-    yeni = base64.b64encode(json.dumps(icerik).encode()).decode()
-    body = {"message": f"Guncelleme: {bugun}", "content": yeni}
+    yeni = base64.b64encode(json.dumps(icerik, ensure_ascii=False, indent=2).encode()).decode()
+    body = {"message": f"Guncelleme: {bugun} {saat_tr}", "content": yeni}
     if sha:
         body["sha"] = sha
     req = urllib.request.Request(
@@ -122,32 +122,45 @@ def f2pool_dunku_btc():
         print(f"F2Pool verisi alinamadi: {e}")
     return None, None
 
-# Bugün mesaj gönderildi mi?
+# ============================================================
+# YENI MANTIK: "Yarinin verisini gonderdik mi?" diye kontrol et
+# Eski mantik: "Bugun script kosturuldu mu?" diye kontrol ediyordu
+# ============================================================
+
 gonderim, sha = dosya_oku("son_gonderim.json")
-if gonderim and gonderim.get("tarih") == bugun:
-    print("Bugun zaten gonderildi.")
+
+# YARIN icin gonderim yapildiysa atla (yarin = hedef tarih)
+# Boylelikle script gun icinde defalarca calissa bile, yarinin verisi geldigine emin olunur
+if gonderim and gonderim.get("hedef_tarih") == yarin:
+    print(f"Yarinin ({yarin}) verisi zaten gonderildi.")
     exit(0)
 
-# EPİAŞ verisini çek — önce yarın, olmazsa bugün
+# Sadece yarin'i dene - bugun varsa atma (yarinin verisi cikmamissa bekle)
 items = []
 hedef_str = ""
 hedef_tarih = yarin
-for tarih in [yarin, bugun]:
-    try:
-        eptr  = EPTR2(username=EPIAS_KULLANICI, password=EPIAS_SIFRE)
-        sonuc = eptr.call("mcp", start_date=tarih, end_date=tarih, postprocess=False)
-        items = sonuc.get("items", [])
-        if items:
-            hedef_tarih = tarih
-            dt = datetime.date.fromisoformat(tarih)
-            hedef_str = f"{dt.strftime('%d.%m.%Y')} {GUNLER[dt.weekday()]}"
-            print(f"EPiAS verisi bulundu: {tarih}")
-            break
-    except Exception as e:
-        print(f"{tarih} verisi yok: {e}")
+try:
+    eptr  = EPTR2(username=EPIAS_KULLANICI, password=EPIAS_SIFRE)
+    sonuc = eptr.call("mcp", start_date=yarin, end_date=yarin, postprocess=False)
+    items = sonuc.get("items", [])
+    if items:
+        dt = datetime.date.fromisoformat(yarin)
+        hedef_str = f"{dt.strftime('%d.%m.%Y')} {GUNLER[dt.weekday()]}"
+        print(f"EPiAS verisi bulundu: {yarin}")
+except Exception as e:
+    print(f"{yarin} verisi yok: {e}")
 
 if not items:
-    whatsapp_gonder(f"EPiAS PTF\nHenuz veri yayinlanmadi.\nSaat: {saat_tr}\nYarim saat sonra tekrar denenecek.")
+    # Yarinin verisi yok - sadece sabah ilk denemede uyari at, sonraki denemelerde sessiz cik
+    son_uyari = gonderim.get("son_bekleme_uyarisi") if gonderim else None
+    if son_uyari != bugun:
+        whatsapp_gonder(f"EPiAS PTF Beklemede\nYarin ({yarin}) verisi henuz yayinlanmadi.\nSaat: {saat_tr}\nVeri cikinca otomatik gonderilecek.")
+        # Uyari gonderildi isaretle
+        yeni_gonderim = gonderim or {}
+        yeni_gonderim["son_bekleme_uyarisi"] = bugun
+        dosya_yaz("son_gonderim.json", yeni_gonderim, sha)
+    else:
+        print(f"Yarinin verisi yok ama bugun zaten uyari gonderilmis. Sessiz cikiyorum.")
     exit(0)
 
 # BTC fiyatı
@@ -165,7 +178,7 @@ GUNLUK_BTC = f2_btc if f2_btc and f2_btc > 0 else GUNLUK_BTC_VARSAYILAN
 f2_kaynak  = "F2Pool gercek" if f2_btc else "tahmini"
 print(f"Kullanilan gunluk BTC: {GUNLUK_BTC:.8f} ({f2_kaynak})")
 
-# Önce karlı saat sayısını bul
+# Karli saat sayisi
 karli_saat_on = 0
 for item in items:
     ptf_tl     = item["price"] / 1000
@@ -182,7 +195,8 @@ satirlar      = []
 toplam_kar    = toplam_maliyet = toplam_btc_gelir = 0
 karli_saat    = 0
 karli_saatler = []
-zarарli_saatler = []
+zararli_saatler = []
+saatlik_detay = []  # Arşiv için
 
 for item in items:
     saat      = item["hour"]
@@ -195,12 +209,22 @@ for item in items:
     toplam_kar       += kar
     toplam_maliyet   += maliyet_tl
     toplam_btc_gelir += btc_gelir_tl
+    
+    saatlik_detay.append({
+        "saat": saat[:2],
+        "ptf": ptf_kurus,
+        "maliyet": round(maliyet_tl, 2),
+        "btc_gelir_tl": round(btc_gelir_tl, 2),
+        "kar": round(kar, 2),
+        "karli": kar > 0,
+    })
+    
     if kar > 0:
         karli_saat += 1
         karli_saatler.append(saat[:2])
         satirlar.append(f"✅ {saat[:2]} | {ptf_kurus:.0f} | {maliyet_tl:.0f} | {btc_gelir_tl:.0f} | +{kar:.0f}")
     else:
-        zarарli_saatler.append(saat[:2])
+        zararli_saatler.append(saat[:2])
         satirlar.append(f"❌ {saat[:2]} | {ptf_kurus:.0f} | {maliyet_tl:.0f} | {btc_gelir_tl:.0f} | {kar:.0f}")
 
 gunluk_kwh     = karli_saat * TOPLAM_KW
@@ -281,12 +305,12 @@ for numara in [KENDI_NUMARA, IKINCI_NUMARA]:
     client.messages.create(body=mesaj2, from_=TWILIO_NUMARA, to=numara)
 print("WhatsApp gonderildi!")
 
-# Sinyal dosyasını GitHub'a yaz
+# Sinyal dosyası (her zaman üzerine yaz - en güncel gün)
 sinyal_data = {
     "tarih": hedef_tarih,
     "guncelleme": saat_tr,
     "karli_saatler": karli_saatler,
-    "zarарli_saatler": zarарli_saatler,
+    "zararli_saatler": zararli_saatler,
     "btc_try": btc_try,
     "btc_usd": btc_usd,
     "gunluk_btc": GUNLUK_BTC,
@@ -297,6 +321,46 @@ sinyal_data = {
 sinyal_sha_data, sinyal_sha = dosya_oku("sinyal.json")
 dosya_yaz("sinyal.json", sinyal_data, sinyal_sha)
 
-dosya_yaz("son_gonderim.json", {"tarih": bugun}, sha)
+# *** YENI: Gunluk arsiv - tum gunleri saklar ***
+arsiv, arsiv_sha = dosya_oku("gunluk_arsiv.json")
+if not arsiv:
+    arsiv = {"gunler": {}}
+
+arsiv["gunler"][hedef_tarih] = {
+    "tarih": hedef_tarih,
+    "gun_adi": GUNLER[datetime.date.fromisoformat(hedef_tarih).weekday()],
+    "olusturulma": f"{bugun} {saat_tr}",
+    "btc_try": btc_try,
+    "btc_usd": btc_usd,
+    "gunluk_btc": GUNLUK_BTC,
+    "btc_kaynak": f2_kaynak,
+    "karli_saat_sayisi": karli_saat,
+    "zararli_saat_sayisi": 24 - karli_saat,
+    "karli_saatler": karli_saatler,
+    "zararli_saatler": zararli_saatler,
+    "toplam_kar_tl": round(toplam_kar, 2),
+    "toplam_maliyet_tl": round(toplam_maliyet, 2),
+    "toplam_btc_gelir_tl": round(toplam_btc_gelir, 2),
+    "gunluk_kwh": gunluk_kwh,
+    "ptf_saatlik": [item["price"] for item in items],
+    "saatlik_detay": saatlik_detay,
+}
+
+# Sadece son 90 gunu tut (eski kayitlari sil)
+cutoff = (datetime.date.today() - datetime.timedelta(days=90)).strftime("%Y-%m-%d")
+arsiv["gunler"] = {k: v for k, v in arsiv["gunler"].items() if k >= cutoff}
+arsiv["son_guncelleme"] = f"{bugun} {saat_tr}"
+arsiv["gun_sayisi"] = len(arsiv["gunler"])
+
+dosya_yaz("gunluk_arsiv.json", arsiv, arsiv_sha)
+print(f"Gunluk arsive eklendi: {hedef_tarih}")
+
+# son_gonderim.json - HEDEF TARIH'i sakla (bugun degil)
+dosya_yaz("son_gonderim.json", {
+    "hedef_tarih": hedef_tarih,
+    "gonderim_zamani": f"{bugun} {saat_tr}",
+    "tarih": bugun,  # Geriye uyumluluk
+}, sha)
+
 dosya_yaz(f"aylik_{ay_key}.json", ay_data, ay_sha)
-print(f"Tamamlandi: {bugun}")
+print(f"Tamamlandi: hedef tarih {hedef_tarih}")
