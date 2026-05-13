@@ -1,0 +1,28 @@
+name: Saat Kontrol (Mining)
+on:
+  schedule:
+    # Her saat 50. dakikada - bir sonraki saatten 10 dk once
+    - cron: '50 * * * *'
+  workflow_dispatch:  # Manuel calistirma
+
+jobs:
+  saat-kontrol:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Twilio kur
+        run: pip install twilio
+
+      - name: Saat kontrol calistir
+        env:
+          TWILIO_SID: ${{ secrets.TWILIO_SID }}
+          TWILIO_TOKEN: ${{ secrets.TWILIO_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          OTOCOIN_URL: ${{ secrets.OTOCOIN_URL }}
+        run: python saat_kontrol.py
