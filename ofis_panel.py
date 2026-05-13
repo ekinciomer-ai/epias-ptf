@@ -640,6 +640,12 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 <!-- ====================== CIHAZLARIM SEKMESI ====================== -->
 <div class="tab-content" id="t-cihazlarim">
 
+<!-- BEKLEYEN ONAYLAR -->
+<div id="cmm-bekleyen" style="display:none; background:linear-gradient(135deg, rgba(239,68,68,0.12), rgba(251,191,36,0.08)); border:2px solid rgba(251,191,36,0.4); border-radius:14px; padding:14px; margin-bottom:14px;">
+  <div style="font-size:14px; font-weight:900; color:#fbbf24; margin-bottom:10px;">⏰ BEKLEYEN ONAYLAR</div>
+  <div id="cmm-bekleyen-liste"></div>
+</div>
+
 <!-- HEADER -->
 <div style="background:linear-gradient(135deg, rgba(251,191,36,0.12), rgba(34,197,94,0.08)); border:1px solid rgba(251,191,36,0.25); border-radius:16px; padding:18px; margin-bottom:14px; position:relative; overflow:hidden;">
   <div style="position:absolute; top:-30px; right:-30px; width:140px; height:140px; background:radial-gradient(circle, rgba(251,191,36,0.15), transparent 70%); border-radius:50%; pointer-events:none;"></div>
@@ -704,12 +710,15 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 </div>
 
 <!-- TOPLU KONTROL -->
-<div style="background:rgba(251,191,36,0.04); border:1px solid rgba(251,191,36,0.2); border-radius:12px; padding:10px; margin-bottom:14px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-  <span style="font-size:11px; color:#94a3b8; font-weight:700;">🎛️ TOPLU İŞLEM:</span>
-  <button onclick="cmmBulk('wake')" style="background:linear-gradient(135deg,#22c55e,#16a34a); color:white; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px; transition:transform 0.1s;">▶️ Hepsini Çalıştır</button>
-  <button onclick="cmmBulk('sleep')" style="background:linear-gradient(135deg,#f59e0b,#d97706); color:white; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px; transition:transform 0.1s;">💤 Hepsini Uyut</button>
-  <div style="flex:1"></div>
-  <div id="cmm-cmd-status" style="font-size:11px; color:#94a3b8;"></div>
+<div style="background:rgba(251,191,36,0.04); border:1px solid rgba(251,191,36,0.2); border-radius:12px; padding:12px; margin-bottom:14px;">
+  <div style="font-size:11px; color:#94a3b8; font-weight:700; margin-bottom:8px;">🎛️ TOPLU İŞLEM (10 sn aralıklı, sıralı)</div>
+  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <button onclick="cmmBulkSirali('wake')" style="background:linear-gradient(135deg,#22c55e,#16a34a); color:white; border:none; padding:10px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;">▶️ Sıralı Çalıştır (yüksek→düşük)</button>
+    <button onclick="cmmBulkSirali('sleep')" style="background:linear-gradient(135deg,#f59e0b,#d97706); color:white; border:none; padding:10px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;">💤 Sıralı Uyut (düşük→yüksek)</button>
+    <button onclick="cmmBulk('wake')" style="background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3); padding:10px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;">▶️ Hepsi Anlık</button>
+    <button onclick="cmmBulk('sleep')" style="background:rgba(245,158,11,0.15); color:#fbbf24; border:1px solid rgba(245,158,11,0.3); padding:10px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;">💤 Hepsi Anlık</button>
+  </div>
+  <div id="cmm-cmd-status" style="font-size:11px; color:#94a3b8; margin-top:8px;"></div>
 </div>
 
 <!-- AYLIK URETIM GRAFIK -->
@@ -1869,6 +1878,10 @@ function antBulk(action) {
 
 function cmmRender() {
   if (!antData) return;
+  
+  // Bekleyen onaylari yukle (her render'da)
+  cmmBekleyenYukle();
+  
   const s = antData.summary || {};
   const devices = antData.devices || [];
   const earnings = s.earnings || {};
@@ -2218,6 +2231,99 @@ function cmmBulk(action) {
   antKomut(action, 'all', 'TÜM');
 }
 
+function cmmBekleyenYukle() {
+  fetch('/api/bekleyen_onaylar').then(r => r.json()).then(d => {
+    const onaylar = (d.onaylar || []).filter(o => o.durum === 'bekliyor');
+    const container = document.getElementById('cmm-bekleyen');
+    const liste = document.getElementById('cmm-bekleyen-liste');
+    
+    if (onaylar.length === 0) {
+      container.style.display = 'none';
+      return;
+    }
+    
+    container.style.display = 'block';
+    let html = '';
+    onaylar.forEach(o => {
+      const eylem = o.eylem === 'wake' ? '▶️ ÇALIŞTIR' : '💤 UYUT';
+      const eylemColor = o.eylem === 'wake' ? '#22c55e' : '#f59e0b';
+      const saatAd = o.saat_durumu || '';
+      
+      html += '<div style="background:rgba(0,0,0,0.3); border-left:4px solid ' + eylemColor + '; padding:10px; border-radius:6px; margin-bottom:8px;">';
+      html += '<div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:6px;">';
+      html += '<div>';
+      html += '<div style="font-size:14px; font-weight:900; color:' + eylemColor + ';">' + eylem + ' - Saat ' + String(o.hedef_saat).padStart(2, '0') + ':00</div>';
+      html += '<div style="font-size:10px; color:#94a3b8;">' + saatAd + ' saat · Oluşturulma: ' + o.olusturulma + '</div>';
+      html += '<div style="font-size:10px; color:#64748b; margin-top:2px;">Şu an: ' + o.mevcut_online + ' açık, ' + o.mevcut_sleeping + ' uyuyor</div>';
+      html += '</div>';
+      html += '</div>';
+      html += '<div style="display:flex; gap:6px; margin-top:8px;">';
+      html += '<button onclick="cmmOnayKarar(\\'' + o.id + '\\',\\'onayla\\')" style="flex:1; background:linear-gradient(135deg,#22c55e,#16a34a); color:white; border:none; padding:10px; border-radius:8px; font-weight:900; cursor:pointer; font-size:12px;">✅ ONAYLA</button>';
+      html += '<button onclick="cmmOnayKarar(\\'' + o.id + '\\',\\'reddet\\')" style="flex:1; background:rgba(239,68,68,0.2); color:#f87171; border:1px solid rgba(239,68,68,0.4); padding:10px; border-radius:8px; font-weight:900; cursor:pointer; font-size:12px;">❌ REDDET</button>';
+      html += '</div>';
+      html += '</div>';
+    });
+    liste.innerHTML = html;
+  }).catch(e => console.error('Onay yukleme hatasi:', e));
+}
+
+function cmmOnayKarar(onayId, karar) {
+  const onayMsg = karar === 'onayla' 
+    ? '✅ Onaylıyorum - Cihazlar 10 sn aralıklı sıralı uygulayacak (~5 dk sürer)'
+    : '❌ Reddediyorum - Cihazlar mevcut durumda kalacak';
+  if (!confirm(onayMsg)) return;
+  
+  fetch('/api/bekleyen_onaylar/' + onayId + '/karar', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ karar })
+  }).then(r => r.json()).then(d => {
+    if (d.hata) {
+      alert('Hata: ' + d.hata);
+    } else {
+      const mesaj = karar === 'onayla' 
+        ? '✅ Onaylandı, cihazlara komut gönderildi (~5 dk)'
+        : '❌ Reddedildi';
+      alert(mesaj);
+      cmmBekleyenYukle();
+      if (karar === 'onayla') antYukle();
+    }
+  }).catch(e => alert('Bağlantı hatası: ' + e));
+}
+
+function cmmBulkSirali(action) {
+  const aksiyon = action === 'sleep' ? 'UYUT' : 'ÇALIŞTIR';
+  const siralama = action === 'sleep' ? 'en düşük hashrate önce' : 'en yüksek 24h hashrate önce';
+  const tahmini = 29 * 10;
+  
+  if (!confirm(`🎛️ SIRALI ${aksiyon}\n\n29 cihaz, 10 sn aralıklı (${siralama})\nTahmini süre: ${tahmini} sn (~${Math.round(tahmini/60)} dk)\n\nOnaylıyor musun?`)) return;
+  
+  const statusEl = document.getElementById('cmm-cmd-status');
+  if (statusEl) statusEl.innerHTML = '<span style="color:#fbbf24">⏳ Sıralı komut gönderiliyor... (~' + Math.round(tahmini/60) + ' dk sürecek)</span>';
+  
+  fetch('/api/antminer/command', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      action,
+      targets: 'all',
+      delay_sec: 10,
+      sort_by: action === 'sleep' ? 'hashrate_asc' : 'hashrate_24h_desc'
+    })
+  }).then(r => r.json()).then(d => {
+    if (d.hata) {
+      alert('Hata: ' + d.hata);
+      if (statusEl) statusEl.innerHTML = '<span style="color:#ef4444">❌ ' + d.hata + '</span>';
+    } else {
+      if (statusEl) statusEl.innerHTML = '<span style="color:#22c55e">✅ Sıralı komut gönderildi (~' + Math.round((d.estimated_duration_sec||tahmini)/60) + ' dk)</span>';
+      setTimeout(() => { antYukle(); if (statusEl) statusEl.innerHTML = ''; }, (d.estimated_duration_sec||tahmini) * 1000 + 5000);
+    }
+  }).catch(e => {
+    alert('Bağlantı hatası: ' + e);
+    if (statusEl) statusEl.innerHTML = '';
+  });
+}
+
 // ======================== CIHAZLARIM SEKMESI SONU ========================
 
 // ====================== ANTMINER SONU ======================
@@ -2453,6 +2559,8 @@ def antminer_command():
     data = request.get_json()
     action = data.get("action")  # "sleep" | "wake"
     targets = data.get("targets")  # IP suffix listesi veya "all"
+    delay_sec = data.get("delay_sec", 0)  # 0=anlik, 10=sirali
+    sort_by = data.get("sort_by")  # "hashrate_asc" | "hashrate_24h_desc"
 
     if action not in ("sleep", "wake"):
         return jsonify({"hata": "action sleep veya wake olmali"}), 400
@@ -2471,6 +2579,8 @@ def antminer_command():
         "id": cmd_id,
         "action": action,
         "targets": targets,
+        "delay_sec": delay_sec,
+        "sort_by": sort_by,
         "issued_at": datetime.datetime.now().isoformat(),
         "issued_by": session["kullanici"],
     }
@@ -2488,14 +2598,110 @@ def antminer_command():
     if not ok:
         return jsonify({"hata": "GitHub'a yazilamadi"}), 500
 
+    # Tahmini sure
+    n = 29 if targets == "all" else len(targets)
+    est_sec = n * delay_sec if delay_sec > 0 else 0
     return jsonify({
         "ok": True,
         "command_id": cmd_id,
         "action": action,
         "targets": targets if targets == "all" else len(targets),
         "issued_at": new_cmd["issued_at"],
-        "message": f"Komut gonderildi. 15 sn icinde sahaya ulasacak.",
+        "estimated_duration_sec": est_sec,
+        "message": f"Komut gonderildi. Tahmini sure: {est_sec} saniye.",
     })
+
+
+@app.route("/api/bekleyen_onaylar")
+def api_bekleyen_onaylar():
+    """Bekleyen saat onaylarini getir."""
+    if "kullanici" not in session:
+        return jsonify({"hata": "yetkisiz"}), 401
+    data = github_oku("bekleyen_onaylar.json") or {"onaylar": []}
+    # Sadece bekleyen veya son 24 saat icinde olusturulanlar
+    onaylar = data.get("onaylar", [])
+    now = datetime.datetime.now()
+    cutoff = (now - datetime.timedelta(hours=24)).date().isoformat()
+    aktif = [o for o in onaylar if o.get("tarih", "") >= cutoff]
+    return jsonify({"onaylar": aktif, "count": len(aktif)})
+
+
+@app.route("/api/bekleyen_onaylar/<onay_id>/karar", methods=["POST"])
+def api_onay_karar(onay_id):
+    """Bir onay icin karar ver: onayla veya reddet."""
+    if "kullanici" not in session:
+        return jsonify({"hata": "yetkisiz"}), 401
+    if KULLANICILAR.get(session["kullanici"], {}).get("rol") != "yonetici":
+        return jsonify({"hata": "Yetki yok"}), 403
+
+    karar = request.get_json().get("karar")  # "onayla" | "reddet"
+    if karar not in ("onayla", "reddet"):
+        return jsonify({"hata": "karar 'onayla' veya 'reddet' olmali"}), 400
+
+    data = github_oku("bekleyen_onaylar.json") or {"onaylar": []}
+    onay = None
+    for o in data.get("onaylar", []):
+        if o.get("id") == onay_id:
+            onay = o
+            break
+
+    if not onay:
+        return jsonify({"hata": "Onay bulunamadi"}), 404
+
+    if onay.get("durum") != "bekliyor":
+        return jsonify({"hata": f"Onay zaten {onay.get('durum')}"}), 400
+
+    # Karar uygula
+    if karar == "reddet":
+        onay["durum"] = "reddedildi"
+        onay["karar_veren"] = session["kullanici"]
+        onay["karar_zamani"] = datetime.datetime.now().isoformat()
+        github_yaz("bekleyen_onaylar.json", data)
+        return jsonify({"ok": True, "durum": "reddedildi"})
+
+    # Onayla -> antminer komutu olustur
+    onay["durum"] = "onaylandi"
+    onay["karar_veren"] = session["kullanici"]
+    onay["karar_zamani"] = datetime.datetime.now().isoformat()
+
+    # Komut olustur (sirali, 10 sn aralikli)
+    import uuid
+    cmd_id = str(uuid.uuid4())[:8]
+    eylem = onay.get("eylem")  # wake | sleep
+    sort_by = "hashrate_24h_desc" if eylem == "wake" else "hashrate_asc"
+
+    cmd_data = github_oku("antminer_commands.json") or {"commands": []}
+    cmd_data.setdefault("commands", []).append({
+        "id": cmd_id,
+        "action": eylem,
+        "targets": "all",
+        "delay_sec": 10,
+        "sort_by": sort_by,
+        "issued_at": datetime.datetime.now().isoformat(),
+        "issued_by": session["kullanici"],
+        "onay_id": onay_id,
+    })
+    cmd_data["commands"] = cmd_data["commands"][-50:]
+    cmd_data["updated_at"] = datetime.datetime.now().isoformat()
+    github_yaz("antminer_commands.json", cmd_data)
+
+    onay["command_id"] = cmd_id
+    github_yaz("bekleyen_onaylar.json", data)
+
+    return jsonify({
+        "ok": True,
+        "durum": "onaylandi",
+        "command_id": cmd_id,
+        "estimated_duration_sec": 290,
+    })
+
+
+@app.route("/onay/<onay_id>")
+def onay_sayfa(onay_id):
+    """WhatsApp linkinden gelen onay sayfasi."""
+    if "kullanici" not in session:
+        return redirect("/?next=/onay/" + onay_id)
+    return redirect("/?tab=cihazlarim&onay=" + onay_id)
 
 
 if __name__ == "__main__":
