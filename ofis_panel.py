@@ -294,6 +294,7 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 <div class="tab" onclick="sekme('cihazlar', this)">🖥️ Cihazlar</div>
 <div class="tab" onclick="sekme('osos', this)">🔋 OSOS</div>
 <div class="tab" onclick="sekme('inverter', this)">🌞 İnverter</div>
+<div class="tab" onclick="sekme('antminer', this)">⛏️ Antminer Saha</div>
 </div>
 <div class="content">
 
@@ -496,6 +497,63 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 </div>
 <!-- ====================== İNVERTER SEKME SONU ====================== -->
 
+<!-- ====================== ANTMINER SAHA SEKMESI ====================== -->
+<div class="tab-content" id="t-antminer">
+
+<div class="status-card" id="ant-status">
+<div class="status-row">
+<div class="status-icon" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)">⛏️</div>
+<div>
+<div class="status-title" id="ant-info-title">Yükleniyor...</div>
+<div class="status-sub" id="ant-info-sub">—</div>
+</div>
+</div>
+</div>
+
+<div class="kpi-grid">
+<div class="kpi-card highlight">
+<div class="kpi-label">⛏️ Toplam Hashrate</div>
+<div class="kpi-value" id="ant-hash" style="color:#fbbf24">—</div>
+<div class="kpi-sub" id="ant-hash-sub">TH/s</div>
+</div>
+<div class="kpi-card">
+<div class="kpi-label">⚡ Verimlilik</div>
+<div class="kpi-value" id="ant-eff" style="color:#4ade80">—</div>
+<div class="kpi-sub">% nominal</div>
+</div>
+<div class="kpi-card">
+<div class="kpi-label">✅ Çalışan</div>
+<div class="kpi-value" id="ant-online" style="color:#22c55e">—</div>
+<div class="kpi-sub" id="ant-online-sub">/ — cihaz</div>
+</div>
+<div class="kpi-card">
+<div class="kpi-label">🌡️ Sıcaklık</div>
+<div class="kpi-value" id="ant-temp" style="color:#fb923c">—</div>
+<div class="kpi-sub" id="ant-temp-sub">°C</div>
+</div>
+</div>
+
+<div class="osos-section-tabs">
+<button class="osos-sec-tab active" onclick="antSec('liste', this)">🖥️ Cihaz Listesi</button>
+<button class="osos-sec-tab" onclick="antSec('modeller', this)">📊 Modeller</button>
+<button class="osos-sec-tab" onclick="antSec('sorunlu', this)">⚠️ Sorunlular</button>
+</div>
+
+<div class="osos-sec-content active" id="ant-sec-liste">
+<div class="cihaz-grid" id="ant-grid"><div class="empty-state" style="grid-column:1/-1">Yükleniyor...</div></div>
+</div>
+
+<div class="osos-sec-content" id="ant-sec-modeller">
+<div id="ant-modeller-liste"><div class="empty-state">Yükleniyor...</div></div>
+</div>
+
+<div class="osos-sec-content" id="ant-sec-sorunlu">
+<div id="ant-sorunlu-liste"><div class="empty-state">Yükleniyor...</div></div>
+</div>
+
+</div>
+<!-- ====================== ANTMINER SEKME SONU ====================== -->
+
 <div class="guncelleme" id="guncelleme"></div>
 </div>
 
@@ -570,6 +628,7 @@ function sekme(ad, btn) {
   document.getElementById('t-' + ad).classList.add('active');
   if (ad === 'osos') ososYukle();
   if (ad === 'inverter') invYukle();
+  if (ad === 'antminer') antYukle();
 }
 
 function renkSinif(v) {
@@ -1295,6 +1354,158 @@ function kapatInvModal() { document.getElementById('inv-modal').classList.remove
 
 // ====================== İNVERTER SONU ======================
 
+// ====================== ANTMINER SAHA ======================
+let antData = null;
+
+function antYukle() {
+  document.getElementById('ant-info-title').textContent = 'Yükleniyor...';
+  fetch('/api/antminer').then(r => r.json()).then(d => {
+    if (d.hata) {
+      document.getElementById('ant-info-title').textContent = 'Veri yok';
+      document.getElementById('ant-info-sub').textContent = d.hata;
+      return;
+    }
+    antData = d;
+    antRender();
+  }).catch(e => {
+    document.getElementById('ant-info-title').textContent = 'Bağlantı hatası';
+  });
+}
+
+function antSec(sec, btn) {
+  document.querySelectorAll('#t-antminer .osos-sec-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#t-antminer .osos-sec-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('ant-sec-' + sec).classList.add('active');
+}
+
+function antRender() {
+  if (!antData) return;
+  const s = antData.summary || {};
+  const devices = antData.devices || [];
+
+  // Info kart
+  let infoTitle = 'Tek Yıldız 2 GES - Saha';
+  if (s.worker_mismatches > 0) {
+    infoTitle += ` <span style="color:#f87171; font-size:12px;">⚠️ ${s.worker_mismatches} Worker Uyuşmazlığı</span>`;
+  }
+  document.getElementById('ant-info-title').innerHTML = infoTitle;
+
+  const modelList = Object.entries(s.models || {}).map(([m,c]) => `${m}×${c}`).join(' · ');
+  const tsStr = antData.timestamp ? new Date(antData.timestamp).toLocaleTimeString('tr-TR') : '—';
+  document.getElementById('ant-info-sub').textContent = `${modelList} · Son güncel: ${tsStr}`;
+
+  // KPI'lar
+  document.getElementById('ant-hash').textContent = Math.round(s.total_hashrate_TH || 0).toLocaleString('tr-TR');
+  document.getElementById('ant-hash-sub').textContent = `TH/s (hedef: ${Math.round(s.total_target_TH || 0).toLocaleString('tr-TR')})`;
+
+  const eff = s.efficiency_pct || 0;
+  const effColor = eff >= 95 ? '#22c55e' : (eff >= 80 ? '#fbbf24' : '#ef4444');
+  document.getElementById('ant-eff').textContent = eff;
+  document.getElementById('ant-eff').style.color = effColor;
+
+  document.getElementById('ant-online').textContent = s.online || 0;
+  document.getElementById('ant-online-sub').textContent = `/ ${s.total || 0} cihaz`;
+
+  document.getElementById('ant-temp').textContent = (s.avg_temp_C || 0).toFixed(1);
+  if (s.avg_water_temp_C > 0) {
+    document.getElementById('ant-temp-sub').textContent = `°C · 💧 Su: ${s.avg_water_temp_C}°`;
+  } else {
+    document.getElementById('ant-temp-sub').textContent = '°C';
+  }
+
+  // Cihaz listesi
+  let html = '';
+  devices.forEach(d => {
+    const power = d.hashrate_TH || 0;
+    const aktif = power > 0.5;
+    let cls = '', badge = '', lbl = '';
+    if (aktif) { cls = ''; badge = 'badge-on'; lbl = 'Çalışıyor'; }
+    else if (d.sleeping) { cls = 'uyuyor'; badge = 'badge-sleep'; lbl = 'Uyuyor'; }
+    else if (d.status === 'TIMEOUT') { cls = 'kapali'; badge = 'badge-off'; lbl = 'Timeout'; }
+    else if (!d.online) { cls = 'kapali'; badge = 'badge-off'; lbl = 'Offline'; }
+    else { cls = 'uyuyor'; badge = 'badge-sleep'; lbl = '0 Hash'; }
+
+    // Worker uyusmazlik
+    let workerWarn = '';
+    if (d.actual_worker && d.expected_worker && d.actual_worker !== d.expected_worker) {
+      workerWarn = '⚠️';
+    }
+
+    const eff = d.efficiency_pct;
+    const effClr = eff >= 95 ? '#22c55e' : (eff >= 80 ? '#fbbf24' : '#ef4444');
+    const dispWorker = d.actual_worker || d.expected_worker || '—';
+    const tempStr = d.temp_max ? d.temp_max + '°' + (d.temp_water ? ' 💧' + d.temp_water + '°' : '') : '—';
+
+    html += '<div class="cihaz-card ' + cls + '">'
+      + '<div class="cihaz-row1">'
+      + '<div class="cihaz-no" style="font-size:13px">' + (d.name || ('Miner-'+d.suffix)) + ' ' + workerWarn + '</div>'
+      + '<div class="cihaz-badge ' + badge + '">' + lbl + '</div>'
+      + '</div>'
+      + '<div style="font-size:10px; color:#64748b; font-family:monospace; margin-bottom:2px;">' + d.ip + '</div>'
+      + '<div class="cihaz-hash" style="color:#fbbf24">' + (power ? power.toFixed(1) : '—') + ' <span style="font-size:11px;color:#64748b">TH/s</span></div>'
+      + '<div class="cihaz-sub">⛏️ ' + dispWorker + (eff != null ? ' · <span style="color:'+effClr+';font-weight:700">⚡'+eff+'%</span>' : '') + '</div>'
+      + '<div class="cihaz-sub">🌡 ' + tempStr + (d.elapsed_hours ? ' · ⏱ ' + d.elapsed_hours.toFixed(1) + 'h' : '') + '</div>'
+      + '</div>';
+  });
+  document.getElementById('ant-grid').innerHTML = html || '<div class="empty-state" style="grid-column:1/-1">Cihaz yok</div>';
+
+  // Modeller
+  let modelHtml = '';
+  const grouped = {};
+  devices.forEach(d => {
+    const m = d.model || '?';
+    if (!grouped[m]) grouped[m] = { count: 0, hashrate: 0, target: 0, online: 0 };
+    grouped[m].count++;
+    grouped[m].hashrate += (d.hashrate_TH || 0);
+    grouped[m].target += (d.target_hashrate_TH || 0);
+    if (d.online && !d.sleeping) grouped[m].online++;
+  });
+  Object.entries(grouped).forEach(([model, info]) => {
+    const eff = info.target > 0 ? (info.hashrate / info.target * 100).toFixed(1) : '—';
+    modelHtml += '<div class="yillik-card">'
+      + '<div class="yillik-title">⛏️ ' + model + ' × ' + info.count + ' adet</div>'
+      + '<div class="yillik-grid">'
+      + '<div class="yillik-stat"><div class="yillik-lbl">Toplam Hash</div><div class="yillik-val" style="color:#fbbf24">' + Math.round(info.hashrate).toLocaleString('tr-TR') + '</div><div class="yillik-lbl">TH/s</div></div>'
+      + '<div class="yillik-stat"><div class="yillik-lbl">Hedef</div><div class="yillik-val" style="color:#60a5fa">' + Math.round(info.target).toLocaleString('tr-TR') + '</div><div class="yillik-lbl">TH/s</div></div>'
+      + '<div class="yillik-stat"><div class="yillik-lbl">Verimlilik</div><div class="yillik-val" style="color:#4ade80">' + eff + '</div><div class="yillik-lbl">%</div></div>'
+      + '<div class="yillik-stat"><div class="yillik-lbl">Aktif</div><div class="yillik-val" style="color:#22c55e">' + info.online + '/' + info.count + '</div><div class="yillik-lbl">cihaz</div></div>'
+      + '</div></div>';
+  });
+  document.getElementById('ant-modeller-liste').innerHTML = modelHtml || '<div class="empty-state">Model yok</div>';
+
+  // Sorunlular
+  let sorunluHtml = '';
+  const problems = devices.filter(d => 
+    !d.online || d.status === 'TIMEOUT' || d.status === 'AUTH_FAIL' || 
+    (d.online && !d.sleeping && (d.hashrate_TH || 0) < 0.5) ||
+    (d.actual_worker && d.expected_worker && d.actual_worker !== d.expected_worker)
+  );
+  if (problems.length === 0) {
+    sorunluHtml = '<div style="background:rgba(34,197,94,0.1); border:2px solid #22c55e; padding:20px; border-radius:12px; text-align:center;"><div style="font-size:36px;">✅</div><div style="font-size:18px; font-weight:900; color:#22c55e; margin-top:10px;">Tüm cihazlar sağlıklı!</div></div>';
+  } else {
+    problems.forEach(d => {
+      let sebep = [];
+      if (!d.online) sebep.push('Offline');
+      if (d.status === 'TIMEOUT') sebep.push('Timeout');
+      if (d.status === 'AUTH_FAIL') sebep.push('Şifre yanlış');
+      if (d.online && !d.sleeping && (d.hashrate_TH || 0) < 0.5) sebep.push('0 Hash');
+      if (d.actual_worker && d.expected_worker && d.actual_worker !== d.expected_worker) {
+        sebep.push('Worker uyuşmazlık: ' + d.actual_worker);
+      }
+      sorunluHtml += '<div class="osos-info" style="margin-bottom:8px; border-left:4px solid #ef4444;">'
+        + '<div class="osos-info-ico" style="background:rgba(239,68,68,0.2)">⚠️</div>'
+        + '<div style="flex:1">'
+        + '<div class="osos-info-title">' + (d.name || ('Miner-'+d.suffix)) + ' (' + d.ip + ')</div>'
+        + '<div class="osos-info-sub" style="color:#f87171;">' + sebep.join(' · ') + '</div>'
+        + (d.mac ? '<div class="osos-info-sub" style="font-family:monospace; font-size:10px;">MAC: ' + d.mac + '</div>' : '')
+        + '</div></div>';
+    });
+  }
+  document.getElementById('ant-sorunlu-liste').innerHTML = sorunluHtml;
+}
+// ====================== ANTMINER SONU ======================
+
 if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
 </script>
 </body></html>"""
@@ -1497,6 +1708,17 @@ def inverter():
     data = github_oku("fusion_data.json")
     if not data:
         return jsonify({"hata": "Veri yok - Raspberry Pi henuz baglanmadi"}), 200
+    return jsonify(data)
+
+
+@app.route("/api/antminer")
+def antminer():
+    """Antminer saha verisi - sahadaki PC'den gelen antminer_panel.json okur."""
+    if "kullanici" not in session:
+        return jsonify({"hata": "yetkisiz"}), 401
+    data = github_oku("antminer_panel.json")
+    if not data:
+        return jsonify({"hata": "Veri yok - Saha PC'sinden henuz veri gelmedi"}), 200
     return jsonify(data)
 
 
