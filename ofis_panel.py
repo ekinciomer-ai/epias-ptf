@@ -13,6 +13,8 @@ KULLANICILAR = {
 }
 
 GITHUB_RAW   = "https://raw.githubusercontent.com/ekinciomer-ai/epias-ptf/main"
+GITHUB_REPO  = "ekinciomer-ai/epias-ptf"
+GH_TOKEN     = os.environ.get("GH_TOKEN", "")
 F2POOL_TOKEN = os.environ.get("F2POOL_TOKEN", "")
 F2POOL_USER  = "mehmetas"
 ZARARLI_ESIK = 2200
@@ -36,6 +38,51 @@ def github_oku(dosya):
             return json.loads(r.read())
     except:
         return None
+
+
+def github_yaz(dosya, payload):
+    """GitHub'a dosya yaz/guncelle."""
+    if not GH_TOKEN:
+        return False
+    try:
+        import base64
+        content_json = json.dumps(payload, ensure_ascii=False, indent=2)
+        content_b64 = base64.b64encode(content_json.encode("utf-8")).decode()
+        api_url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{dosya}"
+        # Mevcut SHA al
+        sha = None
+        try:
+            req = urllib.request.Request(api_url, headers={
+                "Authorization": f"Bearer {GH_TOKEN}",
+                "Accept": "application/vnd.github+json",
+            })
+            with urllib.request.urlopen(req, timeout=10) as r:
+                sha = json.loads(r.read()).get("sha")
+        except:
+            pass
+
+        body = {
+            "message": f"komut {datetime.datetime.now().strftime('%H:%M:%S')}",
+            "content": content_b64,
+        }
+        if sha:
+            body["sha"] = sha
+
+        req = urllib.request.Request(
+            api_url,
+            data=json.dumps(body).encode(),
+            headers={
+                "Authorization": f"Bearer {GH_TOKEN}",
+                "Accept": "application/vnd.github+json",
+                "Content-Type": "application/json",
+            },
+            method="PUT"
+        )
+        with urllib.request.urlopen(req, timeout=15) as r:
+            return r.status in (200, 201)
+    except Exception as e:
+        print(f"github_yaz hatasi ({dosya}): {e}")
+        return False
 
 def f2pool_post(endpoint, body):
     try:
@@ -540,6 +587,16 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 </div>
 
 <div class="osos-sec-content active" id="ant-sec-liste">
+
+<!-- Toplu kontrol butonlari -->
+<div style="background:rgba(251,191,36,0.08); border:1px solid rgba(251,191,36,0.3); border-radius:10px; padding:10px; margin-bottom:12px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+<span style="font-size:11px; color:#94a3b8; font-weight:700;">🎛️ TOPLU İŞLEM:</span>
+<button onclick="antBulk('wake')" style="background:linear-gradient(135deg,#22c55e,#16a34a); color:white; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;">▶️ Hepsini Çalıştır</button>
+<button onclick="antBulk('sleep')" style="background:linear-gradient(135deg,#f59e0b,#d97706); color:white; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;">💤 Hepsini Uyut</button>
+<div style="flex:1"></div>
+<div id="ant-cmd-status" style="font-size:11px; color:#94a3b8;"></div>
+</div>
+
 <div class="cihaz-grid" id="ant-grid"><div class="empty-state" style="grid-column:1/-1">Yükleniyor...</div></div>
 </div>
 
@@ -553,6 +610,14 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 
 </div>
 <!-- ====================== ANTMINER SEKME SONU ====================== -->
+
+<!-- Antminer Cihaz Detay Modal -->
+<div class="modal-overlay" id="ant-modal" onclick="if(event.target.id==='ant-modal')kapatAntModal()">
+<div class="modal" style="max-width:500px;">
+<button onclick="kapatAntModal()" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.05);border:none;color:#cbd5e1;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;">✕</button>
+<div id="ant-modal-icerik"></div>
+</div>
+</div>
 
 <div class="guncelleme" id="guncelleme"></div>
 </div>
@@ -1448,7 +1513,7 @@ function antRender() {
     // Lokasyon (varsa)
     const locStr = d.physical_location ? ` · 📍 ${d.physical_location}` : '';
 
-    html += '<div class="cihaz-card ' + cls + '">'
+    html += '<div class="cihaz-card ' + cls + '" onclick="antDetay(' + d.suffix + ')">'
       + '<div class="cihaz-row1">'
       + '<div class="cihaz-no" style="font-size:13px">' + (d.name || ('Miner-'+d.suffix)) + '</div>'
       + '<div class="cihaz-badge ' + badge + '">' + lbl + '</div>'
@@ -1513,6 +1578,90 @@ function antRender() {
   }
   document.getElementById('ant-sorunlu-liste').innerHTML = sorunluHtml;
 }
+
+function antDetay(suffix) {
+  if (!antData) return;
+  const d = antData.devices.find(x => x.suffix === suffix);
+  if (!d) return;
+
+  let status = 'Bilinmiyor';
+  let statusColor = '#94a3b8';
+  if (d.sleeping) { status = 'Uyuyor'; statusColor = '#fbbf24'; }
+  else if (d.online && d.hashrate_TH > 0.5) { status = 'Çalışıyor'; statusColor = '#22c55e'; }
+  else if (d.status === 'TIMEOUT') { status = 'Timeout'; statusColor = '#fb923c'; }
+  else if (!d.online) { status = 'Offline'; statusColor = '#ef4444'; }
+
+  const eff = d.efficiency_pct;
+  const effClr = eff >= 95 ? '#22c55e' : (eff >= 80 ? '#fbbf24' : '#ef4444');
+
+  let html = '<div style="font-size:20px; font-weight:900; margin-bottom:4px;">' + (d.name || ('Miner-'+d.suffix)) + '</div>';
+  html += '<div style="font-size:11px; color:#64748b; font-family:monospace; margin-bottom:14px;">' + d.ip + ' · <span style="color:' + statusColor + '; font-weight:700;">' + status + '</span></div>';
+
+  // KPI
+  html += '<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px;">';
+  html += '<div style="background:#0f172a; padding:10px; border-radius:8px;"><div style="font-size:10px; color:#64748b;">Hashrate</div><div style="font-size:22px; font-weight:900; color:#fbbf24;">' + (d.hashrate_TH ? d.hashrate_TH.toFixed(1) : '—') + '</div><div style="font-size:10px; color:#64748b;">TH/s</div></div>';
+  html += '<div style="background:#0f172a; padding:10px; border-radius:8px;"><div style="font-size:10px; color:#64748b;">Verimlilik</div><div style="font-size:22px; font-weight:900; color:' + effClr + ';">' + (eff != null ? eff + '%' : '—') + '</div><div style="font-size:10px; color:#64748b;">nominal</div></div>';
+  html += '<div style="background:#0f172a; padding:10px; border-radius:8px;"><div style="font-size:10px; color:#64748b;">Sıcaklık</div><div style="font-size:22px; font-weight:900; color:#fb923c;">' + (d.temp_max || '—') + '°</div><div style="font-size:10px; color:#64748b;">' + (d.temp_water ? '💧 ' + d.temp_water + '°' : 'PCB max') + '</div></div>';
+  html += '<div style="background:#0f172a; padding:10px; border-radius:8px;"><div style="font-size:10px; color:#64748b;">Çalışma Süresi</div><div style="font-size:22px; font-weight:900; color:#60a5fa;">' + (d.elapsed_hours ? d.elapsed_hours.toFixed(1) : '—') + '</div><div style="font-size:10px; color:#64748b;">saat</div></div>';
+  html += '</div>';
+
+  // Kalici kimlik
+  html += '<div style="background:rgba(251,191,36,0.1); padding:10px; border-radius:6px; margin-bottom:10px; border-left:3px solid #fbbf24;">';
+  html += '<div style="font-weight:900; color:#fbbf24; margin-bottom:6px;">🔑 KALICI KİMLİK</div>';
+  if (d.mac) html += '<div>📡 <b>MAC:</b> <code style="background:#0f172a;padding:2px 6px;border-radius:4px;color:#fbbf24;">' + d.mac + '</code></div>';
+  if (d.saha_worker) html += '<div>🏭 <b>Saha:</b> <code style="background:#0f172a;padding:2px 6px;border-radius:4px;color:#60a5fa;">' + d.saha_worker + '</code></div>';
+  if (d.havuz_worker || d.actual_worker) html += '<div>⛏️ <b>Havuz:</b> <code style="background:#0f172a;padding:2px 6px;border-radius:4px;color:#22c55e;">' + (d.havuz_worker || d.actual_worker) + '</code></div>';
+  if (d.model) html += '<div>🔧 <b>Model:</b> ' + d.model + '</div>';
+  html += '</div>';
+
+  // Kontrol butonlari
+  html += '<div style="display:flex; gap:8px; margin-top:14px;">';
+  html += '<button onclick="antKomut(\\'wake\\', [' + d.suffix + '], \\'' + (d.name || 'Miner-'+d.suffix) + '\\')" style="flex:1; background:linear-gradient(135deg,#22c55e,#16a34a); color:white; border:none; padding:12px; border-radius:10px; font-weight:700; cursor:pointer; font-size:13px;">▶️ Çalıştır</button>';
+  html += '<button onclick="antKomut(\\'sleep\\', [' + d.suffix + '], \\'' + (d.name || 'Miner-'+d.suffix) + '\\')" style="flex:1; background:linear-gradient(135deg,#f59e0b,#d97706); color:white; border:none; padding:12px; border-radius:10px; font-weight:700; cursor:pointer; font-size:13px;">💤 Uyut</button>';
+  html += '</div>';
+
+  document.getElementById('ant-modal-icerik').innerHTML = html;
+  document.getElementById('ant-modal').classList.add('active');
+}
+
+function kapatAntModal() { document.getElementById('ant-modal').classList.remove('active'); }
+
+function antKomut(action, targets, isim) {
+  const aksiyonAd = action === 'sleep' ? 'UYUT' : 'ÇALIŞTIR';
+  const onayMesaji = targets === 'all' 
+    ? `TÜM CİHAZLARI ${aksiyonAd} işlemini onaylıyor musun?`
+    : `${isim} cihazını ${aksiyonAd} işlemini onaylıyor musun?`;
+  
+  if (!confirm(onayMesaji)) return;
+
+  const statusEl = document.getElementById('ant-cmd-status');
+  if (statusEl) statusEl.innerHTML = '<span style="color:#fbbf24">⏳ Komut gönderiliyor...</span>';
+
+  fetch('/api/antminer/command', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ action, targets })
+  }).then(r => r.json()).then(d => {
+    if (d.hata) {
+      alert('Hata: ' + d.hata);
+      if (statusEl) statusEl.innerHTML = '<span style="color:#ef4444">❌ Hata: ' + d.hata + '</span>';
+    } else {
+      const cnt = targets === 'all' ? 'tümü' : targets.length + ' cihaz';
+      if (statusEl) statusEl.innerHTML = '<span style="color:#22c55e">✅ Komut gönderildi (' + cnt + ') - 15 sn içinde uygulanacak</span>';
+      kapatAntModal();
+      // 20 saniye sonra paneli yenile
+      setTimeout(() => { antYukle(); if (statusEl) statusEl.innerHTML = ''; }, 20000);
+    }
+  }).catch(e => {
+    alert('Bağlantı hatası: ' + e);
+    if (statusEl) statusEl.innerHTML = '';
+  });
+}
+
+function antBulk(action) {
+  antKomut(action, 'all', 'TÜM');
+}
+
 // ====================== ANTMINER SONU ======================
 
 if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
@@ -1728,7 +1877,67 @@ def antminer():
     data = github_oku("antminer_panel.json")
     if not data:
         return jsonify({"hata": "Veri yok - Saha PC'sinden henuz veri gelmedi"}), 200
+    # Sonuc bilgisini de ekle
+    results = github_oku("antminer_command_results.json")
+    if results:
+        data["command_results"] = results.get("results", [])[-10:]  # Son 10 sonuc
     return jsonify(data)
+
+
+@app.route("/api/antminer/command", methods=["POST"])
+def antminer_command():
+    """Otocoin'den sahaya komut gonder (uyut/calistir)."""
+    if "kullanici" not in session:
+        return jsonify({"hata": "yetkisiz"}), 401
+    if KULLANICILAR.get(session["kullanici"], {}).get("rol") != "yonetici":
+        return jsonify({"hata": "Yetki yok (sadece yoneticiler komut verebilir)"}), 403
+
+    data = request.get_json()
+    action = data.get("action")  # "sleep" | "wake"
+    targets = data.get("targets")  # IP suffix listesi veya "all"
+
+    if action not in ("sleep", "wake"):
+        return jsonify({"hata": "action sleep veya wake olmali"}), 400
+
+    if not targets or (targets != "all" and not isinstance(targets, list)):
+        return jsonify({"hata": "targets bos veya gecersiz"}), 400
+
+    # Mevcut komut dosyasini oku
+    existing = github_oku("antminer_commands.json") or {"commands": []}
+    commands = existing.get("commands", [])
+
+    # Yeni komut ekle
+    import uuid
+    cmd_id = str(uuid.uuid4())[:8]
+    new_cmd = {
+        "id": cmd_id,
+        "action": action,
+        "targets": targets,
+        "issued_at": datetime.datetime.now().isoformat(),
+        "issued_by": session["kullanici"],
+    }
+
+    # Son 50 komutu tut (eskileri unutalim)
+    commands.append(new_cmd)
+    commands = commands[-50:]
+
+    payload = {
+        "updated_at": datetime.datetime.now().isoformat(),
+        "commands": commands,
+    }
+
+    ok = github_yaz("antminer_commands.json", payload)
+    if not ok:
+        return jsonify({"hata": "GitHub'a yazilamadi"}), 500
+
+    return jsonify({
+        "ok": True,
+        "command_id": cmd_id,
+        "action": action,
+        "targets": targets if targets == "all" else len(targets),
+        "issued_at": new_cmd["issued_at"],
+        "message": f"Komut gonderildi. 15 sn icinde sahaya ulasacak.",
+    })
 
 
 if __name__ == "__main__":
