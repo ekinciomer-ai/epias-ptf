@@ -339,6 +339,7 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 <div class="tab" onclick="sekme('epias', this)">⚡ EPİAŞ</div>
 <div class="tab" onclick="sekme('f2pool', this)">₿ F2Pool</div>
 <div class="tab" onclick="sekme('cihazlar', this)">🖥️ Cihazlar</div>
+<div class="tab" onclick="sekme('cihazlarim', this)" style="background:linear-gradient(135deg,rgba(251,191,36,0.15),rgba(34,197,94,0.15));border-color:rgba(251,191,36,0.4);">💎 Cihazlarım</div>
 <div class="tab" onclick="sekme('osos', this)">🔋 OSOS</div>
 <div class="tab" onclick="sekme('inverter', this)">🌞 İnverter</div>
 <div class="tab" onclick="sekme('antminer', this)">⛏️ Antminer Saha</div>
@@ -580,6 +581,30 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 </div>
 </div>
 
+<!-- Kazanç Kartları -->
+<div class="kpi-grid" id="ant-kazanc-grid" style="display:none">
+<div class="kpi-card" style="border-left:3px solid #fbbf24">
+<div class="kpi-label">💰 Bugün</div>
+<div class="kpi-value" id="ant-earn-today-try" style="color:#fbbf24;font-size:18px">—</div>
+<div class="kpi-sub" id="ant-earn-today-sub">— USD · — BTC</div>
+</div>
+<div class="kpi-card" style="border-left:3px solid #94a3b8">
+<div class="kpi-label">📅 Dün</div>
+<div class="kpi-value" id="ant-earn-yesterday-try" style="color:#94a3b8;font-size:18px">—</div>
+<div class="kpi-sub" id="ant-earn-yesterday-sub">— USD · — BTC</div>
+</div>
+<div class="kpi-card" style="border-left:3px solid #60a5fa">
+<div class="kpi-label">📊 Son 7 Gün</div>
+<div class="kpi-value" id="ant-earn-7d-try" style="color:#60a5fa;font-size:18px">—</div>
+<div class="kpi-sub" id="ant-earn-7d-sub">— USD · — BTC</div>
+</div>
+<div class="kpi-card highlight" style="border-left:3px solid #22c55e">
+<div class="kpi-label">🏆 Toplam Kazanç</div>
+<div class="kpi-value" id="ant-earn-total-try" style="color:#22c55e;font-size:18px">—</div>
+<div class="kpi-sub" id="ant-earn-total-sub">— USD · — BTC</div>
+</div>
+</div>
+
 <div class="osos-section-tabs">
 <button class="osos-sec-tab active" onclick="antSec('liste', this)">🖥️ Cihaz Listesi</button>
 <button class="osos-sec-tab" onclick="antSec('modeller', this)">📊 Modeller</button>
@@ -611,11 +636,120 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 </div>
 <!-- ====================== ANTMINER SEKME SONU ====================== -->
 
+
+<!-- ====================== CIHAZLARIM SEKMESI ====================== -->
+<div class="tab-content" id="t-cihazlarim">
+
+<!-- HEADER -->
+<div style="background:linear-gradient(135deg, rgba(251,191,36,0.12), rgba(34,197,94,0.08)); border:1px solid rgba(251,191,36,0.25); border-radius:16px; padding:18px; margin-bottom:14px; position:relative; overflow:hidden;">
+  <div style="position:absolute; top:-30px; right:-30px; width:140px; height:140px; background:radial-gradient(circle, rgba(251,191,36,0.15), transparent 70%); border-radius:50%; pointer-events:none;"></div>
+  <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+    <div>
+      <div style="font-size:22px; font-weight:900; background:linear-gradient(90deg,#fbbf24,#22c55e); -webkit-background-clip:text; background-clip:text; color:transparent;">💎 Cihazlarım</div>
+      <div id="cmm-sub" style="font-size:11px; color:#94a3b8; margin-top:4px;">Saha & Havuz tek ekranda</div>
+    </div>
+    <div id="cmm-stat" style="font-size:11px; color:#94a3b8;">—</div>
+  </div>
+</div>
+
+<!-- ANA KPI -->
+<div class="kpi-grid" style="margin-bottom:14px;">
+  <div class="kpi-card highlight" style="background:linear-gradient(135deg, rgba(251,191,36,0.08), rgba(0,0,0,0)); border-left:3px solid #fbbf24;">
+    <div class="kpi-label">⛏️ Toplam Hashrate</div>
+    <div class="kpi-value" id="cmm-hash" style="color:#fbbf24">—</div>
+    <div class="kpi-sub" id="cmm-hash-sub">TH/s</div>
+  </div>
+  <div class="kpi-card" style="background:linear-gradient(135deg, rgba(34,197,94,0.08), rgba(0,0,0,0)); border-left:3px solid #22c55e;">
+    <div class="kpi-label">💰 Toplam Kazanç</div>
+    <div class="kpi-value" id="cmm-total-earn" style="color:#22c55e;font-size:22px">—</div>
+    <div class="kpi-sub" id="cmm-total-earn-sub">—</div>
+  </div>
+  <div class="kpi-card" style="background:linear-gradient(135deg, rgba(96,165,250,0.08), rgba(0,0,0,0)); border-left:3px solid #60a5fa;">
+    <div class="kpi-label">✅ Çalışan Cihaz</div>
+    <div class="kpi-value" id="cmm-online" style="color:#60a5fa">—</div>
+    <div class="kpi-sub" id="cmm-online-sub">/ — cihaz</div>
+  </div>
+  <div class="kpi-card" style="background:linear-gradient(135deg, rgba(168,85,247,0.08), rgba(0,0,0,0)); border-left:3px solid #a855f7;">
+    <div class="kpi-label">⚡ Verimlilik</div>
+    <div class="kpi-value" id="cmm-eff" style="color:#a855f7">—</div>
+    <div class="kpi-sub">% nominal</div>
+  </div>
+</div>
+
+<!-- KAZANC OZET -->
+<div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:14px; margin-bottom:14px;">
+  <div style="font-size:13px; font-weight:900; color:#fbbf24; margin-bottom:10px;">💰 KAZANÇ ÖZETİ</div>
+  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px;">
+    <div style="background:#0f172a; padding:10px; border-radius:8px; border-left:3px solid #fbbf24;">
+      <div style="font-size:10px; color:#94a3b8;">Bugün</div>
+      <div id="cmm-earn-today" style="font-size:16px; font-weight:900; color:#fbbf24;">—</div>
+      <div id="cmm-earn-today-sub" style="font-size:9px; color:#64748b;">—</div>
+    </div>
+    <div style="background:#0f172a; padding:10px; border-radius:8px; border-left:3px solid #94a3b8;">
+      <div style="font-size:10px; color:#94a3b8;">Dün</div>
+      <div id="cmm-earn-yesterday" style="font-size:16px; font-weight:900; color:#94a3b8;">—</div>
+      <div id="cmm-earn-yesterday-sub" style="font-size:9px; color:#64748b;">—</div>
+    </div>
+    <div style="background:#0f172a; padding:10px; border-radius:8px; border-left:3px solid #60a5fa;">
+      <div style="font-size:10px; color:#94a3b8;">7 Gün</div>
+      <div id="cmm-earn-7d" style="font-size:16px; font-weight:900; color:#60a5fa;">—</div>
+      <div id="cmm-earn-7d-sub" style="font-size:9px; color:#64748b;">—</div>
+    </div>
+    <div style="background:#0f172a; padding:10px; border-radius:8px; border-left:3px solid #22c55e;">
+      <div style="font-size:10px; color:#94a3b8;">Toplam</div>
+      <div id="cmm-earn-total" style="font-size:16px; font-weight:900; color:#22c55e;">—</div>
+      <div id="cmm-earn-total-sub" style="font-size:9px; color:#64748b;">—</div>
+    </div>
+  </div>
+</div>
+
+<!-- TOPLU KONTROL -->
+<div style="background:rgba(251,191,36,0.04); border:1px solid rgba(251,191,36,0.2); border-radius:12px; padding:10px; margin-bottom:14px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+  <span style="font-size:11px; color:#94a3b8; font-weight:700;">🎛️ TOPLU İŞLEM:</span>
+  <button onclick="cmmBulk('wake')" style="background:linear-gradient(135deg,#22c55e,#16a34a); color:white; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px; transition:transform 0.1s;">▶️ Hepsini Çalıştır</button>
+  <button onclick="cmmBulk('sleep')" style="background:linear-gradient(135deg,#f59e0b,#d97706); color:white; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px; transition:transform 0.1s;">💤 Hepsini Uyut</button>
+  <div style="flex:1"></div>
+  <div id="cmm-cmd-status" style="font-size:11px; color:#94a3b8;"></div>
+</div>
+
+<!-- AYLIK URETIM GRAFIK -->
+<div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:14px; margin-bottom:14px;">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+    <div style="font-size:13px; font-weight:900; color:#60a5fa;">📈 AYLIK ÜRETİM (Son 12 Ay)</div>
+    <div id="cmm-monthly-info" style="font-size:10px; color:#64748b;">—</div>
+  </div>
+  <div id="cmm-monthly-chart" style="display:flex; align-items:flex-end; gap:4px; height:140px; padding:6px 0;"></div>
+</div>
+
+<!-- CIHAZ GRID -->
+<div style="font-size:13px; font-weight:900; color:#fbbf24; margin-bottom:8px;">⛏️ CİHAZLAR</div>
+<div id="cmm-grid" class="cihaz-grid" style="margin-bottom:14px;"><div class="empty-state" style="grid-column:1/-1">Yükleniyor...</div></div>
+
+<!-- GUNLUK URETIM LISTE -->
+<div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:14px;">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+    <div style="font-size:13px; font-weight:900; color:#22c55e;">📅 GÜNLÜK ÜRETİM (Son 30 Gün)</div>
+    <div id="cmm-daily-info" style="font-size:10px; color:#64748b;">—</div>
+  </div>
+  <div id="cmm-daily-list" style="max-height:300px; overflow-y:auto;"></div>
+</div>
+
+</div>
+<!-- ====================== CIHAZLARIM SEKMESI SONU ====================== -->
+
 <!-- Antminer Cihaz Detay Modal -->
 <div class="modal-overlay" id="ant-modal" onclick="if(event.target.id==='ant-modal')kapatAntModal()">
 <div class="modal" style="max-width:500px;">
 <button onclick="kapatAntModal()" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.05);border:none;color:#cbd5e1;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;">✕</button>
 <div id="ant-modal-icerik"></div>
+</div>
+</div>
+
+<!-- Cihazlarim Premium Modal -->
+<div class="modal-overlay" id="cmm-modal" onclick="if(event.target.id==='cmm-modal')kapatCmmModal()">
+<div class="modal" style="max-width:620px; max-height:90vh; overflow-y:auto; background:linear-gradient(180deg, #0a0f1f, #050917); border:1px solid rgba(251,191,36,0.2);">
+<button onclick="kapatCmmModal()" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.05);border:none;color:#cbd5e1;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:16px;z-index:10;">✕</button>
+<div id="cmm-modal-icerik"></div>
 </div>
 </div>
 
@@ -694,6 +828,7 @@ function sekme(ad, btn) {
   if (ad === 'osos') ososYukle();
   if (ad === 'inverter') invYukle();
   if (ad === 'antminer') antYukle();
+  if (ad === 'cihazlarim') antYukle();  // Ayni veri kullaniliyor
 }
 
 function renkSinif(v) {
@@ -1432,6 +1567,7 @@ function antYukle() {
     }
     antData = d;
     antRender();
+    cmmRender();  // Cihazlarim sekmesini de guncelle
   }).catch(e => {
     document.getElementById('ant-info-title').textContent = 'Bağlantı hatası';
   });
@@ -1482,6 +1618,23 @@ function antRender() {
     document.getElementById('ant-temp-sub').textContent = '°C';
   }
 
+  // Kazanc kartlari
+  if (s.earnings) {
+    document.getElementById('ant-kazanc-grid').style.display = 'grid';
+    const e = s.earnings;
+    const fmtTRY = (v) => v ? v.toLocaleString('tr-TR', {maximumFractionDigits:0}) + ' ₺' : '— ₺';
+    const fmtSub = (usd, btc) => (usd ? '$' + usd.toLocaleString('tr-TR', {maximumFractionDigits:0}) : '$—') + ' · ' + (btc ? btc.toFixed(6) + ' BTC' : '— BTC');
+
+    document.getElementById('ant-earn-today-try').textContent = fmtTRY(e.today_try);
+    document.getElementById('ant-earn-today-sub').textContent = fmtSub(e.today_usd, e.today_btc);
+    document.getElementById('ant-earn-yesterday-try').textContent = fmtTRY(e.yesterday_try);
+    document.getElementById('ant-earn-yesterday-sub').textContent = fmtSub(e.yesterday_usd, e.yesterday_btc);
+    document.getElementById('ant-earn-7d-try').textContent = fmtTRY(e.last7days_try);
+    document.getElementById('ant-earn-7d-sub').textContent = fmtSub(e.last7days_usd, e.last7days_btc);
+    document.getElementById('ant-earn-total-try').textContent = fmtTRY(e.total_try);
+    document.getElementById('ant-earn-total-sub').textContent = fmtSub(e.total_usd, e.total_btc);
+  }
+
   // Cihaz listesi
   let html = '';
   devices.forEach(d => {
@@ -1524,6 +1677,8 @@ function antRender() {
       + '<div class="cihaz-hash" style="color:#fbbf24">' + (power ? power.toFixed(1) : '—') + ' <span style="font-size:11px;color:#64748b">TH/s</span>' + diffBadge + '</div>'
       + '<div class="cihaz-sub">' + (eff != null ? '<span style="color:'+effClr+';font-weight:700">⚡'+eff+'%</span>' : '') + '</div>'
       + '<div class="cihaz-sub">🌡 ' + tempStr + (d.elapsed_hours ? ' · ⏱ ' + d.elapsed_hours.toFixed(1) + 'h' : '') + '</div>'
+      + (d.earn_today_try ? '<div class="cihaz-sub" style="color:#4ade80;font-weight:700;margin-top:4px;border-top:1px solid rgba(255,255,255,0.05);padding-top:4px;">💰 ' + Math.round(d.earn_today_try).toLocaleString('tr-TR') + ' ₺/gün</div>' : '')
+      + ((d.health_issues && d.health_issues.length > 0) ? '<div class="cihaz-sub" style="color:#f87171;font-weight:700;margin-top:2px;">⚠️ ' + d.health_issues.length + ' sorun</div>' : '')
       + '</div>';
   });
   document.getElementById('ant-grid').innerHTML = html || '<div class="empty-state" style="grid-column:1/-1">Cihaz yok</div>';
@@ -1556,24 +1711,34 @@ function antRender() {
   let sorunluHtml = '';
   const problems = devices.filter(d => 
     !d.online || d.status === 'TIMEOUT' || d.status === 'AUTH_FAIL' || 
-    (d.online && !d.sleeping && (d.hashrate_TH || 0) < 0.5)
+    (d.online && !d.sleeping && (d.hashrate_TH || 0) < 0.5) ||
+    (d.health_issues && d.health_issues.length > 0)
   );
   if (problems.length === 0) {
     sorunluHtml = '<div style="background:rgba(34,197,94,0.1); border:2px solid #22c55e; padding:20px; border-radius:12px; text-align:center;"><div style="font-size:36px;">✅</div><div style="font-size:18px; font-weight:900; color:#22c55e; margin-top:10px;">Tüm cihazlar sağlıklı!</div></div>';
   } else {
     problems.forEach(d => {
-      let sebep = [];
-      if (!d.online) sebep.push('Offline');
-      if (d.status === 'TIMEOUT') sebep.push('Timeout');
-      if (d.status === 'AUTH_FAIL') sebep.push('Şifre yanlış');
-      if (d.online && !d.sleeping && (d.hashrate_TH || 0) < 0.5) sebep.push('0 Hash');
-      sorunluHtml += '<div class="osos-info" style="margin-bottom:8px; border-left:4px solid #ef4444;">'
-        + '<div class="osos-info-ico" style="background:rgba(239,68,68,0.2)">⚠️</div>'
-        + '<div style="flex:1">'
-        + '<div class="osos-info-title">' + (d.name || ('Miner-'+d.suffix)) + ' (' + d.ip + ')</div>'
-        + '<div class="osos-info-sub" style="color:#f87171;">' + sebep.join(' · ') + '</div>'
-        + (d.mac ? '<div class="osos-info-sub" style="font-family:monospace; font-size:10px;">MAC: ' + d.mac + '</div>' : '')
-        + '</div></div>';
+      const issueCount = (d.health_issues || []).length;
+      const highSev = (d.health_issues || []).filter(i => i.severity === 'high').length;
+      const issueColor = highSev > 0 ? '#ef4444' : '#fbbf24';
+      
+      let html2 = '<div style="background:rgba(255,255,255,0.03); padding:12px; border-radius:10px; margin-bottom:8px; border-left:4px solid ' + issueColor + '; cursor:pointer;" onclick="antDetay(' + d.suffix + ')">';
+      html2 += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">';
+      html2 += '<div style="font-weight:900; font-size:13px;">' + (d.name || ('Miner-'+d.suffix)) + ' <span style="color:#64748b; font-size:11px; font-family:monospace;">(' + d.ip + ')</span></div>';
+      html2 += '<div style="font-size:10px; color:' + issueColor + '; font-weight:700;">' + issueCount + ' sorun</div>';
+      html2 += '</div>';
+      
+      (d.health_issues || []).forEach(issue => {
+        const sevColor = issue.severity === 'high' ? '#ef4444' : (issue.severity === 'medium' ? '#fbbf24' : '#94a3b8');
+        html2 += '<div style="background:#0f172a; padding:6px 8px; border-radius:4px; margin-top:4px; border-left:2px solid ' + sevColor + ';">';
+        html2 += '<div style="font-size:11px; font-weight:700; color:' + sevColor + ';">' + issue.icon + ' ' + issue.title + '</div>';
+        html2 += '<div style="font-size:10px; color:#94a3b8;">' + issue.reason + '</div>';
+        html2 += '</div>';
+      });
+      
+      html2 += '<div style="font-size:10px; color:#64748b; margin-top:6px; text-align:center;">Detay ve çözüm önerileri için tıkla →</div>';
+      html2 += '</div>';
+      sorunluHtml += html2;
     });
   }
   document.getElementById('ant-sorunlu-liste').innerHTML = sorunluHtml;
@@ -1613,6 +1778,43 @@ function antDetay(suffix) {
   if (d.havuz_worker || d.actual_worker) html += '<div>⛏️ <b>Havuz:</b> <code style="background:#0f172a;padding:2px 6px;border-radius:4px;color:#22c55e;">' + (d.havuz_worker || d.actual_worker) + '</code></div>';
   if (d.model) html += '<div>🔧 <b>Model:</b> ' + d.model + '</div>';
   html += '</div>';
+
+  // Kazanc (cihaz icin)
+  if (d.earn_today_try != null || d.earn_today_btc != null) {
+    const fmtRow = (lbl, btc, usd, tryV, color) => 
+      '<div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05);">' +
+      '<span style="font-size:11px; color:#94a3b8;">' + lbl + '</span>' +
+      '<span style="font-weight:700; color:' + color + ';">' + 
+      (tryV ? Math.round(tryV).toLocaleString('tr-TR') + ' ₺' : '—') +
+      ' <span style="font-size:10px; color:#64748b;">($' + (usd ? Math.round(usd) : '—') + ' · ' + (btc ? btc.toFixed(6) : '—') + ')</span>' +
+      '</span></div>';
+    html += '<div style="background:rgba(34,197,94,0.08); padding:10px; border-radius:6px; margin-bottom:10px; border-left:3px solid #22c55e;">';
+    html += '<div style="font-weight:900; color:#4ade80; margin-bottom:6px;">💰 KAZANÇ</div>';
+    html += fmtRow('Bugün', d.earn_today_btc, d.earn_today_usd, d.earn_today_try, '#fbbf24');
+    html += fmtRow('Dün', d.earn_yesterday_btc, d.earn_yesterday_usd, d.earn_yesterday_try, '#94a3b8');
+    html += fmtRow('Son 7 Gün', d.earn_7d_btc, d.earn_7d_usd, d.earn_7d_try, '#60a5fa');
+    html += fmtRow('Toplam', d.earn_total_btc, d.earn_total_usd, d.earn_total_try, '#22c55e');
+    html += '</div>';
+  }
+
+  // Ariza ve cozumler
+  if (d.health_issues && d.health_issues.length > 0) {
+    html += '<div style="background:rgba(239,68,68,0.08); padding:10px; border-radius:6px; margin-bottom:10px; border-left:3px solid #ef4444;">';
+    html += '<div style="font-weight:900; color:#f87171; margin-bottom:8px;">⚠️ TESPİT EDİLEN SORUNLAR (' + d.health_issues.length + ')</div>';
+    d.health_issues.forEach(issue => {
+      const sevColor = issue.severity === 'high' ? '#ef4444' : (issue.severity === 'medium' ? '#fbbf24' : '#94a3b8');
+      html += '<div style="background:#0f172a; padding:8px; border-radius:6px; margin-bottom:6px; border-left:3px solid ' + sevColor + ';">';
+      html += '<div style="font-weight:700; color:' + sevColor + '; font-size:12px;">' + issue.icon + ' ' + issue.title + '</div>';
+      html += '<div style="font-size:11px; color:#94a3b8; margin:3px 0;">' + issue.reason + '</div>';
+      html += '<div style="font-size:10px; color:#cbd5e1; margin-top:4px;"><b>Çözüm:</b></div>';
+      html += '<ul style="margin:2px 0 0 16px; padding:0; font-size:10px; color:#94a3b8;">';
+      issue.solutions.forEach(s => { html += '<li style="margin:2px 0;">' + s + '</li>'; });
+      html += '</ul></div>';
+    });
+    html += '</div>';
+  } else if (d.online && !d.sleeping) {
+    html += '<div style="background:rgba(34,197,94,0.08); padding:8px; border-radius:6px; margin-bottom:10px; text-align:center; color:#4ade80; font-size:12px;">✅ Cihazda herhangi bir sorun tespit edilmedi</div>';
+  }
 
   // Kontrol butonlari
   html += '<div style="display:flex; gap:8px; margin-top:14px;">';
@@ -1661,6 +1863,359 @@ function antKomut(action, targets, isim) {
 function antBulk(action) {
   antKomut(action, 'all', 'TÜM');
 }
+
+
+// ======================== CIHAZLARIM SEKMESI ========================
+
+function cmmRender() {
+  if (!antData) return;
+  const s = antData.summary || {};
+  const devices = antData.devices || [];
+  const earnings = s.earnings || {};
+  
+  // Header sub
+  const ts = antData.timestamp ? new Date(antData.timestamp).toLocaleTimeString('tr-TR') : '—';
+  const modelList = Object.entries(s.models || {}).map(([m,c]) => m+'×'+c).join(' · ');
+  document.getElementById('cmm-sub').textContent = modelList + ' · Son güncel: ' + ts;
+  
+  // Stat
+  let stat = (s.total || 0) + ' cihaz';
+  if (s.f2pool && s.f2pool.enabled) {
+    stat += ' · F2Pool ' + (s.f2pool.matched_devices || 0) + '/' + (s.total || 0) + ' eşleşti';
+  }
+  document.getElementById('cmm-stat').textContent = stat;
+  
+  // KPI
+  document.getElementById('cmm-hash').textContent = Math.round(s.total_hashrate_TH || 0).toLocaleString('tr-TR');
+  document.getElementById('cmm-hash-sub').textContent = 'TH/s (hedef: ' + Math.round(s.total_target_TH || 0).toLocaleString('tr-TR') + ')';
+  
+  document.getElementById('cmm-online').textContent = s.online || 0;
+  document.getElementById('cmm-online-sub').textContent = '/ ' + (s.total || 0) + ' cihaz';
+  
+  const eff = s.efficiency_pct || 0;
+  document.getElementById('cmm-eff').textContent = eff;
+  document.getElementById('cmm-eff').style.color = eff >= 95 ? '#22c55e' : (eff >= 80 ? '#fbbf24' : '#ef4444');
+  
+  // Kazanc
+  const fmtTRY = (v) => v ? Math.round(v).toLocaleString('tr-TR') + ' ₺' : '— ₺';
+  const fmtBoth = (usd, btc) => '$' + (usd ? Math.round(usd).toLocaleString('tr-TR') : '—') + ' · ' + (btc ? btc.toFixed(6) + ' BTC' : '— BTC');
+  
+  document.getElementById('cmm-total-earn').textContent = fmtTRY(earnings.total_try);
+  document.getElementById('cmm-total-earn-sub').textContent = fmtBoth(earnings.total_usd, earnings.total_btc);
+  document.getElementById('cmm-earn-today').textContent = fmtTRY(earnings.today_try);
+  document.getElementById('cmm-earn-today-sub').textContent = fmtBoth(earnings.today_usd, earnings.today_btc);
+  document.getElementById('cmm-earn-yesterday').textContent = fmtTRY(earnings.yesterday_try);
+  document.getElementById('cmm-earn-yesterday-sub').textContent = fmtBoth(earnings.yesterday_usd, earnings.yesterday_btc);
+  document.getElementById('cmm-earn-7d').textContent = fmtTRY(earnings.last7days_try);
+  document.getElementById('cmm-earn-7d-sub').textContent = fmtBoth(earnings.last7days_usd, earnings.last7days_btc);
+  document.getElementById('cmm-earn-total').textContent = fmtTRY(earnings.total_try);
+  document.getElementById('cmm-earn-total-sub').textContent = fmtBoth(earnings.total_usd, earnings.total_btc);
+  
+  // Aylik grafik
+  cmmDrawMonthlyChart(antData.monthly_history || []);
+  
+  // Cihaz grid (premium)
+  cmmRenderDevices(devices, earnings);
+  
+  // Gunluk liste
+  cmmRenderDailyList(antData.daily_history || [], earnings);
+}
+
+
+function cmmDrawMonthlyChart(monthly) {
+  const container = document.getElementById('cmm-monthly-chart');
+  const infoEl = document.getElementById('cmm-monthly-info');
+  
+  if (!monthly || monthly.length === 0) {
+    container.innerHTML = '<div style="width:100%; text-align:center; color:#64748b; font-size:11px; padding:30px 0;">Henüz veri yok — birkaç gün veri biriktikten sonra grafiğin görüneecek</div>';
+    infoEl.textContent = '';
+    return;
+  }
+  
+  const maxHash = Math.max(...monthly.map(m => m.avg_hash_TH));
+  const maxEarn = Math.max(...monthly.map(m => m.earn_btc));
+  let totalBtc = monthly.reduce((s,m) => s + m.earn_btc, 0);
+  infoEl.textContent = 'Toplam: ' + totalBtc.toFixed(6) + ' BTC';
+  
+  // Eskiden yeniye sirala
+  const sorted = [...monthly].reverse();
+  let html = '';
+  sorted.forEach(m => {
+    const heightPct = maxHash > 0 ? (m.avg_hash_TH / maxHash) * 100 : 0;
+    const earnPct = maxEarn > 0 ? (m.earn_btc / maxEarn) * 100 : 0;
+    const [year, monthNum] = m.month.split('-');
+    const monthName = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'][parseInt(monthNum)-1] || monthNum;
+    html += '<div style="flex:1; min-width:30px; display:flex; flex-direction:column; align-items:center; gap:3px;">';
+    html += '<div style="font-size:9px; color:#fbbf24; font-weight:700;">' + (m.avg_hash_TH > 0 ? Math.round(m.avg_hash_TH) : '') + '</div>';
+    html += '<div style="width:100%; height:90px; display:flex; flex-direction:column; justify-content:flex-end; gap:2px;">';
+    html += '<div style="width:100%; height:' + heightPct + '%; background:linear-gradient(180deg, rgba(251,191,36,0.9), rgba(251,191,36,0.3)); border-radius:3px 3px 0 0; min-height:2px;" title="Hash: ' + m.avg_hash_TH + ' TH/s"></div>';
+    html += '</div>';
+    html += '<div style="font-size:10px; color:#94a3b8; font-weight:700;">' + monthName + '</div>';
+    html += '<div style="font-size:8px; color:#64748b;">' + year.slice(2) + '</div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+
+function cmmRenderDevices(devices, earnings) {
+  let html = '';
+  devices.forEach(d => {
+    const power = d.hashrate_TH || 0;
+    const aktif = power > 0.5;
+    let cls = 'cihaz-card', badge = 'badge-on', lbl = 'Çalışıyor', borderColor = '#22c55e';
+    if (aktif) { borderColor = '#22c55e'; }
+    else if (d.sleeping) { cls += ' uyuyor'; badge = 'badge-sleep'; lbl = 'Uyuyor'; borderColor = '#fbbf24'; }
+    else if (d.status === 'TIMEOUT') { cls += ' kapali'; badge = 'badge-off'; lbl = 'Timeout'; borderColor = '#fb923c'; }
+    else if (!d.online) { cls += ' kapali'; badge = 'badge-off'; lbl = 'Offline'; borderColor = '#ef4444'; }
+    else { cls += ' uyuyor'; badge = 'badge-sleep'; lbl = '0 Hash'; borderColor = '#94a3b8'; }
+    
+    // Sorun rozetleri
+    const issueCount = (d.health_issues || []).length;
+    const highSev = (d.health_issues || []).filter(i => i.severity === 'high').length;
+    
+    const sahaW = d.saha_worker || '—';
+    const havuzW = d.havuz_worker || d.actual_worker || '—';
+    const eff = d.efficiency_pct;
+    const effClr = eff >= 95 ? '#22c55e' : (eff >= 80 ? '#fbbf24' : '#ef4444');
+    
+    html += '<div class="' + cls + '" style="cursor:pointer; border-left:3px solid ' + borderColor + '; background:linear-gradient(135deg, rgba(255,255,255,0.02), transparent);" onclick="cmmDetay(' + d.suffix + ')">';
+    
+    // Üst satır
+    html += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">';
+    html += '<div style="font-size:13px; font-weight:900;">' + (d.name || ('Miner-'+d.suffix)) + '</div>';
+    html += '<div class="cihaz-badge ' + badge + '">' + lbl + '</div>';
+    html += '</div>';
+    
+    // IP
+    html += '<div style="font-size:10px; color:#64748b; font-family:monospace; margin-bottom:4px;">' + d.ip + '</div>';
+    
+    // SAHA & HAVUZ
+    html += '<div style="display:flex; gap:6px; margin-bottom:6px;">';
+    html += '<div style="flex:1; background:rgba(96,165,250,0.08); border-left:2px solid #60a5fa; padding:4px 6px; border-radius:4px;">';
+    html += '<div style="font-size:8px; color:#94a3b8;">🏭 SAHA</div>';
+    html += '<div style="font-size:10px; color:#60a5fa; font-family:monospace; font-weight:700;">' + sahaW + '</div>';
+    html += '</div>';
+    html += '<div style="flex:1; background:rgba(34,197,94,0.08); border-left:2px solid #22c55e; padding:4px 6px; border-radius:4px;">';
+    html += '<div style="font-size:8px; color:#94a3b8;">⛏️ HAVUZ</div>';
+    html += '<div style="font-size:10px; color:#22c55e; font-family:monospace; font-weight:700;">' + havuzW + '</div>';
+    html += '</div>';
+    html += '</div>';
+    
+    // Hashrate buyuk
+    html += '<div style="font-size:24px; font-weight:900; color:#fbbf24; margin-bottom:2px;">' + (power ? power.toFixed(1) : '—') + ' <span style="font-size:11px; color:#64748b;">TH/s</span></div>';
+    
+    // Verim + sicaklik
+    const tempStr = d.temp_max ? d.temp_max + '°' + (d.temp_water ? ' 💧' + d.temp_water + '°' : '') : '—';
+    html += '<div style="font-size:10px; color:#94a3b8; display:flex; justify-content:space-between; margin-bottom:4px;">';
+    html += '<span>' + (eff != null ? '<span style="color:'+effClr+';font-weight:700">⚡'+eff+'%</span>' : '') + '</span>';
+    html += '<span>🌡 ' + tempStr + '</span>';
+    html += '</div>';
+    
+    // Kazanc + Sorun
+    if (d.earn_today_try) {
+      html += '<div style="margin-top:6px; padding-top:6px; border-top:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center;">';
+      html += '<div style="font-size:11px; color:#4ade80; font-weight:700;">💰 ' + Math.round(d.earn_today_try).toLocaleString('tr-TR') + ' ₺/gün</div>';
+      if (issueCount > 0) {
+        const color = highSev > 0 ? '#ef4444' : '#fbbf24';
+        html += '<div style="font-size:10px; color:' + color + '; font-weight:700;">⚠️ ' + issueCount + '</div>';
+      }
+      html += '</div>';
+    } else if (issueCount > 0) {
+      const color = highSev > 0 ? '#ef4444' : '#fbbf24';
+      html += '<div style="margin-top:6px; padding-top:6px; border-top:1px solid rgba(255,255,255,0.05); font-size:10px; color:' + color + '; font-weight:700;">⚠️ ' + issueCount + ' sorun</div>';
+    }
+    
+    html += '</div>';
+  });
+  document.getElementById('cmm-grid').innerHTML = html || '<div class="empty-state" style="grid-column:1/-1">Cihaz yok</div>';
+}
+
+
+function cmmRenderDailyList(daily, earnings) {
+  const infoEl = document.getElementById('cmm-daily-info');
+  const listEl = document.getElementById('cmm-daily-list');
+  
+  if (!daily || daily.length === 0) {
+    listEl.innerHTML = '<div class="empty-state">Henüz günlük veri yok</div>';
+    infoEl.textContent = '';
+    return;
+  }
+  
+  const usd_try = earnings.usd_try || 0;
+  const btc_usd = earnings.btc_price_usd || 0;
+  
+  let totalBtc = daily.reduce((s,d) => s + (d.total_earn_btc || 0), 0);
+  infoEl.textContent = '30 gün: ' + totalBtc.toFixed(6) + ' BTC';
+  
+  let html = '<div style="display:grid; grid-template-columns:1fr; gap:4px;">';
+  // En yeni en üstte
+  const sorted = [...daily].reverse();
+  sorted.forEach(d => {
+    const dt = new Date(d.date);
+    const dateStr = dt.toLocaleDateString('tr-TR', {day:'2-digit', month:'short', weekday:'short'});
+    const earnTry = d.total_earn_btc * btc_usd * usd_try;
+    html += '<div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px; padding:8px 10px; background:rgba(255,255,255,0.02); border-radius:6px; align-items:center;">';
+    html += '<div style="font-size:11px; color:#cbd5e1;">' + dateStr + '</div>';
+    html += '<div style="font-size:11px; color:#fbbf24; font-weight:700;">' + (d.total_hash_TH ? Math.round(d.total_hash_TH) + ' TH/s' : '—') + '</div>';
+    html += '<div style="font-size:11px; color:#22c55e; font-weight:700;">' + (earnTry ? Math.round(earnTry).toLocaleString('tr-TR') + ' ₺' : '—') + '</div>';
+    html += '<div style="font-size:10px; color:#64748b; text-align:right;">' + (d.total_earn_btc ? d.total_earn_btc.toFixed(6) + ' BTC' : '—') + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+  listEl.innerHTML = html;
+}
+
+
+function cmmDetay(suffix) {
+  if (!antData) return;
+  const d = antData.devices.find(x => x.suffix === suffix);
+  if (!d) return;
+  
+  const power = d.hashrate_TH || 0;
+  let status = 'Bilinmiyor', statusColor = '#94a3b8';
+  if (d.sleeping) { status = 'Uyuyor'; statusColor = '#fbbf24'; }
+  else if (d.online && power > 0.5) { status = 'Çalışıyor'; statusColor = '#22c55e'; }
+  else if (d.status === 'TIMEOUT') { status = 'Timeout'; statusColor = '#fb923c'; }
+  else if (!d.online) { status = 'Offline'; statusColor = '#ef4444'; }
+  
+  const eff = d.efficiency_pct;
+  const effClr = eff >= 95 ? '#22c55e' : (eff >= 80 ? '#fbbf24' : '#ef4444');
+  const fmtTRY = v => v ? Math.round(v).toLocaleString('tr-TR') + ' ₺' : '—';
+  
+  let html = '';
+  
+  // Üst Header
+  html += '<div style="background:linear-gradient(135deg, rgba(251,191,36,0.15), rgba(34,197,94,0.05)); padding:18px; border-bottom:1px solid rgba(255,255,255,0.08); position:relative;">';
+  html += '<div style="font-size:22px; font-weight:900; background:linear-gradient(90deg,#fbbf24,#22c55e); -webkit-background-clip:text; background-clip:text; color:transparent;">' + (d.name || ('Miner-'+d.suffix)) + '</div>';
+  html += '<div style="font-size:11px; color:#64748b; font-family:monospace; margin-top:2px;">' + d.ip + ' · <span style="color:' + statusColor + '; font-weight:700;">' + status + '</span></div>';
+  if (d.model) html += '<div style="font-size:10px; color:#94a3b8; margin-top:2px;">' + d.model + '</div>';
+  html += '</div>';
+  
+  html += '<div style="padding:16px;">';
+  
+  // Saha & Havuz YAN YANA
+  html += '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">';
+  html += '<div style="background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.25); padding:12px; border-radius:10px;">';
+  html += '<div style="font-size:11px; color:#60a5fa; font-weight:900; margin-bottom:8px;">🏭 SAHA</div>';
+  html += '<div style="font-size:9px; color:#94a3b8;">Worker:</div>';
+  html += '<div style="font-size:13px; color:#60a5fa; font-family:monospace; font-weight:700; margin-bottom:6px;">' + (d.saha_worker || '—') + '</div>';
+  html += '<div style="font-size:9px; color:#94a3b8;">MAC:</div>';
+  html += '<div style="font-size:10px; color:#fbbf24; font-family:monospace; word-break:break-all;">' + (d.mac || '—') + '</div>';
+  html += '</div>';
+  html += '<div style="background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.25); padding:12px; border-radius:10px;">';
+  html += '<div style="font-size:11px; color:#22c55e; font-weight:900; margin-bottom:8px;">⛏️ HAVUZ</div>';
+  html += '<div style="font-size:9px; color:#94a3b8;">Worker:</div>';
+  html += '<div style="font-size:13px; color:#22c55e; font-family:monospace; font-weight:700; margin-bottom:6px;">' + (d.havuz_worker || d.actual_worker || '—') + '</div>';
+  html += '<div style="font-size:9px; color:#94a3b8;">F2Pool 24h:</div>';
+  html += '<div style="font-size:11px; color:#22c55e; font-weight:700;">' + (d.f2pool_h24_TH ? d.f2pool_h24_TH + ' TH/s' : '—') + '</div>';
+  html += '</div>';
+  html += '</div>';
+  
+  // KPI mini grid
+  html += '<div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:6px; margin-bottom:14px;">';
+  html += '<div style="background:#0f172a; padding:8px; border-radius:6px; text-align:center;"><div style="font-size:9px; color:#64748b;">Hashrate</div><div style="font-size:16px; font-weight:900; color:#fbbf24;">' + (power ? power.toFixed(1) : '—') + '</div><div style="font-size:8px; color:#64748b;">TH/s</div></div>';
+  html += '<div style="background:#0f172a; padding:8px; border-radius:6px; text-align:center;"><div style="font-size:9px; color:#64748b;">Verim</div><div style="font-size:16px; font-weight:900; color:' + effClr + ';">' + (eff != null ? eff : '—') + '</div><div style="font-size:8px; color:#64748b;">%</div></div>';
+  html += '<div style="background:#0f172a; padding:8px; border-radius:6px; text-align:center;"><div style="font-size:9px; color:#64748b;">Sıcaklık</div><div style="font-size:16px; font-weight:900; color:#fb923c;">' + (d.temp_max || '—') + '°</div><div style="font-size:8px; color:#64748b;">' + (d.temp_water ? '💧' + d.temp_water + '°' : '—') + '</div></div>';
+  html += '<div style="background:#0f172a; padding:8px; border-radius:6px; text-align:center;"><div style="font-size:9px; color:#64748b;">Süre</div><div style="font-size:16px; font-weight:900; color:#a855f7;">' + (d.elapsed_hours ? d.elapsed_hours.toFixed(0) : '—') + '</div><div style="font-size:8px; color:#64748b;">saat</div></div>';
+  html += '</div>';
+  
+  // Kazanç
+  if (d.earn_today_btc != null) {
+    html += '<div style="background:rgba(34,197,94,0.06); border:1px solid rgba(34,197,94,0.2); border-radius:10px; padding:12px; margin-bottom:14px;">';
+    html += '<div style="font-size:12px; font-weight:900; color:#4ade80; margin-bottom:8px;">💰 KAZANÇ</div>';
+    [
+      ['Bugün', d.earn_today_btc, d.earn_today_usd, d.earn_today_try, '#fbbf24'],
+      ['Dün', d.earn_yesterday_btc, d.earn_yesterday_usd, d.earn_yesterday_try, '#94a3b8'],
+      ['Son 7 Gün', d.earn_7d_btc, d.earn_7d_usd, d.earn_7d_try, '#60a5fa'],
+      ['Toplam', d.earn_total_btc, d.earn_total_usd, d.earn_total_try, '#22c55e'],
+    ].forEach(([lbl, btc, usd, tryV, col]) => {
+      html += '<div style="display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:11px;">';
+      html += '<span style="color:#94a3b8;">' + lbl + '</span>';
+      html += '<span style="color:' + col + '; font-weight:700;">' + fmtTRY(tryV) + ' <span style="font-size:9px; color:#64748b;">($' + (usd ? Math.round(usd) : '—') + ' · ' + (btc ? btc.toFixed(6) : '—') + ')</span></span>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+  
+  // Aylik mini grafik
+  if (d.monthly_history && d.monthly_history.length > 0) {
+    const monthly = d.monthly_history;
+    const maxH = Math.max(...monthly.map(m => m.avg_hash_TH));
+    html += '<div style="background:rgba(96,165,250,0.05); border:1px solid rgba(96,165,250,0.15); border-radius:10px; padding:12px; margin-bottom:14px;">';
+    html += '<div style="font-size:12px; font-weight:900; color:#60a5fa; margin-bottom:10px;">📈 AYLIK ÜRETİM</div>';
+    html += '<div style="display:flex; align-items:flex-end; gap:3px; height:80px;">';
+    [...monthly].reverse().forEach(m => {
+      const hp = maxH > 0 ? (m.avg_hash_TH / maxH) * 100 : 0;
+      const [, mn] = m.month.split('-');
+      const monthName = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'][parseInt(mn)-1];
+      html += '<div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:2px;">';
+      html += '<div style="width:100%; height:50px; display:flex; flex-direction:column; justify-content:flex-end;">';
+      html += '<div style="width:100%; height:' + hp + '%; background:linear-gradient(180deg,#60a5fa,rgba(96,165,250,0.3)); border-radius:2px 2px 0 0;"></div>';
+      html += '</div>';
+      html += '<div style="font-size:8px; color:#94a3b8;">' + monthName + '</div>';
+      html += '</div>';
+    });
+    html += '</div></div>';
+  }
+  
+  // Gunluk liste (mini)
+  if (d.daily_history && d.daily_history.length > 0) {
+    html += '<div style="background:rgba(34,197,94,0.05); border:1px solid rgba(34,197,94,0.15); border-radius:10px; padding:12px; margin-bottom:14px;">';
+    html += '<div style="font-size:12px; font-weight:900; color:#22c55e; margin-bottom:8px;">📅 SON 7 GÜN</div>';
+    [...d.daily_history].reverse().slice(0, 7).forEach(day => {
+      const dt = new Date(day.date);
+      const dateStr = dt.toLocaleDateString('tr-TR', {day:'2-digit', month:'short'});
+      html += '<div style="display:flex; justify-content:space-between; padding:4px 0; font-size:10px; border-bottom:1px solid rgba(255,255,255,0.03);">';
+      html += '<span style="color:#cbd5e1;">' + dateStr + (day.estimated ? ' <span style="color:#94a3b8; font-size:8px;">(tahmini)</span>' : '') + '</span>';
+      html += '<span style="color:#fbbf24; font-weight:700;">' + (day.avg_hash_TH ? day.avg_hash_TH + ' TH/s' : '—') + '</span>';
+      html += '<span style="color:#22c55e;">' + (day.uptime_pct ? day.uptime_pct + '%' : '—') + '</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+  
+  // Ariza
+  if (d.health_issues && d.health_issues.length > 0) {
+    html += '<div style="background:rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.2); border-radius:10px; padding:12px; margin-bottom:14px;">';
+    html += '<div style="font-size:12px; font-weight:900; color:#f87171; margin-bottom:8px;">⚠️ TESPİT EDİLEN SORUNLAR (' + d.health_issues.length + ')</div>';
+    d.health_issues.forEach(issue => {
+      const sevColor = issue.severity === 'high' ? '#ef4444' : (issue.severity === 'medium' ? '#fbbf24' : '#94a3b8');
+      html += '<div style="background:#0f172a; padding:8px; border-radius:6px; margin-bottom:6px; border-left:3px solid ' + sevColor + ';">';
+      html += '<div style="font-weight:700; color:' + sevColor + '; font-size:11px;">' + issue.icon + ' ' + issue.title + '</div>';
+      html += '<div style="font-size:10px; color:#94a3b8; margin:3px 0;">' + issue.reason + '</div>';
+      html += '<div style="font-size:9px; color:#cbd5e1; margin-top:4px;"><b>Çözüm:</b></div>';
+      html += '<ul style="margin:2px 0 0 14px; padding:0; font-size:9px; color:#94a3b8;">';
+      issue.solutions.forEach(s => html += '<li style="margin:1px 0;">' + s + '</li>');
+      html += '</ul></div>';
+    });
+    html += '</div>';
+  } else if (d.online && !d.sleeping) {
+    html += '<div style="background:rgba(34,197,94,0.06); padding:10px; border-radius:8px; margin-bottom:14px; text-align:center; color:#4ade80; font-size:11px;">✅ Cihaz sağlıklı çalışıyor</div>';
+  }
+  
+  // Kontrol butonları
+  const isim = (d.name || ('Miner-'+d.suffix)).replace(/'/g, "\\'");
+  html += '<div style="display:flex; gap:8px;">';
+  html += '<button onclick="antKomut(\\'wake\\',[' + d.suffix + '],\\'' + isim + '\\')" style="flex:1; background:linear-gradient(135deg,#22c55e,#16a34a); color:white; border:none; padding:14px; border-radius:10px; font-weight:900; cursor:pointer; font-size:13px;">▶️ Çalıştır</button>';
+  html += '<button onclick="antKomut(\\'sleep\\',[' + d.suffix + '],\\'' + isim + '\\')" style="flex:1; background:linear-gradient(135deg,#f59e0b,#d97706); color:white; border:none; padding:14px; border-radius:10px; font-weight:900; cursor:pointer; font-size:13px;">💤 Uyut</button>';
+  html += '</div>';
+  
+  html += '</div>'; // padding kapanışı
+  
+  document.getElementById('cmm-modal-icerik').innerHTML = html;
+  document.getElementById('cmm-modal').classList.add('active');
+}
+
+function kapatCmmModal() { document.getElementById('cmm-modal').classList.remove('active'); }
+
+function cmmBulk(action) {
+  const statusEl = document.getElementById('cmm-cmd-status');
+  if (statusEl) statusEl.innerHTML = '<span style="color:#fbbf24">⏳ Komut gönderiliyor...</span>';
+  antKomut(action, 'all', 'TÜM');
+}
+
+// ======================== CIHAZLARIM SEKMESI SONU ========================
 
 // ====================== ANTMINER SONU ======================
 
