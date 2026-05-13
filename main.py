@@ -355,6 +355,23 @@ arsiv["gun_sayisi"] = len(arsiv["gunler"])
 dosya_yaz("gunluk_arsiv.json", arsiv, arsiv_sha)
 print(f"Gunluk arsive eklendi: {hedef_tarih}")
 
+# *** YENI: aylik_ptf.json - aya gore PTF saatlik ***
+# Format: { "2026-05": { "14": [saat0_fiyat, saat1_fiyat, ...], ... } }
+hedef_ay = hedef_tarih[:7]   # "2026-05"
+hedef_gun = hedef_tarih[8:10]  # "14"
+
+ayptf, ayptf_sha = dosya_oku("aylik_ptf.json")
+if not ayptf:
+    ayptf = {}
+if hedef_ay not in ayptf:
+    ayptf[hedef_ay] = {}
+
+# Saatlik fiyatlari TL/kWh formatinda yaz (mevcut formatla ayni)
+ayptf[hedef_ay][hedef_gun] = [round(item["price"] / 1000, 2) for item in items]
+
+dosya_yaz("aylik_ptf.json", ayptf, ayptf_sha)
+print(f"aylik_ptf.json guncellendi: {hedef_ay}/{hedef_gun}")
+
 # son_gonderim.json - HEDEF TARIH'i sakla (bugun degil)
 dosya_yaz("son_gonderim.json", {
     "hedef_tarih": hedef_tarih,
