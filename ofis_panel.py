@@ -1386,8 +1386,11 @@ function antRender() {
 
   // Info kart
   let infoTitle = 'Tek Yıldız 2 GES - Saha';
-  if (s.worker_mismatches > 0) {
-    infoTitle += ` <span style="color:#f87171; font-size:12px;">⚠️ ${s.worker_mismatches} Worker Uyuşmazlığı</span>`;
+  if (s.f2pool && s.f2pool.enabled) {
+    const fmtch = s.f2pool.matched_devices || 0;
+    const total = s.total || 0;
+    const f2Color = fmtch === total ? '#22c55e' : (fmtch > total * 0.8 ? '#fbbf24' : '#ef4444');
+    infoTitle += ` <span style="color:${f2Color}; font-size:12px; margin-left:8px;">⛏️ F2Pool: ${fmtch}/${total} eşleşti</span>`;
   }
   document.getElementById('ant-info-title').innerHTML = infoTitle;
 
@@ -1426,25 +1429,35 @@ function antRender() {
     else if (!d.online) { cls = 'kapali'; badge = 'badge-off'; lbl = 'Offline'; }
     else { cls = 'uyuyor'; badge = 'badge-sleep'; lbl = '0 Hash'; }
 
-    // Worker uyusmazlik
-    let workerWarn = '';
-    if (d.actual_worker && d.expected_worker && d.actual_worker !== d.expected_worker) {
-      workerWarn = '⚠️';
-    }
-
     const eff = d.efficiency_pct;
     const effClr = eff >= 95 ? '#22c55e' : (eff >= 80 ? '#fbbf24' : '#ef4444');
-    const dispWorker = d.actual_worker || d.expected_worker || '—';
+    
+    // Saha ve Havuz isimleri
+    const sahaW = d.saha_worker || '—';
+    const havuzW = d.havuz_worker || d.actual_worker || '—';
+    
+    // F2Pool hashrate karsilastirma
+    let diffBadge = '';
+    if (d.hashrate_diff_pct != null && Math.abs(d.hashrate_diff_pct) > 5) {
+      const diffColor = d.hashrate_diff_pct > 0 ? '#22c55e' : '#f87171';
+      diffBadge = ` <span style="color:${diffColor}; font-size:10px; font-weight:700;">(${d.hashrate_diff_pct > 0 ? '+' : ''}${d.hashrate_diff_pct}%)</span>`;
+    }
+    
     const tempStr = d.temp_max ? d.temp_max + '°' + (d.temp_water ? ' 💧' + d.temp_water + '°' : '') : '—';
+    
+    // Lokasyon (varsa)
+    const locStr = d.physical_location ? ` · 📍 ${d.physical_location}` : '';
 
     html += '<div class="cihaz-card ' + cls + '">'
       + '<div class="cihaz-row1">'
-      + '<div class="cihaz-no" style="font-size:13px">' + (d.name || ('Miner-'+d.suffix)) + ' ' + workerWarn + '</div>'
+      + '<div class="cihaz-no" style="font-size:13px">' + (d.name || ('Miner-'+d.suffix)) + '</div>'
       + '<div class="cihaz-badge ' + badge + '">' + lbl + '</div>'
       + '</div>'
-      + '<div style="font-size:10px; color:#64748b; font-family:monospace; margin-bottom:2px;">' + d.ip + '</div>'
-      + '<div class="cihaz-hash" style="color:#fbbf24">' + (power ? power.toFixed(1) : '—') + ' <span style="font-size:11px;color:#64748b">TH/s</span></div>'
-      + '<div class="cihaz-sub">⛏️ ' + dispWorker + (eff != null ? ' · <span style="color:'+effClr+';font-weight:700">⚡'+eff+'%</span>' : '') + '</div>'
+      + '<div style="font-size:10px; color:#64748b; font-family:monospace; margin-bottom:2px;">' + d.ip + locStr + '</div>'
+      + '<div style="font-size:10px; color:#60a5fa; font-family:monospace;">🏭 ' + sahaW + '</div>'
+      + '<div style="font-size:10px; color:#22c55e; font-family:monospace; margin-bottom:2px;">⛏️ ' + havuzW + '</div>'
+      + '<div class="cihaz-hash" style="color:#fbbf24">' + (power ? power.toFixed(1) : '—') + ' <span style="font-size:11px;color:#64748b">TH/s</span>' + diffBadge + '</div>'
+      + '<div class="cihaz-sub">' + (eff != null ? '<span style="color:'+effClr+';font-weight:700">⚡'+eff+'%</span>' : '') + '</div>'
       + '<div class="cihaz-sub">🌡 ' + tempStr + (d.elapsed_hours ? ' · ⏱ ' + d.elapsed_hours.toFixed(1) + 'h' : '') + '</div>'
       + '</div>';
   });
@@ -1478,8 +1491,7 @@ function antRender() {
   let sorunluHtml = '';
   const problems = devices.filter(d => 
     !d.online || d.status === 'TIMEOUT' || d.status === 'AUTH_FAIL' || 
-    (d.online && !d.sleeping && (d.hashrate_TH || 0) < 0.5) ||
-    (d.actual_worker && d.expected_worker && d.actual_worker !== d.expected_worker)
+    (d.online && !d.sleeping && (d.hashrate_TH || 0) < 0.5)
   );
   if (problems.length === 0) {
     sorunluHtml = '<div style="background:rgba(34,197,94,0.1); border:2px solid #22c55e; padding:20px; border-radius:12px; text-align:center;"><div style="font-size:36px;">✅</div><div style="font-size:18px; font-weight:900; color:#22c55e; margin-top:10px;">Tüm cihazlar sağlıklı!</div></div>';
@@ -1490,9 +1502,6 @@ function antRender() {
       if (d.status === 'TIMEOUT') sebep.push('Timeout');
       if (d.status === 'AUTH_FAIL') sebep.push('Şifre yanlış');
       if (d.online && !d.sleeping && (d.hashrate_TH || 0) < 0.5) sebep.push('0 Hash');
-      if (d.actual_worker && d.expected_worker && d.actual_worker !== d.expected_worker) {
-        sebep.push('Worker uyuşmazlık: ' + d.actual_worker);
-      }
       sorunluHtml += '<div class="osos-info" style="margin-bottom:8px; border-left:4px solid #ef4444;">'
         + '<div class="osos-info-ico" style="background:rgba(239,68,68,0.2)">⚠️</div>'
         + '<div style="flex:1">'
