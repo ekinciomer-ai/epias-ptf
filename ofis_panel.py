@@ -1987,8 +1987,9 @@ function cmmRenderDevices(devices, earnings) {
     html += '<div class="cihaz-badge ' + badge + '">' + lbl + '</div>';
     html += '</div>';
     
-    // IP
+    // IP + Seri
     html += '<div style="font-size:10px; color:#64748b; font-family:monospace; margin-bottom:4px;">' + d.ip + '</div>';
+    if (d.serial) html += '<div style="font-size:9px; color:#fbbf24; font-family:monospace; margin-bottom:4px;">🔖 ' + d.serial + '</div>';
     
     // SAHA & HAVUZ
     html += '<div style="display:flex; gap:6px; margin-bottom:6px;">';
@@ -2101,7 +2102,9 @@ function cmmDetay(suffix) {
   html += '<div style="font-size:9px; color:#94a3b8;">Worker:</div>';
   html += '<div style="font-size:13px; color:#60a5fa; font-family:monospace; font-weight:700; margin-bottom:6px;">' + (d.saha_worker || '—') + '</div>';
   html += '<div style="font-size:9px; color:#94a3b8;">MAC:</div>';
-  html += '<div style="font-size:10px; color:#fbbf24; font-family:monospace; word-break:break-all;">' + (d.mac || '—') + '</div>';
+  html += '<div style="font-size:10px; color:#fbbf24; font-family:monospace; word-break:break-all; margin-bottom:6px;">' + (d.mac || '—') + '</div>';
+  html += '<div style="font-size:9px; color:#94a3b8;">Seri No:</div>';
+  html += '<div style="font-size:11px; color:#fb923c; font-family:monospace; font-weight:700; word-break:break-all;">' + (d.serial || '—') + '</div>';
   html += '</div>';
   html += '<div style="background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.25); padding:12px; border-radius:10px;">';
   html += '<div style="font-size:11px; color:#22c55e; font-weight:900; margin-bottom:8px;">⛏️ HAVUZ</div>';
