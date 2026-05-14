@@ -1042,7 +1042,7 @@ function cihazRender(workers) {
   let html = '';
   workers.sort((a,b) => a.name.localeCompare(b.name)).forEach(w => {
     const d = durumBilgisi(w.durum);
-    html += '<div class="cihaz-card ' + w.durum + '" onclick="cihazDetay(\\'' + w.name + '\\')">'
+    html += '<div class="cihaz-card ' + w.durum + '" onclick="cihazDetay(\'' + w.name + '\')">'
       + '<div class="cihaz-row1"><div class="cihaz-no">' + w.name + '</div><div class="cihaz-badge ' + d.cls + '">' + d.label + '</div></div>'
       + '<div class="cihaz-hash">' + Math.round(w.anlik) + ' <span style="font-size:11px;color:#64748b">TH/s anlık</span></div>'
       + '<div class="cihaz-sub">24h ort: ' + Math.round(w.h24) + ' TH/s</div>'
@@ -1229,7 +1229,7 @@ function ososRender() {
   son14.forEach(g => {
     const tarih = new Date(g);
     const lbl = tarih.getDate() + '.' + (tarih.getMonth()+1).toString().padStart(2,'0');
-    dayHtml += '<button class="osos-day-btn" onclick="ososGunSec(\\'' + g + '\\', this)">' + lbl + '</button>';
+    dayHtml += '<button class="osos-day-btn" onclick="ososGunSec(\'' + g + '\', this)">' + lbl + '</button>';
   });
   document.getElementById('osos-day-list').innerHTML = dayHtml;
   
@@ -1477,7 +1477,7 @@ function invSaatlikRender() {
   son14.forEach((g, i) => {
     const tarih = new Date(g);
     const lbl = tarih.getDate() + '.' + (tarih.getMonth()+1).toString().padStart(2,'0');
-    dayHtml += '<button class="osos-day-btn' + (i === 0 ? ' active' : '') + '" onclick="invGunSec(\\'' + g + '\\', this)">' + lbl + '</button>';
+    dayHtml += '<button class="osos-day-btn' + (i === 0 ? ' active' : '') + '" onclick="invGunSec(\'' + g + '\', this)">' + lbl + '</button>';
   });
   document.getElementById('inv-day-list').innerHTML = dayHtml;
 
@@ -1655,7 +1655,7 @@ function invListeRender(inverters) {
 
     const stationKisa = inv.stationName.replace(' GES', '');
 
-    html += '<div class="cihaz-card ' + cls + '" onclick="invDetay(\\'' + inv.devId + '\\')">'
+    html += '<div class="cihaz-card ' + cls + '" onclick="invDetay(\'' + inv.devId + '\')">'
       + '<div class="cihaz-row1">'
       + '<div class="cihaz-no" style="font-size:14px">' + inv.devName + '</div>'
       + '<div class="cihaz-badge ' + badge + '">' + lbl + '</div>'
@@ -1961,8 +1961,8 @@ function antDetay(suffix) {
 
   // Kontrol butonlari
   html += '<div style="display:flex; gap:8px; margin-top:14px;">';
-  html += '<button onclick="antKomut(\\'wake\\', [' + d.suffix + '], \\'' + (d.name || 'Miner-'+d.suffix) + '\\')" style="flex:1; background:linear-gradient(135deg,#22c55e,#16a34a); color:white; border:none; padding:12px; border-radius:10px; font-weight:700; cursor:pointer; font-size:13px;">▶️ Çalıştır</button>';
-  html += '<button onclick="antKomut(\\'sleep\\', [' + d.suffix + '], \\'' + (d.name || 'Miner-'+d.suffix) + '\\')" style="flex:1; background:linear-gradient(135deg,#f59e0b,#d97706); color:white; border:none; padding:12px; border-radius:10px; font-weight:700; cursor:pointer; font-size:13px;">💤 Uyut</button>';
+  html += '<button onclick="antKomut(\'wake\', [' + d.suffix + '], \'' + (d.name || 'Miner-'+d.suffix) + '\')" style="flex:1; background:linear-gradient(135deg,#22c55e,#16a34a); color:white; border:none; padding:12px; border-radius:10px; font-weight:700; cursor:pointer; font-size:13px;">▶️ Çalıştır</button>';
+  html += '<button onclick="antKomut(\'sleep\', [' + d.suffix + '], \'' + (d.name || 'Miner-'+d.suffix) + '\')" style="flex:1; background:linear-gradient(135deg,#f59e0b,#d97706); color:white; border:none; padding:12px; border-radius:10px; font-weight:700; cursor:pointer; font-size:13px;">💤 Uyut</button>';
   html += '</div>';
 
   document.getElementById('ant-modal-icerik').innerHTML = html;
@@ -2345,10 +2345,10 @@ function cmmDetay(suffix) {
   }
   
   // Kontrol butonları
-  const isim = (d.name || ('Miner-'+d.suffix)).replace(/'/g, "\\'");
+  const isim = (d.name || ('Miner-'+d.suffix)).replace(/'/g, "\'");
   html += '<div style="display:flex; gap:8px;">';
-  html += '<button onclick="antKomut(\\'wake\\',[' + d.suffix + '],\\'' + isim + '\\')" style="flex:1; background:linear-gradient(135deg,#22c55e,#16a34a); color:white; border:none; padding:14px; border-radius:10px; font-weight:900; cursor:pointer; font-size:13px;">▶️ Çalıştır</button>';
-  html += '<button onclick="antKomut(\\'sleep\\',[' + d.suffix + '],\\'' + isim + '\\')" style="flex:1; background:linear-gradient(135deg,#f59e0b,#d97706); color:white; border:none; padding:14px; border-radius:10px; font-weight:900; cursor:pointer; font-size:13px;">💤 Uyut</button>';
+  html += '<button onclick="antKomut(\'wake\',[' + d.suffix + '],\'' + isim + '\')" style="flex:1; background:linear-gradient(135deg,#22c55e,#16a34a); color:white; border:none; padding:14px; border-radius:10px; font-weight:900; cursor:pointer; font-size:13px;">▶️ Çalıştır</button>';
+  html += '<button onclick="antKomut(\'sleep\',[' + d.suffix + '],\'' + isim + '\')" style="flex:1; background:linear-gradient(135deg,#f59e0b,#d97706); color:white; border:none; padding:14px; border-radius:10px; font-weight:900; cursor:pointer; font-size:13px;">💤 Uyut</button>';
   html += '</div>';
   
   html += '</div>'; // padding kapanışı
@@ -2392,8 +2392,8 @@ function cmmBekleyenYukle() {
       html += '</div>';
       html += '</div>';
       html += '<div style="display:flex; gap:6px; margin-top:8px;">';
-      html += '<button onclick="cmmOnayKarar(\\'' + o.id + '\\',\\'onayla\\')" style="flex:1; background:linear-gradient(135deg,#22c55e,#16a34a); color:white; border:none; padding:10px; border-radius:8px; font-weight:900; cursor:pointer; font-size:12px;">✅ ONAYLA</button>';
-      html += '<button onclick="cmmOnayKarar(\\'' + o.id + '\\',\\'reddet\\')" style="flex:1; background:rgba(239,68,68,0.2); color:#f87171; border:1px solid rgba(239,68,68,0.4); padding:10px; border-radius:8px; font-weight:900; cursor:pointer; font-size:12px;">❌ REDDET</button>';
+      html += '<button onclick="cmmOnayKarar(\'' + o.id + '\',\'onayla\')" style="flex:1; background:linear-gradient(135deg,#22c55e,#16a34a); color:white; border:none; padding:10px; border-radius:8px; font-weight:900; cursor:pointer; font-size:12px;">✅ ONAYLA</button>';
+      html += '<button onclick="cmmOnayKarar(\'' + o.id + '\',\'reddet\')" style="flex:1; background:rgba(239,68,68,0.2); color:#f87171; border:1px solid rgba(239,68,68,0.4); padding:10px; border-radius:8px; font-weight:900; cursor:pointer; font-size:12px;">❌ REDDET</button>';
       html += '</div>';
       html += '</div>';
     });
