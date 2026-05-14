@@ -1,0 +1,32 @@
+name: EPİAŞ PTF - main.py
+
+on:
+  schedule:
+    # Türkiye saati 13:00-18:00 her saat
+    - cron: '0 10-15 * * *'
+  workflow_dispatch:
+
+jobs:
+  ptf-cek:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Paketleri kur
+        run: pip install --quiet eptr2 twilio requests
+
+      - name: main.py çalıştır
+        env:
+          EPIAS_KULLANICI: ${{ secrets.EPIAS_KULLANICI }}
+          EPIAS_SIFRE: ${{ secrets.EPIAS_SIFRE }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          TWILIO_SID: ${{ secrets.TWILIO_SID }}
+          TWILIO_TOKEN: ${{ secrets.TWILIO_TOKEN }}
+          F2POOL_TOKEN: ${{ secrets.F2POOL_TOKEN }}
+          F2POOL_KULLANICI: mehmetas
+        run: python main.py
