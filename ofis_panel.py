@@ -343,6 +343,7 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 <div class="tab" onclick="sekme('cihazlar', this)">🖥️ Cihazlar</div>
 <div class="tab" onclick="sekme('cihazlarim', this)" style="background:linear-gradient(135deg,rgba(251,191,36,0.15),rgba(34,197,94,0.15));border-color:rgba(251,191,36,0.4);">💎 Cihazlarım</div>
 <div class="tab" onclick="sekme('maliyetler', this)" style="background:linear-gradient(135deg,rgba(239,68,68,0.12),rgba(245,158,11,0.08));border-color:rgba(245,158,11,0.4);">💸 Maliyetler</div>
+<div class="tab" onclick="sekme('veri', this)" style="background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(99,102,241,0.08));border-color:rgba(59,130,246,0.4);">📊 Veri</div>
 <div class="tab" onclick="sekme('osos', this)">🔋 OSOS</div>
 <div class="tab" onclick="sekme('inverter', this)">🌞 İnverter</div>
 <div class="tab" onclick="sekme('antminer', this)">⛏️ Antminer Saha</div>
@@ -876,6 +877,80 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 </div>
 <!-- ====================== MALIYETLER SEKMESI SONU ====================== -->
 
+<!-- ====================== VERI SEKMESI ====================== -->
+<div class="tab-content" id="t-veri">
+
+<div style="margin-bottom:14px;">
+  <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+    <div>
+      <div style="font-size:18px; font-weight:600; color:#1e293b;">📊 3 Abone Üretim/Tüketim</div>
+      <div style="font-size:12px; color:#64748b; margin-top:2px;">TY1, TY2 ve Aksaray 3 birleşik tablo</div>
+    </div>
+    <select id="veri-ay" onchange="veriYukle()" style="background:#fff; border:1px solid #cbd5e1; color:#1e293b; padding:6px 10px; border-radius:6px; font-size:13px;">
+      <option value="">— Yükleniyor —</option>
+    </select>
+  </div>
+</div>
+
+<!-- KPI -->
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:10px; margin-bottom:16px;">
+  <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px 14px;">
+    <div style="font-size:12px; color:#64748b; margin-bottom:4px;">Toplam Üretim (TY1+TY2)</div>
+    <div id="veri-uretim" style="font-size:22px; font-weight:600; color:#0c447c;">—</div>
+    <div style="font-size:10px; color:#94a3b8; margin-top:2px;">kWh</div>
+  </div>
+  <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px 14px;">
+    <div style="font-size:12px; color:#64748b; margin-bottom:4px;">Toplam Tüketim (TY2+AKS3)</div>
+    <div id="veri-tuketim" style="font-size:22px; font-weight:600; color:#993c1d;">—</div>
+    <div style="font-size:10px; color:#94a3b8; margin-top:2px;">kWh</div>
+  </div>
+  <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px 14px;">
+    <div style="font-size:12px; color:#64748b; margin-bottom:4px;">TY Mahsup (Ür - TY2 Tük)</div>
+    <div id="veri-mahsup" style="font-size:22px; font-weight:600; color:#1e293b;">—</div>
+    <div style="font-size:10px; color:#94a3b8; margin-top:2px;">kWh</div>
+  </div>
+  <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px 14px;">
+    <div style="font-size:12px; color:#64748b; margin-bottom:4px;">AKS3 Tüketim (Mining)</div>
+    <div id="veri-aks3" style="font-size:22px; font-weight:600; color:#d85a30;">—</div>
+    <div style="font-size:10px; color:#94a3b8; margin-top:2px;">kWh</div>
+  </div>
+</div>
+
+<!-- TABLO -->
+<div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; margin-bottom:16px;">
+  <table style="width:100%; border-collapse:collapse; font-size:13px;">
+    <thead>
+      <tr style="background:#f1f5f9; border-bottom:1px solid #e2e8f0;">
+        <th style="padding:10px 8px; text-align:left; width:30px;"></th>
+        <th style="padding:10px 12px; text-align:left; font-weight:600; color:#64748b;">Tarih</th>
+        <th style="padding:10px 8px; text-align:right; font-weight:600; color:#185fa5;">TY1 Üret</th>
+        <th style="padding:10px 8px; text-align:right; font-weight:600; color:#185fa5;">TY2 Üret</th>
+        <th style="padding:10px 8px; text-align:right; font-weight:600; color:#d85a30;">TY2 Tük</th>
+        <th style="padding:10px 8px; text-align:right; font-weight:600; color:#d85a30;">AKS3 Tük</th>
+        <th style="padding:10px 8px; text-align:right; font-weight:600; color:#64748b;">Mahsup</th>
+      </tr>
+    </thead>
+    <tbody id="veri-tablo"></tbody>
+  </table>
+</div>
+
+<!-- CIZGI GRAFIK -->
+<div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:14px; margin-bottom:24px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+    <div style="font-size:13px; font-weight:600; color:#475569;">📈 Günlük Üretim/Tüketim</div>
+    <div style="font-size:11px; color:#64748b;">
+      <span style="display:inline-flex; align-items:center; gap:4px; margin-right:12px;"><span style="width:10px; height:10px; border-radius:2px; background:#185fa5;"></span>Üretim</span>
+      <span style="display:inline-flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; border-radius:2px; background:#d85a30;"></span>Tüketim</span>
+    </div>
+  </div>
+  <div style="position:relative; width:100%; height:240px;">
+    <canvas id="veri-chart"></canvas>
+  </div>
+</div>
+
+</div>
+<!-- ====================== VERI SEKMESI SONU ====================== -->
+
 <!-- Antminer Cihaz Detay Modal -->
 <div class="modal-overlay" id="ant-modal" onclick="if(event.target.id==='ant-modal')kapatAntModal()">
 <div class="modal" style="max-width:500px;">
@@ -968,7 +1043,7 @@ function sekme(ad, btn) {
   if (ad === 'inverter') invYukle();
   if (ad === 'antminer') antYukle();
   if (ad === 'cihazlarim') antYukle();
-  if (ad === 'maliyetler') { mltYukle(); utYukle(); }
+  if (ad === 'maliyetler') { mltDropdownDoldur().then(() => mltYukle()); utYukle(); }
 }
 
 function renkSinif(v) {
@@ -2464,6 +2539,35 @@ let mltChartInstance = null;
 let mltData = null;
 let mltAcikGun = null;
 
+async function mltDropdownDoldur() {
+  const sel = document.getElementById('mlt-ay');
+  if (!sel || sel.options.length > 1) return; // zaten dolu
+  
+  let raw;
+  try {
+    const r = await fetch('/api/osos_raw');
+    raw = await r.json();
+  } catch (e) {
+    console.error('Mlt dropdown:', e);
+    return;
+  }
+  
+  const aylar = new Set();
+  Object.values(raw).forEach(abone => {
+    Object.keys(abone.veri || {}).forEach(t => aylar.add(t.slice(0,7)));
+  });
+  const aylarSorted = [...aylar].sort().reverse();
+  
+  let html = '<option value="2026">2026 Toplam</option>';
+  aylarSorted.forEach(ay => {
+    const [yil, mAy] = ay.split('-');
+    const adi = TR_AYLAR[parseInt(mAy,10)-1] + ' ' + yil;
+    html += '<option value="' + ay + '">' + adi + '</option>';
+  });
+  sel.innerHTML = html;
+  if (aylarSorted.length > 0) sel.value = aylarSorted[0]; // en son ay
+}
+
 function mltYukle() {
   const ay = document.getElementById('mlt-ay').value;
   const url = '/api/maliyet/aksaray3' + (ay ? '?ay=' + ay : '');
@@ -2514,7 +2618,7 @@ function mltTabloRender() {
     const icon = acik ? '▼' : '▶';
     const iconColor = acik ? '#185fa5' : '#94a3b8';
     
-    tbl += '<tr style="border-bottom:1px solid #e2e8f0; cursor:pointer; ' + bg + '" onclick="mltGunAc(\\'' + g.tarih + '\\')">';
+    tbl += '<tr style="border-bottom:1px solid #e2e8f0; cursor:pointer; ' + bg + '" onclick="mltGunAc(\\\'' + g.tarih + '\\\')">';
     tbl += '<td style="padding:11px 8px; text-align:center; color:' + iconColor + '; font-size:11px;">' + icon + '</td>';
     tbl += '<td style="padding:11px 12px; color:#1e293b; font-weight:' + (acik?'600':'400') + ';">' + dateStr + '</td>';
     tbl += '<td style="padding:11px 12px; text-align:right; color:#1e293b;">' + fmtNum(g.toplam_tuketim_kwh) + '</td>';
@@ -2715,7 +2819,7 @@ function utTabloRender() {
     const netRenk = g.fazla_uretim ? '#0c447c' : '#993c1d';
     const netPrefix = g.fazla_uretim ? '+' : '';
     
-    tbl += '<tr style="border-bottom:1px solid #e2e8f0; cursor:pointer; ' + bg + '" onclick="utGunAc(\\'' + g.tarih + '\\')">';
+    tbl += '<tr style="border-bottom:1px solid #e2e8f0; cursor:pointer; ' + bg + '" onclick="utGunAc(\\\'' + g.tarih + '\\\')">';
     tbl += '<td style="padding:11px 8px; text-align:center; color:' + iconColor + '; font-size:11px;">' + icon + '</td>';
     tbl += '<td style="padding:11px 12px; color:#1e293b; font-weight:' + (acik?'600':'400') + ';">' + dateStr + '</td>';
     tbl += '<td style="padding:11px 12px; text-align:right; color:#185fa5;">' + fmtNum(g.ty1_uretim) + '</td>';
@@ -2820,6 +2924,271 @@ function utChartRender() {
 
 // ======================== URETIM/TUKETIM SONU ========================
 
+
+// ======================== VERI SEKMESI (3 ABONE) ========================
+
+const TR_AYLAR = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+
+let veriChartInstance = null;
+let veriData = null;
+let veriAcikGun = null;
+let veriRaw = null; // GitHub'dan ham JSON
+
+async function veriRawYukle() {
+  if (veriRaw) return veriRaw;
+  try {
+    const r = await fetch('/api/osos_raw');
+    veriRaw = await r.json();
+    return veriRaw;
+  } catch (e) {
+    console.error('Veri yuklenemedi:', e);
+    return {};
+  }
+}
+
+async function veriDropdownDoldur() {
+  const sel = document.getElementById('veri-ay');
+  if (!sel) return;
+  const raw = await veriRawYukle();
+  
+  // Tum aylari topla
+  const aylar = new Set();
+  Object.values(raw).forEach(abone => {
+    Object.keys(abone.veri || {}).forEach(t => aylar.add(t.slice(0,7)));
+  });
+  const aylarSorted = [...aylar].sort().reverse();
+  
+  let html = '<option value="2026">2026 Toplam</option>';
+  aylarSorted.forEach(ay => {
+    const [yil, mAy] = ay.split('-');
+    const adi = TR_AYLAR[parseInt(mAy,10)-1] + ' ' + yil;
+    html += '<option value="' + ay + '">' + adi + '</option>';
+  });
+  sel.innerHTML = html;
+  // Varsayilan: en son ay
+  if (aylarSorted.length > 0) sel.value = aylarSorted[0];
+}
+
+async function veriYukle() {
+  const sel = document.getElementById('veri-ay');
+  const secim = sel ? sel.value : '';
+  const raw = await veriRawYukle();
+  
+  // 3 abone icin gunluk topla
+  const gunluk = {};  // tarih -> {ty1u, ty2u, ty2t, aks3t}
+  
+  Object.entries(raw).forEach(([key, abone]) => {
+    const veri = abone.veri || {};
+    Object.entries(veri).forEach(([tarih, saatler]) => {
+      // Filtre
+      if (secim === '2026') {
+        if (!tarih.startsWith('2026')) return;
+      } else if (secim) {
+        if (!tarih.startsWith(secim)) return;
+      }
+      
+      if (!gunluk[tarih]) gunluk[tarih] = { ty1u:0, ty2u:0, ty2t:0, aks3t:0, saatler: {} };
+      
+      Object.entries(saatler).forEach(([saat, v]) => {
+        if (!gunluk[tarih].saatler[saat]) gunluk[tarih].saatler[saat] = { ty1u:0, ty2u:0, ty2t:0, aks3t:0 };
+        
+        if (key === 'tekyildiz_1') {
+          gunluk[tarih].ty1u += v.veris || 0;
+          gunluk[tarih].saatler[saat].ty1u += v.veris || 0;
+        } else if (key === 'tekyildiz_2') {
+          gunluk[tarih].ty2u += v.veris || 0;
+          gunluk[tarih].ty2t += v.cekis || 0;
+          gunluk[tarih].saatler[saat].ty2u += v.veris || 0;
+          gunluk[tarih].saatler[saat].ty2t += v.cekis || 0;
+        } else if (key === 'aksaray_3') {
+          gunluk[tarih].aks3t += v.cekis || 0;
+          gunluk[tarih].saatler[saat].aks3t += v.cekis || 0;
+        }
+      });
+    });
+  });
+  
+  // Toplamlar
+  const tarihlerSorted = Object.keys(gunluk).sort();
+  let topUretim = 0, topTuketim = 0, topMahsup = 0, topAks3 = 0;
+  tarihlerSorted.forEach(t => {
+    const g = gunluk[t];
+    topUretim += g.ty1u + g.ty2u;
+    topTuketim += g.ty2t + g.aks3t;
+    topMahsup += (g.ty1u + g.ty2u) - g.ty2t;
+    topAks3 += g.aks3t;
+  });
+  
+  veriData = { gunler: tarihlerSorted.map(t => ({tarih:t, ...gunluk[t]})), top: {topUretim, topTuketim, topMahsup, topAks3} };
+  
+  // KPI
+  const fmtNum = v => Math.round(v).toLocaleString('tr-TR');
+  document.getElementById('veri-uretim').textContent = fmtNum(topUretim);
+  document.getElementById('veri-tuketim').textContent = fmtNum(topTuketim);
+  
+  const mahsupEl = document.getElementById('veri-mahsup');
+  if (topMahsup >= 0) {
+    mahsupEl.textContent = '+' + fmtNum(topMahsup);
+    mahsupEl.style.color = '#0c447c';
+  } else {
+    mahsupEl.textContent = fmtNum(topMahsup);
+    mahsupEl.style.color = '#993c1d';
+  }
+  document.getElementById('veri-aks3').textContent = fmtNum(topAks3);
+  
+  // Son gun otomatik ac
+  if (tarihlerSorted.length > 0 && !veriAcikGun) {
+    veriAcikGun = tarihlerSorted[tarihlerSorted.length - 1];
+  }
+  
+  veriTabloRender();
+  veriChartRender();
+}
+
+function veriGunAc(tarih) {
+  veriAcikGun = (veriAcikGun === tarih) ? null : tarih;
+  veriTabloRender();
+}
+
+function veriTabloRender() {
+  if (!veriData) return;
+  const fmtNum = v => Math.round(v || 0).toLocaleString('tr-TR');
+  
+  const gunler = [...veriData.gunler].reverse();
+  let tbl = '';
+  
+  gunler.forEach(g => {
+    const acik = (g.tarih === veriAcikGun);
+    const dt = new Date(g.tarih);
+    const dateStr = dt.toLocaleDateString('tr-TR', {day:'2-digit', month:'short', weekday:'short'});
+    const bg = acik ? 'background:#dbeafe;' : '';
+    const icon = acik ? '▼' : '▶';
+    const iconColor = acik ? '#185fa5' : '#94a3b8';
+    const mahsup = (g.ty1u + g.ty2u) - g.ty2t;
+    const mahsupRenk = mahsup >= 0 ? '#0c447c' : '#993c1d';
+    const mahsupPrefix = mahsup >= 0 ? '+' : '';
+    
+    tbl += '<tr style="border-bottom:1px solid #e2e8f0; cursor:pointer; ' + bg + '" onclick="veriGunAc(\\\'' + g.tarih + '\\\')">';
+    tbl += '<td style="padding:11px 8px; text-align:center; color:' + iconColor + '; font-size:11px;">' + icon + '</td>';
+    tbl += '<td style="padding:11px 12px; color:#1e293b; font-weight:' + (acik?'600':'400') + ';">' + dateStr + '</td>';
+    tbl += '<td style="padding:11px 8px; text-align:right; color:#185fa5;">' + fmtNum(g.ty1u) + '</td>';
+    tbl += '<td style="padding:11px 8px; text-align:right; color:#185fa5;">' + fmtNum(g.ty2u) + '</td>';
+    tbl += '<td style="padding:11px 8px; text-align:right; color:#d85a30;">' + fmtNum(g.ty2t) + '</td>';
+    tbl += '<td style="padding:11px 8px; text-align:right; color:#d85a30;">' + fmtNum(g.aks3t) + '</td>';
+    tbl += '<td style="padding:11px 8px; text-align:right; color:' + mahsupRenk + '; font-weight:600;">' + mahsupPrefix + fmtNum(mahsup) + '</td>';
+    tbl += '</tr>';
+    
+    if (acik && g.saatler) {
+      tbl += '<tr style="background:#dbeafe;"><td colspan="7" style="padding:0 12px 12px 12px;">';
+      tbl += '<div style="background:#fff; border:1px solid #cbd5e1; border-radius:6px; overflow:hidden;">';
+      tbl += '<table style="width:100%; border-collapse:collapse; font-size:11px;">';
+      tbl += '<thead><tr style="background:#f1f5f9;">';
+      tbl += '<th style="padding:7px 10px; text-align:left; color:#64748b;">Saat</th>';
+      tbl += '<th style="padding:7px 10px; text-align:right; color:#185fa5;">TY1 Üret</th>';
+      tbl += '<th style="padding:7px 10px; text-align:right; color:#185fa5;">TY2 Üret</th>';
+      tbl += '<th style="padding:7px 10px; text-align:right; color:#d85a30;">TY2 Tük</th>';
+      tbl += '<th style="padding:7px 10px; text-align:right; color:#d85a30;">AKS3 Tük</th>';
+      tbl += '<th style="padding:7px 10px; text-align:right; color:#64748b;">Mahsup</th>';
+      tbl += '</tr></thead><tbody>';
+      
+      const saatler = Object.keys(g.saatler).sort();
+      saatler.forEach(s => {
+        const v = g.saatler[s];
+        const m = (v.ty1u + v.ty2u) - v.ty2t;
+        const mr = m >= 0 ? '#0c447c' : '#993c1d';
+        const mp = m >= 0 ? '+' : '';
+        tbl += '<tr style="border-top:1px solid #f1f5f9;">';
+        tbl += '<td style="padding:5px 10px; color:#64748b;">' + s + ':00</td>';
+        tbl += '<td style="padding:5px 10px; text-align:right; color:#185fa5;">' + Math.round(v.ty1u) + '</td>';
+        tbl += '<td style="padding:5px 10px; text-align:right; color:#185fa5;">' + Math.round(v.ty2u) + '</td>';
+        tbl += '<td style="padding:5px 10px; text-align:right; color:#d85a30;">' + Math.round(v.ty2t) + '</td>';
+        tbl += '<td style="padding:5px 10px; text-align:right; color:#d85a30;">' + Math.round(v.aks3t) + '</td>';
+        tbl += '<td style="padding:5px 10px; text-align:right; color:' + mr + '; font-weight:600;">' + mp + Math.round(m) + '</td>';
+        tbl += '</tr>';
+      });
+      
+      tbl += '<tr style="border-top:1px solid #cbd5e1; background:#f8fafc;">';
+      tbl += '<td style="padding:7px 10px; font-weight:600; color:#1e293b;">Toplam</td>';
+      tbl += '<td style="padding:7px 10px; text-align:right; font-weight:600; color:#185fa5;">' + fmtNum(g.ty1u) + '</td>';
+      tbl += '<td style="padding:7px 10px; text-align:right; font-weight:600; color:#185fa5;">' + fmtNum(g.ty2u) + '</td>';
+      tbl += '<td style="padding:7px 10px; text-align:right; font-weight:600; color:#d85a30;">' + fmtNum(g.ty2t) + '</td>';
+      tbl += '<td style="padding:7px 10px; text-align:right; font-weight:600; color:#d85a30;">' + fmtNum(g.aks3t) + '</td>';
+      tbl += '<td style="padding:7px 10px; text-align:right; font-weight:600; color:' + mahsupRenk + ';">' + mahsupPrefix + fmtNum(mahsup) + '</td>';
+      tbl += '</tr>';
+      tbl += '</tbody></table></div></td></tr>';
+    }
+  });
+  
+  // Genel toplam
+  const t = veriData.top;
+  const tMahsupRenk = t.topMahsup >= 0 ? '#0c447c' : '#993c1d';
+  const tMahsupPrefix = t.topMahsup >= 0 ? '+' : '';
+  tbl += '<tr style="background:#f1f5f9; border-top:2px solid #cbd5e1;">';
+  tbl += '<td></td>';
+  tbl += '<td style="padding:12px; font-weight:600; color:#1e293b;">TOPLAM (' + veriData.gunler.length + ' gün)</td>';
+  tbl += '<td style="padding:12px; text-align:right; font-weight:600; color:#185fa5;">' + fmtNum(veriData.gunler.reduce((s,g)=>s+g.ty1u,0)) + '</td>';
+  tbl += '<td style="padding:12px; text-align:right; font-weight:600; color:#185fa5;">' + fmtNum(veriData.gunler.reduce((s,g)=>s+g.ty2u,0)) + '</td>';
+  tbl += '<td style="padding:12px; text-align:right; font-weight:600; color:#d85a30;">' + fmtNum(veriData.gunler.reduce((s,g)=>s+g.ty2t,0)) + '</td>';
+  tbl += '<td style="padding:12px; text-align:right; font-weight:600; color:#d85a30;">' + fmtNum(t.topAks3) + '</td>';
+  tbl += '<td style="padding:12px; text-align:right; font-weight:600; color:' + tMahsupRenk + ';">' + tMahsupPrefix + fmtNum(t.topMahsup) + '</td>';
+  tbl += '</tr>';
+  
+  document.getElementById('veri-tablo').innerHTML = tbl;
+}
+
+function veriChartRender() {
+  if (!veriData || !window.Chart) return;
+  const gunler = veriData.gunler;
+  const labels = gunler.map(g => g.tarih.slice(-2));
+  const uretim = gunler.map(g => Math.round(g.ty1u + g.ty2u));
+  const tuketim = gunler.map(g => Math.round(g.ty2t + g.aks3t));
+  
+  const ctx = document.getElementById('veri-chart');
+  if (!ctx) return;
+  if (veriChartInstance) veriChartInstance.destroy();
+  
+  veriChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'Üretim', data: uretim, borderColor: '#185fa5', backgroundColor: 'rgba(24,95,165,0.05)', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#185fa5', tension: 0.25, fill: false },
+        { label: 'Tüketim', data: tuketim, borderColor: '#d85a30', backgroundColor: 'rgba(216,90,48,0.05)', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#d85a30', tension: 0.25, fill: false }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: (items) => 'Gün ' + items[0].label,
+            label: (item) => item.dataset.label + ': ' + item.parsed.y.toLocaleString('tr-TR') + ' kWh'
+          }
+        }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Gün', color: '#64748b' }, grid: { display: false }, ticks: { color: '#64748b' } },
+        y: { title: { display: true, text: 'kWh', color: '#64748b' }, beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { color: '#64748b', callback: v => v.toLocaleString('tr-TR') } }
+      },
+      interaction: { intersect: false, mode: 'index' }
+    }
+  });
+}
+
+// Veri sekmesi acildiginda yukle
+(function() {
+  const origSekme = window.sekme;
+  window.sekme = function(ad, btn) {
+    if (origSekme) origSekme(ad, btn);
+    if (ad === 'veri') {
+      veriDropdownDoldur().then(() => veriYukle());
+    }
+  };
+})();
+
+// ======================== VERI SEKMESI SONU ========================
+
 // ====================== ANTMINER SONU ======================
 
 if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
@@ -2897,6 +3266,16 @@ def osos():
             else:
                 veri['dogrulama'] = "bekliyor"
         abone['aylar'] = aylar
+    return jsonify(data)
+
+@app.route("/api/osos_raw")
+def osos_raw():
+    """3 abone icin ham saatlik veri - Veri sekmesi kullanir."""
+    if "kullanici" not in session:
+        return jsonify({"hata":"yetkisiz"}), 401
+    data = github_oku("2026_osos_endeks.json")
+    if not data:
+        return jsonify({})
     return jsonify(data)
 
 @app.route("/api/cihaz/<name>")
@@ -3212,13 +3591,20 @@ def api_maliyet_aksaray3():
     YEKDEM_KR_MWH = 602.51
     DAGITIM_KATSAYI = 1.05  # %5 dagitim/kayip
     
-    ay = request.args.get("ay")  # "2026-05" - bos ise mevcut ay
+    ay = request.args.get("ay")  # "2026-05" - bos ise mevcut ay, "2026" tum yil
     if not ay:
         ay = datetime.datetime.now().strftime("%Y-%m")
     
+    yil_mod = (len(ay) == 4)  # "2026" -> tum yil
+    
     # 1. PTF verisi (aylik_ptf.json)
     ayptf = github_oku("aylik_ptf.json") or {}
-    ay_ptf = ayptf.get(ay, {})
+    ay_ptf = ayptf.get(ay, {}) if not yil_mod else {}
+    if yil_mod:
+        # Tum aylarin PTF'sini topla
+        for k, v in ayptf.items():
+            if k.startswith(ay):
+                ay_ptf.update(v)
     
     # 2. OSOS verisi (saatlik tuketim)
     osos = github_oku("2026_osos_endeks.json") or {}
@@ -3235,11 +3621,22 @@ def api_maliyet_aksaray3():
     ay_gun_sayisi = 0
     
     for gun_str in sorted(aksaray3.keys()):
-        if not gun_str.startswith(ay):
-            continue
+        # Filtre: yil_mod ise tum 2026, degilse sadece bu ay
+        if yil_mod:
+            if not gun_str.startswith(ay):
+                continue
+        else:
+            if not gun_str.startswith(ay):
+                continue
         
         gun_no = gun_str[8:10]
-        gun_ptf = ay_ptf.get(gun_no)  # 24 saatlik PTF (TL/MWh)
+        # PTF okumasi: yil_mod'da o ayin PTF'sini bul
+        if yil_mod:
+            ay_str = gun_str[:7]
+            ay_ptf_local = ayptf.get(ay_str, {})
+            gun_ptf = ay_ptf_local.get(gun_no)
+        else:
+            gun_ptf = ay_ptf.get(gun_no)
         if not gun_ptf or len(gun_ptf) != 24:
             continue  # PTF yoksa gun atlaniyor
         
