@@ -326,7 +326,9 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 .tab-content.active{display:block;}
 .osos-sec-content{display:none;}
 .osos-sec-content.active{display:block;}
-</style></head><body>
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+</head><body>
 <div class="header">
 <div class="brand"><div class="brand-logo">⚡</div><div class="brand-text">Otocoin</div></div>
 <div style="display:flex;align-items:center;gap:8px">
@@ -752,11 +754,11 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 <div class="tab-content" id="t-maliyetler">
 
 <!-- HEADER -->
-<div style="background:linear-gradient(135deg, rgba(239,68,68,0.12), rgba(245,158,11,0.08)); border:1px solid rgba(245,158,11,0.3); border-radius:16px; padding:18px; margin-bottom:14px;">
+<div style="margin-bottom:18px;">
   <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
     <div>
-      <div style="font-size:22px; font-weight:900; background:linear-gradient(90deg,#f59e0b,#ef4444); -webkit-background-clip:text; background-clip:text; color:transparent;">💸 Elektrik Maliyetleri</div>
-      <div style="font-size:11px; color:#94a3b8; margin-top:4px;">Aksaray 3 · (PTF + YEKDEM) × 1.05 × Saatlik Tüketim</div>
+      <div style="font-size:20px; font-weight:700; color:#fbbf24;">💸 Aksaray 3 - Elektrik Maliyeti</div>
+      <div style="font-size:11px; color:#94a3b8; margin-top:4px;">(PTF + YEKDEM) × 1.05 × Tüketim</div>
     </div>
     <select id="mlt-ay" onchange="mltYukle()" style="background:#0f172a; border:1px solid #334155; color:#e2e8f0; padding:8px 12px; border-radius:8px; font-size:13px;">
       <option value="">Mevcut Ay</option>
@@ -764,145 +766,113 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
   </div>
 </div>
 
-<!-- KPI -->
-<div class="kpi-grid" style="margin-bottom:14px;">
-  <div class="kpi-card highlight" style="background:linear-gradient(135deg, rgba(239,68,68,0.1), rgba(0,0,0,0)); border-left:3px solid #ef4444;">
-    <div class="kpi-label">💸 Toplam Maliyet</div>
-    <div class="kpi-value" id="mlt-toplam" style="color:#ef4444;font-size:22px">—</div>
-    <div class="kpi-sub" id="mlt-toplam-sub">— gün</div>
+<!-- KPI sade -->
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:10px; margin-bottom:18px;">
+  <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:12px 14px;">
+    <div style="font-size:11px; color:#94a3b8; margin-bottom:4px;">Toplam Maliyet</div>
+    <div id="mlt-toplam" style="font-size:18px; font-weight:700; color:#ef4444;">—</div>
+    <div id="mlt-toplam-sub" style="font-size:10px; color:#64748b; margin-top:2px;">— gün</div>
   </div>
-  <div class="kpi-card" style="background:linear-gradient(135deg, rgba(96,165,250,0.08), rgba(0,0,0,0)); border-left:3px solid #60a5fa;">
-    <div class="kpi-label">⚡ Toplam Tüketim</div>
-    <div class="kpi-value" id="mlt-tuketim" style="color:#60a5fa">—</div>
-    <div class="kpi-sub">kWh</div>
+  <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:12px 14px;">
+    <div style="font-size:11px; color:#94a3b8; margin-bottom:4px;">Toplam Tüketim</div>
+    <div id="mlt-tuketim" style="font-size:18px; font-weight:700; color:#60a5fa;">—</div>
+    <div style="font-size:10px; color:#64748b; margin-top:2px;">kWh</div>
   </div>
-  <div class="kpi-card" style="background:linear-gradient(135deg, rgba(251,191,36,0.08), rgba(0,0,0,0)); border-left:3px solid #fbbf24;">
-    <div class="kpi-label">📊 Birim Maliyet</div>
-    <div class="kpi-value" id="mlt-birim" style="color:#fbbf24;font-size:20px">—</div>
-    <div class="kpi-sub">TL/kWh</div>
+  <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:12px 14px;">
+    <div style="font-size:11px; color:#94a3b8; margin-bottom:4px;">Birim Maliyet</div>
+    <div id="mlt-birim" style="font-size:18px; font-weight:700; color:#fbbf24;">—</div>
+    <div style="font-size:10px; color:#64748b; margin-top:2px;">TL/kWh</div>
   </div>
-  <div class="kpi-card" style="background:linear-gradient(135deg, rgba(168,85,247,0.08), rgba(0,0,0,0)); border-left:3px solid #a855f7;">
-    <div class="kpi-label">📉 Ort. PTF</div>
-    <div class="kpi-value" id="mlt-ortptf" style="color:#a855f7">—</div>
-    <div class="kpi-sub">TL/MWh</div>
-  </div>
-</div>
-
-<!-- GUNLUK BAR CHART -->
-<div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:14px; margin-bottom:14px;">
-  <div style="font-size:13px; font-weight:900; color:#ef4444; margin-bottom:10px;">📈 GÜNLÜK MALİYET DAĞILIMI</div>
-  <div id="mlt-chart" style="display:flex; align-items:flex-end; gap:3px; height:140px; padding:6px 0; overflow-x:auto;"></div>
-</div>
-
-<!-- GUNLUK TABLO -->
-<div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:14px;">
-  <div style="font-size:13px; font-weight:900; color:#fbbf24; margin-bottom:10px;">📅 AKSARAY 3 - GÜN GÜN DETAY</div>
-  <div style="overflow-x:auto;">
-    <table style="width:100%; border-collapse:collapse; font-size:12px;">
-      <thead>
-        <tr style="background:rgba(255,255,255,0.04); color:#94a3b8;">
-          <th style="padding:8px 6px; text-align:left;">Tarih</th>
-          <th style="padding:8px 6px; text-align:right;">Tüketim (kWh)</th>
-          <th style="padding:8px 6px; text-align:right;">Ort PTF (TL/MWh)</th>
-          <th style="padding:8px 6px; text-align:right;">Birim (TL/kWh)</th>
-          <th style="padding:8px 6px; text-align:right;">Maliyet (TL)</th>
-        </tr>
-      </thead>
-      <tbody id="mlt-tablo"></tbody>
-    </table>
+  <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:12px 14px;">
+    <div style="font-size:11px; color:#94a3b8; margin-bottom:4px;">Ort. PTF</div>
+    <div id="mlt-ortptf" style="font-size:18px; font-weight:700; color:#a855f7;">—</div>
+    <div style="font-size:10px; color:#64748b; margin-top:2px;">TL/MWh</div>
   </div>
 </div>
 
-<!-- ====== TEK YILDIZ 1+2 ÜRETIM/TÜKETIM ====== -->
-<div style="margin-top:24px;">
-  <!-- Header -->
-  <div style="background:linear-gradient(135deg, rgba(34,197,94,0.12), rgba(96,165,250,0.08)); border:1px solid rgba(34,197,94,0.3); border-radius:16px; padding:18px; margin-bottom:14px;">
-    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
-      <div>
-        <div style="font-size:20px; font-weight:900; background:linear-gradient(90deg,#22c55e,#60a5fa); -webkit-background-clip:text; background-clip:text; color:transparent;">📊 Üretim / Tüketim Mahsuplaşma</div>
-        <div style="font-size:11px; color:#94a3b8; margin-top:4px;">Tek Yıldız 1 (üretim) + Tek Yıldız 2 (üretim + Sera 2 tüketim)</div>
-      </div>
-      <input type="date" id="ut-gun" onchange="utYukle()" style="background:#0f172a; border:1px solid #334155; color:#e2e8f0; padding:8px 12px; border-radius:8px; font-size:13px;">
+<!-- TABLO -->
+<div style="background:rgba(15,23,42,0.4); border:1px solid rgba(255,255,255,0.06); border-radius:12px; overflow:hidden; margin-bottom:18px;">
+  <table style="width:100%; border-collapse:collapse; font-size:13px;">
+    <thead>
+      <tr style="background:rgba(255,255,255,0.04); border-bottom:1px solid rgba(255,255,255,0.06); color:#94a3b8;">
+        <th style="padding:10px 8px; text-align:left; width:36px;"></th>
+        <th style="padding:10px 12px; text-align:left; font-weight:600;">Tarih</th>
+        <th style="padding:10px 12px; text-align:right; font-weight:600;">Tüketim (kWh)</th>
+        <th style="padding:10px 12px; text-align:right; font-weight:600;">Ort PTF</th>
+        <th style="padding:10px 12px; text-align:right; font-weight:600;">Birim</th>
+        <th style="padding:10px 12px; text-align:right; font-weight:600;">Maliyet</th>
+      </tr>
+    </thead>
+    <tbody id="mlt-tablo"></tbody>
+  </table>
+</div>
+
+<!-- CIZGI GRAFIK - GUNLUK TUKETIM -->
+<div style="background:rgba(15,23,42,0.4); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:14px; margin-bottom:24px;">
+  <div style="font-size:13px; font-weight:600; color:#60a5fa; margin-bottom:10px;">📈 Günlük Tüketim (kWh)</div>
+  <div style="position:relative; width:100%; height:240px;">
+    <canvas id="mlt-chart"></canvas>
+  </div>
+</div>
+
+
+<!-- ====== TEK YILDIZ 1+2 BIRLESIK ====== -->
+<div style="margin-bottom:18px; padding-top:18px; border-top:1px solid rgba(255,255,255,0.06);">
+  <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+    <div>
+      <div style="font-size:20px; font-weight:700; color:#22c55e;">📊 Tek Yıldız 1+2 - Üretim/Tüketim</div>
+      <div style="font-size:11px; color:#94a3b8; margin-top:4px;">Toplam Üretim - TY2 Tüketim = NET (🟢 fazla / 🔴 eksik)</div>
     </div>
   </div>
+</div>
 
-  <!-- GUNLUK KPI -->
-  <div class="kpi-grid" style="margin-bottom:14px;">
-    <div class="kpi-card" style="background:linear-gradient(135deg, rgba(251,191,36,0.08), rgba(0,0,0,0)); border-left:3px solid #fbbf24;">
-      <div class="kpi-label">☀️ TY1 Üretim (Gün)</div>
-      <div class="kpi-value" id="ut-ty1-uretim" style="color:#fbbf24">—</div>
-      <div class="kpi-sub">kWh</div>
-    </div>
-    <div class="kpi-card" style="background:linear-gradient(135deg, rgba(245,158,11,0.08), rgba(0,0,0,0)); border-left:3px solid #f59e0b;">
-      <div class="kpi-label">⚡ TY2 Üretim (Gün)</div>
-      <div class="kpi-value" id="ut-ty2-uretim" style="color:#f59e0b">—</div>
-      <div class="kpi-sub">kWh</div>
-    </div>
-    <div class="kpi-card" style="background:linear-gradient(135deg, rgba(239,68,68,0.08), rgba(0,0,0,0)); border-left:3px solid #ef4444;">
-      <div class="kpi-label">🔌 TY2 Tüketim (Gün)</div>
-      <div class="kpi-value" id="ut-ty2-tuketim" style="color:#ef4444">—</div>
-      <div class="kpi-sub">kWh (Sera 2)</div>
-    </div>
-    <div class="kpi-card highlight" style="background:linear-gradient(135deg, rgba(34,197,94,0.1), rgba(0,0,0,0)); border-left:3px solid #22c55e;">
-      <div class="kpi-label">⚖️ NET (Gün)</div>
-      <div class="kpi-value" id="ut-net" style="color:#22c55e;font-size:22px">—</div>
-      <div class="kpi-sub" id="ut-net-sub">kWh</div>
+<!-- KPI birlesik -->
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:10px; margin-bottom:18px;">
+  <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:12px 14px;">
+    <div style="font-size:11px; color:#94a3b8; margin-bottom:4px;">Toplam Üretim (TY1+TY2)</div>
+    <div id="ut-ay-uretim" style="font-size:18px; font-weight:700; color:#60a5fa;">—</div>
+    <div style="font-size:10px; color:#64748b; margin-top:2px;">kWh</div>
+  </div>
+  <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:12px 14px;">
+    <div style="font-size:11px; color:#94a3b8; margin-bottom:4px;">TY2 Tüketim (Sera 2)</div>
+    <div id="ut-ay-tuketim" style="font-size:18px; font-weight:700; color:#ef4444;">—</div>
+    <div style="font-size:10px; color:#64748b; margin-top:2px;">kWh</div>
+  </div>
+  <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:12px 14px;">
+    <div style="font-size:11px; color:#94a3b8; margin-bottom:4px;">NET (Üretim − Tüketim)</div>
+    <div id="ut-ay-net" style="font-size:18px; font-weight:700; color:#22c55e;">—</div>
+    <div id="ut-ay-net-sub" style="font-size:10px; color:#64748b; margin-top:2px;">kWh</div>
+  </div>
+</div>
+
+<!-- TABLO -->
+<div style="background:rgba(15,23,42,0.4); border:1px solid rgba(255,255,255,0.06); border-radius:12px; overflow:hidden; margin-bottom:18px;">
+  <table style="width:100%; border-collapse:collapse; font-size:13px;">
+    <thead>
+      <tr style="background:rgba(255,255,255,0.04); border-bottom:1px solid rgba(255,255,255,0.06); color:#94a3b8;">
+        <th style="padding:10px 8px; text-align:left; width:36px;"></th>
+        <th style="padding:10px 12px; text-align:left; font-weight:600;">Tarih</th>
+        <th style="padding:10px 12px; text-align:right; font-weight:600;">TY1 Üretim</th>
+        <th style="padding:10px 12px; text-align:right; font-weight:600;">TY2 Üretim</th>
+        <th style="padding:10px 12px; text-align:right; font-weight:600;">TY2 Tüketim</th>
+        <th style="padding:10px 12px; text-align:right; font-weight:600;">NET</th>
+      </tr>
+    </thead>
+    <tbody id="ut-tablo"></tbody>
+  </table>
+</div>
+
+<!-- CIZGI GRAFIK - URETIM/TUKETIM -->
+<div style="background:rgba(15,23,42,0.4); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:14px; margin-bottom:18px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+    <div style="font-size:13px; font-weight:600; color:#22c55e;">📈 Günlük Üretim/Tüketim (kWh)</div>
+    <div style="font-size:11px; color:#94a3b8;">
+      <span style="display:inline-flex; align-items:center; gap:4px; margin-right:12px;"><span style="width:10px; height:10px; border-radius:2px; background:#60a5fa;"></span>Üretim</span>
+      <span style="display:inline-flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; border-radius:2px; background:#ef4444;"></span>Tüketim</span>
     </div>
   </div>
-
-  <!-- SAATLIK TABLO -->
-  <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:14px; margin-bottom:14px;">
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
-      <div style="font-size:13px; font-weight:900; color:#60a5fa;">⏱ SAATLİK MAHSUPLAŞMA</div>
-      <div style="font-size:10px; color:#94a3b8;">🟢 Fazla Üretim · 🔴 Tüketim Fazla</div>
-    </div>
-    <div style="overflow-x:auto;">
-      <table style="width:100%; border-collapse:collapse; font-size:11px;">
-        <thead>
-          <tr style="background:rgba(255,255,255,0.04); color:#94a3b8;">
-            <th style="padding:6px 4px; text-align:center;">Saat</th>
-            <th style="padding:6px 4px; text-align:right; color:#fbbf24;">TY1 Üret</th>
-            <th style="padding:6px 4px; text-align:right; color:#f59e0b;">TY2 Üret</th>
-            <th style="padding:6px 4px; text-align:right; color:#22c55e;">Toplam Üret</th>
-            <th style="padding:6px 4px; text-align:right; color:#ef4444;">TY2 Tük</th>
-            <th style="padding:6px 4px; text-align:right;">NET</th>
-          </tr>
-        </thead>
-        <tbody id="ut-saatlik"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- GUNLUK GRAFIK -->
-  <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:14px; margin-bottom:14px;">
-    <div style="font-size:13px; font-weight:900; color:#22c55e; margin-bottom:10px;">📈 GÜNLÜK ÜRETİM/TÜKETİM (Saatlik)</div>
-    <div id="ut-gunluk-chart" style="display:flex; align-items:flex-end; gap:3px; height:140px;"></div>
-  </div>
-
-  <!-- AYLIK OZET -->
-  <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:14px; margin-bottom:14px;">
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
-      <div style="font-size:13px; font-weight:900; color:#fbbf24;">📅 AYLIK ÖZET</div>
-      <div id="ut-aylik-info" style="font-size:11px; color:#94a3b8;">—</div>
-    </div>
-    <div id="ut-aylik-chart" style="display:flex; align-items:flex-end; gap:3px; height:120px; margin-bottom:12px;"></div>
-    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px;">
-      <div style="background:#0f172a; padding:10px; border-radius:8px; border-left:3px solid #fbbf24; text-align:center;">
-        <div style="font-size:10px; color:#94a3b8;">Toplam Üretim</div>
-        <div id="ut-ay-uretim" style="font-size:16px; font-weight:900; color:#fbbf24;">—</div>
-        <div style="font-size:9px; color:#64748b;">kWh</div>
-      </div>
-      <div style="background:#0f172a; padding:10px; border-radius:8px; border-left:3px solid #ef4444; text-align:center;">
-        <div style="font-size:10px; color:#94a3b8;">Toplam Tüketim</div>
-        <div id="ut-ay-tuketim" style="font-size:16px; font-weight:900; color:#ef4444;">—</div>
-        <div style="font-size:9px; color:#64748b;">kWh</div>
-      </div>
-      <div style="background:#0f172a; padding:10px; border-radius:8px; border-left:3px solid #22c55e; text-align:center;">
-        <div style="font-size:10px; color:#94a3b8;">Net</div>
-        <div id="ut-ay-net" style="font-size:16px; font-weight:900; color:#22c55e;">—</div>
-        <div style="font-size:9px; color:#64748b;">kWh</div>
-      </div>
-    </div>
+  <div style="position:relative; width:100%; height:240px;">
+    <canvas id="ut-chart"></canvas>
   </div>
 </div>
 
@@ -2493,6 +2463,10 @@ function cmmBulkSirali(action) {
 
 // ======================== MALIYETLER SEKMESI ========================
 
+let mltChartInstance = null;
+let mltData = null;
+let mltAcikGun = null;
+
 function mltYukle() {
   const ay = document.getElementById('mlt-ay').value;
   const url = '/api/maliyet/aksaray3' + (ay ? '?ay=' + ay : '');
@@ -2501,177 +2475,402 @@ function mltYukle() {
     if (d.hata) {
       document.getElementById('mlt-toplam').textContent = '—';
       document.getElementById('mlt-toplam-sub').textContent = d.hata;
-      document.getElementById('mlt-tablo').innerHTML = '<tr><td colspan="5" style="padding:20px;text-align:center;color:#94a3b8;">' + d.hata + '</td></tr>';
-      document.getElementById('mlt-chart').innerHTML = '';
+      document.getElementById('mlt-tablo').innerHTML = '<tr><td colspan="6" style="padding:20px;text-align:center;color:#94a3b8;">' + d.hata + '</td></tr>';
       return;
     }
     
-    // KPI
+    mltData = d;
     const fmtTRY = v => v ? Math.round(v).toLocaleString('tr-TR') + ' ₺' : '— ₺';
     const fmtNum = v => v ? Math.round(v).toLocaleString('tr-TR') : '—';
     
+    // KPI
     document.getElementById('mlt-toplam').textContent = fmtTRY(d.toplam_maliyet_tl);
     document.getElementById('mlt-toplam-sub').textContent = d.gun_sayisi + ' gün · Ort: ' + fmtTRY(d.ort_gunluk_maliyet_tl) + '/gün';
     document.getElementById('mlt-tuketim').textContent = fmtNum(d.toplam_tuketim_kwh);
     document.getElementById('mlt-birim').textContent = d.ort_birim_fiyat_tl_kwh ? d.ort_birim_fiyat_tl_kwh.toFixed(4) : '—';
     document.getElementById('mlt-ortptf').textContent = fmtNum(d.ort_ptf_tl_mwh);
     
-    // Chart
-    const gunler = d.gunler || [];
-    const maxMal = Math.max(...gunler.map(g => g.toplam_maliyet_tl), 1);
-    let chartHtml = '';
-    gunler.forEach(g => {
-      const heightPct = (g.toplam_maliyet_tl / maxMal) * 100;
-      const dt = new Date(g.tarih);
-      const dgun = dt.toLocaleDateString('tr-TR', {day:'2-digit'});
-      chartHtml += '<div style="flex:1; min-width:24px; display:flex; flex-direction:column; align-items:center; gap:3px;" title="' + g.tarih + ': ' + Math.round(g.toplam_maliyet_tl).toLocaleString('tr-TR') + ' ₺">';
-      chartHtml += '<div style="font-size:8px; color:#ef4444; font-weight:700;">' + Math.round(g.toplam_maliyet_tl / 1000) + 'k</div>';
-      chartHtml += '<div style="width:100%; height:90px; display:flex; flex-direction:column; justify-content:flex-end;">';
-      chartHtml += '<div style="width:100%; height:' + heightPct + '%; background:linear-gradient(180deg, rgba(239,68,68,0.9), rgba(245,158,11,0.4)); border-radius:3px 3px 0 0; min-height:2px;"></div>';
-      chartHtml += '</div>';
-      chartHtml += '<div style="font-size:9px; color:#94a3b8; font-weight:700;">' + dgun + '</div>';
-      chartHtml += '</div>';
-    });
-    document.getElementById('mlt-chart').innerHTML = chartHtml || '<div style="width:100%; text-align:center; color:#64748b; font-size:11px; padding:30px 0;">Veri yok</div>';
+    // Son günü otomatik aç
+    const gunlerSorted = [...(d.gunler || [])].reverse();
+    if (gunlerSorted.length > 0 && !mltAcikGun) {
+      mltAcikGun = gunlerSorted[0].tarih;
+    }
     
-    // Tablo (yeniden eskiye)
-    let tbl = '';
-    [...gunler].reverse().forEach(g => {
-      const dt = new Date(g.tarih);
-      const dateStr = dt.toLocaleDateString('tr-TR', {day:'2-digit', month:'short', weekday:'short'});
-      tbl += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04);">';
-      tbl += '<td style="padding:8px 6px; color:#cbd5e1;">' + dateStr + '</td>';
-      tbl += '<td style="padding:8px 6px; text-align:right; color:#60a5fa;">' + fmtNum(g.toplam_tuketim_kwh) + '</td>';
-      tbl += '<td style="padding:8px 6px; text-align:right; color:#a855f7;">' + fmtNum(g.ort_ptf_tl_mwh) + '</td>';
-      tbl += '<td style="padding:8px 6px; text-align:right; color:#fbbf24;">' + g.ort_birim_fiyat_tl_kwh.toFixed(4) + '</td>';
-      tbl += '<td style="padding:8px 6px; text-align:right; color:#ef4444; font-weight:700;">' + fmtTRY(g.toplam_maliyet_tl) + '</td>';
-      tbl += '</tr>';
-    });
-    
-    // Toplam satiri
-    tbl += '<tr style="border-top:2px solid rgba(239,68,68,0.4); background:rgba(239,68,68,0.05); font-weight:900;">';
-    tbl += '<td style="padding:10px 6px; color:#fff;">TOPLAM (' + d.gun_sayisi + ' gün)</td>';
-    tbl += '<td style="padding:10px 6px; text-align:right; color:#60a5fa;">' + fmtNum(d.toplam_tuketim_kwh) + '</td>';
-    tbl += '<td style="padding:10px 6px; text-align:right; color:#a855f7;">' + fmtNum(d.ort_ptf_tl_mwh) + '</td>';
-    tbl += '<td style="padding:10px 6px; text-align:right; color:#fbbf24;">' + d.ort_birim_fiyat_tl_kwh.toFixed(4) + '</td>';
-    tbl += '<td style="padding:10px 6px; text-align:right; color:#ef4444; font-size:14px;">' + fmtTRY(d.toplam_maliyet_tl) + '</td>';
-    tbl += '</tr>';
-    
-    document.getElementById('mlt-tablo').innerHTML = tbl || '<tr><td colspan="5" style="padding:20px;text-align:center;">Veri yok</td></tr>';
+    mltTabloRender();
+    mltChartRender();
   }).catch(e => {
     console.error('Maliyet yukleme hatasi:', e);
-    document.getElementById('mlt-tablo').innerHTML = '<tr><td colspan="5" style="padding:20px;text-align:center;color:#ef4444;">Hata: ' + e + '</td></tr>';
+    document.getElementById('mlt-tablo').innerHTML = '<tr><td colspan="6" style="padding:20px;text-align:center;color:#ef4444;">Hata: ' + e + '</td></tr>';
   });
 }
 
-// ======================== MALIYETLER SEKMESI SONU ========================
+function mltTabloRender() {
+  if (!mltData) return;
+  const fmtTRY = v => v ? Math.round(v).toLocaleString('tr-TR') + ' ₺' : '— ₺';
+  const fmtNum = v => v ? Math.round(v).toLocaleString('tr-TR') : '—';
+  
+  const gunler = [...(mltData.gunler || [])].reverse();
+  let tbl = '';
+  
+  gunler.forEach(g => {
+    const acik = (g.tarih === mltAcikGun);
+    const dt = new Date(g.tarih);
+    const dateStr = dt.toLocaleDateString('tr-TR', {day:'2-digit', month:'short', weekday:'short'});
+    const bg = acik ? 'background:rgba(96,165,250,0.05);' : '';
+    const icon = acik ? '▼' : '▶';
+    const iconColor = acik ? '#60a5fa' : '#64748b';
+    
+    tbl += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04); cursor:pointer; ' + bg + '" onclick="mltGunAc(\'' + g.tarih + '\')">';
+    tbl += '<td style="padding:12px 8px; text-align:center; color:' + iconColor + '; font-size:11px;">' + icon + '</td>';
+    tbl += '<td style="padding:12px; color:#cbd5e1; font-weight:' + (acik?'700':'400') + ';">' + dateStr + '</td>';
+    tbl += '<td style="padding:12px; text-align:right; color:#60a5fa; font-size:14px;">' + fmtNum(g.toplam_tuketim_kwh) + '</td>';
+    tbl += '<td style="padding:12px; text-align:right; color:#a855f7;">' + fmtNum(g.ort_ptf_tl_mwh) + '</td>';
+    tbl += '<td style="padding:12px; text-align:right; color:#fbbf24;">' + g.ort_birim_fiyat_tl_kwh.toFixed(4) + '</td>';
+    tbl += '<td style="padding:12px; text-align:right; color:#ef4444; font-weight:700; font-size:14px;">' + fmtTRY(g.toplam_maliyet_tl) + '</td>';
+    tbl += '</tr>';
+    
+    if (acik && g.saatler) {
+      tbl += '<tr style="background:rgba(0,0,0,0.2);"><td colspan="6" style="padding:12px;">';
+      tbl += '<div style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.04); border-radius:8px; overflow:hidden;">';
+      tbl += '<table style="width:100%; border-collapse:collapse; font-size:11px;">';
+      tbl += '<thead><tr style="background:rgba(255,255,255,0.02); color:#94a3b8;">';
+      tbl += '<th style="padding:6px 10px; text-align:left;">Saat</th>';
+      tbl += '<th style="padding:6px 10px; text-align:right;">Tüketim (kWh)</th>';
+      tbl += '<th style="padding:6px 10px; text-align:right;">PTF (TL/MWh)</th>';
+      tbl += '<th style="padding:6px 10px; text-align:right;">Enerji (TL/kWh)</th>';
+      tbl += '<th style="padding:6px 10px; text-align:right;">Tutar (₺)</th>';
+      tbl += '</tr></thead><tbody>';
+      
+      g.saatler.forEach(s => {
+        const enerji = (s.ptf/1000 + 602.51/1000) * 1.05;
+        const pahalı = s.ptf > 2000;
+        const renkTutar = pahalı ? '#ef4444' : '#cbd5e1';
+        tbl += '<tr style="border-top:1px solid rgba(255,255,255,0.03);">';
+        tbl += '<td style="padding:5px 10px; color:#94a3b8;">' + String(s.saat).padStart(2,'0') + ':00</td>';
+        tbl += '<td style="padding:5px 10px; text-align:right; color:#60a5fa;">' + s.tuketim.toFixed(1) + '</td>';
+        tbl += '<td style="padding:5px 10px; text-align:right; color:' + (pahalı?'#ef4444':'#a855f7') + ';">' + Math.round(s.ptf) + '</td>';
+        tbl += '<td style="padding:5px 10px; text-align:right; color:#fbbf24;">' + enerji.toFixed(4) + '</td>';
+        tbl += '<td style="padding:5px 10px; text-align:right; color:' + renkTutar + '; font-weight:700;">' + Math.round(s.maliyet).toLocaleString('tr-TR') + '</td>';
+        tbl += '</tr>';
+      });
+      
+      tbl += '<tr style="border-top:2px solid rgba(96,165,250,0.3); background:rgba(255,255,255,0.02);">';
+      tbl += '<td style="padding:7px 10px; font-weight:700; color:#fff;">Toplam</td>';
+      tbl += '<td style="padding:7px 10px; text-align:right; font-weight:700; color:#60a5fa;">' + fmtNum(g.toplam_tuketim_kwh) + '</td>';
+      tbl += '<td style="padding:7px 10px; text-align:right; font-weight:700; color:#a855f7;">' + fmtNum(g.ort_ptf_tl_mwh) + '</td>';
+      tbl += '<td style="padding:7px 10px; text-align:right; font-weight:700; color:#fbbf24;">' + g.ort_birim_fiyat_tl_kwh.toFixed(4) + '</td>';
+      tbl += '<td style="padding:7px 10px; text-align:right; font-weight:700; color:#ef4444;">' + fmtTRY(g.toplam_maliyet_tl) + '</td>';
+      tbl += '</tr>';
+      
+      tbl += '</tbody></table></div></td></tr>';
+    }
+  });
+  
+  // Genel toplam
+  tbl += '<tr style="background:rgba(239,68,68,0.08); border-top:2px solid rgba(239,68,68,0.4);">';
+  tbl += '<td style="padding:12px 8px;"></td>';
+  tbl += '<td style="padding:12px; font-weight:900; color:#fff;">TOPLAM (' + mltData.gun_sayisi + ' gün)</td>';
+  tbl += '<td style="padding:12px; text-align:right; font-weight:900; color:#60a5fa; font-size:14px;">' + fmtNum(mltData.toplam_tuketim_kwh) + '</td>';
+  tbl += '<td style="padding:12px; text-align:right; font-weight:900; color:#a855f7;">' + fmtNum(mltData.ort_ptf_tl_mwh) + '</td>';
+  tbl += '<td style="padding:12px; text-align:right; font-weight:900; color:#fbbf24;">' + mltData.ort_birim_fiyat_tl_kwh.toFixed(4) + '</td>';
+  tbl += '<td style="padding:12px; text-align:right; font-weight:900; color:#ef4444; font-size:16px;">' + fmtTRY(mltData.toplam_maliyet_tl) + '</td>';
+  tbl += '</tr>';
+  
+  document.getElementById('mlt-tablo').innerHTML = tbl;
+}
+
+function mltGunAc(tarih) {
+  mltAcikGun = (mltAcikGun === tarih) ? null : tarih;
+  mltTabloRender();
+}
+
+function mltChartRender() {
+  if (!mltData || !window.Chart) return;
+  const gunler = mltData.gunler || [];
+  const labels = gunler.map(g => g.tarih.slice(-2));  // gun
+  const data = gunler.map(g => Math.round(g.toplam_tuketim_kwh));
+  
+  const ctx = document.getElementById('mlt-chart');
+  if (!ctx) return;
+  if (mltChartInstance) mltChartInstance.destroy();
+  
+  mltChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Tüketim',
+        data: data,
+        borderColor: '#60a5fa',
+        backgroundColor: 'rgba(96,165,250,0.15)',
+        borderWidth: 2,
+        pointRadius: 4,
+        pointBackgroundColor: '#60a5fa',
+        pointBorderColor: '#0f172a',
+        pointBorderWidth: 1.5,
+        tension: 0.25,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: (items) => 'Gün ' + items[0].label,
+            label: (item) => item.parsed.y.toLocaleString('tr-TR') + ' kWh'
+          }
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'Gün', color: '#94a3b8', font: { size: 11 } },
+          grid: { display: false },
+          ticks: { color: '#94a3b8', font: { size: 10 } }
+        },
+        y: {
+          title: { display: true, text: 'Tüketim (kWh)', color: '#94a3b8', font: { size: 11 } },
+          beginAtZero: true,
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: '#94a3b8', font: { size: 10 }, callback: v => v.toLocaleString('tr-TR') }
+        }
+      },
+      interaction: { intersect: false, mode: 'index' }
+    }
+  });
+}
 
 
 // ======================== URETIM/TUKETIM (TY1+TY2) ========================
 
+let utChartInstance = null;
+let utData = null;
+let utAcikGun = null;
+
 function utYukle() {
-  // Gun input yoksa bugun
-  let gunInput = document.getElementById('ut-gun');
-  if (!gunInput.value) {
-    const t = new Date();
-    gunInput.value = t.toISOString().slice(0, 10);
-  }
-  const gun = gunInput.value;
-  
-  fetch('/api/uretim_tuketim?gun=' + gun + '&ay=' + gun.slice(0, 7)).then(r => r.json()).then(d => {
-    if (d.hata) {
-      console.error(d.hata);
-      return;
-    }
+  const ay = (new Date()).toISOString().slice(0, 7);
+  const gun = (new Date()).toISOString().slice(0, 10);
+  fetch('/api/uretim_tuketim?gun=' + gun + '&ay=' + ay).then(r => r.json()).then(d => {
+    if (d.hata) return;
+    utData = d;
     
-    const g = d.gunluk || {};
     const a = d.aylik || {};
-    const fmt = v => v ? Math.round(v).toLocaleString('tr-TR') : '0';
+    const fmtNum = v => (v || v === 0) ? Math.round(v).toLocaleString('tr-TR') : '—';
     
-    // Gunluk KPI
-    document.getElementById('ut-ty1-uretim').textContent = fmt(g.ty1_uretim);
-    document.getElementById('ut-ty2-uretim').textContent = fmt(g.ty2_uretim);
-    document.getElementById('ut-ty2-tuketim').textContent = fmt(g.ty2_tuketim);
+    document.getElementById('ut-ay-uretim').textContent = fmtNum(a.toplam_uretim);
+    document.getElementById('ut-ay-tuketim').textContent = fmtNum(a.toplam_tuketim);
     
-    const netEl = document.getElementById('ut-net');
-    const netSub = document.getElementById('ut-net-sub');
-    if (g.fazla_uretim) {
-      netEl.textContent = '+' + fmt(g.net);
+    const netEl = document.getElementById('ut-ay-net');
+    const netSub = document.getElementById('ut-ay-net-sub');
+    if ((a.net || 0) >= 0) {
+      netEl.textContent = '+' + fmtNum(a.net);
       netEl.style.color = '#22c55e';
-      netSub.textContent = 'kWh fazla üretim 🟢';
+      netSub.textContent = 'kWh fazla üretim';
     } else {
-      netEl.textContent = fmt(g.net);
+      netEl.textContent = fmtNum(a.net);
       netEl.style.color = '#ef4444';
-      netSub.textContent = 'kWh tüketim fazla 🔴';
+      netSub.textContent = 'kWh eksik üretim';
     }
     
-    // Saatlik tablo
-    let tbl = '';
-    (g.saatlik || []).forEach(s => {
-      const netColor = s.fazla_uretim ? '#22c55e' : '#ef4444';
-      const netBg = s.fazla_uretim ? 'rgba(34,197,94,0.06)' : 'rgba(239,68,68,0.06)';
-      const icon = s.fazla_uretim ? '🟢' : '🔴';
-      tbl += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04); background:' + netBg + ';">';
-      tbl += '<td style="padding:6px 4px; text-align:center; font-weight:700; color:#cbd5e1;">' + String(s.saat).padStart(2,'0') + ':00</td>';
-      tbl += '<td style="padding:6px 4px; text-align:right; color:#fbbf24;">' + fmt(s.ty1_uretim) + '</td>';
-      tbl += '<td style="padding:6px 4px; text-align:right; color:#f59e0b;">' + fmt(s.ty2_uretim) + '</td>';
-      tbl += '<td style="padding:6px 4px; text-align:right; color:#22c55e; font-weight:700;">' + fmt(s.toplam_uretim) + '</td>';
-      tbl += '<td style="padding:6px 4px; text-align:right; color:#ef4444;">' + fmt(s.ty2_tuketim) + '</td>';
-      tbl += '<td style="padding:6px 4px; text-align:right; color:' + netColor + '; font-weight:900;">' + icon + ' ' + (s.fazla_uretim?'+':'') + fmt(s.net) + '</td>';
-      tbl += '</tr>';
-    });
-    document.getElementById('ut-saatlik').innerHTML = tbl || '<tr><td colspan="6" style="padding:20px;text-align:center;color:#94a3b8;">Veri yok</td></tr>';
-    
-    // Gunluk grafik (saatlik bar) - yesil/kirmizi
-    const maxAbs = Math.max(...(g.saatlik || []).map(s => Math.abs(s.net)), 1);
-    let chartHtml = '';
-    (g.saatlik || []).forEach(s => {
-      const heightPct = Math.abs(s.net) / maxAbs * 100;
-      const renk = s.fazla_uretim ? '#22c55e' : '#ef4444';
-      const renkLight = s.fazla_uretim ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)';
-      chartHtml += '<div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:2px;" title="Saat ' + s.saat + ': ' + s.net + ' kWh">';
-      chartHtml += '<div style="font-size:8px; color:' + renk + '; font-weight:700;">' + (s.fazla_uretim?'+':'') + Math.round(s.net) + '</div>';
-      chartHtml += '<div style="width:100%; height:90px; display:flex; flex-direction:column; justify-content:flex-end;">';
-      chartHtml += '<div style="width:100%; height:' + heightPct + '%; background:linear-gradient(180deg, ' + renk + ', ' + renkLight + '); border-radius:2px 2px 0 0; min-height:2px;"></div>';
-      chartHtml += '</div>';
-      chartHtml += '<div style="font-size:8px; color:#94a3b8;">' + String(s.saat).padStart(2,'0') + '</div>';
-      chartHtml += '</div>';
-    });
-    document.getElementById('ut-gunluk-chart').innerHTML = chartHtml;
-    
-    // Aylik
-    document.getElementById('ut-aylik-info').textContent = a.gun_sayisi + ' gün';
-    document.getElementById('ut-ay-uretim').textContent = fmt(a.toplam_uretim);
-    document.getElementById('ut-ay-tuketim').textContent = fmt(a.toplam_tuketim);
-    
-    const ayNetEl = document.getElementById('ut-ay-net');
-    if (a.net >= 0) {
-      ayNetEl.textContent = '+' + fmt(a.net);
-      ayNetEl.style.color = '#22c55e';
-    } else {
-      ayNetEl.textContent = fmt(a.net);
-      ayNetEl.style.color = '#ef4444';
-    }
-    
-    // Aylik chart (gun bazli net)
+    // Son gün otomatik aç
     const aylikGunler = a.gunler || [];
-    const ayMaxAbs = Math.max(...aylikGunler.map(g => Math.abs(g.net)), 1);
-    let ayChartHtml = '';
-    aylikGunler.forEach(g => {
-      const heightPct = Math.abs(g.net) / ayMaxAbs * 100;
-      const renk = g.fazla_uretim ? '#22c55e' : '#ef4444';
-      const renkLight = g.fazla_uretim ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)';
-      const dt = new Date(g.tarih);
-      const gunNo = dt.toLocaleDateString('tr-TR', {day:'2-digit'});
-      ayChartHtml += '<div style="flex:1; min-width:18px; display:flex; flex-direction:column; align-items:center; gap:2px;" title="' + g.tarih + ': ' + g.net + ' kWh">';
-      ayChartHtml += '<div style="font-size:7px; color:' + renk + '; font-weight:700;">' + (g.fazla_uretim?'+':'') + Math.round(g.net/1000) + 'k</div>';
-      ayChartHtml += '<div style="width:100%; height:75px; display:flex; flex-direction:column; justify-content:flex-end;">';
-      ayChartHtml += '<div style="width:100%; height:' + heightPct + '%; background:linear-gradient(180deg, ' + renk + ', ' + renkLight + '); border-radius:2px 2px 0 0; min-height:2px;"></div>';
-      ayChartHtml += '</div>';
-      ayChartHtml += '<div style="font-size:8px; color:#94a3b8;">' + gunNo + '</div>';
-      ayChartHtml += '</div>';
-    });
-    document.getElementById('ut-aylik-chart').innerHTML = ayChartHtml;
+    if (aylikGunler.length > 0 && !utAcikGun) {
+      utAcikGun = aylikGunler[aylikGunler.length - 1].tarih;
+      // Saatlik veriyi yukle
+      utGunDetayYukle(utAcikGun);
+    } else {
+      utTabloRender();
+      utChartRender();
+    }
+  }).catch(e => console.error('UT hata:', e));
+}
+
+function utGunDetayYukle(tarih) {
+  // Bu gun icin saatlik veriyi cek
+  fetch('/api/uretim_tuketim?gun=' + tarih + '&ay=' + tarih.slice(0,7)).then(r => r.json()).then(d => {
+    if (d.gunluk && d.gunluk.saatlik) {
+      // Aylik veriye ekle
+      const aylikGunler = (utData.aylik && utData.aylik.gunler) || [];
+      const idx = aylikGunler.findIndex(g => g.tarih === tarih);
+      if (idx >= 0) {
+        aylikGunler[idx].saatlik = d.gunluk.saatlik;
+      }
+    }
+    utTabloRender();
+    utChartRender();
+  });
+}
+
+function utGunAc(tarih) {
+  if (utAcikGun === tarih) {
+    utAcikGun = null;
+    utTabloRender();
+  } else {
+    utAcikGun = tarih;
+    // Saatlik veri yoksa cek
+    const aylikGunler = (utData.aylik && utData.aylik.gunler) || [];
+    const gun = aylikGunler.find(g => g.tarih === tarih);
+    if (gun && !gun.saatlik) {
+      utGunDetayYukle(tarih);
+    } else {
+      utTabloRender();
+    }
+  }
+}
+
+function utTabloRender() {
+  if (!utData) return;
+  const fmtNum = v => (v || v === 0) ? Math.round(v).toLocaleString('tr-TR') : '—';
+  
+  const aylikGunler = (utData.aylik && utData.aylik.gunler) || [];
+  const gunler = [...aylikGunler].reverse();
+  let tbl = '';
+  
+  gunler.forEach(g => {
+    const acik = (g.tarih === utAcikGun);
+    const dt = new Date(g.tarih);
+    const dateStr = dt.toLocaleDateString('tr-TR', {day:'2-digit', month:'short', weekday:'short'});
+    const bg = acik ? 'background:rgba(34,197,94,0.05);' : '';
+    const icon = acik ? '▼' : '▶';
+    const iconColor = acik ? '#22c55e' : '#64748b';
+    const netRenk = g.fazla_uretim ? '#22c55e' : '#ef4444';
+    const netIcon = g.fazla_uretim ? '🟢' : '🔴';
+    const netPrefix = g.fazla_uretim ? '+' : '';
+    
+    tbl += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04); cursor:pointer; ' + bg + '" onclick="utGunAc(\'' + g.tarih + '\')">';
+    tbl += '<td style="padding:12px 8px; text-align:center; color:' + iconColor + '; font-size:11px;">' + icon + '</td>';
+    tbl += '<td style="padding:12px; color:#cbd5e1; font-weight:' + (acik?'700':'400') + ';">' + dateStr + '</td>';
+    tbl += '<td style="padding:12px; text-align:right; color:#fbbf24;">' + fmtNum(g.ty1_uretim) + '</td>';
+    tbl += '<td style="padding:12px; text-align:right; color:#f59e0b;">' + fmtNum(g.ty2_uretim) + '</td>';
+    tbl += '<td style="padding:12px; text-align:right; color:#ef4444;">' + fmtNum(g.ty2_tuketim) + '</td>';
+    tbl += '<td style="padding:12px; text-align:right; color:' + netRenk + '; font-weight:700; font-size:14px;">' + netIcon + ' ' + netPrefix + fmtNum(g.net) + '</td>';
+    tbl += '</tr>';
+    
+    if (acik && g.saatlik) {
+      tbl += '<tr style="background:rgba(0,0,0,0.2);"><td colspan="6" style="padding:12px;">';
+      tbl += '<div style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.04); border-radius:8px; overflow:hidden;">';
+      tbl += '<table style="width:100%; border-collapse:collapse; font-size:11px;">';
+      tbl += '<thead><tr style="background:rgba(255,255,255,0.02); color:#94a3b8;">';
+      tbl += '<th style="padding:6px 10px; text-align:left;">Saat</th>';
+      tbl += '<th style="padding:6px 10px; text-align:right;">TY1 Üretim</th>';
+      tbl += '<th style="padding:6px 10px; text-align:right;">TY2 Üretim</th>';
+      tbl += '<th style="padding:6px 10px; text-align:right;">Toplam Ü</th>';
+      tbl += '<th style="padding:6px 10px; text-align:right;">TY2 Tüketim</th>';
+      tbl += '<th style="padding:6px 10px; text-align:right;">NET</th>';
+      tbl += '</tr></thead><tbody>';
+      
+      g.saatlik.forEach(s => {
+        const renk = s.fazla_uretim ? '#22c55e' : '#ef4444';
+        const ico = s.fazla_uretim ? '🟢' : '🔴';
+        const pre = s.fazla_uretim ? '+' : '';
+        tbl += '<tr style="border-top:1px solid rgba(255,255,255,0.03);">';
+        tbl += '<td style="padding:5px 10px; color:#94a3b8;">' + String(s.saat).padStart(2,'0') + ':00</td>';
+        tbl += '<td style="padding:5px 10px; text-align:right; color:#fbbf24;">' + Math.round(s.ty1_uretim) + '</td>';
+        tbl += '<td style="padding:5px 10px; text-align:right; color:#f59e0b;">' + Math.round(s.ty2_uretim) + '</td>';
+        tbl += '<td style="padding:5px 10px; text-align:right; color:#60a5fa;">' + Math.round(s.toplam_uretim) + '</td>';
+        tbl += '<td style="padding:5px 10px; text-align:right; color:#ef4444;">' + Math.round(s.ty2_tuketim) + '</td>';
+        tbl += '<td style="padding:5px 10px; text-align:right; color:' + renk + '; font-weight:700;">' + ico + ' ' + pre + Math.round(s.net) + '</td>';
+        tbl += '</tr>';
+      });
+      
+      tbl += '<tr style="border-top:2px solid rgba(34,197,94,0.3); background:rgba(255,255,255,0.02);">';
+      tbl += '<td style="padding:7px 10px; font-weight:700; color:#fff;">Toplam</td>';
+      tbl += '<td style="padding:7px 10px; text-align:right; font-weight:700; color:#fbbf24;">' + fmtNum(g.ty1_uretim) + '</td>';
+      tbl += '<td style="padding:7px 10px; text-align:right; font-weight:700; color:#f59e0b;">' + fmtNum(g.ty2_uretim) + '</td>';
+      tbl += '<td style="padding:7px 10px; text-align:right; font-weight:700; color:#60a5fa;">' + fmtNum(g.toplam_uretim) + '</td>';
+      tbl += '<td style="padding:7px 10px; text-align:right; font-weight:700; color:#ef4444;">' + fmtNum(g.ty2_tuketim) + '</td>';
+      tbl += '<td style="padding:7px 10px; text-align:right; font-weight:700; color:' + netRenk + ';">' + netPrefix + fmtNum(g.net) + '</td>';
+      tbl += '</tr>';
+      
+      tbl += '</tbody></table></div></td></tr>';
+    }
+  });
+  
+  // Genel toplam
+  const a = utData.aylik || {};
+  const totalNetRenk = (a.net || 0) >= 0 ? '#22c55e' : '#ef4444';
+  const totalNetPrefix = (a.net || 0) >= 0 ? '+' : '';
+  tbl += '<tr style="background:rgba(34,197,94,0.08); border-top:2px solid rgba(34,197,94,0.4);">';
+  tbl += '<td style="padding:12px 8px;"></td>';
+  tbl += '<td style="padding:12px; font-weight:900; color:#fff;">TOPLAM (' + (a.gun_sayisi || 0) + ' gün)</td>';
+  tbl += '<td style="padding:12px; text-align:right; font-weight:900; color:#fbbf24;">' + fmtNum(aylikGunler.reduce((s,g)=>s+g.ty1_uretim,0)) + '</td>';
+  tbl += '<td style="padding:12px; text-align:right; font-weight:900; color:#f59e0b;">' + fmtNum(aylikGunler.reduce((s,g)=>s+g.ty2_uretim,0)) + '</td>';
+  tbl += '<td style="padding:12px; text-align:right; font-weight:900; color:#ef4444;">' + fmtNum(a.toplam_tuketim) + '</td>';
+  tbl += '<td style="padding:12px; text-align:right; font-weight:900; color:' + totalNetRenk + '; font-size:14px;">' + totalNetPrefix + fmtNum(a.net) + '</td>';
+  tbl += '</tr>';
+  
+  document.getElementById('ut-tablo').innerHTML = tbl;
+}
+
+function utChartRender() {
+  if (!utData || !window.Chart) return;
+  const aylikGunler = (utData.aylik && utData.aylik.gunler) || [];
+  const labels = aylikGunler.map(g => g.tarih.slice(-2));
+  const uretimData = aylikGunler.map(g => Math.round(g.toplam_uretim));
+  const tuketimData = aylikGunler.map(g => Math.round(g.ty2_tuketim));
+  
+  const ctx = document.getElementById('ut-chart');
+  if (!ctx) return;
+  if (utChartInstance) utChartInstance.destroy();
+  
+  utChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Üretim',
+          data: uretimData,
+          borderColor: '#60a5fa',
+          backgroundColor: 'rgba(96,165,250,0.1)',
+          borderWidth: 2,
+          pointRadius: 3,
+          pointBackgroundColor: '#60a5fa',
+          tension: 0.25,
+          fill: false
+        },
+        {
+          label: 'Tüketim',
+          data: tuketimData,
+          borderColor: '#ef4444',
+          backgroundColor: 'rgba(239,68,68,0.1)',
+          borderWidth: 2,
+          pointRadius: 3,
+          pointBackgroundColor: '#ef4444',
+          tension: 0.25,
+          fill: false
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: (items) => 'Gün ' + items[0].label,
+            label: (item) => item.dataset.label + ': ' + item.parsed.y.toLocaleString('tr-TR') + ' kWh'
+          }
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'Gün', color: '#94a3b8', font: { size: 11 } },
+          grid: { display: false },
+          ticks: { color: '#94a3b8', font: { size: 10 } }
+        },
+        y: {
+          title: { display: true, text: 'kWh', color: '#94a3b8', font: { size: 11 } },
+          beginAtZero: true,
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: '#94a3b8', font: { size: 10 }, callback: v => v.toLocaleString('tr-TR') }
+        }
+      },
+      interaction: { intersect: false, mode: 'index' }
+    }
   });
 }
 
