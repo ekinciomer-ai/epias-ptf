@@ -2514,7 +2514,7 @@ function mltTabloRender() {
     const icon = acik ? '▼' : '▶';
     const iconColor = acik ? '#185fa5' : '#94a3b8';
     
-    tbl += '<tr style="border-bottom:1px solid #e2e8f0; cursor:pointer; ' + bg + '" onclick="mltGunAc(\'' + g.tarih + '\')">';
+    tbl += '<tr style="border-bottom:1px solid #e2e8f0; cursor:pointer; ' + bg + '" onclick="mltGunAc(\\'' + g.tarih + '\\')">';
     tbl += '<td style="padding:11px 8px; text-align:center; color:' + iconColor + '; font-size:11px;">' + icon + '</td>';
     tbl += '<td style="padding:11px 12px; color:#1e293b; font-weight:' + (acik?'600':'400') + ';">' + dateStr + '</td>';
     tbl += '<td style="padding:11px 12px; text-align:right; color:#1e293b;">' + fmtNum(g.toplam_tuketim_kwh) + '</td>';
@@ -2715,7 +2715,7 @@ function utTabloRender() {
     const netRenk = g.fazla_uretim ? '#0c447c' : '#993c1d';
     const netPrefix = g.fazla_uretim ? '+' : '';
     
-    tbl += '<tr style="border-bottom:1px solid #e2e8f0; cursor:pointer; ' + bg + '" onclick="utGunAc(\'' + g.tarih + '\')">';
+    tbl += '<tr style="border-bottom:1px solid #e2e8f0; cursor:pointer; ' + bg + '" onclick="utGunAc(\\'' + g.tarih + '\\')">';
     tbl += '<td style="padding:11px 8px; text-align:center; color:' + iconColor + '; font-size:11px;">' + icon + '</td>';
     tbl += '<td style="padding:11px 12px; color:#1e293b; font-weight:' + (acik?'600':'400') + ';">' + dateStr + '</td>';
     tbl += '<td style="padding:11px 12px; text-align:right; color:#185fa5;">' + fmtNum(g.ty1_uretim) + '</td>';
