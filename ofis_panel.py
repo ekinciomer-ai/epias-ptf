@@ -1114,7 +1114,8 @@ function cihazRender(workers) {
   let html = '';
   workers.sort((a,b) => a.name.localeCompare(b.name)).forEach(w => {
     const d = durumBilgisi(w.durum);
-    html += '<div class="cihaz-card ' + w.durum + '" onclick="cihazDetay(\"' + w.name + '\")">'
+    const nameEsc = w.name.replace(/'/g, "\\'");
+    html += '<div class="cihaz-card ' + w.durum + '" onclick="cihazDetay(&quot;' + w.name + '&quot;)">'
       + '<div class="cihaz-row1"><div class="cihaz-no">' + w.name + '</div><div class="cihaz-badge ' + d.cls + '">' + d.label + '</div></div>'
       + '<div class="cihaz-hash">' + Math.round(w.anlik) + ' <span style="font-size:11px;color:#64748b">TH/s anlık</span></div>'
       + '<div class="cihaz-sub">24h ort: ' + Math.round(w.h24) + ' TH/s</div>'
@@ -1727,7 +1728,7 @@ function invListeRender(inverters) {
 
     const stationKisa = inv.stationName.replace(' GES', '');
 
-    html += '<div class="cihaz-card ' + cls + '" onclick="invDetay(\"' + inv.devId + '\")">'
+    html += '<div class="cihaz-card ' + cls + '" onclick="invDetay(&quot;' + inv.devId + '&quot;)">'
       + '<div class="cihaz-row1">'
       + '<div class="cihaz-no" style="font-size:14px">' + inv.devName + '</div>'
       + '<div class="cihaz-badge ' + badge + '">' + lbl + '</div>'
