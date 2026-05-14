@@ -1655,7 +1655,7 @@ function invListeRender(inverters) {
 
     const stationKisa = inv.stationName.replace(' GES', '');
 
-    html += '<div class="cihaz-card ' + cls + '" onclick="invDetay(\'' + inv.devId + '\\\')">'
+    html += '<div class="cihaz-card ' + cls + '" onclick="invDetay(\\\'' + inv.devId + '\\\')">'
       + '<div class="cihaz-row1">'
       + '<div class="cihaz-no" style="font-size:14px">' + inv.devName + '</div>'
       + '<div class="cihaz-badge ' + badge + '">' + lbl + '</div>'
