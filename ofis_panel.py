@@ -1229,7 +1229,7 @@ function ososRender() {
   son14.forEach(g => {
     const tarih = new Date(g);
     const lbl = tarih.getDate() + '.' + (tarih.getMonth()+1).toString().padStart(2,'0');
-    dayHtml += '<button class="osos-day-btn" onclick="ososGunSec(\'' + g + '\', this)">' + lbl + '</button>';
+    dayHtml += '<button class="osos-day-btn" onclick="ososGunSec(\\\'' + g + '\\\', this)">' + lbl + '</button>';
   });
   document.getElementById('osos-day-list').innerHTML = dayHtml;
   
@@ -1477,7 +1477,7 @@ function invSaatlikRender() {
   son14.forEach((g, i) => {
     const tarih = new Date(g);
     const lbl = tarih.getDate() + '.' + (tarih.getMonth()+1).toString().padStart(2,'0');
-    dayHtml += '<button class="osos-day-btn' + (i === 0 ? ' active' : '') + '" onclick="invGunSec(\'' + g + '\', this)">' + lbl + '</button>';
+    dayHtml += '<button class="osos-day-btn' + (i === 0 ? ' active' : '') + '" onclick="invGunSec(\\\'' + g + '\\\', this)">' + lbl + '</button>';
   });
   document.getElementById('inv-day-list').innerHTML = dayHtml;
 
@@ -1961,8 +1961,8 @@ function antDetay(suffix) {
 
   // Kontrol butonlari
   html += '<div style="display:flex; gap:8px; margin-top:14px;">';
-  html += '<button onclick="antKomut(\'wake\', [' + d.suffix + '], \'' + (d.name || 'Miner-'+d.suffix) + '\')" style="flex:1; background:linear-gradient(135deg,#22c55e,#16a34a); color:white; border:none; padding:12px; border-radius:10px; font-weight:700; cursor:pointer; font-size:13px;">▶️ Çalıştır</button>';
-  html += '<button onclick="antKomut(\'sleep\', [' + d.suffix + '], \'' + (d.name || 'Miner-'+d.suffix) + '\')" style="flex:1; background:linear-gradient(135deg,#f59e0b,#d97706); color:white; border:none; padding:12px; border-radius:10px; font-weight:700; cursor:pointer; font-size:13px;">💤 Uyut</button>';
+  html += '<button onclick="antKomut(\\\'wake\\\', [' + d.suffix + '], \\\'' + (d.name || 'Miner-'+d.suffix) + '\\\')" style="flex:1; background:linear-gradient(135deg,#22c55e,#16a34a); color:white; border:none; padding:12px; border-radius:10px; font-weight:700; cursor:pointer; font-size:13px;">▶️ Çalıştır</button>';
+  html += '<button onclick="antKomut(\\\'sleep\\\', [' + d.suffix + '], \\\'' + (d.name || 'Miner-'+d.suffix) + '\\\')" style="flex:1; background:linear-gradient(135deg,#f59e0b,#d97706); color:white; border:none; padding:12px; border-radius:10px; font-weight:700; cursor:pointer; font-size:13px;">💤 Uyut</button>';
   html += '</div>';
 
   document.getElementById('ant-modal-icerik').innerHTML = html;
@@ -2347,8 +2347,8 @@ function cmmDetay(suffix) {
   // Kontrol butonları
   const isim = (d.name || ('Miner-'+d.suffix)).replace(/'/g, "\'");
   html += '<div style="display:flex; gap:8px;">';
-  html += '<button onclick="antKomut(\'wake\',[' + d.suffix + '],\'' + isim + '\')" style="flex:1; background:linear-gradient(135deg,#22c55e,#16a34a); color:white; border:none; padding:14px; border-radius:10px; font-weight:900; cursor:pointer; font-size:13px;">▶️ Çalıştır</button>';
-  html += '<button onclick="antKomut(\'sleep\',[' + d.suffix + '],\'' + isim + '\')" style="flex:1; background:linear-gradient(135deg,#f59e0b,#d97706); color:white; border:none; padding:14px; border-radius:10px; font-weight:900; cursor:pointer; font-size:13px;">💤 Uyut</button>';
+  html += '<button onclick="antKomut(\\\'wake\\\',[' + d.suffix + '],\\\'' + isim + '\\\')" style="flex:1; background:linear-gradient(135deg,#22c55e,#16a34a); color:white; border:none; padding:14px; border-radius:10px; font-weight:900; cursor:pointer; font-size:13px;">▶️ Çalıştır</button>';
+  html += '<button onclick="antKomut(\\\'sleep\\\',[' + d.suffix + '],\\\'' + isim + '\\\')" style="flex:1; background:linear-gradient(135deg,#f59e0b,#d97706); color:white; border:none; padding:14px; border-radius:10px; font-weight:900; cursor:pointer; font-size:13px;">💤 Uyut</button>';
   html += '</div>';
   
   html += '</div>'; // padding kapanışı
@@ -2392,8 +2392,8 @@ function cmmBekleyenYukle() {
       html += '</div>';
       html += '</div>';
       html += '<div style="display:flex; gap:6px; margin-top:8px;">';
-      html += '<button onclick="cmmOnayKarar(\'' + o.id + '\',\'onayla\')" style="flex:1; background:linear-gradient(135deg,#22c55e,#16a34a); color:white; border:none; padding:10px; border-radius:8px; font-weight:900; cursor:pointer; font-size:12px;">✅ ONAYLA</button>';
-      html += '<button onclick="cmmOnayKarar(\'' + o.id + '\',\'reddet\')" style="flex:1; background:rgba(239,68,68,0.2); color:#f87171; border:1px solid rgba(239,68,68,0.4); padding:10px; border-radius:8px; font-weight:900; cursor:pointer; font-size:12px;">❌ REDDET</button>';
+      html += '<button onclick="cmmOnayKarar(\\\'' + o.id + '\\\',\\\'onayla\\\')" style="flex:1; background:linear-gradient(135deg,#22c55e,#16a34a); color:white; border:none; padding:10px; border-radius:8px; font-weight:900; cursor:pointer; font-size:12px;">✅ ONAYLA</button>';
+      html += '<button onclick="cmmOnayKarar(\\\'' + o.id + '\\\',\\\'reddet\\\')" style="flex:1; background:rgba(239,68,68,0.2); color:#f87171; border:1px solid rgba(239,68,68,0.4); padding:10px; border-radius:8px; font-weight:900; cursor:pointer; font-size:12px;">❌ REDDET</button>';
       html += '</div>';
       html += '</div>';
     });
@@ -2520,7 +2520,7 @@ function mltTabloRender() {
     const icon = acik ? '▼' : '▶';
     const iconColor = acik ? '#60a5fa' : '#64748b';
     
-    tbl += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04); cursor:pointer; ' + bg + '" onclick="mltGunAc(\'' + g.tarih + '\')">';
+    tbl += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04); cursor:pointer; ' + bg + '" onclick="mltGunAc(\\\'' + g.tarih + '\\\')">';
     tbl += '<td style="padding:12px 8px; text-align:center; color:' + iconColor + '; font-size:11px;">' + icon + '</td>';
     tbl += '<td style="padding:12px; color:#cbd5e1; font-weight:' + (acik?'700':'400') + ';">' + dateStr + '</td>';
     tbl += '<td style="padding:12px; text-align:right; color:#60a5fa; font-size:14px;">' + fmtNum(g.toplam_tuketim_kwh) + '</td>';
@@ -2739,7 +2739,7 @@ function utTabloRender() {
     const netIcon = g.fazla_uretim ? '🟢' : '🔴';
     const netPrefix = g.fazla_uretim ? '+' : '';
     
-    tbl += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04); cursor:pointer; ' + bg + '" onclick="utGunAc(\'' + g.tarih + '\')">';
+    tbl += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04); cursor:pointer; ' + bg + '" onclick="utGunAc(\\\'' + g.tarih + '\\\')">';
     tbl += '<td style="padding:12px 8px; text-align:center; color:' + iconColor + '; font-size:11px;">' + icon + '</td>';
     tbl += '<td style="padding:12px; color:#cbd5e1; font-weight:' + (acik?'700':'400') + ';">' + dateStr + '</td>';
     tbl += '<td style="padding:12px; text-align:right; color:#fbbf24;">' + fmtNum(g.ty1_uretim) + '</td>';
