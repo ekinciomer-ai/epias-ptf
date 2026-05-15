@@ -3313,7 +3313,8 @@ async function mahsupYukle() {
     }
     const raw = await r.json();
     
-    // Veri yapısı: {ay: {uretim, tuketim, gunler: {gun: {uretim, tuketim, saatler: {saat: {uretim, tuketim}}}}}}
+    // 3 aboneyi tek pot'ta sa'ate göre topla
+    // Yapı: {ay: {gunler: {gun: {saatler: {saat: {uretim, tuketim}}}}}}
     const aylar = {};
     
     const aboneTip = {
@@ -3330,11 +3331,11 @@ async function mahsupYukle() {
         if (!gun.startsWith('2026')) return;
         const ay = gun.substring(0, 7);
         
-        if (!aylar[ay]) aylar[ay] = { uretim: 0, tuketim: 0, mining: 0, gunler: {} };
-        if (!aylar[ay].gunler[gun]) aylar[ay].gunler[gun] = { uretim: 0, tuketim: 0, saatler: {} };
+        if (!aylar[ay]) aylar[ay] = { gunler: {}, miningAylik: 0 };
+        if (!aylar[ay].gunler[gun]) aylar[ay].gunler[gun] = { saatler: {} };
         
         Object.entries(saatler).forEach(([saatRaw, v]) => {
-          const saat = saatRaw.substring(0, 2);  // "00", "01", ...
+          const saat = saatRaw.substring(0, 2);
           const cekis = (v.cekis !== undefined ? v.cekis : (v.cekis_kwh || 0));
           const veris = (v.veris !== undefined ? v.veris : (v.veris_kwh || 0));
           
@@ -3343,24 +3344,58 @@ async function mahsupYukle() {
           }
           
           if (tipler.uretim) {
-            aylar[ay].uretim += veris;
-            aylar[ay].gunler[gun].uretim += veris;
             aylar[ay].gunler[gun].saatler[saat].uretim += veris;
           }
           if (tipler.tuketim) {
-            aylar[ay].tuketim += cekis;
-            aylar[ay].gunler[gun].tuketim += cekis;
             aylar[ay].gunler[gun].saatler[saat].tuketim += cekis;
           }
         });
       });
     });
     
-    // TY2 Mining aylik (manuel sabit - aylik toplama eklenir)
+    // TY2 Mining aylik (manuel sabit) - aylik toplama eklenir (saatlik dagilim yapilmaz)
     Object.entries(MHS_TY2_MINING_AYLIK).forEach(([ay, v]) => {
-      if (!aylar[ay]) aylar[ay] = { uretim: 0, tuketim: 0, mining: 0, gunler: {} };
-      aylar[ay].mining = v;
-      aylar[ay].tuketim += v;  // aylik tuketime dahil
+      if (!aylar[ay]) aylar[ay] = { gunler: {}, miningAylik: 0 };
+      aylar[ay].miningAylik = v;
+    });
+    
+    // SAATLIK MAHSUPLASMA HESAPLA -> GUN TOPLAMI -> AY TOPLAMI
+    Object.keys(aylar).forEach(ay => {
+      const A = aylar[ay];
+      let ayU = 0, ayT = 0, ayM = 0, ayB = 0;
+      
+      Object.keys(A.gunler).forEach(gun => {
+        const G = A.gunler[gun];
+        let gU = 0, gT = 0, gM = 0, gB = 0;
+        
+        Object.keys(G.saatler).forEach(saat => {
+          const S = G.saatler[saat];
+          // Saatlik mahsup ve bedelli
+          S.mahsup = Math.min(S.uretim, S.tuketim);
+          S.bedelli = Math.max(0, S.uretim - S.tuketim);
+          
+          gU += S.uretim;
+          gT += S.tuketim;
+          gM += S.mahsup;
+          gB += S.bedelli;
+        });
+        
+        G.uretim = gU;
+        G.tuketim = gT;
+        G.mahsup = gM;
+        G.bedelli = gB;
+        
+        ayU += gU;
+        ayT += gT;
+        ayM += gM;
+        ayB += gB;
+      });
+      
+      // Mining aylik tüketime eklenir ama mahsuplaşmaya girmez (kullanıcı talimatı)
+      A.uretim = ayU;
+      A.tuketim = ayT + A.miningAylik;
+      A.mahsup = ayM;
+      A.bedelli = ayB;
     });
     
     mhsData = aylar;
@@ -3388,12 +3423,10 @@ function mhsKpiGuncelle() {
   if (!mhsData) return;
   let topU = 0, topT = 0, topM = 0, topB = 0;
   Object.values(mhsData).forEach(ay => {
-    const mahsup = Math.min(ay.uretim, ay.tuketim);
-    const bedelli = Math.max(0, ay.uretim - ay.tuketim);
     topU += ay.uretim;
     topT += ay.tuketim;
-    topM += mahsup;
-    topB += bedelli;
+    topM += ay.mahsup;
+    topB += ay.bedelli;
   });
   
   document.getElementById('mhs-uretim').textContent = mhsFmt(topU);
@@ -3420,8 +3453,8 @@ function mhsTabloRender() {
     const ayNo = parseInt(ay.substring(5, 7));
     const ayAd = MHS_AY_ISIM[ayNo - 1] + ' ' + ay.substring(0, 4);
     const ayAcik = (mhsAcikAy === ay);
-    const mahsup = Math.min(d.uretim, d.tuketim);
-    const bedelli = Math.max(0, d.uretim - d.tuketim);
+    const mahsup = d.mahsup;
+    const bedelli = d.bedelli;
     
     topU += d.uretim;
     topT += d.tuketim;
@@ -3464,8 +3497,8 @@ function mhsTabloRender() {
       gunler.forEach(gun => {
         const g = d.gunler[gun];
         const gunAcik = (mhsAcikGun === gun);
-        const gMahsup = Math.min(g.uretim, g.tuketim);
-        const gBedelli = Math.max(0, g.uretim - g.tuketim);
+        const gMahsup = g.mahsup;
+        const gBedelli = g.bedelli;
         const gunBg = gunAcik ? 'background:#fef3c7;' : '';
         const gunIcon = gunAcik ? '▼' : '▶';
         const dt = new Date(gun);
