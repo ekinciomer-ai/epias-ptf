@@ -344,6 +344,7 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 <div class="tab" onclick="sekme('cihazlarim', this)" style="background:linear-gradient(135deg,rgba(251,191,36,0.15),rgba(34,197,94,0.15));border-color:rgba(251,191,36,0.4);">💎 Cihazlarım</div>
 <div class="tab" onclick="sekme('maliyetler', this)" style="background:linear-gradient(135deg,rgba(239,68,68,0.12),rgba(245,158,11,0.08));border-color:rgba(245,158,11,0.4);">💸 Maliyetler</div>
 <div class="tab" onclick="sekme('veri', this)" style="background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(99,102,241,0.08));border-color:rgba(59,130,246,0.4);">📊 Veri</div>
+<div class="tab" onclick="sekme('mahsuplasma', this)" style="background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(217,70,239,0.08));border-color:rgba(139,92,246,0.4);">🔄 Mahsuplaşma</div>
 <div class="tab" onclick="sekme('osos', this)">🔋 OSOS</div>
 <div class="tab" onclick="sekme('inverter', this)">🌞 İnverter</div>
 <div class="tab" onclick="sekme('antminer', this)">⛏️ Antminer Saha</div>
@@ -951,6 +952,85 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 </div>
 <!-- ====================== VERI SEKMESI SONU ====================== -->
 
+<!-- ====================== MAHSUPLAŞMA SEKMESI ====================== -->
+<div class="tab-content" id="t-mahsuplasma">
+
+<div style="margin-bottom:14px;">
+  <div>
+    <div style="font-size:18px; font-weight:600; color:#1e293b;">🔄 2026 Mahsuplaşma Tablosu</div>
+    <div style="font-size:12px; color:#64748b; margin-top:2px;">EPDK Kararı 14531 · Aylık Üretim/Tüketim Mahsuplaşması</div>
+  </div>
+</div>
+
+<!-- KPI 4 KUTU -->
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px; margin-bottom:16px;">
+  <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:12px 14px;">
+    <div style="font-size:12px; color:#1e40af; margin-bottom:4px;">Toplam Üretim</div>
+    <div id="mhs-uretim" style="font-size:22px; font-weight:600; color:#185fa5;">—</div>
+    <div style="font-size:10px; color:#64748b; margin-top:2px;">kWh · 2026</div>
+  </div>
+  <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:12px 14px;">
+    <div style="font-size:12px; color:#991b1b; margin-bottom:4px;">Toplam Tüketim</div>
+    <div id="mhs-tuketim" style="font-size:22px; font-weight:600; color:#dc2626;">—</div>
+    <div style="font-size:10px; color:#64748b; margin-top:2px;">kWh · 2026</div>
+  </div>
+  <div style="background:#faf5ff; border:1px solid #e9d5ff; border-radius:8px; padding:12px 14px;">
+    <div style="font-size:12px; color:#6b21a8; margin-bottom:4px;">Toplam Mahsuplaşma</div>
+    <div id="mhs-mahsup" style="font-size:22px; font-weight:600; color:#7c3aed;">—</div>
+    <div style="font-size:10px; color:#64748b; margin-top:2px;">kWh · 2026</div>
+  </div>
+  <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:12px 14px;">
+    <div style="font-size:12px; color:#166534; margin-bottom:4px;">Toplam Bedelli Satış</div>
+    <div id="mhs-bedelli" style="font-size:22px; font-weight:600; color:#16a34a;">—</div>
+    <div style="font-size:10px; color:#64748b; margin-top:2px;">kWh · 2026</div>
+  </div>
+</div>
+
+<!-- BEDELLI LIMIT PROGRESS -->
+<div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:16px 20px; margin-bottom:16px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+    <div>
+      <div style="font-size:13px; color:#64748b;">2026 Bedelli Satış Limiti</div>
+      <div style="font-size:11px; color:#94a3b8; margin-top:2px;">2025 Dahil Toplam Tüketim × 2 = <span id="mhs-limit-deger">2.905.914</span> kWh</div>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:16px; font-weight:600;"><span id="mhs-bedelli-toplam" style="color:#16a34a;">—</span> <span style="color:#94a3b8;">/</span> <span id="mhs-limit-toplam" style="color:#64748b;">2.905.914</span></div>
+      <div style="font-size:11px; color:#94a3b8;">kWh</div>
+    </div>
+  </div>
+  <div style="height:14px; background:#fef3c7; border-radius:7px; overflow:hidden; position:relative;">
+    <div id="mhs-progress" style="width:0%; height:100%; background:linear-gradient(90deg, #16a34a, #22c55e); border-radius:7px; transition:width 0.6s;"></div>
+  </div>
+</div>
+
+<!-- AYLIK TABLO -->
+<div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; margin-bottom:16px;">
+  <div style="padding:12px 18px; border-bottom:1px solid #e2e8f0; background:#f8fafc;">
+    <div style="font-size:14px; font-weight:600; color:#1e293b;">📋 Aylık Mahsuplaşma Tablosu</div>
+  </div>
+  <table style="width:100%; border-collapse:collapse; font-size:13px;">
+    <thead>
+      <tr style="background:#f1f5f9; border-bottom:1px solid #e2e8f0;">
+        <th style="padding:10px 16px; text-align:left; font-weight:600; color:#64748b;">Ay</th>
+        <th style="padding:10px 12px; text-align:right; font-weight:600; color:#185fa5;">Üretim</th>
+        <th style="padding:10px 12px; text-align:right; font-weight:600; color:#dc2626;">Tüketim</th>
+        <th style="padding:10px 12px; text-align:right; font-weight:600; color:#7c3aed;">Mahsuplaşma</th>
+        <th style="padding:10px 12px; text-align:right; font-weight:600; color:#16a34a;">Bedelli</th>
+        <th style="padding:10px 12px; text-align:center; font-weight:600; color:#64748b;">Durum</th>
+      </tr>
+    </thead>
+    <tbody id="mhs-tablo"></tbody>
+  </table>
+</div>
+
+<!-- AÇIKLAMA -->
+<div style="background:#eff6ff; border-left:3px solid #185fa5; border-radius:6px; padding:10px 14px; margin-bottom:24px; font-size:12px; color:#1e40af;">
+  <strong>Mahsuplaşma kuralı:</strong> Üretim &gt; Tüketim → Mahsup = Tüketim, Bedelli = Üretim − Tüketim. Üretim ≤ Tüketim → Mahsup = Üretim, Bedelli = 0.
+</div>
+
+</div>
+<!-- ====================== MAHSUPLAŞMA SEKMESI SONU ====================== -->
+
 <!-- Antminer Cihaz Detay Modal -->
 <div class="modal-overlay" id="ant-modal" onclick="if(event.target.id==='ant-modal')kapatAntModal()">
 <div class="modal" style="max-width:500px;">
@@ -1044,6 +1124,7 @@ function sekme(ad, btn) {
   if (ad === 'antminer') antYukle();
   if (ad === 'cihazlarim') antYukle();
   if (ad === 'maliyetler') { mltDropdownDoldur().then(() => mltYukle()); utYukle(); }
+  if (ad === 'mahsuplasma') mahsupYukle();
 }
 
 function renkSinif(v) {
@@ -1274,8 +1355,8 @@ function ososRender() {
   const gunler = Object.keys(a.veri).sort();
   gunler.forEach(g => {
     Object.values(a.veri[g]).forEach(s => {
-      toplamCekis += (s.cekis !== undefined ? s.cekis : (s.cekis_kwh || 0));
-      toplamVeris += (s.veris !== undefined ? s.veris : (s.veris_kwh || 0));
+      toplamCekis += s.cekis || 0;
+      toplamVeris += s.veris || 0;
     });
   });
   document.getElementById('osos-cekis').textContent = Math.round(toplamCekis).toLocaleString('tr-TR');
@@ -1288,10 +1369,7 @@ function ososRender() {
   const son30 = gunler.slice(-30);
   const grafikData = son30.map(g => {
     let c = 0, v = 0;
-    Object.values(a.veri[g]).forEach(s => {
-      c += (s.cekis !== undefined ? s.cekis : (s.cekis_kwh || 0));
-      v += (s.veris !== undefined ? s.veris : (s.veris_kwh || 0));
-    });
+    Object.values(a.veri[g]).forEach(s => { c += s.cekis || 0; v += s.veris || 0; });
     const value = a.tip === 'ges' ? v : (a.tip === 'tuketim' ? c : Math.abs(v - c));
     const tarih = new Date(g);
     return { label: tarih.getDate() + '.' + (tarih.getMonth()+1).toString().padStart(2,'0'), value: value, tarih: g };
@@ -1383,17 +1461,10 @@ function ososGunSec(tarih, btn) {
   let tC = 0, tV = 0;
   for (let s = 0; s < 24; s++) {
     const ss = String(s).padStart(2,'0');
-    const ssGoster = ss + ':00';
-    // Cesitli formatlari dene: "00", "00:00", "00:00:00"
-    const dRaw = gun[ss] || gun[ss + ':00'] || gun[ss + ':00:00'] || {};
-    // Alan adi fallback: cekis vs cekis_kwh
-    const d = {
-      cekis: dRaw.cekis !== undefined ? dRaw.cekis : (dRaw.cekis_kwh || 0),
-      veris: dRaw.veris !== undefined ? dRaw.veris : (dRaw.veris_kwh || 0)
-    };
+    const d = gun[ss] || {cekis:0, veris:0};
     const net = d.cekis - d.veris;
     tC += d.cekis; tV += d.veris;
-    tbody += '<tr><td class="saat-cell">' + ssGoster + '</td>'
+    tbody += '<tr><td class="saat-cell">' + ss + '</td>'
       + '<td class="l4">' + (d.cekis ? Math.round(d.cekis).toLocaleString('tr-TR') : '—') + '</td>'
       + '<td class="l0">' + (d.veris ? Math.round(d.veris).toLocaleString('tr-TR') : '—') + '</td>'
       + '<td class="saat-cell" style="color:' + (net > 0 ? '#f87171' : '#4ade80') + '">' + Math.round(net).toLocaleString('tr-TR') + '</td></tr>';
@@ -3000,26 +3071,20 @@ async function veriYukle() {
       
       if (!gunluk[tarih]) gunluk[tarih] = { ty1u:0, ty2u:0, ty2t:0, aks3t:0, saatler: {} };
       
-      Object.entries(saatler).forEach(([saatRaw, v]) => {
-        // Saat formatini normalize et: "00", "00:00", "00:00:00" hepsini "00"a cevir
-        const saat = saatRaw.substring(0, 2);
+      Object.entries(saatler).forEach(([saat, v]) => {
         if (!gunluk[tarih].saatler[saat]) gunluk[tarih].saatler[saat] = { ty1u:0, ty2u:0, ty2t:0, aks3t:0 };
         
-        // Alan adi farkli olabilir: cekis vs cekis_kwh
-        const vc = v.cekis !== undefined ? v.cekis : (v.cekis_kwh || 0);
-        const vv = v.veris !== undefined ? v.veris : (v.veris_kwh || 0);
-        
         if (key === 'tekyildiz_1') {
-          gunluk[tarih].ty1u += vv;
-          gunluk[tarih].saatler[saat].ty1u += vv;
+          gunluk[tarih].ty1u += v.veris || 0;
+          gunluk[tarih].saatler[saat].ty1u += v.veris || 0;
         } else if (key === 'tekyildiz_2') {
-          gunluk[tarih].ty2u += vv;
-          gunluk[tarih].ty2t += vc;
-          gunluk[tarih].saatler[saat].ty2u += vv;
-          gunluk[tarih].saatler[saat].ty2t += vc;
+          gunluk[tarih].ty2u += v.veris || 0;
+          gunluk[tarih].ty2t += v.cekis || 0;
+          gunluk[tarih].saatler[saat].ty2u += v.veris || 0;
+          gunluk[tarih].saatler[saat].ty2t += v.cekis || 0;
         } else if (key === 'aksaray_3') {
-          gunluk[tarih].aks3t += vc;
-          gunluk[tarih].saatler[saat].aks3t += vc;
+          gunluk[tarih].aks3t += v.cekis || 0;
+          gunluk[tarih].saatler[saat].aks3t += v.cekis || 0;
         }
       });
     });
@@ -3206,6 +3271,132 @@ function veriChartRender() {
 
 // ======================== VERI SEKMESI SONU ========================
 
+// ====================== MAHSUPLAŞMA SEKMESI ======================
+// 2025 baz tüketim (bedelli limit hesabı için)
+const MHS_2025_DAHIL = {
+  TY1: 4549,
+  TY2: 0,
+  AKS3_HAZ_ARA: 1448407.80
+};
+const MHS_2025_TOPLAM = MHS_2025_DAHIL.TY1 + MHS_2025_DAHIL.TY2 + MHS_2025_DAHIL.AKS3_HAZ_ARA;
+const MHS_BEDELLI_LIMIT = MHS_2025_TOPLAM * 2;
+
+// TY2 üretim varken tüketim (mining - aylık manuel)
+const MHS_TY2_MINING = {
+  '2026-03': 36038.52,
+  '2026-04': 53609.85
+};
+
+const MHS_AY_ISIM = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+
+function mhsFmt(v) {
+  return Math.round(v).toLocaleString('tr-TR');
+}
+
+async function mahsupYukle() {
+  try {
+    // 2026 OSOS verisini cek (ham veri)
+    const r = await fetch('/api/osos_raw');
+    if (!r.ok) {
+      document.getElementById('mhs-tablo').innerHTML = '<tr><td colspan="6" style="padding:20px; text-align:center; color:#94a3b8;">Veri yok</td></tr>';
+      return;
+    }
+    const data = await r.json();
+    
+    // Aylık toplama
+    const aylik = {};  // {YYYY-MM: {uretim, tuketim, mining}}
+    const aboneler = [
+      { key: 'tekyildiz_1', tip: 'uretim_cekis' },
+      { key: 'tekyildiz_2', tip: 'uretim_cekis' },
+      { key: 'aksaray_3',   tip: 'cekis' },
+    ];
+    
+    aboneler.forEach(({ key }) => {
+      const abone = data[key];
+      if (!abone || !abone.veri) return;
+      Object.entries(abone.veri).forEach(([gun, saatler]) => {
+        if (!gun.startsWith('2026')) return;
+        const ay = gun.substring(0, 7);
+        if (!aylik[ay]) aylik[ay] = { uretim: 0, tuketim: 0, mining: 0 };
+        Object.values(saatler).forEach(v => {
+          const cekis = (v.cekis !== undefined ? v.cekis : (v.cekis_kwh || 0));
+          const veris = (v.veris !== undefined ? v.veris : (v.veris_kwh || 0));
+          aylik[ay].uretim += veris;
+          aylik[ay].tuketim += cekis;
+        });
+      });
+    });
+    
+    // Mining aylık manuel ekle
+    Object.entries(MHS_TY2_MINING).forEach(([ay, v]) => {
+      if (!aylik[ay]) aylik[ay] = { uretim: 0, tuketim: 0, mining: 0 };
+      aylik[ay].mining = v;
+      aylik[ay].tuketim += v;  // tüketim toplamına dahil
+    });
+    
+    // Aylık hesapla
+    const aylar = Object.keys(aylik).sort();
+    let topU = 0, topT = 0, topM = 0, topB = 0;
+    let html = '';
+    
+    aylar.forEach(ay => {
+      const d = aylik[ay];
+      const mahsup = Math.min(d.uretim, d.tuketim);
+      const bedelli = Math.max(0, d.uretim - d.tuketim);
+      const ayNo = parseInt(ay.substring(5, 7));
+      const ayAd = MHS_AY_ISIM[ayNo - 1];
+      const fazla = d.uretim > d.tuketim;
+      const durumBg = fazla ? '#dcfce7' : '#fee2e2';
+      const durumColor = fazla ? '#166534' : '#991b1b';
+      const durumText = fazla ? 'Fazla' : 'Eksik';
+      
+      topU += d.uretim;
+      topT += d.tuketim;
+      topM += mahsup;
+      topB += bedelli;
+      
+      html += '<tr style="border-bottom:1px solid #f1f5f9;">';
+      html += '<td style="padding:11px 16px; color:#0f172a;">' + ayAd + '</td>';
+      html += '<td style="padding:11px 12px; text-align:right; color:#185fa5;">' + mhsFmt(d.uretim) + '</td>';
+      html += '<td style="padding:11px 12px; text-align:right; color:#dc2626;">' + mhsFmt(d.tuketim) + '</td>';
+      html += '<td style="padding:11px 12px; text-align:right; color:#7c3aed; font-weight:600;">' + mhsFmt(mahsup) + '</td>';
+      html += '<td style="padding:11px 12px; text-align:right; color:' + (bedelli > 0 ? '#16a34a' : '#94a3b8') + '; font-weight:600;">' + mhsFmt(bedelli) + '</td>';
+      html += '<td style="padding:11px 12px; text-align:center;"><span style="background:' + durumBg + '; color:' + durumColor + '; padding:2px 8px; border-radius:4px; font-size:11px;">' + durumText + '</span></td>';
+      html += '</tr>';
+    });
+    
+    // TOPLAM satırı
+    html += '<tr style="background:#fff7ed; border-top:2px solid #d85a30;">';
+    html += '<td style="padding:13px 16px; color:#d85a30; font-weight:700;">TOPLAM</td>';
+    html += '<td style="padding:13px 12px; text-align:right; color:#185fa5; font-weight:700;">' + mhsFmt(topU) + '</td>';
+    html += '<td style="padding:13px 12px; text-align:right; color:#dc2626; font-weight:700;">' + mhsFmt(topT) + '</td>';
+    html += '<td style="padding:13px 12px; text-align:right; color:#7c3aed; font-weight:700;">' + mhsFmt(topM) + '</td>';
+    html += '<td style="padding:13px 12px; text-align:right; color:#16a34a; font-weight:700;">' + mhsFmt(topB) + '</td>';
+    html += '<td></td></tr>';
+    
+    document.getElementById('mhs-tablo').innerHTML = html;
+    
+    // KPI'lar
+    document.getElementById('mhs-uretim').textContent = mhsFmt(topU);
+    document.getElementById('mhs-tuketim').textContent = mhsFmt(topT);
+    document.getElementById('mhs-mahsup').textContent = mhsFmt(topM);
+    document.getElementById('mhs-bedelli').textContent = mhsFmt(topB);
+    
+    // Progress bar
+    const pct = Math.min(100, (topB / MHS_BEDELLI_LIMIT) * 100);
+    document.getElementById('mhs-progress').style.width = pct.toFixed(2) + '%';
+    document.getElementById('mhs-bedelli-toplam').textContent = mhsFmt(topB);
+    document.getElementById('mhs-limit-toplam').textContent = mhsFmt(MHS_BEDELLI_LIMIT);
+    document.getElementById('mhs-limit-deger').textContent = mhsFmt(MHS_BEDELLI_LIMIT);
+    
+  } catch (e) {
+    console.error('Mahsuplaşma yukleme hatasi:', e);
+    document.getElementById('mhs-tablo').innerHTML = '<tr><td colspan="6" style="padding:20px; text-align:center; color:#dc2626;">Hata: ' + e.message + '</td></tr>';
+  }
+}
+
+// ====================== MAHSUPLAŞMA SEKMESI SONU ======================
+
 // ====================== ANTMINER SONU ======================
 
 if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
@@ -3262,8 +3453,8 @@ def osos():
             if ay not in aylar:
                 aylar[ay] = {"cekis": 0, "veris": 0, "gun_sayisi": 0}
             for s, v in saatler.items():
-                aylar[ay]['cekis'] += v.get('cekis', v.get('cekis_kwh', 0))
-                aylar[ay]['veris'] += v.get('veris', v.get('veris_kwh', 0))
+                aylar[ay]['cekis'] += v.get('cekis', 0)
+                aylar[ay]['veris'] += v.get('veris', 0)
             aylar[ay]['gun_sayisi'] += 1
         aysonu_abone = aysonu.get(key, {})
         for ay, veri in aylar.items():
@@ -3666,10 +3857,8 @@ def api_maliyet_aksaray3():
         
         for saat_int in range(24):
             saat_key = f"{saat_int:02d}"
-            # Saat anahtari farkli formatlarda olabilir
-            saat_veri = saatler_data.get(saat_key, saatler_data.get(saat_key + ":00", saatler_data.get(saat_key + ":00:00", {})))
-            # Alan adi farkli olabilir
-            tuketim_kwh = float(saat_veri.get("cekis", saat_veri.get("cekis_kwh", 0)))
+            saat_veri = saatler_data.get(saat_key, {})
+            tuketim_kwh = float(saat_veri.get("cekis", 0))
             ptf_tl_mwh = float(gun_ptf[saat_int])
             
             ptf_tl_kwh = ptf_tl_mwh / 1000
@@ -3751,20 +3940,9 @@ def api_uretim_tuketim():
     
     # Saatlik veri olusturma yardimcisi
     def get_saatlik(abone_veri, gun_str, alan):
-        """abone_veri[gun_str][saat][cekis|veris] -> saatlik liste.
-        Saat anahtari ve alan adi farkli formatlarda olabilir, hepsini tolere eder."""
+        """abone_veri[gun_str][saat][cekis|veris] -> saatlik liste"""
         saatler_data = abone_veri.get(gun_str, {})
-        # Alan adi haritalama
-        alan_alternatif = alan + "_kwh"
-        sonuc = []
-        for h in range(24):
-            sk = f"{h:02d}"
-            # Saat anahtari farkli formatlarda olabilir
-            v = saatler_data.get(sk, saatler_data.get(sk + ":00", saatler_data.get(sk + ":00:00", {})))
-            # Alan adi farkli olabilir
-            val = v.get(alan, v.get(alan_alternatif, 0))
-            sonuc.append(float(val) if val else 0.0)
-        return sonuc
+        return [float(saatler_data.get(f"{h:02d}", {}).get(alan, 0)) for h in range(24)]
     
     # ===== GUNLUK DETAY (saatlik tablo icin) =====
     ty1_uretim = get_saatlik(ty1, gun, "veris")
