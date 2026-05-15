@@ -3298,9 +3298,15 @@ function mhsHesaplaSaatlik(uretim, tuketim) {
   return { mahsup, bedelli };
 }
 
-async function mahsupYukle() {
+function mahsupYukle() {
+  // Her sekme açılışında veriyi yenile (cache yok)
+  return mahsupYukleAsync();
+}
+
+async function mahsupYukleAsync() {
   try {
-    const r = await fetch('/api/osos_raw');
+    // Cache busting parametresi ekle
+    const r = await fetch('/api/osos_raw?_=' + Date.now());
     if (!r.ok) {
       document.getElementById('mhs-tablo').innerHTML = '<tr><td colspan="6" style="padding:20px; text-align:center; color:#94a3b8;">Veri yok</td></tr>';
       return;
@@ -3551,127 +3557,116 @@ function mhsTabloRender() {
     const tColor = secili ? '#fff' : '#dc2626';
     const mColor = secili ? '#fff' : '#7c3aed';
     const sColor = secili ? '#fff' : '#ea580c';
-    const bColor = secili ? '#fff' : (bedelli > 0 ? '#16a34a' : '#94a3b8');
-    const a3Color = secili ? 'rgba(255,255,255,0.5)' : '#94a3b8';
+    const bColor = secili ? '#fff' : (bedelli > 0 ? '#16a34a' : '#cbd5e1');
+    const a3Color = secili ? 'rgba(255,255,255,0.45)' : '#cbd5e1';
     
-    const uBgL = secili ? bg : 'rgba(239,246,255,0.4)';
-    const uBgT = secili ? bg : 'rgba(219,234,254,0.6)';
-    const tBgL = secili ? bg : 'rgba(254,242,242,0.4)';
-    const tBgT = secili ? bg : 'rgba(254,226,226,0.6)';
-    const sBgL = secili ? bg : 'rgba(255,247,237,0.4)';
-    const sBgT = secili ? bg : 'rgba(254,215,170,0.6)';
-    const bdL = 'border-left:2px solid ' + (secili ? 'rgba(255,255,255,0.2)' : 'rgba(203,213,225,0.4)') + ';';
+    const uBgL = secili ? bg : '#f0f9ff';
+    const uBgT = secili ? bg : '#dbeafe';
+    const tBgL = secili ? bg : '#fef2f2';
+    const tBgT = secili ? bg : '#fee2e2';
+    const sBgL = secili ? bg : '#fff7ed';
+    const sBgT = secili ? bg : '#fed7aa';
+    const bdL = 'border-left:1px solid ' + (secili ? 'rgba(255,255,255,0.15)' : '#e2e8f0') + ';';
+    const bdLStrong = 'border-left:2px solid ' + (secili ? 'rgba(255,255,255,0.3)' : '#cbd5e1') + ';';
     
     const w = weight || '400';
     const fs = fontSize || '11px';
     const indentPx = indent || 0;
     
     function td(v, color, bgC, weight2, leftBorder) {
-      const style = 'padding:6px 8px; text-align:right; color:' + color + 
+      const borderStyle = leftBorder === 'strong' ? bdLStrong : (leftBorder ? bdL : '');
+      const style = 'padding:8px 10px; text-align:right; color:' + color + 
                     '; background:' + bgC +
                     '; font-weight:' + (weight2 || w) +
                     '; font-size:' + fs + ';' +
-                    (leftBorder ? bdL : '');
-      const val = (v === null || v === undefined || v === 0) ? '—' : Math.round(v).toLocaleString('tr-TR');
+                    borderStyle;
+      const val = (v === null || v === undefined || v === 0) ? '<span style="opacity:0.4">—</span>' : Math.round(v).toLocaleString('tr-TR');
       return '<td style="' + style + '">' + val + '</td>';
     }
     
-    let s = '<tr style="border-bottom:1px solid ' + (secili ? bg : '#e2e8f0') + ';' + 
+    let s = '<tr style="border-bottom:1px solid #f1f5f9;' + 
             (bg ? 'background:' + bg + ';' : '') + 
-            (onclick ? 'cursor:pointer;' : '') +
-            '"' + (onclick ? ' onclick="' + onclick + '"' : '') + '>';
-    s += '<td style="padding:6px; text-align:center; color:' + (secili ? '#fff' : '#94a3b8') + '; font-size:' + fs + ';' + (bg ? 'background:' + bg + ';' : '') + '">' + (icon || '') + '</td>';
-    s += '<td style="padding:6px 12px; padding-left:' + (12+indentPx) + 'px; color:' + (textColor || '#1e293b') + '; font-weight:' + w + '; font-size:' + fs + ';' + (bg ? 'background:' + bg + ';' : '') + '">' + ayText + '</td>';
+            (onclick ? 'cursor:pointer; transition:background 0.15s;' : '') +
+            '"' + (onclick ? ' onclick="' + onclick + '"' : '') + 
+            (onclick && !secili ? ' onmouseover="this.style.background=\\'#f1f5f9\\'" onmouseout="this.style.background=\\'' + (bg||'') + '\\'"' : '') +
+            '>';
+    s += '<td style="padding:8px; text-align:center; color:' + (secili ? '#fff' : '#cbd5e1') + '; font-size:' + fs + '; width:24px;' + (bg ? 'background:' + bg + ';' : '') + '">' + (icon || '') + '</td>';
+    s += '<td style="padding:8px 12px; padding-left:' + (12+indentPx) + 'px; color:' + (textColor || '#0f172a') + '; font-weight:' + w + '; font-size:' + fs + ';' + (bg ? 'background:' + bg + ';' : '') + '">' + ayText + '</td>';
     
-    // ÜRETİM - detay açıksa T1/T2/A3 + TPL, kapalıysa sadece TPL
+    // ÜRETİM
     if (mhsAboneDetay) {
-      s += td(uretim.T1, uColor, uBgL, w, true);
+      s += td(uretim.T1, uColor, uBgL, w, 'strong');
       s += td(uretim.T2, uColor, uBgL, w);
       s += td(uretim.A3 || null, a3Color, uBgL, w);
     }
-    s += td(uretim.TPL, uColor, uBgT, '600', !mhsAboneDetay);
+    s += td(uretim.TPL, uColor, uBgT, '600', mhsAboneDetay ? false : 'strong');
     
     // TÜKETİM
     if (mhsAboneDetay) {
-      s += td(tuketim.T1, tColor, tBgL, w, true);
+      s += td(tuketim.T1, tColor, tBgL, w, 'strong');
       s += td(tuketim.T2, tColor, tBgL, w);
       s += td(tuketim.A3, tColor, tBgL, w);
     }
-    s += td(tuketim.TPL, tColor, tBgT, '600', !mhsAboneDetay);
+    s += td(tuketim.TPL, tColor, tBgT, '600', mhsAboneDetay ? false : 'strong');
     
     // Mahsup
-    s += '<td style="padding:6px 8px; text-align:right; color:' + mColor + '; font-weight:600; font-size:' + fs + ';' + bdL + 'background:' + (bg || 'transparent') + ';">' + (mahsup ? Math.round(mahsup).toLocaleString('tr-TR') : '—') + '</td>';
+    s += '<td style="padding:8px 10px; text-align:right; color:' + mColor + '; font-weight:600; font-size:' + fs + ';' + bdLStrong + 'background:' + (bg || 'transparent') + ';">' + (mahsup ? Math.round(mahsup).toLocaleString('tr-TR') : '<span style="opacity:0.4">—</span>') + '</td>';
     
     // MAHSUP SONRASI TÜKETİM
     if (mhsAboneDetay) {
-      s += td(sonra.T1, sColor, sBgL, w, true);
+      s += td(sonra.T1, sColor, sBgL, w, 'strong');
       s += td(sonra.T2, sColor, sBgL, w);
       s += td(sonra.A3, sColor, sBgL, w);
     }
-    s += td(sonra.TPL, sColor, sBgT, '600', !mhsAboneDetay);
+    s += td(sonra.TPL, sColor, sBgT, '600', mhsAboneDetay ? false : 'strong');
     
     // Bedelli
-    s += '<td style="padding:6px 8px; text-align:right; color:' + bColor + '; font-weight:600; font-size:' + fs + ';' + bdL + 'background:' + (bg || 'transparent') + ';">' + (bedelli ? Math.round(bedelli).toLocaleString('tr-TR') : '—') + '</td>';
-    
-    // Durum
-    if (level === 'ay') {
-      const fazla = uretim.TPL > tuketim.TPL;
-      const dBg = secili ? 'rgba(255,255,255,0.25)' : (fazla ? '#dcfce7' : '#fee2e2');
-      const dC = secili ? '#fff' : (fazla ? '#166534' : '#991b1b');
-      const dT = fazla ? 'Fazla' : 'Eksik';
-      s += '<td style="padding:6px 10px; text-align:center; font-size:' + fs + ';' + (bg ? 'background:' + bg + ';' : '') + '"><span style="background:' + dBg + '; color:' + dC + '; padding:2px 8px; border-radius:4px; font-size:10px;">' + dT + '</span></td>';
-    } else {
-      s += '<td style="' + (bg ? 'background:' + bg + ';' : '') + '"></td>';
-    }
+    s += '<td style="padding:8px 10px; text-align:right; color:' + bColor + '; font-weight:600; font-size:' + fs + ';' + bdLStrong + 'background:' + (bg || 'transparent') + ';">' + (bedelli ? Math.round(bedelli).toLocaleString('tr-TR') : '<span style="opacity:0.4">—</span>') + '</td>';
     
     s += '</tr>';
     return s;
   }
   
-  // THEAD render - mhsAboneDetay'a göre
+  // THEAD render
   function renderThead() {
     let th = '';
     if (mhsAboneDetay) {
-      th += '<tr style="background:#f1f5f9; border-bottom:1px solid #e2e8f0;">';
-      th += '<th rowspan="2" style="padding:8px; width:26px;"></th>';
-      th += '<th rowspan="2" style="padding:8px 12px; text-align:left; font-weight:600; color:#64748b; vertical-align:middle;">Ay / Tarih / Saat</th>';
-      th += '<th colspan="4" style="padding:8px; text-align:center; font-weight:600; color:#185fa5; background:#eff6ff; border-left:2px solid #cbd5e1;">ÜRETİM</th>';
-      th += '<th colspan="4" style="padding:8px; text-align:center; font-weight:600; color:#dc2626; background:#fef2f2; border-left:2px solid #cbd5e1;">TÜKETİM</th>';
-      th += '<th rowspan="2" style="padding:8px; text-align:right; font-weight:600; color:#7c3aed; vertical-align:middle; border-left:2px solid #cbd5e1;">Mahsup</th>';
-      th += '<th colspan="4" style="padding:8px; text-align:center; font-weight:600; color:#ea580c; background:#fff7ed; border-left:2px solid #cbd5e1;">MAHSUP SONRASI<br>TÜKETİM</th>';
-      th += '<th rowspan="2" style="padding:8px; text-align:right; font-weight:600; color:#16a34a; vertical-align:middle; border-left:2px solid #cbd5e1;">Bedelli</th>';
-      th += '<th rowspan="2" style="padding:8px 10px; text-align:center; font-weight:600; color:#64748b; vertical-align:middle;">Durum</th>';
+      th += '<tr style="background:#f8fafc; border-bottom:2px solid #cbd5e1;">';
+      th += '<th rowspan="2" style="padding:10px; width:24px;"></th>';
+      th += '<th rowspan="2" style="padding:10px 12px; text-align:left; font-weight:600; color:#475569; vertical-align:middle; font-size:12px;">Ay / Tarih / Saat</th>';
+      th += '<th colspan="4" style="padding:10px; text-align:center; font-weight:600; color:#185fa5; background:#dbeafe; border-left:2px solid #cbd5e1; font-size:12px; letter-spacing:0.5px;">ÜRETİM <span style="font-weight:400; opacity:0.7;">(kWh)</span></th>';
+      th += '<th colspan="4" style="padding:10px; text-align:center; font-weight:600; color:#dc2626; background:#fee2e2; border-left:2px solid #cbd5e1; font-size:12px; letter-spacing:0.5px;">TÜKETİM <span style="font-weight:400; opacity:0.7;">(kWh)</span></th>';
+      th += '<th rowspan="2" style="padding:10px; text-align:right; font-weight:600; color:#7c3aed; vertical-align:middle; border-left:2px solid #cbd5e1; font-size:12px;">Mahsup<br><span style="font-size:10px; font-weight:400; opacity:0.7;">(kWh)</span></th>';
+      th += '<th colspan="4" style="padding:10px; text-align:center; font-weight:600; color:#ea580c; background:#fed7aa; border-left:2px solid #cbd5e1; font-size:12px; letter-spacing:0.5px;">MAHSUP SONRASI <span style="font-weight:400; opacity:0.7;">(kWh)</span></th>';
+      th += '<th rowspan="2" style="padding:10px; text-align:right; font-weight:600; color:#16a34a; vertical-align:middle; border-left:2px solid #cbd5e1; font-size:12px;">Bedelli<br><span style="font-size:10px; font-weight:400; opacity:0.7;">(kWh)</span></th>';
       th += '</tr>';
-      th += '<tr style="background:#f8fafc; border-bottom:1px solid #e2e8f0;">';
-      th += '<th style="padding:6px 6px; text-align:right; font-weight:500; color:#185fa5; background:#eff6ff; border-left:2px solid #cbd5e1;">T1</th>';
-      th += '<th style="padding:6px 6px; text-align:right; font-weight:500; color:#185fa5; background:#eff6ff;">T2</th>';
-      th += '<th style="padding:6px 6px; text-align:right; font-weight:500; color:#185fa5; background:#eff6ff;">A3</th>';
-      th += '<th style="padding:6px 6px; text-align:right; font-weight:600; color:#185fa5; background:#dbeafe;">TPL</th>';
-      th += '<th style="padding:6px 6px; text-align:right; font-weight:500; color:#dc2626; background:#fef2f2; border-left:2px solid #cbd5e1;">T1</th>';
-      th += '<th style="padding:6px 6px; text-align:right; font-weight:500; color:#dc2626; background:#fef2f2;">T2</th>';
-      th += '<th style="padding:6px 6px; text-align:right; font-weight:500; color:#dc2626; background:#fef2f2;">A3</th>';
-      th += '<th style="padding:6px 6px; text-align:right; font-weight:600; color:#dc2626; background:#fee2e2;">TPL</th>';
-      th += '<th style="padding:6px 6px; text-align:right; font-weight:500; color:#ea580c; background:#fff7ed; border-left:2px solid #cbd5e1;">T1</th>';
-      th += '<th style="padding:6px 6px; text-align:right; font-weight:500; color:#ea580c; background:#fff7ed;">T2</th>';
-      th += '<th style="padding:6px 6px; text-align:right; font-weight:500; color:#ea580c; background:#fff7ed;">A3</th>';
-      th += '<th style="padding:6px 6px; text-align:right; font-weight:600; color:#ea580c; background:#fed7aa;">TPL</th>';
+      th += '<tr style="background:#f1f5f9; border-bottom:1px solid #e2e8f0;">';
+      th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#1e40af; background:#eff6ff; border-left:2px solid #cbd5e1; font-size:11px;">T1</th>';
+      th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#1e40af; background:#eff6ff; font-size:11px;">T2</th>';
+      th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#1e40af; background:#eff6ff; font-size:11px;">A3</th>';
+      th += '<th style="padding:7px 10px; text-align:right; font-weight:700; color:#185fa5; background:#bfdbfe; font-size:11px;">TPL</th>';
+      th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#991b1b; background:#fef2f2; border-left:2px solid #cbd5e1; font-size:11px;">T1</th>';
+      th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#991b1b; background:#fef2f2; font-size:11px;">T2</th>';
+      th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#991b1b; background:#fef2f2; font-size:11px;">A3</th>';
+      th += '<th style="padding:7px 10px; text-align:right; font-weight:700; color:#dc2626; background:#fecaca; font-size:11px;">TPL</th>';
+      th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#9a3412; background:#fff7ed; border-left:2px solid #cbd5e1; font-size:11px;">T1</th>';
+      th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#9a3412; background:#fff7ed; font-size:11px;">T2</th>';
+      th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#9a3412; background:#fff7ed; font-size:11px;">A3</th>';
+      th += '<th style="padding:7px 10px; text-align:right; font-weight:700; color:#ea580c; background:#fdba74; font-size:11px;">TPL</th>';
       th += '</tr>';
     } else {
-      // Sadece TPL - basit header
-      th += '<tr style="background:#f1f5f9; border-bottom:1px solid #e2e8f0;">';
-      th += '<th style="padding:10px 8px; width:30px;"></th>';
-      th += '<th style="padding:10px 16px; text-align:left; font-weight:600; color:#64748b;">Ay / Tarih / Saat</th>';
-      th += '<th style="padding:10px 12px; text-align:right; font-weight:600; color:#185fa5; border-left:2px solid #cbd5e1;">Üretim</th>';
-      th += '<th style="padding:10px 12px; text-align:right; font-weight:600; color:#dc2626; border-left:2px solid #cbd5e1;">Tüketim</th>';
-      th += '<th style="padding:10px 12px; text-align:right; font-weight:600; color:#7c3aed; border-left:2px solid #cbd5e1;">Mahsup</th>';
-      th += '<th style="padding:10px 12px; text-align:right; font-weight:600; color:#ea580c; border-left:2px solid #cbd5e1;">Mahsup Sonrası<br>Tüketim</th>';
-      th += '<th style="padding:10px 12px; text-align:right; font-weight:600; color:#16a34a; border-left:2px solid #cbd5e1;">Bedelli</th>';
-      th += '<th style="padding:10px 12px; text-align:center; font-weight:600; color:#64748b;">Durum</th>';
+      th += '<tr style="background:#f8fafc; border-bottom:2px solid #cbd5e1;">';
+      th += '<th style="padding:12px 10px; width:24px;"></th>';
+      th += '<th style="padding:12px 16px; text-align:left; font-weight:600; color:#475569; font-size:12px;">Ay / Tarih / Saat</th>';
+      th += '<th style="padding:12px; text-align:right; font-weight:600; color:#185fa5; border-left:2px solid #cbd5e1; font-size:12px; letter-spacing:0.5px;">ÜRETİM <span style="font-weight:400; opacity:0.7; font-size:10px;">(kWh)</span></th>';
+      th += '<th style="padding:12px; text-align:right; font-weight:600; color:#dc2626; border-left:2px solid #cbd5e1; font-size:12px; letter-spacing:0.5px;">TÜKETİM <span style="font-weight:400; opacity:0.7; font-size:10px;">(kWh)</span></th>';
+      th += '<th style="padding:12px; text-align:right; font-weight:600; color:#7c3aed; border-left:2px solid #cbd5e1; font-size:12px;">MAHSUP <span style="font-weight:400; opacity:0.7; font-size:10px;">(kWh)</span></th>';
+      th += '<th style="padding:12px; text-align:right; font-weight:600; color:#ea580c; border-left:2px solid #cbd5e1; font-size:12px; letter-spacing:0.5px;">MAHSUP SONRASI <span style="font-weight:400; opacity:0.7; font-size:10px;">(kWh)</span></th>';
+      th += '<th style="padding:12px; text-align:right; font-weight:600; color:#16a34a; border-left:2px solid #cbd5e1; font-size:12px;">BEDELLİ <span style="font-weight:400; opacity:0.7; font-size:10px;">(kWh)</span></th>';
       th += '</tr>';
     }
     document.getElementById('mhs-thead').innerHTML = th;
     
-    // Buton metnini güncelle
     const btn = document.getElementById('mhs-abone-btn');
     if (btn) btn.innerHTML = mhsAboneDetay ? '✕ Abone Detayı Gizle' : '🔍 Abone Detay (T1/T2/A3) Göster';
   }
@@ -3698,14 +3693,14 @@ function mhsTabloRender() {
     topM += d.mahsup;
     topB += d.bedelli;
     
-    // AY satırı - seçilince güçlü renk
+    // AY satırı - seçilince yumuşak slate-blue
     tbl += renderSatir({
       uretim: d.uretim, tuketim: d.tuketim, mahsup: d.mahsup, 
       sonra: d.sonra, bedelli: d.bedelli,
       indent: 0, 
-      bg: ayAcik ? '#1e40af' : '',  // koyu mavi - belirgin
-      textColor: ayAcik ? '#fff' : '#1e293b',
-      weight: '600', fontSize: '12px',
+      bg: ayAcik ? '#475569' : '#f8fafc',
+      textColor: ayAcik ? '#fff' : '#0f172a',
+      weight: '600', fontSize: '13px',
       level: 'ay', ayText: ayAd, 
       onclick: "mhsAyAc('" + ay + "')",
       icon: ayAcik ? '▼' : '▶'
@@ -3723,10 +3718,10 @@ function mhsTabloRender() {
         tbl += renderSatir({
           uretim: g.uretim, tuketim: g.tuketim, mahsup: g.mahsup,
           sonra: g.sonra, bedelli: g.bedelli,
-          indent: 20, 
-          bg: gunAcik ? '#92400e' : '#fafbfc',  // koyu turuncu seçili
-          textColor: gunAcik ? '#fff' : '#1e293b',
-          weight: gunAcik ? '600' : '400', fontSize: '11px',
+          indent: 24, 
+          bg: gunAcik ? '#64748b' : '',
+          textColor: gunAcik ? '#fff' : '#334155',
+          weight: gunAcik ? '600' : '400', fontSize: '12px',
           level: 'gun', ayText: gunStr,
           onclick: "mhsGunAc('" + gun + "')",
           icon: gunAcik ? '▼' : '▶'
@@ -3745,7 +3740,10 @@ function mhsTabloRender() {
             tbl += renderSatir({
               uretim: sv.uretim, tuketim: sv.tuketim, mahsup: sMahsup,
               sonra: sSonra, bedelli: sBedelli,
-              indent: 40, bg: '#fffbeb', weight: '400', fontSize: '10px',
+              indent: 48, 
+              bg: '#f0f9ff',
+              textColor: '#475569',
+              weight: '400', fontSize: '11px',
               level: 'saat', ayText: s + ':00',
               icon: ''
             });
@@ -3755,11 +3753,12 @@ function mhsTabloRender() {
     }
   });
   
-  // TOPLAM satırı
+  // TOPLAM satırı - büyük vurgu
   tbl += renderSatir({
     uretim: topU, tuketim: topT, mahsup: topM,
     sonra: topS, bedelli: topB,
-    indent: 0, bg: '#fff7ed', weight: '700', fontSize: '12px',
+    indent: 0, bg: '#fff7ed', textColor: '#9a3412', 
+    weight: '700', fontSize: '13px',
     level: 'toplam', ayText: 'TOPLAM (' + aylar.length + ' ay)',
     icon: ''
   });
