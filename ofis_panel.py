@@ -1274,8 +1274,8 @@ function ososRender() {
   const gunler = Object.keys(a.veri).sort();
   gunler.forEach(g => {
     Object.values(a.veri[g]).forEach(s => {
-      toplamCekis += s.cekis || 0;
-      toplamVeris += s.veris || 0;
+      toplamCekis += (s.cekis !== undefined ? s.cekis : (s.cekis_kwh || 0));
+      toplamVeris += (s.veris !== undefined ? s.veris : (s.veris_kwh || 0));
     });
   });
   document.getElementById('osos-cekis').textContent = Math.round(toplamCekis).toLocaleString('tr-TR');
@@ -1288,7 +1288,10 @@ function ososRender() {
   const son30 = gunler.slice(-30);
   const grafikData = son30.map(g => {
     let c = 0, v = 0;
-    Object.values(a.veri[g]).forEach(s => { c += s.cekis || 0; v += s.veris || 0; });
+    Object.values(a.veri[g]).forEach(s => {
+      c += (s.cekis !== undefined ? s.cekis : (s.cekis_kwh || 0));
+      v += (s.veris !== undefined ? s.veris : (s.veris_kwh || 0));
+    });
     const value = a.tip === 'ges' ? v : (a.tip === 'tuketim' ? c : Math.abs(v - c));
     const tarih = new Date(g);
     return { label: tarih.getDate() + '.' + (tarih.getMonth()+1).toString().padStart(2,'0'), value: value, tarih: g };
@@ -1380,10 +1383,17 @@ function ososGunSec(tarih, btn) {
   let tC = 0, tV = 0;
   for (let s = 0; s < 24; s++) {
     const ss = String(s).padStart(2,'0');
-    const d = gun[ss] || {cekis:0, veris:0};
+    const ssGoster = ss + ':00';
+    // Cesitli formatlari dene: "00", "00:00", "00:00:00"
+    const dRaw = gun[ss] || gun[ss + ':00'] || gun[ss + ':00:00'] || {};
+    // Alan adi fallback: cekis vs cekis_kwh
+    const d = {
+      cekis: dRaw.cekis !== undefined ? dRaw.cekis : (dRaw.cekis_kwh || 0),
+      veris: dRaw.veris !== undefined ? dRaw.veris : (dRaw.veris_kwh || 0)
+    };
     const net = d.cekis - d.veris;
     tC += d.cekis; tV += d.veris;
-    tbody += '<tr><td class="saat-cell">' + ss + '</td>'
+    tbody += '<tr><td class="saat-cell">' + ssGoster + '</td>'
       + '<td class="l4">' + (d.cekis ? Math.round(d.cekis).toLocaleString('tr-TR') : '—') + '</td>'
       + '<td class="l0">' + (d.veris ? Math.round(d.veris).toLocaleString('tr-TR') : '—') + '</td>'
       + '<td class="saat-cell" style="color:' + (net > 0 ? '#f87171' : '#4ade80') + '">' + Math.round(net).toLocaleString('tr-TR') + '</td></tr>';
@@ -2990,20 +3000,26 @@ async function veriYukle() {
       
       if (!gunluk[tarih]) gunluk[tarih] = { ty1u:0, ty2u:0, ty2t:0, aks3t:0, saatler: {} };
       
-      Object.entries(saatler).forEach(([saat, v]) => {
+      Object.entries(saatler).forEach(([saatRaw, v]) => {
+        // Saat formatini normalize et: "00", "00:00", "00:00:00" hepsini "00"a cevir
+        const saat = saatRaw.substring(0, 2);
         if (!gunluk[tarih].saatler[saat]) gunluk[tarih].saatler[saat] = { ty1u:0, ty2u:0, ty2t:0, aks3t:0 };
         
+        // Alan adi farkli olabilir: cekis vs cekis_kwh
+        const vc = v.cekis !== undefined ? v.cekis : (v.cekis_kwh || 0);
+        const vv = v.veris !== undefined ? v.veris : (v.veris_kwh || 0);
+        
         if (key === 'tekyildiz_1') {
-          gunluk[tarih].ty1u += v.veris || 0;
-          gunluk[tarih].saatler[saat].ty1u += v.veris || 0;
+          gunluk[tarih].ty1u += vv;
+          gunluk[tarih].saatler[saat].ty1u += vv;
         } else if (key === 'tekyildiz_2') {
-          gunluk[tarih].ty2u += v.veris || 0;
-          gunluk[tarih].ty2t += v.cekis || 0;
-          gunluk[tarih].saatler[saat].ty2u += v.veris || 0;
-          gunluk[tarih].saatler[saat].ty2t += v.cekis || 0;
+          gunluk[tarih].ty2u += vv;
+          gunluk[tarih].ty2t += vc;
+          gunluk[tarih].saatler[saat].ty2u += vv;
+          gunluk[tarih].saatler[saat].ty2t += vc;
         } else if (key === 'aksaray_3') {
-          gunluk[tarih].aks3t += v.cekis || 0;
-          gunluk[tarih].saatler[saat].aks3t += v.cekis || 0;
+          gunluk[tarih].aks3t += vc;
+          gunluk[tarih].saatler[saat].aks3t += vc;
         }
       });
     });
@@ -3246,8 +3262,8 @@ def osos():
             if ay not in aylar:
                 aylar[ay] = {"cekis": 0, "veris": 0, "gun_sayisi": 0}
             for s, v in saatler.items():
-                aylar[ay]['cekis'] += v.get('cekis', 0)
-                aylar[ay]['veris'] += v.get('veris', 0)
+                aylar[ay]['cekis'] += v.get('cekis', v.get('cekis_kwh', 0))
+                aylar[ay]['veris'] += v.get('veris', v.get('veris_kwh', 0))
             aylar[ay]['gun_sayisi'] += 1
         aysonu_abone = aysonu.get(key, {})
         for ay, veri in aylar.items():
@@ -3650,8 +3666,10 @@ def api_maliyet_aksaray3():
         
         for saat_int in range(24):
             saat_key = f"{saat_int:02d}"
-            saat_veri = saatler_data.get(saat_key, {})
-            tuketim_kwh = float(saat_veri.get("cekis", 0))
+            # Saat anahtari farkli formatlarda olabilir
+            saat_veri = saatler_data.get(saat_key, saatler_data.get(saat_key + ":00", saatler_data.get(saat_key + ":00:00", {})))
+            # Alan adi farkli olabilir
+            tuketim_kwh = float(saat_veri.get("cekis", saat_veri.get("cekis_kwh", 0)))
             ptf_tl_mwh = float(gun_ptf[saat_int])
             
             ptf_tl_kwh = ptf_tl_mwh / 1000
@@ -3733,9 +3751,20 @@ def api_uretim_tuketim():
     
     # Saatlik veri olusturma yardimcisi
     def get_saatlik(abone_veri, gun_str, alan):
-        """abone_veri[gun_str][saat][cekis|veris] -> saatlik liste"""
+        """abone_veri[gun_str][saat][cekis|veris] -> saatlik liste.
+        Saat anahtari ve alan adi farkli formatlarda olabilir, hepsini tolere eder."""
         saatler_data = abone_veri.get(gun_str, {})
-        return [float(saatler_data.get(f"{h:02d}", {}).get(alan, 0)) for h in range(24)]
+        # Alan adi haritalama
+        alan_alternatif = alan + "_kwh"
+        sonuc = []
+        for h in range(24):
+            sk = f"{h:02d}"
+            # Saat anahtari farkli formatlarda olabilir
+            v = saatler_data.get(sk, saatler_data.get(sk + ":00", saatler_data.get(sk + ":00:00", {})))
+            # Alan adi farkli olabilir
+            val = v.get(alan, v.get(alan_alternatif, 0))
+            sonuc.append(float(val) if val else 0.0)
+        return sonuc
     
     # ===== GUNLUK DETAY (saatlik tablo icin) =====
     ty1_uretim = get_saatlik(ty1, gun, "veris")
