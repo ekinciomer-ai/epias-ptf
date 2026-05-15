@@ -1005,36 +1005,14 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 
 <!-- AYLIK TABLO -->
 <div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; overflow:auto; margin-bottom:16px;">
-  <div style="padding:12px 18px; border-bottom:1px solid #e2e8f0; background:#f8fafc;">
-    <div style="font-size:14px; font-weight:600; color:#1e293b;">📋 Aylık → Günlük → Saatlik Mahsuplaşma (Abone Dağılımı)</div>
+  <div style="padding:12px 18px; border-bottom:1px solid #e2e8f0; background:#f8fafc; display:flex; justify-content:space-between; align-items:center;">
+    <div style="font-size:14px; font-weight:600; color:#1e293b;">📋 Aylık → Günlük → Saatlik Mahsuplaşma</div>
+    <button onclick="mhsAboneToggle()" id="mhs-abone-btn" style="background:#fff; border:1px solid #cbd5e1; color:#1e293b; padding:6px 14px; border-radius:6px; font-size:12px; cursor:pointer; font-weight:500;">
+      🔍 Abone Detay (T1/T2/A3) Göster
+    </button>
   </div>
-  <table style="width:100%; border-collapse:collapse; font-size:11px; min-width:1200px;">
-    <thead>
-      <tr style="background:#f1f5f9; border-bottom:1px solid #e2e8f0;">
-        <th rowspan="2" style="padding:8px; width:26px;"></th>
-        <th rowspan="2" style="padding:8px 12px; text-align:left; font-weight:600; color:#64748b; vertical-align:middle;">Ay / Tarih / Saat</th>
-        <th colspan="4" style="padding:8px; text-align:center; font-weight:600; color:#185fa5; background:#eff6ff; border-left:2px solid #cbd5e1;">ÜRETİM</th>
-        <th colspan="4" style="padding:8px; text-align:center; font-weight:600; color:#dc2626; background:#fef2f2; border-left:2px solid #cbd5e1;">TÜKETİM</th>
-        <th rowspan="2" style="padding:8px 8px; text-align:right; font-weight:600; color:#7c3aed; vertical-align:middle; border-left:2px solid #cbd5e1;">Mahsup</th>
-        <th colspan="4" style="padding:8px; text-align:center; font-weight:600; color:#ea580c; background:#fff7ed; border-left:2px solid #cbd5e1;">MAHSUP SONRASI<br>TÜKETİM</th>
-        <th rowspan="2" style="padding:8px 8px; text-align:right; font-weight:600; color:#16a34a; vertical-align:middle; border-left:2px solid #cbd5e1;">Bedelli</th>
-        <th rowspan="2" style="padding:8px 10px; text-align:center; font-weight:600; color:#64748b; vertical-align:middle;">Durum</th>
-      </tr>
-      <tr style="background:#f8fafc; border-bottom:1px solid #e2e8f0;">
-        <th style="padding:6px 6px; text-align:right; font-weight:500; color:#185fa5; background:#eff6ff; border-left:2px solid #cbd5e1;">T1</th>
-        <th style="padding:6px 6px; text-align:right; font-weight:500; color:#185fa5; background:#eff6ff;">T2</th>
-        <th style="padding:6px 6px; text-align:right; font-weight:500; color:#185fa5; background:#eff6ff;">A3</th>
-        <th style="padding:6px 6px; text-align:right; font-weight:600; color:#185fa5; background:#dbeafe;">TPL</th>
-        <th style="padding:6px 6px; text-align:right; font-weight:500; color:#dc2626; background:#fef2f2; border-left:2px solid #cbd5e1;">T1</th>
-        <th style="padding:6px 6px; text-align:right; font-weight:500; color:#dc2626; background:#fef2f2;">T2</th>
-        <th style="padding:6px 6px; text-align:right; font-weight:500; color:#dc2626; background:#fef2f2;">A3</th>
-        <th style="padding:6px 6px; text-align:right; font-weight:600; color:#dc2626; background:#fee2e2;">TPL</th>
-        <th style="padding:6px 6px; text-align:right; font-weight:500; color:#ea580c; background:#fff7ed; border-left:2px solid #cbd5e1;">T1</th>
-        <th style="padding:6px 6px; text-align:right; font-weight:500; color:#ea580c; background:#fff7ed;">T2</th>
-        <th style="padding:6px 6px; text-align:right; font-weight:500; color:#ea580c; background:#fff7ed;">A3</th>
-        <th style="padding:6px 6px; text-align:right; font-weight:600; color:#ea580c; background:#fed7aa;">TPL</th>
-      </tr>
-    </thead>
+  <table style="width:100%; border-collapse:collapse; font-size:11px;" id="mhs-tablo-el">
+    <thead id="mhs-thead"></thead>
     <tbody id="mhs-tablo"></tbody>
   </table>
 </div>
@@ -3308,6 +3286,7 @@ const MHS_AY_ISIM = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz',
 let mhsData = null;       // hesaplanmış data
 let mhsAcikAy = null;     // hangi ay acik
 let mhsAcikGun = null;    // hangi gun acik
+let mhsAboneDetay = false;  // T1/T2/A3 detay aç/kapa
 
 function mhsFmt(v) {
   return Math.round(v || 0).toLocaleString('tr-TR');
@@ -3506,6 +3485,11 @@ function mhsGunAc(gun) {
   mhsTabloRender();
 }
 
+function mhsAboneToggle() {
+  mhsAboneDetay = !mhsAboneDetay;
+  mhsTabloRender();
+}
+
 function mhsKpiGuncelle() {
   if (!mhsData) return;
   let topU = 0, topT = 0, topM = 0, topB = 0;
@@ -3555,68 +3539,143 @@ function mhsTabloRender() {
   }
   
   function renderSatir(opts) {
-    // opts: { uretim:{T1,T2,A3,TPL}, tuketim:{T1,T2,A3,TPL}, mahsup, sonra:{T1,T2,A3,TPL}, bedelli, ureT1Show:bool, ureT2Show, ureA3Show, tukShow }
     const { 
       uretim, tuketim, mahsup, sonra, bedelli, 
-      indent, bg, weight, fontSize, level, // 'ay', 'gun', 'saat'
+      indent, bg, textColor, weight, fontSize, level,
       ayText, onclick, icon
     } = opts;
     
-    const uBgL = 'rgba(239,246,255,0.4)';
-    const uBgT = 'rgba(219,234,254,0.5)';
-    const tBgL = 'rgba(254,242,242,0.4)';
-    const tBgT = 'rgba(254,226,226,0.5)';
-    const sBgL = 'rgba(255,247,237,0.4)';
-    const sBgT = 'rgba(254,215,170,0.5)';
-    const bdL = 'border-left:2px solid rgba(203,213,225,0.4);';
+    const secili = (textColor === '#fff');
+    
+    const uColor = secili ? '#fff' : '#185fa5';
+    const tColor = secili ? '#fff' : '#dc2626';
+    const mColor = secili ? '#fff' : '#7c3aed';
+    const sColor = secili ? '#fff' : '#ea580c';
+    const bColor = secili ? '#fff' : (bedelli > 0 ? '#16a34a' : '#94a3b8');
+    const a3Color = secili ? 'rgba(255,255,255,0.5)' : '#94a3b8';
+    
+    const uBgL = secili ? bg : 'rgba(239,246,255,0.4)';
+    const uBgT = secili ? bg : 'rgba(219,234,254,0.6)';
+    const tBgL = secili ? bg : 'rgba(254,242,242,0.4)';
+    const tBgT = secili ? bg : 'rgba(254,226,226,0.6)';
+    const sBgL = secili ? bg : 'rgba(255,247,237,0.4)';
+    const sBgT = secili ? bg : 'rgba(254,215,170,0.6)';
+    const bdL = 'border-left:2px solid ' + (secili ? 'rgba(255,255,255,0.2)' : 'rgba(203,213,225,0.4)') + ';';
     
     const w = weight || '400';
     const fs = fontSize || '11px';
     const indentPx = indent || 0;
     
-    let s = '<tr style="border-bottom:1px solid #e2e8f0;' + (bg ? 'background:' + bg + ';' : '') + (onclick ? 'cursor:pointer;' : '') + '"' + (onclick ? ' onclick="' + onclick + '"' : '') + '>';
-    s += '<td style="padding:6px; text-align:center; color:#94a3b8; font-size:' + fs + ';">' + (icon || '') + '</td>';
-    s += '<td style="padding:6px 12px; padding-left:' + (12+indentPx) + 'px; color:#1e293b; font-weight:' + w + '; font-size:' + fs + ';">' + ayText + '</td>';
+    function td(v, color, bgC, weight2, leftBorder) {
+      const style = 'padding:6px 8px; text-align:right; color:' + color + 
+                    '; background:' + bgC +
+                    '; font-weight:' + (weight2 || w) +
+                    '; font-size:' + fs + ';' +
+                    (leftBorder ? bdL : '');
+      const val = (v === null || v === undefined || v === 0) ? '—' : Math.round(v).toLocaleString('tr-TR');
+      return '<td style="' + style + '">' + val + '</td>';
+    }
     
-    // Üretim 4 sütun
-    s += tdNum(uretim.T1, '#185fa5', uBgL, w, fs).replace(';"', ';' + bdL + '"');
-    s += tdNum(uretim.T2, '#185fa5', uBgL, w, fs);
-    s += tdNum(uretim.A3 || null, '#94a3b8', uBgL, w, fs);  // A3 üretim yok
-    s += tdNum(uretim.TPL, '#185fa5', uBgT, '600', fs);
+    let s = '<tr style="border-bottom:1px solid ' + (secili ? bg : '#e2e8f0') + ';' + 
+            (bg ? 'background:' + bg + ';' : '') + 
+            (onclick ? 'cursor:pointer;' : '') +
+            '"' + (onclick ? ' onclick="' + onclick + '"' : '') + '>';
+    s += '<td style="padding:6px; text-align:center; color:' + (secili ? '#fff' : '#94a3b8') + '; font-size:' + fs + ';' + (bg ? 'background:' + bg + ';' : '') + '">' + (icon || '') + '</td>';
+    s += '<td style="padding:6px 12px; padding-left:' + (12+indentPx) + 'px; color:' + (textColor || '#1e293b') + '; font-weight:' + w + '; font-size:' + fs + ';' + (bg ? 'background:' + bg + ';' : '') + '">' + ayText + '</td>';
     
-    // Tüketim 4 sütun
-    s += tdNum(tuketim.T1, '#dc2626', tBgL, w, fs).replace(';"', ';' + bdL + '"');
-    s += tdNum(tuketim.T2, '#dc2626', tBgL, w, fs);
-    s += tdNum(tuketim.A3, '#dc2626', tBgL, w, fs);
-    s += tdNum(tuketim.TPL, '#dc2626', tBgT, '600', fs);
+    // ÜRETİM - detay açıksa T1/T2/A3 + TPL, kapalıysa sadece TPL
+    if (mhsAboneDetay) {
+      s += td(uretim.T1, uColor, uBgL, w, true);
+      s += td(uretim.T2, uColor, uBgL, w);
+      s += td(uretim.A3 || null, a3Color, uBgL, w);
+    }
+    s += td(uretim.TPL, uColor, uBgT, '600', !mhsAboneDetay);
+    
+    // TÜKETİM
+    if (mhsAboneDetay) {
+      s += td(tuketim.T1, tColor, tBgL, w, true);
+      s += td(tuketim.T2, tColor, tBgL, w);
+      s += td(tuketim.A3, tColor, tBgL, w);
+    }
+    s += td(tuketim.TPL, tColor, tBgT, '600', !mhsAboneDetay);
     
     // Mahsup
-    const mhsBdL = ';border-left:2px solid rgba(203,213,225,0.4);';
-    s += '<td style="padding:6px 8px; text-align:right; color:#7c3aed; font-weight:600; font-size:' + fs + ';' + mhsBdL + '">' + (mahsup ? Math.round(mahsup).toLocaleString('tr-TR') : '—') + '</td>';
+    s += '<td style="padding:6px 8px; text-align:right; color:' + mColor + '; font-weight:600; font-size:' + fs + ';' + bdL + 'background:' + (bg || 'transparent') + ';">' + (mahsup ? Math.round(mahsup).toLocaleString('tr-TR') : '—') + '</td>';
     
-    // Mahsup sonrası 4 sütun
-    s += tdNumZero(sonra.T1, '#ea580c', sBgL, w, fs).replace(';"', ';' + bdL + '"');
-    s += tdNumZero(sonra.T2, '#ea580c', sBgL, w, fs);
-    s += tdNumZero(sonra.A3, '#ea580c', sBgL, w, fs);
-    s += tdNumZero(sonra.TPL, '#ea580c', sBgT, '600', fs);
+    // MAHSUP SONRASI TÜKETİM
+    if (mhsAboneDetay) {
+      s += td(sonra.T1, sColor, sBgL, w, true);
+      s += td(sonra.T2, sColor, sBgL, w);
+      s += td(sonra.A3, sColor, sBgL, w);
+    }
+    s += td(sonra.TPL, sColor, sBgT, '600', !mhsAboneDetay);
     
     // Bedelli
-    s += '<td style="padding:6px 8px; text-align:right; color:' + (bedelli > 0 ? '#16a34a' : '#94a3b8') + '; font-weight:600; font-size:' + fs + ';' + mhsBdL + '">' + (bedelli ? Math.round(bedelli).toLocaleString('tr-TR') : '—') + '</td>';
+    s += '<td style="padding:6px 8px; text-align:right; color:' + bColor + '; font-weight:600; font-size:' + fs + ';' + bdL + 'background:' + (bg || 'transparent') + ';">' + (bedelli ? Math.round(bedelli).toLocaleString('tr-TR') : '—') + '</td>';
     
-    // Durum (sadece ay seviyesinde)
+    // Durum
     if (level === 'ay') {
       const fazla = uretim.TPL > tuketim.TPL;
-      const dBg = fazla ? '#dcfce7' : '#fee2e2';
-      const dC = fazla ? '#166534' : '#991b1b';
+      const dBg = secili ? 'rgba(255,255,255,0.25)' : (fazla ? '#dcfce7' : '#fee2e2');
+      const dC = secili ? '#fff' : (fazla ? '#166534' : '#991b1b');
       const dT = fazla ? 'Fazla' : 'Eksik';
-      s += '<td style="padding:6px 10px; text-align:center; font-size:' + fs + ';"><span style="background:' + dBg + '; color:' + dC + '; padding:2px 8px; border-radius:4px; font-size:10px;">' + dT + '</span></td>';
+      s += '<td style="padding:6px 10px; text-align:center; font-size:' + fs + ';' + (bg ? 'background:' + bg + ';' : '') + '"><span style="background:' + dBg + '; color:' + dC + '; padding:2px 8px; border-radius:4px; font-size:10px;">' + dT + '</span></td>';
     } else {
-      s += '<td></td>';
+      s += '<td style="' + (bg ? 'background:' + bg + ';' : '') + '"></td>';
     }
     
     s += '</tr>';
     return s;
   }
+  
+  // THEAD render - mhsAboneDetay'a göre
+  function renderThead() {
+    let th = '';
+    if (mhsAboneDetay) {
+      th += '<tr style="background:#f1f5f9; border-bottom:1px solid #e2e8f0;">';
+      th += '<th rowspan="2" style="padding:8px; width:26px;"></th>';
+      th += '<th rowspan="2" style="padding:8px 12px; text-align:left; font-weight:600; color:#64748b; vertical-align:middle;">Ay / Tarih / Saat</th>';
+      th += '<th colspan="4" style="padding:8px; text-align:center; font-weight:600; color:#185fa5; background:#eff6ff; border-left:2px solid #cbd5e1;">ÜRETİM</th>';
+      th += '<th colspan="4" style="padding:8px; text-align:center; font-weight:600; color:#dc2626; background:#fef2f2; border-left:2px solid #cbd5e1;">TÜKETİM</th>';
+      th += '<th rowspan="2" style="padding:8px; text-align:right; font-weight:600; color:#7c3aed; vertical-align:middle; border-left:2px solid #cbd5e1;">Mahsup</th>';
+      th += '<th colspan="4" style="padding:8px; text-align:center; font-weight:600; color:#ea580c; background:#fff7ed; border-left:2px solid #cbd5e1;">MAHSUP SONRASI<br>TÜKETİM</th>';
+      th += '<th rowspan="2" style="padding:8px; text-align:right; font-weight:600; color:#16a34a; vertical-align:middle; border-left:2px solid #cbd5e1;">Bedelli</th>';
+      th += '<th rowspan="2" style="padding:8px 10px; text-align:center; font-weight:600; color:#64748b; vertical-align:middle;">Durum</th>';
+      th += '</tr>';
+      th += '<tr style="background:#f8fafc; border-bottom:1px solid #e2e8f0;">';
+      th += '<th style="padding:6px 6px; text-align:right; font-weight:500; color:#185fa5; background:#eff6ff; border-left:2px solid #cbd5e1;">T1</th>';
+      th += '<th style="padding:6px 6px; text-align:right; font-weight:500; color:#185fa5; background:#eff6ff;">T2</th>';
+      th += '<th style="padding:6px 6px; text-align:right; font-weight:500; color:#185fa5; background:#eff6ff;">A3</th>';
+      th += '<th style="padding:6px 6px; text-align:right; font-weight:600; color:#185fa5; background:#dbeafe;">TPL</th>';
+      th += '<th style="padding:6px 6px; text-align:right; font-weight:500; color:#dc2626; background:#fef2f2; border-left:2px solid #cbd5e1;">T1</th>';
+      th += '<th style="padding:6px 6px; text-align:right; font-weight:500; color:#dc2626; background:#fef2f2;">T2</th>';
+      th += '<th style="padding:6px 6px; text-align:right; font-weight:500; color:#dc2626; background:#fef2f2;">A3</th>';
+      th += '<th style="padding:6px 6px; text-align:right; font-weight:600; color:#dc2626; background:#fee2e2;">TPL</th>';
+      th += '<th style="padding:6px 6px; text-align:right; font-weight:500; color:#ea580c; background:#fff7ed; border-left:2px solid #cbd5e1;">T1</th>';
+      th += '<th style="padding:6px 6px; text-align:right; font-weight:500; color:#ea580c; background:#fff7ed;">T2</th>';
+      th += '<th style="padding:6px 6px; text-align:right; font-weight:500; color:#ea580c; background:#fff7ed;">A3</th>';
+      th += '<th style="padding:6px 6px; text-align:right; font-weight:600; color:#ea580c; background:#fed7aa;">TPL</th>';
+      th += '</tr>';
+    } else {
+      // Sadece TPL - basit header
+      th += '<tr style="background:#f1f5f9; border-bottom:1px solid #e2e8f0;">';
+      th += '<th style="padding:10px 8px; width:30px;"></th>';
+      th += '<th style="padding:10px 16px; text-align:left; font-weight:600; color:#64748b;">Ay / Tarih / Saat</th>';
+      th += '<th style="padding:10px 12px; text-align:right; font-weight:600; color:#185fa5; border-left:2px solid #cbd5e1;">Üretim</th>';
+      th += '<th style="padding:10px 12px; text-align:right; font-weight:600; color:#dc2626; border-left:2px solid #cbd5e1;">Tüketim</th>';
+      th += '<th style="padding:10px 12px; text-align:right; font-weight:600; color:#7c3aed; border-left:2px solid #cbd5e1;">Mahsup</th>';
+      th += '<th style="padding:10px 12px; text-align:right; font-weight:600; color:#ea580c; border-left:2px solid #cbd5e1;">Mahsup Sonrası<br>Tüketim</th>';
+      th += '<th style="padding:10px 12px; text-align:right; font-weight:600; color:#16a34a; border-left:2px solid #cbd5e1;">Bedelli</th>';
+      th += '<th style="padding:10px 12px; text-align:center; font-weight:600; color:#64748b;">Durum</th>';
+      th += '</tr>';
+    }
+    document.getElementById('mhs-thead').innerHTML = th;
+    
+    // Buton metnini güncelle
+    const btn = document.getElementById('mhs-abone-btn');
+    if (btn) btn.innerHTML = mhsAboneDetay ? '✕ Abone Detayı Gizle' : '🔍 Abone Detay (T1/T2/A3) Göster';
+  }
+  renderThead();
   
   const aylar = Object.keys(mhsData).sort().reverse();
   let tbl = '';
@@ -3639,11 +3698,14 @@ function mhsTabloRender() {
     topM += d.mahsup;
     topB += d.bedelli;
     
-    // AY satırı
+    // AY satırı - seçilince güçlü renk
     tbl += renderSatir({
       uretim: d.uretim, tuketim: d.tuketim, mahsup: d.mahsup, 
       sonra: d.sonra, bedelli: d.bedelli,
-      indent: 0, bg: ayAcik ? '#dbeafe' : '', weight: '600', fontSize: '12px',
+      indent: 0, 
+      bg: ayAcik ? '#1e40af' : '',  // koyu mavi - belirgin
+      textColor: ayAcik ? '#fff' : '#1e293b',
+      weight: '600', fontSize: '12px',
       level: 'ay', ayText: ayAd, 
       onclick: "mhsAyAc('" + ay + "')",
       icon: ayAcik ? '▼' : '▶'
@@ -3661,7 +3723,10 @@ function mhsTabloRender() {
         tbl += renderSatir({
           uretim: g.uretim, tuketim: g.tuketim, mahsup: g.mahsup,
           sonra: g.sonra, bedelli: g.bedelli,
-          indent: 20, bg: gunAcik ? '#fef3c7' : '#fafbfc', weight: gunAcik ? '600' : '400', fontSize: '11px',
+          indent: 20, 
+          bg: gunAcik ? '#92400e' : '#fafbfc',  // koyu turuncu seçili
+          textColor: gunAcik ? '#fff' : '#1e293b',
+          weight: gunAcik ? '600' : '400', fontSize: '11px',
           level: 'gun', ayText: gunStr,
           onclick: "mhsGunAc('" + gun + "')",
           icon: gunAcik ? '▼' : '▶'
