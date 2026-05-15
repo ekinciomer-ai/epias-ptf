@@ -3359,10 +3359,15 @@ async function mahsupYukle() {
       aylar[ay].miningAylik = v;
     });
     
-    // SAATLIK MAHSUPLASMA HESAPLA -> GUN TOPLAMI -> AY TOPLAMI
+    // MAHSUPLASMA HESAPLA:
+    // - Ocak-Nisan 2026 → AYLIK MANTIK (ay sonu toplam üretim vs toplam tüketim)
+    // - Mayıs 2026+ → SAATLİK MANTIK (her saat min/max)
+    const SAATLIK_BASLANGIC = '2026-05';
+    
     Object.keys(aylar).forEach(ay => {
       const A = aylar[ay];
-      let ayU = 0, ayT = 0, ayM = 0, ayB = 0;
+      let ayU = 0, ayT = 0;
+      const saatlik_mod = (ay >= SAATLIK_BASLANGIC);
       
       Object.keys(A.gunler).forEach(gun => {
         const G = A.gunler[gun];
@@ -3370,32 +3375,54 @@ async function mahsupYukle() {
         
         Object.keys(G.saatler).forEach(saat => {
           const S = G.saatler[saat];
-          // Saatlik mahsup ve bedelli
-          S.mahsup = Math.min(S.uretim, S.tuketim);
-          S.bedelli = Math.max(0, S.uretim - S.tuketim);
-          
           gU += S.uretim;
           gT += S.tuketim;
-          gM += S.mahsup;
-          gB += S.bedelli;
+          
+          if (saatlik_mod) {
+            // SAATLIK MAHSUPLASMA (Mayıs ve sonrası)
+            S.mahsup = Math.min(S.uretim, S.tuketim);
+            S.bedelli = Math.max(0, S.uretim - S.tuketim);
+            gM += S.mahsup;
+            gB += S.bedelli;
+          } else {
+            // Aylık modda saatlik mahsup/bedelli gösterilmez
+            S.mahsup = 0;
+            S.bedelli = 0;
+          }
         });
         
         G.uretim = gU;
         G.tuketim = gT;
-        G.mahsup = gM;
-        G.bedelli = gB;
+        
+        if (saatlik_mod) {
+          // Günlük = saatlerin toplamı
+          G.mahsup = gM;
+          G.bedelli = gB;
+        } else {
+          // Aylık modda günlük mahsup/bedelli: günlük üretim vs günlük tüketim
+          G.mahsup = Math.min(gU, gT);
+          G.bedelli = Math.max(0, gU - gT);
+        }
         
         ayU += gU;
         ayT += gT;
-        ayM += gM;
-        ayB += gB;
       });
       
-      // Mining aylik tüketime eklenir ama mahsuplaşmaya girmez (kullanıcı talimatı)
+      // Mining HESAPLARA KATILMAZ - sadece 2025 bedelli limit hesabında kullanılır
       A.uretim = ayU;
-      A.tuketim = ayT + A.miningAylik;
-      A.mahsup = ayM;
-      A.bedelli = ayB;
+      A.tuketim = ayT;  // Mining EKLENMİYOR
+      
+      if (saatlik_mod) {
+        // Saatlik modda aylık = günlerin toplamı (Mining mahsuplaşmaya girmez)
+        let m = 0, b = 0;
+        Object.values(A.gunler).forEach(G => { m += G.mahsup; b += G.bedelli; });
+        A.mahsup = m;
+        A.bedelli = b;
+      } else {
+        // AYLIK MANTIK: ay sonu toplam üretim vs toplam tüketim
+        A.mahsup = Math.min(A.uretim, A.tuketim);
+        A.bedelli = Math.max(0, A.uretim - A.tuketim);
+      }
     });
     
     mhsData = aylar;
@@ -3527,17 +3554,19 @@ function mhsTabloRender() {
           tbl += '<th style="padding:5px 10px; text-align:right; color:#16a34a;">Bedelli</th>';
           tbl += '</tr></thead><tbody>';
           
+          // Mayis ve sonrasi saatlik mahsuplasma uygular
+          const saatlikMod = (ay >= '2026-05');
           const saatler = Object.keys(g.saatler).sort();
           saatler.forEach(s => {
             const sv = g.saatler[s];
-            const sMahsup = Math.min(sv.uretim, sv.tuketim);
-            const sBedelli = Math.max(0, sv.uretim - sv.tuketim);
+            const sMahsup = saatlikMod ? Math.min(sv.uretim, sv.tuketim) : null;
+            const sBedelli = saatlikMod ? Math.max(0, sv.uretim - sv.tuketim) : null;
             tbl += '<tr style="border-top:1px solid #fef3c7;">';
             tbl += '<td style="padding:4px 10px; color:#64748b;">' + s + ':00</td>';
             tbl += '<td style="padding:4px 10px; text-align:right; color:#185fa5;">' + (sv.uretim ? Math.round(sv.uretim).toLocaleString('tr-TR') : '—') + '</td>';
             tbl += '<td style="padding:4px 10px; text-align:right; color:#dc2626;">' + (sv.tuketim ? Math.round(sv.tuketim).toLocaleString('tr-TR') : '—') + '</td>';
-            tbl += '<td style="padding:4px 10px; text-align:right; color:#7c3aed;">' + (sMahsup ? Math.round(sMahsup).toLocaleString('tr-TR') : '—') + '</td>';
-            tbl += '<td style="padding:4px 10px; text-align:right; color:#16a34a;">' + (sBedelli ? Math.round(sBedelli).toLocaleString('tr-TR') : '—') + '</td>';
+            tbl += '<td style="padding:4px 10px; text-align:right; color:#7c3aed;">' + (saatlikMod ? (sMahsup ? Math.round(sMahsup).toLocaleString('tr-TR') : '—') : '·') + '</td>';
+            tbl += '<td style="padding:4px 10px; text-align:right; color:#16a34a;">' + (saatlikMod ? (sBedelli ? Math.round(sBedelli).toLocaleString('tr-TR') : '—') : '·') + '</td>';
             tbl += '</tr>';
           });
           
