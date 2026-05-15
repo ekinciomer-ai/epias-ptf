@@ -1004,20 +1004,35 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 </div>
 
 <!-- AYLIK TABLO -->
-<div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; margin-bottom:16px;">
+<div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; overflow:auto; margin-bottom:16px;">
   <div style="padding:12px 18px; border-bottom:1px solid #e2e8f0; background:#f8fafc;">
-    <div style="font-size:14px; font-weight:600; color:#1e293b;">📋 Aylık → Günlük → Saatlik Mahsuplaşma</div>
+    <div style="font-size:14px; font-weight:600; color:#1e293b;">📋 Aylık → Günlük → Saatlik Mahsuplaşma (Abone Dağılımı)</div>
   </div>
-  <table style="width:100%; border-collapse:collapse; font-size:13px;">
+  <table style="width:100%; border-collapse:collapse; font-size:11px; min-width:1200px;">
     <thead>
       <tr style="background:#f1f5f9; border-bottom:1px solid #e2e8f0;">
-        <th style="padding:10px 8px; text-align:left; width:30px;"></th>
-        <th style="padding:10px 16px; text-align:left; font-weight:600; color:#64748b;">Ay</th>
-        <th style="padding:10px 12px; text-align:right; font-weight:600; color:#185fa5;">Üretim</th>
-        <th style="padding:10px 12px; text-align:right; font-weight:600; color:#dc2626;">Tüketim</th>
-        <th style="padding:10px 12px; text-align:right; font-weight:600; color:#7c3aed;">Mahsuplaşma</th>
-        <th style="padding:10px 12px; text-align:right; font-weight:600; color:#16a34a;">Bedelli</th>
-        <th style="padding:10px 12px; text-align:center; font-weight:600; color:#64748b;">Durum</th>
+        <th rowspan="2" style="padding:8px; width:26px;"></th>
+        <th rowspan="2" style="padding:8px 12px; text-align:left; font-weight:600; color:#64748b; vertical-align:middle;">Ay / Tarih / Saat</th>
+        <th colspan="4" style="padding:8px; text-align:center; font-weight:600; color:#185fa5; background:#eff6ff; border-left:2px solid #cbd5e1;">ÜRETİM</th>
+        <th colspan="4" style="padding:8px; text-align:center; font-weight:600; color:#dc2626; background:#fef2f2; border-left:2px solid #cbd5e1;">TÜKETİM</th>
+        <th rowspan="2" style="padding:8px 8px; text-align:right; font-weight:600; color:#7c3aed; vertical-align:middle; border-left:2px solid #cbd5e1;">Mahsup</th>
+        <th colspan="4" style="padding:8px; text-align:center; font-weight:600; color:#ea580c; background:#fff7ed; border-left:2px solid #cbd5e1;">MAHSUP SONRASI<br>TÜKETİM</th>
+        <th rowspan="2" style="padding:8px 8px; text-align:right; font-weight:600; color:#16a34a; vertical-align:middle; border-left:2px solid #cbd5e1;">Bedelli</th>
+        <th rowspan="2" style="padding:8px 10px; text-align:center; font-weight:600; color:#64748b; vertical-align:middle;">Durum</th>
+      </tr>
+      <tr style="background:#f8fafc; border-bottom:1px solid #e2e8f0;">
+        <th style="padding:6px 6px; text-align:right; font-weight:500; color:#185fa5; background:#eff6ff; border-left:2px solid #cbd5e1;">T1</th>
+        <th style="padding:6px 6px; text-align:right; font-weight:500; color:#185fa5; background:#eff6ff;">T2</th>
+        <th style="padding:6px 6px; text-align:right; font-weight:500; color:#185fa5; background:#eff6ff;">A3</th>
+        <th style="padding:6px 6px; text-align:right; font-weight:600; color:#185fa5; background:#dbeafe;">TPL</th>
+        <th style="padding:6px 6px; text-align:right; font-weight:500; color:#dc2626; background:#fef2f2; border-left:2px solid #cbd5e1;">T1</th>
+        <th style="padding:6px 6px; text-align:right; font-weight:500; color:#dc2626; background:#fef2f2;">T2</th>
+        <th style="padding:6px 6px; text-align:right; font-weight:500; color:#dc2626; background:#fef2f2;">A3</th>
+        <th style="padding:6px 6px; text-align:right; font-weight:600; color:#dc2626; background:#fee2e2;">TPL</th>
+        <th style="padding:6px 6px; text-align:right; font-weight:500; color:#ea580c; background:#fff7ed; border-left:2px solid #cbd5e1;">T1</th>
+        <th style="padding:6px 6px; text-align:right; font-weight:500; color:#ea580c; background:#fff7ed;">T2</th>
+        <th style="padding:6px 6px; text-align:right; font-weight:500; color:#ea580c; background:#fff7ed;">A3</th>
+        <th style="padding:6px 6px; text-align:right; font-weight:600; color:#ea580c; background:#fed7aa;">TPL</th>
       </tr>
     </thead>
     <tbody id="mhs-tablo"></tbody>
@@ -3313,26 +3328,38 @@ async function mahsupYukle() {
     }
     const raw = await r.json();
     
-    // 3 aboneyi tek pot'ta sa'ate göre topla
-    // Yapı: {ay: {gunler: {gun: {saatler: {saat: {uretim, tuketim}}}}}}
+    // 3 aboneyi ayrı tut - her saatte T1, T2, A3 verileri ayrı
     const aylar = {};
     
+    const aboneKisalt = {
+      'tekyildiz_1': 'T1',
+      'tekyildiz_2': 'T2',
+      'aksaray_3': 'A3',
+    };
     const aboneTip = {
       'tekyildiz_1': { uretim: true, tuketim: true },
       'tekyildiz_2': { uretim: true, tuketim: true },
       'aksaray_3': { uretim: false, tuketim: true },
     };
     
+    function bosVeri() {
+      return {
+        uretim: { T1: 0, T2: 0, A3: 0, TPL: 0 },
+        tuketim: { T1: 0, T2: 0, A3: 0, TPL: 0 },
+      };
+    }
+    
     Object.entries(raw).forEach(([key, abone]) => {
       if (!aboneTip[key] || !abone.veri) return;
       const tipler = aboneTip[key];
+      const k = aboneKisalt[key];
       
       Object.entries(abone.veri).forEach(([gun, saatler]) => {
         if (!gun.startsWith('2026')) return;
         const ay = gun.substring(0, 7);
         
-        if (!aylar[ay]) aylar[ay] = { gunler: {}, miningAylik: 0 };
-        if (!aylar[ay].gunler[gun]) aylar[ay].gunler[gun] = { saatler: {} };
+        if (!aylar[ay]) aylar[ay] = { ...bosVeri(), gunler: {}, miningAylik: 0 };
+        if (!aylar[ay].gunler[gun]) aylar[ay].gunler[gun] = { ...bosVeri(), saatler: {} };
         
         Object.entries(saatler).forEach(([saatRaw, v]) => {
           const saat = saatRaw.substring(0, 2);
@@ -3340,89 +3367,122 @@ async function mahsupYukle() {
           const veris = (v.veris !== undefined ? v.veris : (v.veris_kwh || 0));
           
           if (!aylar[ay].gunler[gun].saatler[saat]) {
-            aylar[ay].gunler[gun].saatler[saat] = { uretim: 0, tuketim: 0 };
+            aylar[ay].gunler[gun].saatler[saat] = bosVeri();
           }
           
+          const S = aylar[ay].gunler[gun].saatler[saat];
           if (tipler.uretim) {
-            aylar[ay].gunler[gun].saatler[saat].uretim += veris;
+            S.uretim[k] += veris;
+            S.uretim.TPL += veris;
           }
           if (tipler.tuketim) {
-            aylar[ay].gunler[gun].saatler[saat].tuketim += cekis;
+            S.tuketim[k] += cekis;
+            S.tuketim.TPL += cekis;
           }
         });
       });
     });
     
-    // TY2 Mining aylik (manuel sabit) - aylik toplama eklenir (saatlik dagilim yapilmaz)
+    // TY2 Mining manuel (hesaplara KATILMAZ, sadece referans)
     Object.entries(MHS_TY2_MINING_AYLIK).forEach(([ay, v]) => {
-      if (!aylar[ay]) aylar[ay] = { gunler: {}, miningAylik: 0 };
+      if (!aylar[ay]) aylar[ay] = { ...bosVeri(), gunler: {}, miningAylik: 0 };
       aylar[ay].miningAylik = v;
     });
     
     // MAHSUPLASMA HESAPLA:
-    // - Ocak-Nisan 2026 → AYLIK MANTIK (ay sonu toplam üretim vs toplam tüketim)
-    // - Mayıs 2026+ → SAATLİK MANTIK (her saat min/max)
+    // - Ocak-Nisan 2026 → AYLIK MANTIK
+    // - Mayıs 2026+ → SAATLİK MANTIK
     const SAATLIK_BASLANGIC = '2026-05';
+    
+    // Mahsup sonrası tüketim'i T1/T2/A3'e oransal dağıtır
+    function mahsupSonrasiDagit(tuketim, bedelliTuketim) {
+      // bedelliTuketim = TPL - mahsup. Bunu T1/T2/A3'e oransal dağıt
+      const tpl = tuketim.TPL;
+      if (tpl === 0 || bedelliTuketim === 0) {
+        return { T1: 0, T2: 0, A3: 0, TPL: bedelliTuketim };
+      }
+      return {
+        T1: tuketim.T1 / tpl * bedelliTuketim,
+        T2: tuketim.T2 / tpl * bedelliTuketim,
+        A3: tuketim.A3 / tpl * bedelliTuketim,
+        TPL: bedelliTuketim,
+      };
+    }
     
     Object.keys(aylar).forEach(ay => {
       const A = aylar[ay];
-      let ayU = 0, ayT = 0;
-      const saatlik_mod = (ay >= SAATLIK_BASLANGIC);
+      const saatlikMod = (ay >= SAATLIK_BASLANGIC);
+      
+      // Ay toplamları sıfırla
+      A.uretim = { T1: 0, T2: 0, A3: 0, TPL: 0 };
+      A.tuketim = { T1: 0, T2: 0, A3: 0, TPL: 0 };
       
       Object.keys(A.gunler).forEach(gun => {
         const G = A.gunler[gun];
-        let gU = 0, gT = 0, gM = 0, gB = 0;
+        
+        // Gün toplamları sıfırla
+        G.uretim = { T1: 0, T2: 0, A3: 0, TPL: 0 };
+        G.tuketim = { T1: 0, T2: 0, A3: 0, TPL: 0 };
+        let gM = 0, gB = 0;
         
         Object.keys(G.saatler).forEach(saat => {
           const S = G.saatler[saat];
-          gU += S.uretim;
-          gT += S.tuketim;
           
-          if (saatlik_mod) {
-            // SAATLIK MAHSUPLASMA (Mayıs ve sonrası)
-            S.mahsup = Math.min(S.uretim, S.tuketim);
-            S.bedelli = Math.max(0, S.uretim - S.tuketim);
+          // Saatte gün toplamına ekle
+          ['T1', 'T2', 'A3', 'TPL'].forEach(k => {
+            G.uretim[k] += S.uretim[k];
+            G.tuketim[k] += S.tuketim[k];
+          });
+          
+          if (saatlikMod) {
+            // SAATLİK: her saat ayrı min/max
+            S.mahsup = Math.min(S.uretim.TPL, S.tuketim.TPL);
+            S.bedelli = Math.max(0, S.uretim.TPL - S.tuketim.TPL);
+            const sonraTuk = S.tuketim.TPL - S.mahsup;
+            S.sonra = mahsupSonrasiDagit(S.tuketim, sonraTuk);
+            
             gM += S.mahsup;
             gB += S.bedelli;
           } else {
-            // Aylık modda saatlik mahsup/bedelli gösterilmez
+            // Aylık modda saat seviyesinde hesap gösterilmez
             S.mahsup = 0;
             S.bedelli = 0;
+            S.sonra = { T1: 0, T2: 0, A3: 0, TPL: 0 };
           }
         });
         
-        G.uretim = gU;
-        G.tuketim = gT;
+        // Gün toplamlarını ay'a ekle
+        ['T1', 'T2', 'A3', 'TPL'].forEach(k => {
+          A.uretim[k] += G.uretim[k];
+          A.tuketim[k] += G.tuketim[k];
+        });
         
-        if (saatlik_mod) {
-          // Günlük = saatlerin toplamı
+        if (saatlikMod) {
+          // Saatlik mod: gün = saatlerin toplamı
           G.mahsup = gM;
           G.bedelli = gB;
         } else {
-          // Aylık modda günlük mahsup/bedelli: günlük üretim vs günlük tüketim
-          G.mahsup = Math.min(gU, gT);
-          G.bedelli = Math.max(0, gU - gT);
+          // Aylık mod: gün için de aylık mantık (toplam üretim vs toplam tüketim)
+          G.mahsup = Math.min(G.uretim.TPL, G.tuketim.TPL);
+          G.bedelli = Math.max(0, G.uretim.TPL - G.tuketim.TPL);
         }
-        
-        ayU += gU;
-        ayT += gT;
+        const gSonraTuk = G.tuketim.TPL - G.mahsup;
+        G.sonra = mahsupSonrasiDagit(G.tuketim, gSonraTuk);
       });
       
-      // Mining HESAPLARA KATILMAZ - sadece 2025 bedelli limit hesabında kullanılır
-      A.uretim = ayU;
-      A.tuketim = ayT;  // Mining EKLENMİYOR
-      
-      if (saatlik_mod) {
-        // Saatlik modda aylık = günlerin toplamı (Mining mahsuplaşmaya girmez)
+      if (saatlikMod) {
+        // Saatlik mod: ay = günlerin toplamı
         let m = 0, b = 0;
         Object.values(A.gunler).forEach(G => { m += G.mahsup; b += G.bedelli; });
         A.mahsup = m;
         A.bedelli = b;
       } else {
-        // AYLIK MANTIK: ay sonu toplam üretim vs toplam tüketim
-        A.mahsup = Math.min(A.uretim, A.tuketim);
-        A.bedelli = Math.max(0, A.uretim - A.tuketim);
+        // Aylık mod: ay sonu toplam üretim vs toplam tüketim
+        A.mahsup = Math.min(A.uretim.TPL, A.tuketim.TPL);
+        A.bedelli = Math.max(0, A.uretim.TPL - A.tuketim.TPL);
       }
+      const aSonraTuk = A.tuketim.TPL - A.mahsup;
+      A.sonra = mahsupSonrasiDagit(A.tuketim, aSonraTuk);
     });
     
     mhsData = aylar;
@@ -3450,8 +3510,8 @@ function mhsKpiGuncelle() {
   if (!mhsData) return;
   let topU = 0, topT = 0, topM = 0, topB = 0;
   Object.values(mhsData).forEach(ay => {
-    topU += ay.uretim;
-    topT += ay.tuketim;
+    topU += ay.uretim.TPL;
+    topT += ay.tuketim.TPL;
     topM += ay.mahsup;
     topB += ay.bedelli;
   });
@@ -3471,139 +3531,173 @@ function mhsKpiGuncelle() {
 function mhsTabloRender() {
   if (!mhsData) return;
   
-  const aylar = Object.keys(mhsData).sort().reverse();  // en yeni once
+  // colspan: 1 (icon) + 1 (ad) + 4 (üretim) + 4 (tüketim) + 1 (mahsup) + 4 (sonra) + 1 (bedelli) + 1 (durum) = 17
+  const COLSPAN = 17;
+  
+  // Hücre üretici fonksiyonlar
+  function tdNum(v, color, bg, weight, fontSize) {
+    const style = 'padding:6px 6px; text-align:right; color:' + color + 
+                  '; background:' + (bg || 'transparent') +
+                  '; font-weight:' + (weight || '400') +
+                  '; font-size:' + (fontSize || '11px') + ';';
+    const val = (v === null || v === undefined || v === 0) ? '—' : Math.round(v).toLocaleString('tr-TR');
+    return '<td style="' + style + '">' + val + '</td>';
+  }
+  
+  function tdNumZero(v, color, bg, weight, fontSize) {
+    // 0 da gösterir (üretim/tüketim toplamı 0 olabilir ama '—' yazsın)
+    const style = 'padding:6px 6px; text-align:right; color:' + color + 
+                  '; background:' + (bg || 'transparent') +
+                  '; font-weight:' + (weight || '400') +
+                  '; font-size:' + (fontSize || '11px') + ';';
+    const val = (v === null || v === undefined) ? '—' : (v === 0 ? '—' : Math.round(v).toLocaleString('tr-TR'));
+    return '<td style="' + style + '">' + val + '</td>';
+  }
+  
+  function renderSatir(opts) {
+    // opts: { uretim:{T1,T2,A3,TPL}, tuketim:{T1,T2,A3,TPL}, mahsup, sonra:{T1,T2,A3,TPL}, bedelli, ureT1Show:bool, ureT2Show, ureA3Show, tukShow }
+    const { 
+      uretim, tuketim, mahsup, sonra, bedelli, 
+      indent, bg, weight, fontSize, level, // 'ay', 'gun', 'saat'
+      ayText, onclick, icon
+    } = opts;
+    
+    const uBgL = 'rgba(239,246,255,0.4)';
+    const uBgT = 'rgba(219,234,254,0.5)';
+    const tBgL = 'rgba(254,242,242,0.4)';
+    const tBgT = 'rgba(254,226,226,0.5)';
+    const sBgL = 'rgba(255,247,237,0.4)';
+    const sBgT = 'rgba(254,215,170,0.5)';
+    const bdL = 'border-left:2px solid rgba(203,213,225,0.4);';
+    
+    const w = weight || '400';
+    const fs = fontSize || '11px';
+    const indentPx = indent || 0;
+    
+    let s = '<tr style="border-bottom:1px solid #e2e8f0;' + (bg ? 'background:' + bg + ';' : '') + (onclick ? 'cursor:pointer;' : '') + '"' + (onclick ? ' onclick="' + onclick + '"' : '') + '>';
+    s += '<td style="padding:6px; text-align:center; color:#94a3b8; font-size:' + fs + ';">' + (icon || '') + '</td>';
+    s += '<td style="padding:6px 12px; padding-left:' + (12+indentPx) + 'px; color:#1e293b; font-weight:' + w + '; font-size:' + fs + ';">' + ayText + '</td>';
+    
+    // Üretim 4 sütun
+    s += tdNum(uretim.T1, '#185fa5', uBgL, w, fs).replace(';"', ';' + bdL + '"');
+    s += tdNum(uretim.T2, '#185fa5', uBgL, w, fs);
+    s += tdNum(uretim.A3 || null, '#94a3b8', uBgL, w, fs);  // A3 üretim yok
+    s += tdNum(uretim.TPL, '#185fa5', uBgT, '600', fs);
+    
+    // Tüketim 4 sütun
+    s += tdNum(tuketim.T1, '#dc2626', tBgL, w, fs).replace(';"', ';' + bdL + '"');
+    s += tdNum(tuketim.T2, '#dc2626', tBgL, w, fs);
+    s += tdNum(tuketim.A3, '#dc2626', tBgL, w, fs);
+    s += tdNum(tuketim.TPL, '#dc2626', tBgT, '600', fs);
+    
+    // Mahsup
+    const mhsBdL = ';border-left:2px solid rgba(203,213,225,0.4);';
+    s += '<td style="padding:6px 8px; text-align:right; color:#7c3aed; font-weight:600; font-size:' + fs + ';' + mhsBdL + '">' + (mahsup ? Math.round(mahsup).toLocaleString('tr-TR') : '—') + '</td>';
+    
+    // Mahsup sonrası 4 sütun
+    s += tdNumZero(sonra.T1, '#ea580c', sBgL, w, fs).replace(';"', ';' + bdL + '"');
+    s += tdNumZero(sonra.T2, '#ea580c', sBgL, w, fs);
+    s += tdNumZero(sonra.A3, '#ea580c', sBgL, w, fs);
+    s += tdNumZero(sonra.TPL, '#ea580c', sBgT, '600', fs);
+    
+    // Bedelli
+    s += '<td style="padding:6px 8px; text-align:right; color:' + (bedelli > 0 ? '#16a34a' : '#94a3b8') + '; font-weight:600; font-size:' + fs + ';' + mhsBdL + '">' + (bedelli ? Math.round(bedelli).toLocaleString('tr-TR') : '—') + '</td>';
+    
+    // Durum (sadece ay seviyesinde)
+    if (level === 'ay') {
+      const fazla = uretim.TPL > tuketim.TPL;
+      const dBg = fazla ? '#dcfce7' : '#fee2e2';
+      const dC = fazla ? '#166534' : '#991b1b';
+      const dT = fazla ? 'Fazla' : 'Eksik';
+      s += '<td style="padding:6px 10px; text-align:center; font-size:' + fs + ';"><span style="background:' + dBg + '; color:' + dC + '; padding:2px 8px; border-radius:4px; font-size:10px;">' + dT + '</span></td>';
+    } else {
+      s += '<td></td>';
+    }
+    
+    s += '</tr>';
+    return s;
+  }
+  
+  const aylar = Object.keys(mhsData).sort().reverse();
   let tbl = '';
-  let topU = 0, topT = 0, topM = 0, topB = 0;
+  let topU = { T1:0, T2:0, A3:0, TPL:0 };
+  let topT = { T1:0, T2:0, A3:0, TPL:0 };
+  let topM = 0, topB = 0;
+  let topS = { T1:0, T2:0, A3:0, TPL:0 };
   
   aylar.forEach(ay => {
     const d = mhsData[ay];
     const ayNo = parseInt(ay.substring(5, 7));
     const ayAd = MHS_AY_ISIM[ayNo - 1] + ' ' + ay.substring(0, 4);
     const ayAcik = (mhsAcikAy === ay);
-    const mahsup = d.mahsup;
-    const bedelli = d.bedelli;
     
-    topU += d.uretim;
-    topT += d.tuketim;
-    topM += mahsup;
-    topB += bedelli;
+    ['T1','T2','A3','TPL'].forEach(k => {
+      topU[k] += d.uretim[k];
+      topT[k] += d.tuketim[k];
+      topS[k] += d.sonra[k];
+    });
+    topM += d.mahsup;
+    topB += d.bedelli;
     
-    const ayBg = ayAcik ? 'background:#dbeafe;' : '';
-    const ayIcon = ayAcik ? '▼' : '▶';
-    const fazla = d.uretim > d.tuketim;
-    const durumBg = fazla ? '#dcfce7' : '#fee2e2';
-    const durumColor = fazla ? '#166534' : '#991b1b';
-    const durumText = fazla ? 'Fazla' : 'Eksik';
+    // AY satırı
+    tbl += renderSatir({
+      uretim: d.uretim, tuketim: d.tuketim, mahsup: d.mahsup, 
+      sonra: d.sonra, bedelli: d.bedelli,
+      indent: 0, bg: ayAcik ? '#dbeafe' : '', weight: '600', fontSize: '12px',
+      level: 'ay', ayText: ayAd, 
+      onclick: "mhsAyAc('" + ay + "')",
+      icon: ayAcik ? '▼' : '▶'
+    });
     
-    // AY satiri
-    tbl += '<tr style="border-bottom:1px solid #e2e8f0; cursor:pointer; ' + ayBg + '" onclick="mhsAyAc(\\\'' + ay + '\\\')">';
-    tbl += '<td style="padding:11px 8px; text-align:center; color:' + (ayAcik ? '#185fa5' : '#94a3b8') + '; font-size:11px;">' + ayIcon + '</td>';
-    tbl += '<td style="padding:11px 16px; color:#1e293b; font-weight:' + (ayAcik ? '600' : '500') + ';">' + ayAd + '</td>';
-    tbl += '<td style="padding:11px 12px; text-align:right; color:#185fa5;">' + mhsFmt(d.uretim) + '</td>';
-    tbl += '<td style="padding:11px 12px; text-align:right; color:#dc2626;">' + mhsFmt(d.tuketim) + '</td>';
-    tbl += '<td style="padding:11px 12px; text-align:right; color:#7c3aed; font-weight:600;">' + mhsFmt(mahsup) + '</td>';
-    tbl += '<td style="padding:11px 12px; text-align:right; color:' + (bedelli > 0 ? '#16a34a' : '#94a3b8') + '; font-weight:600;">' + mhsFmt(bedelli) + '</td>';
-    tbl += '<td style="padding:11px 12px; text-align:center;"><span style="background:' + durumBg + '; color:' + durumColor + '; padding:2px 8px; border-radius:4px; font-size:11px;">' + durumText + '</span></td>';
-    tbl += '</tr>';
-    
-    // AY ACIKSA → GUN tablosu
+    // AY AÇIKSA günleri göster
     if (ayAcik) {
-      tbl += '<tr style="background:#dbeafe;"><td colspan="7" style="padding:0 12px 12px 12px;">';
-      tbl += '<div style="background:#fff; border:1px solid #cbd5e1; border-radius:6px; overflow:hidden;">';
-      tbl += '<table style="width:100%; border-collapse:collapse; font-size:12px;">';
-      tbl += '<thead><tr style="background:#f1f5f9;">';
-      tbl += '<th style="padding:7px 6px; width:24px;"></th>';
-      tbl += '<th style="padding:7px 12px; text-align:left; color:#64748b;">Tarih</th>';
-      tbl += '<th style="padding:7px 10px; text-align:right; color:#185fa5;">Üretim</th>';
-      tbl += '<th style="padding:7px 10px; text-align:right; color:#dc2626;">Tüketim</th>';
-      tbl += '<th style="padding:7px 10px; text-align:right; color:#7c3aed;">Mahsup</th>';
-      tbl += '<th style="padding:7px 10px; text-align:right; color:#16a34a;">Bedelli</th>';
-      tbl += '</tr></thead><tbody>';
-      
       const gunler = Object.keys(d.gunler).sort().reverse();
       gunler.forEach(gun => {
         const g = d.gunler[gun];
         const gunAcik = (mhsAcikGun === gun);
-        const gMahsup = g.mahsup;
-        const gBedelli = g.bedelli;
-        const gunBg = gunAcik ? 'background:#fef3c7;' : '';
-        const gunIcon = gunAcik ? '▼' : '▶';
         const dt = new Date(gun);
         const gunStr = dt.toLocaleDateString('tr-TR', {day:'2-digit', month:'short', weekday:'short'});
         
-        // GUN satiri
-        tbl += '<tr style="border-top:1px solid #f1f5f9; cursor:pointer; ' + gunBg + '" onclick="mhsGunAc(\\\'' + gun + '\\\')">';
-        tbl += '<td style="padding:6px 6px; text-align:center; color:#94a3b8;">' + gunIcon + '</td>';
-        tbl += '<td style="padding:6px 12px; color:#1e293b; font-weight:' + (gunAcik ? '600' : '400') + ';">' + gunStr + '</td>';
-        tbl += '<td style="padding:6px 10px; text-align:right; color:#185fa5;">' + mhsFmt(g.uretim) + '</td>';
-        tbl += '<td style="padding:6px 10px; text-align:right; color:#dc2626;">' + mhsFmt(g.tuketim) + '</td>';
-        tbl += '<td style="padding:6px 10px; text-align:right; color:#7c3aed; font-weight:500;">' + mhsFmt(gMahsup) + '</td>';
-        tbl += '<td style="padding:6px 10px; text-align:right; color:' + (gBedelli > 0 ? '#16a34a' : '#cbd5e1') + '; font-weight:500;">' + mhsFmt(gBedelli) + '</td>';
-        tbl += '</tr>';
+        tbl += renderSatir({
+          uretim: g.uretim, tuketim: g.tuketim, mahsup: g.mahsup,
+          sonra: g.sonra, bedelli: g.bedelli,
+          indent: 20, bg: gunAcik ? '#fef3c7' : '#fafbfc', weight: gunAcik ? '600' : '400', fontSize: '11px',
+          level: 'gun', ayText: gunStr,
+          onclick: "mhsGunAc('" + gun + "')",
+          icon: gunAcik ? '▼' : '▶'
+        });
         
-        // GUN ACIKSA → SAAT tablosu
+        // GÜN AÇIKSA saatleri göster
         if (gunAcik && g.saatler) {
-          tbl += '<tr style="background:#fef3c7;"><td colspan="6" style="padding:0 10px 10px 10px;">';
-          tbl += '<div style="background:#fff; border:1px solid #fde68a; border-radius:6px; overflow:hidden;">';
-          tbl += '<table style="width:100%; border-collapse:collapse; font-size:11px;">';
-          tbl += '<thead><tr style="background:#fffbeb;">';
-          tbl += '<th style="padding:5px 10px; text-align:left; color:#92400e;">Saat</th>';
-          tbl += '<th style="padding:5px 10px; text-align:right; color:#185fa5;">Üretim</th>';
-          tbl += '<th style="padding:5px 10px; text-align:right; color:#dc2626;">Tüketim</th>';
-          tbl += '<th style="padding:5px 10px; text-align:right; color:#7c3aed;">Mahsup</th>';
-          tbl += '<th style="padding:5px 10px; text-align:right; color:#16a34a;">Bedelli</th>';
-          tbl += '</tr></thead><tbody>';
-          
-          // Mayis ve sonrasi saatlik mahsuplasma uygular
           const saatlikMod = (ay >= '2026-05');
           const saatler = Object.keys(g.saatler).sort();
           saatler.forEach(s => {
             const sv = g.saatler[s];
-            const sMahsup = saatlikMod ? Math.min(sv.uretim, sv.tuketim) : null;
-            const sBedelli = saatlikMod ? Math.max(0, sv.uretim - sv.tuketim) : null;
-            tbl += '<tr style="border-top:1px solid #fef3c7;">';
-            tbl += '<td style="padding:4px 10px; color:#64748b;">' + s + ':00</td>';
-            tbl += '<td style="padding:4px 10px; text-align:right; color:#185fa5;">' + (sv.uretim ? Math.round(sv.uretim).toLocaleString('tr-TR') : '—') + '</td>';
-            tbl += '<td style="padding:4px 10px; text-align:right; color:#dc2626;">' + (sv.tuketim ? Math.round(sv.tuketim).toLocaleString('tr-TR') : '—') + '</td>';
-            tbl += '<td style="padding:4px 10px; text-align:right; color:#7c3aed;">' + (saatlikMod ? (sMahsup ? Math.round(sMahsup).toLocaleString('tr-TR') : '—') : '·') + '</td>';
-            tbl += '<td style="padding:4px 10px; text-align:right; color:#16a34a;">' + (saatlikMod ? (sBedelli ? Math.round(sBedelli).toLocaleString('tr-TR') : '—') : '·') + '</td>';
-            tbl += '</tr>';
+            const sMahsup = saatlikMod ? sv.mahsup : 0;
+            const sBedelli = saatlikMod ? sv.bedelli : 0;
+            const sSonra = saatlikMod ? sv.sonra : { T1:0, T2:0, A3:0, TPL:0 };
+            
+            tbl += renderSatir({
+              uretim: sv.uretim, tuketim: sv.tuketim, mahsup: sMahsup,
+              sonra: sSonra, bedelli: sBedelli,
+              indent: 40, bg: '#fffbeb', weight: '400', fontSize: '10px',
+              level: 'saat', ayText: s + ':00',
+              icon: ''
+            });
           });
-          
-          // Saat toplam
-          tbl += '<tr style="border-top:1px solid #fbbf24; background:#fef3c7;">';
-          tbl += '<td style="padding:6px 10px; font-weight:600; color:#92400e;">Toplam</td>';
-          tbl += '<td style="padding:6px 10px; text-align:right; font-weight:600; color:#185fa5;">' + mhsFmt(g.uretim) + '</td>';
-          tbl += '<td style="padding:6px 10px; text-align:right; font-weight:600; color:#dc2626;">' + mhsFmt(g.tuketim) + '</td>';
-          tbl += '<td style="padding:6px 10px; text-align:right; font-weight:600; color:#7c3aed;">' + mhsFmt(gMahsup) + '</td>';
-          tbl += '<td style="padding:6px 10px; text-align:right; font-weight:600; color:#16a34a;">' + mhsFmt(gBedelli) + '</td>';
-          tbl += '</tr>';
-          tbl += '</tbody></table></div></td></tr>';
         }
       });
-      
-      // Ay toplam
-      tbl += '<tr style="border-top:1px solid #cbd5e1; background:#f8fafc;">';
-      tbl += '<td></td>';
-      tbl += '<td style="padding:8px 12px; font-weight:700; color:#1e293b;">Aylık Toplam</td>';
-      tbl += '<td style="padding:8px 10px; text-align:right; font-weight:700; color:#185fa5;">' + mhsFmt(d.uretim) + '</td>';
-      tbl += '<td style="padding:8px 10px; text-align:right; font-weight:700; color:#dc2626;">' + mhsFmt(d.tuketim) + '</td>';
-      tbl += '<td style="padding:8px 10px; text-align:right; font-weight:700; color:#7c3aed;">' + mhsFmt(mahsup) + '</td>';
-      tbl += '<td style="padding:8px 10px; text-align:right; font-weight:700; color:#16a34a;">' + mhsFmt(bedelli) + '</td>';
-      tbl += '</tr>';
-      tbl += '</tbody></table></div></td></tr>';
     }
   });
   
-  // TOPLAM satiri
-  tbl += '<tr style="background:#fff7ed; border-top:2px solid #d85a30;">';
-  tbl += '<td></td>';
-  tbl += '<td style="padding:13px 16px; color:#d85a30; font-weight:700;">TOPLAM (' + aylar.length + ' ay)</td>';
-  tbl += '<td style="padding:13px 12px; text-align:right; color:#185fa5; font-weight:700;">' + mhsFmt(topU) + '</td>';
-  tbl += '<td style="padding:13px 12px; text-align:right; color:#dc2626; font-weight:700;">' + mhsFmt(topT) + '</td>';
-  tbl += '<td style="padding:13px 12px; text-align:right; color:#7c3aed; font-weight:700;">' + mhsFmt(topM) + '</td>';
-  tbl += '<td style="padding:13px 12px; text-align:right; color:#16a34a; font-weight:700;">' + mhsFmt(topB) + '</td>';
-  tbl += '<td></td></tr>';
+  // TOPLAM satırı
+  tbl += renderSatir({
+    uretim: topU, tuketim: topT, mahsup: topM,
+    sonra: topS, bedelli: topB,
+    indent: 0, bg: '#fff7ed', weight: '700', fontSize: '12px',
+    level: 'toplam', ayText: 'TOPLAM (' + aylar.length + ' ay)',
+    icon: ''
+  });
   
   document.getElementById('mhs-tablo').innerHTML = tbl;
 }
