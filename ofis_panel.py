@@ -285,6 +285,11 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#4ade80;}
 .fat-saatlik-icerik td{padding:5px;text-align:right;border-bottom:1px solid rgba(255,255,255,0.02);font-weight:700;color:#cbd5e1;background:transparent;}
 .fat-saatlik-icerik td:first-child{text-align:left;color:#4ade80;font-weight:800;}
 .fat-saatlik-icerik tr.gun-tpl td{background:rgba(251,191,36,0.06);color:#fbbf24;font-weight:900;border-top:1px solid rgba(251,191,36,0.2);}
+.fat-tutar-card{background:linear-gradient(135deg,rgba(251,191,36,0.18),rgba(245,158,11,0.06));border:1px solid rgba(251,191,36,0.35);border-radius:14px;padding:14px 16px;text-align:center;}
+.fat-tutar-lbl{font-size:10px;color:#fbbf24;font-weight:800;text-transform:uppercase;letter-spacing:1px;}
+.fat-tutar-val{font-size:24px;font-weight:900;color:#fcd34d;margin-top:6px;letter-spacing:-0.5px;}
+.fat-tutar-sub{font-size:10px;color:#94a3b8;margin-top:4px;font-weight:600;}
+.fat-table td.fat-col-tutar{color:#fcd34d;font-weight:800;}
 .f2-summary{background:linear-gradient(135deg,rgba(245,158,11,0.15) 0%,rgba(245,158,11,0.05) 100%);border:1px solid rgba(245,158,11,0.25);border-radius:18px;padding:16px;margin-bottom:14px;}
 .f2-icon-wrap{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
 .f2-icon{width:44px;height:44px;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;}
@@ -3957,6 +3962,8 @@ function fatKartUret(ay, A, ab) {
   const gunler = Object.keys(A.gunler || {}).sort();
   const aylar = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
   let satirlar = '';
+  let ayTutar = 0;
+  let ayTutarHesaplandi = false;
 
   gunler.forEach(function(g) {
     const G = A.gunler[g];
@@ -3975,6 +3982,26 @@ function fatKartUret(ay, A, ab) {
     const gOrtPtf = gPtfCnt ? gPtfTpl / gPtfCnt : null;
     const gOrtMal = gOrtPtf !== null ? fatEnerjiMal(gOrtPtf) : null;
 
+    // Gunluk TUTAR: her saatin (snr × E.Mal) toplami
+    // PTF yoksa o saat icin Tutar = null (hesaba katilmaz)
+    let gTutar = 0;
+    let gHesaplandi = false;
+    for (let s = 0; s < 24; s++) {
+      const saatKey = String(s).padStart(2, '0');
+      const S = (G.saatler || {})[saatKey];
+      const sSnr = (S && S.sonra) ? (S.sonra[ab.key] || 0) : 0;
+      const sPtf = (gPtfArr && gPtfArr[s] !== undefined && gPtfArr[s] !== null) ? gPtfArr[s] : null;
+      if (sPtf !== null) {
+        const sMal = fatEnerjiMal(sPtf);
+        gTutar += sSnr * sMal;
+        gHesaplandi = true;
+      }
+    }
+    const gTutarFmt = gHesaplandi ? fatFmt(gTutar, 2) : '—';
+    // Karta ay toplami icin biriktir
+    ayTutar += gTutar;
+    if (gHesaplandi) ayTutarHesaplandi = true;
+
     const d = new Date(g);
     const tarihLbl = d.getDate() + ' ' + aylar[d.getMonth()];
 
@@ -3984,9 +4011,10 @@ function fatKartUret(ay, A, ab) {
     satirlar += '<td class="fat-col-mhs">' + fatFmt(gMhs, 2) + '</td>';
     satirlar += '<td class="fat-col-snr">' + fatFmt(gSnr, 2) + '</td>';
     satirlar += '<td class="fat-col-mal">' + (gOrtMal !== null ? fatFmt(gOrtMal, 3) : '—') + '</td>';
+    satirlar += '<td class="fat-col-tutar">' + gTutarFmt + '</td>';
     satirlar += '</tr>';
 
-    satirlar += '<tr class="fat-saatlik-row"><td colspan="5"><div class="fat-saatlik-icerik">';
+    satirlar += '<tr class="fat-saatlik-row"><td colspan="6"><div class="fat-saatlik-icerik">';
     satirlar += fatSaatlikUret(G, ab, gPtfArr);
     satirlar += '</div></td></tr>';
   });
@@ -3998,6 +4026,7 @@ function fatKartUret(ay, A, ab) {
   satirlar += '<td>' + fatFmt(mhsAy, 2) + '</td>';
   satirlar += '<td>' + fatFmt(snrAy, 2) + '</td>';
   satirlar += '<td>—</td>';
+  satirlar += '<td>' + (ayTutarHesaplandi ? fatFmt(ayTutar, 2) : '—') + '</td>';
   satirlar += '</tr>';
 
   // Kart HTML
@@ -4030,9 +4059,17 @@ function fatKartUret(ay, A, ab) {
   h += '<div class="fat-mal-sub">(PTF + 602,51) × 1,05 / 1000</div></div>';
   h += '</div>';
 
+  // Fatura Tutari (vurgulu tek kart)
+  h += '<div class="fat-bolum-baslik">💰 Fatura Tutarı</div>';
+  h += '<div class="fat-tutar-card">';
+  h += '<div class="fat-tutar-lbl">Toplam Tutar (' + (FAT_AY_ISIM_MAP[ay] || ay) + ')</div>';
+  h += '<div class="fat-tutar-val">' + (ayTutarHesaplandi ? fatFmt(ayTutar, 2) : '—') + ' <span style="font-size:13px;color:#94a3b8;font-weight:700">TL</span></div>';
+  h += '<div class="fat-tutar-sub">M.Sonrası Tüketim (kWh) × Enerji Maliyeti (TL/kWh)</div>';
+  h += '</div>';
+
   h += '<div class="fat-bolum-baslik">📋 Günlük Tüketim Tablosu</div>';
   h += '<div class="fat-tablo-wrap"><table class="fat-table">';
-  h += '<thead><tr><th>Tarih</th><th>Ham (kWh)</th><th>Mahsup (kWh)</th><th>M.Sonrası (kWh)</th><th>Ort. E.Mal. (TL/kWh)</th></tr></thead>';
+  h += '<thead><tr><th>Tarih</th><th>Ham (kWh)</th><th>Mahsup (kWh)</th><th>M.Sonrası (kWh)</th><th>Ort. E.Mal. (TL/kWh)</th><th>Tutar (TL)</th></tr></thead>';
   h += '<tbody>' + satirlar + '</tbody></table></div>';
 
   h += '</div>';
@@ -4041,10 +4078,11 @@ function fatKartUret(ay, A, ab) {
 
 function fatSaatlikUret(G, ab, gPtfArr) {
   let h = '<table><thead><tr>';
-  h += '<th>Saat</th><th>Ham (kWh)</th><th>Mahsup (kWh)</th><th>M.Sonrası (kWh)</th><th>PTF (TL/MWh)</th><th>E.Mal. (TL/kWh)</th>';
+  h += '<th>Saat</th><th>Ham (kWh)</th><th>Mahsup (kWh)</th><th>M.Sonrası (kWh)</th><th>PTF (TL/MWh)</th><th>E.Mal. (TL/kWh)</th><th>Tutar (TL)</th>';
   h += '</tr></thead><tbody>';
 
-  let sHamTpl = 0, sSnrTpl = 0;
+  let sHamTpl = 0, sSnrTpl = 0, sTutarTpl = 0;
+  let sTutarHesaplandi = false;
   for (let s = 0; s < 24; s++) {
     const saatKey = String(s).padStart(2, '0');
     const S = (G.saatler || {})[saatKey];
@@ -4053,6 +4091,9 @@ function fatSaatlikUret(G, ab, gPtfArr) {
     const sMhs = sHam - sSnr;
     const sPtf = (gPtfArr && gPtfArr[s] !== undefined && gPtfArr[s] !== null) ? gPtfArr[s] : null;
     const sMal = sPtf !== null ? fatEnerjiMal(sPtf) : null;
+    // Tutar = M.Sonrasi (kWh) × E.Mal (TL/kWh) -> TL
+    const sTutar = (sMal !== null) ? (sSnr * sMal) : null;
+    if (sTutar !== null) { sTutarTpl += sTutar; sTutarHesaplandi = true; }
     sHamTpl += sHam; sSnrTpl += sSnr;
 
     h += '<tr>';
@@ -4062,13 +4103,15 @@ function fatSaatlikUret(G, ab, gPtfArr) {
     h += '<td>' + fatFmt(sSnr, 2) + '</td>';
     h += '<td>' + (sPtf !== null ? fatFmt(sPtf) : '—') + '</td>';
     h += '<td>' + (sMal !== null ? fatFmt(sMal, 3) : '—') + '</td>';
+    h += '<td>' + (sTutar !== null ? fatFmt(sTutar, 2) : '—') + '</td>';
     h += '</tr>';
   }
   h += '<tr class="gun-tpl"><td>GÜN</td>';
   h += '<td>' + fatFmt(sHamTpl, 2) + '</td>';
   h += '<td>' + fatFmt(sHamTpl - sSnrTpl, 2) + '</td>';
   h += '<td>' + fatFmt(sSnrTpl, 2) + '</td>';
-  h += '<td>—</td><td>—</td></tr>';
+  h += '<td>—</td><td>—</td>';
+  h += '<td>' + (sTutarHesaplandi ? fatFmt(sTutarTpl, 2) : '—') + '</td></tr>';
   h += '</tbody></table>';
   return h;
 }
