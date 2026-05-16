@@ -995,7 +995,7 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
     </div>
     <div style="text-align:right;">
       <div style="font-size:16px; font-weight:600;"><span id="mhs-bedelli-toplam" style="color:#16a34a;">—</span> <span style="color:#94a3b8;">/</span> <span id="mhs-limit-toplam" style="color:#64748b;">2.905.914</span></div>
-      <div style="font-size:11px; color:#94a3b8;">kWh</div>
+      <div style="font-size:11px; color:#94a3b8;">kWh &bull; <span id="mhs-yuzde">%0.0</span></div>
     </div>
   </div>
   <div style="height:14px; background:#fef3c7; border-radius:7px; overflow:hidden; position:relative;">
@@ -3516,6 +3516,7 @@ function mhsKpiGuncelle() {
   document.getElementById('mhs-bedelli-toplam').textContent = mhsFmt(topB);
   document.getElementById('mhs-limit-toplam').textContent = mhsFmt(MHS_BEDELLI_LIMIT);
   document.getElementById('mhs-limit-deger').textContent = mhsFmt(MHS_BEDELLI_LIMIT);
+  document.getElementById('mhs-yuzde').textContent = '%' + pct.toFixed(1);
 }
 
 function mhsTabloRender() {
@@ -3590,8 +3591,8 @@ function mhsTabloRender() {
             '"' + (onclick ? ' onclick="' + onclick + '"' : '') + 
             (onclick && !secili ? ' onmouseover="this.style.background=\\'#f1f5f9\\'" onmouseout="this.style.background=\\'' + (bg||'') + '\\'"' : '') +
             '>';
-    s += '<td style="padding:8px; text-align:center; color:' + (secili ? '#fff' : '#cbd5e1') + '; font-size:' + fs + '; width:24px;' + (bg ? 'background:' + bg + ';' : '') + '">' + (icon || '') + '</td>';
-    s += '<td style="padding:8px 12px; padding-left:' + (12+indentPx) + 'px; color:' + (textColor || '#0f172a') + '; font-weight:' + w + '; font-size:' + fs + ';' + (bg ? 'background:' + bg + ';' : '') + '">' + ayText + '</td>';
+    s += '<td style="padding:8px; text-align:center; color:' + (secili ? '#fff' : '#cbd5e1') + '; font-size:' + fs + '; width:24px; position:sticky; left:0; z-index:2; background:' + (bg || '#fff') + ';">' + (icon || '') + '</td>';
+    s += '<td style="padding:8px 12px; padding-left:' + (12+indentPx) + 'px; color:' + (textColor || '#0f172a') + '; font-weight:' + w + '; font-size:' + fs + '; position:sticky; left:24px; z-index:2; box-shadow:2px 0 3px -1px rgba(0,0,0,0.08); background:' + (bg || '#fff') + ';">' + ayText + '</td>';
     
     // ÜRETİM
     if (mhsAboneDetay) {
@@ -3632,8 +3633,8 @@ function mhsTabloRender() {
     let th = '';
     if (mhsAboneDetay) {
       th += '<tr style="background:#f8fafc; border-bottom:2px solid #cbd5e1;">';
-      th += '<th rowspan="2" style="padding:10px; width:24px;"></th>';
-      th += '<th rowspan="2" style="padding:10px 12px; text-align:left; font-weight:600; color:#475569; vertical-align:middle; font-size:12px;">Ay / Tarih / Saat</th>';
+      th += '<th rowspan="2" style="padding:10px; width:24px; position:sticky; left:0; background:#f8fafc; z-index:3;"></th>';
+      th += '<th rowspan="2" style="padding:10px 12px; text-align:left; font-weight:600; color:#475569; vertical-align:middle; font-size:12px; position:sticky; left:24px; background:#f8fafc; z-index:3; box-shadow:2px 0 3px -1px rgba(0,0,0,0.08);">Ay / Tarih / Saat</th>';
       th += '<th colspan="4" style="padding:10px; text-align:center; font-weight:600; color:#185fa5; background:#dbeafe; border-left:2px solid #cbd5e1; font-size:12px; letter-spacing:0.5px;">ÜRETİM <span style="font-weight:400; opacity:0.7;">(kWh)</span></th>';
       th += '<th colspan="4" style="padding:10px; text-align:center; font-weight:600; color:#dc2626; background:#fee2e2; border-left:2px solid #cbd5e1; font-size:12px; letter-spacing:0.5px;">TÜKETİM <span style="font-weight:400; opacity:0.7;">(kWh)</span></th>';
       th += '<th rowspan="2" style="padding:10px; text-align:right; font-weight:600; color:#7c3aed; vertical-align:middle; border-left:2px solid #cbd5e1; font-size:12px;">Mahsup<br><span style="font-size:10px; font-weight:400; opacity:0.7;">(kWh)</span></th>';
@@ -3656,8 +3657,8 @@ function mhsTabloRender() {
       th += '</tr>';
     } else {
       th += '<tr style="background:#f8fafc; border-bottom:2px solid #cbd5e1;">';
-      th += '<th style="padding:12px 10px; width:24px;"></th>';
-      th += '<th style="padding:12px 16px; text-align:left; font-weight:600; color:#475569; font-size:12px;">Ay / Tarih / Saat</th>';
+      th += '<th style="padding:12px 10px; width:24px; position:sticky; left:0; background:#f8fafc; z-index:3;"></th>';
+      th += '<th style="padding:12px 16px; text-align:left; font-weight:600; color:#475569; font-size:12px; position:sticky; left:24px; background:#f8fafc; z-index:3; box-shadow:2px 0 3px -1px rgba(0,0,0,0.08);">Ay / Tarih / Saat</th>';
       th += '<th style="padding:12px; text-align:right; font-weight:600; color:#185fa5; border-left:2px solid #cbd5e1; font-size:12px; letter-spacing:0.5px;">ÜRETİM <span style="font-weight:400; opacity:0.7; font-size:10px;">(kWh)</span></th>';
       th += '<th style="padding:12px; text-align:right; font-weight:600; color:#dc2626; border-left:2px solid #cbd5e1; font-size:12px; letter-spacing:0.5px;">TÜKETİM <span style="font-weight:400; opacity:0.7; font-size:10px;">(kWh)</span></th>';
       th += '<th style="padding:12px; text-align:right; font-weight:600; color:#7c3aed; border-left:2px solid #cbd5e1; font-size:12px;">MAHSUP <span style="font-weight:400; opacity:0.7; font-size:10px;">(kWh)</span></th>';
