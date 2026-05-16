@@ -3964,7 +3964,10 @@ function fatKartUret(ay, A, ab) {
     const gSnr = (G.sonra && G.sonra[ab.key]) || 0;
     const gMhs = gHam - gSnr;
 
-    const gPtfArr = ayPtf[g] || [];
+    // PTF anahtari: aylik_ptf.json'da gun key'i "01","02",... (sadece gun numarasi)
+    // Burada g = "2026-05-01" formatinda, son 2 karakteri al
+    const gunKey = g.slice(-2);
+    const gPtfArr = ayPtf[gunKey] || [];
     let gPtfTpl = 0, gPtfCnt = 0;
     gPtfArr.forEach(function(p) {
       if (p !== null && p !== undefined) { gPtfTpl += p; gPtfCnt++; }
