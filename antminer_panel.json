@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-05-16T18:28:01.822503",
+  "timestamp": "2026-05-16T18:29:29.155596",
   "source": "Tek Yildiz 2 GES - Saha PC",
   "summary": {
     "total": 29,
     "online": 27,
     "sleeping": 0,
     "offline": 2,
-    "total_hashrate_TH": 8566.77,
+    "total_hashrate_TH": 8566.82,
     "total_target_TH": 8260.0,
     "efficiency_pct": 103.7,
-    "avg_temp_C": 53.9,
+    "avg_temp_C": 53.8,
     "avg_water_temp_C": 46.3,
     "models": {
       "?": 2,
@@ -60,7 +60,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -71,7 +71,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1778945020,
+      "f2pool_last_share": 1778945272,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -90,15 +90,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -135,7 +135,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1778945020,
+      "f2pool_last_share": 1778945272,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -192,9 +192,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2895,
+      "accepted": 2900,
       "rejected": 0,
-      "hw_errors_total": 3352,
+      "hw_errors_total": 3354,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -232,7 +232,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (3352)",
+          "title": "Yuksek Donanim Hatasi (3354)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -418,7 +418,7 @@
         },
         {
           "date": "2026-05-16",
-          "avg_hash_TH": 251.6,
+          "avg_hash_TH": 251.7,
           "uptime_pct": 100.0,
           "earn_btc": 0
         }
@@ -444,7 +444,7 @@
       "saha_worker": "saha.F240",
       "havuz_worker": "mehmetas.013",
       "actual_worker": "mehmetas.013",
-      "hashrate_TH": 322.52,
+      "hashrate_TH": 322.53,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 104.0,
       "temp_max": 57,
@@ -455,7 +455,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2791,
+      "accepted": 2792,
       "rejected": 2,
       "hw_errors_total": 596,
       "f2pool_name": null,
@@ -656,7 +656,7 @@
         },
         {
           "date": "2026-05-16",
-          "avg_hash_TH": 319.2,
+          "avg_hash_TH": 319.3,
           "uptime_pct": 100.0,
           "earn_btc": 0
         }
@@ -682,18 +682,18 @@
       "saha_worker": "saha.CF41",
       "havuz_worker": "mehmetas.018",
       "actual_worker": "mehmetas.018",
-      "hashrate_TH": 323.18,
+      "hashrate_TH": 323.17,
       "target_hashrate_TH": 310.0,
-      "efficiency_pct": 104.3,
-      "temp_max": 55,
-      "temp_water": 46,
+      "efficiency_pct": 104.2,
+      "temp_max": 54,
+      "temp_water": 48,
       "elapsed_hours": 18.7,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2608,
+      "accepted": 2610,
       "rejected": 0,
       "hw_errors_total": 1283,
       "f2pool_name": null,
@@ -907,7 +907,7 @@
         },
         {
           "date": "2026-05-16",
-          "avg_hash_TH": 319.8,
+          "avg_hash_TH": 319.9,
           "uptime_pct": 100.0,
           "earn_btc": 0
         }
@@ -937,16 +937,16 @@
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 104.2,
       "temp_max": 54,
-      "temp_water": 45,
+      "temp_water": 46,
       "elapsed_hours": 18.7,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2613,
+      "accepted": 2619,
       "rejected": 0,
-      "hw_errors_total": 512,
+      "hw_errors_total": 513,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -1175,16 +1175,16 @@
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 104.1,
       "temp_max": 53,
-      "temp_water": 46,
+      "temp_water": 48,
       "elapsed_hours": 18.7,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2598,
+      "accepted": 2600,
       "rejected": 1,
-      "hw_errors_total": 556,
+      "hw_errors_total": 565,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -1383,7 +1383,7 @@
         },
         {
           "date": "2026-05-16",
-          "avg_hash_TH": 319.3,
+          "avg_hash_TH": 319.4,
           "uptime_pct": 100.0,
           "earn_btc": 0
         }
@@ -1409,11 +1409,11 @@
       "saha_worker": "saha.5DAD",
       "havuz_worker": "mehmetas.021",
       "actual_worker": "mehmetas.021",
-      "hashrate_TH": 324.15,
+      "hashrate_TH": 324.16,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 104.6,
       "temp_max": 53,
-      "temp_water": 46,
+      "temp_water": 45,
       "elapsed_hours": 18.7,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
@@ -1422,7 +1422,7 @@
       "is_hydro": true,
       "accepted": 2675,
       "rejected": 1,
-      "hw_errors_total": 531,
+      "hw_errors_total": 532,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -1629,7 +1629,7 @@
       "monthly_history": [
         {
           "month": "2026-05",
-          "avg_hash_TH": 320.5,
+          "avg_hash_TH": 320.6,
           "earn_btc": 0,
           "days": 2
         }
@@ -1658,9 +1658,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": false,
-      "accepted": 2428,
+      "accepted": 2431,
       "rejected": 3,
-      "hw_errors_total": 5004,
+      "hw_errors_total": 5008,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -1686,7 +1686,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (5004)",
+          "title": "Yuksek Donanim Hatasi (5008)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -1880,7 +1880,7 @@
       "monthly_history": [
         {
           "month": "2026-05",
-          "avg_hash_TH": 299.4,
+          "avg_hash_TH": 299.5,
           "earn_btc": 0,
           "days": 2
         }
@@ -1902,16 +1902,16 @@
       "target_hashrate_TH": 293.0,
       "efficiency_pct": 102.7,
       "temp_max": 52,
-      "temp_water": 48,
+      "temp_water": 47,
       "elapsed_hours": 18.7,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": false,
-      "accepted": 2383,
+      "accepted": 2390,
       "rejected": 1,
-      "hw_errors_total": 16510,
+      "hw_errors_total": 16525,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -1937,7 +1937,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (16510)",
+          "title": "Yuksek Donanim Hatasi (16525)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -2123,7 +2123,7 @@
         },
         {
           "date": "2026-05-16",
-          "avg_hash_TH": 297.8,
+          "avg_hash_TH": 297.9,
           "uptime_pct": 100.0,
           "earn_btc": 0
         }
@@ -2153,16 +2153,16 @@
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 104.1,
       "temp_max": 53,
-      "temp_water": 47,
+      "temp_water": 46,
       "elapsed_hours": 18.7,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2623,
+      "accepted": 2626,
       "rejected": 3,
-      "hw_errors_total": 3739,
+      "hw_errors_total": 3748,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -2188,7 +2188,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (3739)",
+          "title": "Yuksek Donanim Hatasi (3748)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -2382,7 +2382,7 @@
       "monthly_history": [
         {
           "month": "2026-05",
-          "avg_hash_TH": 320.8,
+          "avg_hash_TH": 320.9,
           "earn_btc": 0,
           "days": 2
         }
@@ -2400,7 +2400,7 @@
       "saha_worker": "saha.A22C",
       "havuz_worker": "mehmetas.006",
       "actual_worker": "mehmetas.006",
-      "hashrate_TH": 317.47,
+      "hashrate_TH": 317.48,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 102.4,
       "temp_max": 54,
@@ -2411,9 +2411,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2790,
+      "accepted": 2792,
       "rejected": 0,
-      "hw_errors_total": 648,
+      "hw_errors_total": 649,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -2649,9 +2649,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2912,
+      "accepted": 2915,
       "rejected": 1,
-      "hw_errors_total": 674,
+      "hw_errors_total": 676,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -2850,7 +2850,7 @@
         },
         {
           "date": "2026-05-16",
-          "avg_hash_TH": 319.1,
+          "avg_hash_TH": 319.2,
           "uptime_pct": 100.0,
           "earn_btc": 0
         }
@@ -2876,7 +2876,7 @@
       "saha_worker": "saha.578B",
       "havuz_worker": "mehmetas.015",
       "actual_worker": "mehmetas.015",
-      "hashrate_TH": 321.55,
+      "hashrate_TH": 321.56,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.7,
       "temp_max": 56,
@@ -2887,7 +2887,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2906,
+      "accepted": 2908,
       "rejected": 2,
       "hw_errors_total": 634,
       "f2pool_name": null,
@@ -3088,7 +3088,7 @@
         },
         {
           "date": "2026-05-16",
-          "avg_hash_TH": 318.3,
+          "avg_hash_TH": 318.4,
           "uptime_pct": 100.0,
           "earn_btc": 0
         }
@@ -3117,7 +3117,7 @@
       "hashrate_TH": 321.08,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.6,
-      "temp_max": 52,
+      "temp_max": 51,
       "temp_water": 46,
       "elapsed_hours": 20.4,
       "fan_avg_rpm": 0,
@@ -3125,9 +3125,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2867,
+      "accepted": 2870,
       "rejected": 0,
-      "hw_errors_total": 591,
+      "hw_errors_total": 593,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -3326,7 +3326,7 @@
         },
         {
           "date": "2026-05-16",
-          "avg_hash_TH": 317.8,
+          "avg_hash_TH": 317.9,
           "uptime_pct": 100.0,
           "earn_btc": 0
         }
@@ -3363,9 +3363,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2852,
+      "accepted": 2857,
       "rejected": 0,
-      "hw_errors_total": 690,
+      "hw_errors_total": 692,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -3564,7 +3564,7 @@
         },
         {
           "date": "2026-05-16",
-          "avg_hash_TH": 319.5,
+          "avg_hash_TH": 319.6,
           "uptime_pct": 100.0,
           "earn_btc": 0
         }
@@ -3593,7 +3593,7 @@
       "hashrate_TH": 323.66,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 104.4,
-      "temp_max": 56,
+      "temp_max": 55,
       "temp_water": 46,
       "elapsed_hours": 20.4,
       "fan_avg_rpm": 0,
@@ -3601,9 +3601,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2854,
+      "accepted": 2857,
       "rejected": 1,
-      "hw_errors_total": 694,
+      "hw_errors_total": 697,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -3802,7 +3802,7 @@
         },
         {
           "date": "2026-05-16",
-          "avg_hash_TH": 320.3,
+          "avg_hash_TH": 320.4,
           "uptime_pct": 100.0,
           "earn_btc": 0
         }
@@ -3839,7 +3839,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2887,
+      "accepted": 2889,
       "rejected": 2,
       "hw_errors_total": 691,
       "f2pool_name": null,
@@ -4077,7 +4077,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2836,
+      "accepted": 2837,
       "rejected": 0,
       "hw_errors_total": 787,
       "f2pool_name": null,
@@ -4286,7 +4286,7 @@
       "monthly_history": [
         {
           "month": "2026-05",
-          "avg_hash_TH": 320.3,
+          "avg_hash_TH": 320.4,
           "earn_btc": 0,
           "days": 2
         }
@@ -4315,7 +4315,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2878,
+      "accepted": 2881,
       "rejected": 1,
       "hw_errors_total": 676,
       "f2pool_name": null,
@@ -4516,7 +4516,7 @@
         },
         {
           "date": "2026-05-16",
-          "avg_hash_TH": 320.7,
+          "avg_hash_TH": 320.8,
           "uptime_pct": 100.0,
           "earn_btc": 0
         }
@@ -4553,9 +4553,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2844,
+      "accepted": 2847,
       "rejected": 1,
-      "hw_errors_total": 2591,
+      "hw_errors_total": 2592,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -4581,7 +4581,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (2591)",
+          "title": "Yuksek Donanim Hatasi (2592)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -4796,7 +4796,7 @@
       "hashrate_TH": 322.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.9,
-      "temp_max": 54,
+      "temp_max": 53,
       "temp_water": 44,
       "elapsed_hours": 20.4,
       "fan_avg_rpm": 0,
@@ -4804,7 +4804,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2804,
+      "accepted": 2806,
       "rejected": 2,
       "hw_errors_total": 1197,
       "f2pool_name": null,
@@ -5044,7 +5044,7 @@
       "saha_worker": "saha.52A1",
       "havuz_worker": "mehmetas.026",
       "actual_worker": "mehmetas.026",
-      "hashrate_TH": 321.29,
+      "hashrate_TH": 321.3,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.6,
       "temp_max": 55,
@@ -5055,7 +5055,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2834,
+      "accepted": 2837,
       "rejected": 3,
       "hw_errors_total": 739,
       "f2pool_name": null,
@@ -5293,9 +5293,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2884,
+      "accepted": 2893,
       "rejected": 3,
-      "hw_errors_total": 19897,
+      "hw_errors_total": 19899,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -5321,7 +5321,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (19897)",
+          "title": "Yuksek Donanim Hatasi (19899)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -5507,7 +5507,7 @@
         },
         {
           "date": "2026-05-16",
-          "avg_hash_TH": 319.5,
+          "avg_hash_TH": 319.6,
           "uptime_pct": 100.0,
           "earn_btc": 0
         }
@@ -5536,7 +5536,7 @@
       "hashrate_TH": 320.73,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.5,
-      "temp_max": 51,
+      "temp_max": 53,
       "temp_water": 44,
       "elapsed_hours": 20.4,
       "fan_avg_rpm": 0,
@@ -5544,9 +5544,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2767,
+      "accepted": 2770,
       "rejected": 0,
-      "hw_errors_total": 725,
+      "hw_errors_total": 727,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -5745,7 +5745,7 @@
         },
         {
           "date": "2026-05-16",
-          "avg_hash_TH": 317.4,
+          "avg_hash_TH": 317.5,
           "uptime_pct": 100.0,
           "earn_btc": 0
         }
@@ -5774,15 +5774,15 @@
       "hashrate_TH": 321.62,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.7,
-      "temp_max": 52,
-      "temp_water": 45,
+      "temp_max": 53,
+      "temp_water": 44,
       "elapsed_hours": 20.4,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2874,
+      "accepted": 2878,
       "rejected": 0,
       "hw_errors_total": 670,
       "f2pool_name": null,
@@ -6013,14 +6013,14 @@
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.2,
       "temp_max": 56,
-      "temp_water": 45,
+      "temp_water": 44,
       "elapsed_hours": 20.4,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2892,
+      "accepted": 2894,
       "rejected": 3,
       "hw_errors_total": 604,
       "f2pool_name": null,
@@ -6247,7 +6247,7 @@
       "saha_worker": "saha.D48E",
       "havuz_worker": "mehmetas.023",
       "actual_worker": "mehmetas.023",
-      "hashrate_TH": 302.6,
+      "hashrate_TH": 302.61,
       "target_hashrate_TH": 293.0,
       "efficiency_pct": 103.3,
       "temp_max": 52,
@@ -6258,9 +6258,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": false,
-      "accepted": 2656,
+      "accepted": 2658,
       "rejected": 1,
-      "hw_errors_total": 5632,
+      "hw_errors_total": 5634,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -6286,7 +6286,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (5632)",
+          "title": "Yuksek Donanim Hatasi (5634)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -6480,7 +6480,7 @@
       "monthly_history": [
         {
           "month": "2026-05",
-          "avg_hash_TH": 300.8,
+          "avg_hash_TH": 300.9,
           "earn_btc": 0,
           "days": 2
         }
@@ -6509,7 +6509,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2755,
+      "accepted": 2756,
       "rejected": 1,
       "hw_errors_total": 628,
       "f2pool_name": null,
@@ -6904,7 +6904,7 @@
     },
     {
       "date": "2026-05-16",
-      "total_hash_TH": 8477.4,
+      "total_hash_TH": 8478.3,
       "total_earn_btc": 0,
       "online_avg": 27.0
     }
@@ -6912,7 +6912,7 @@
   "monthly_history": [
     {
       "month": "2026-05",
-      "avg_hash_TH": 8832.4,
+      "avg_hash_TH": 8832.9,
       "earn_btc": 0,
       "days": 2
     }
