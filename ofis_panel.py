@@ -3877,6 +3877,7 @@ function mhsTabloRender() {
 const FAT_YEKDEM = 602.51;     // TL/MWh
 const FAT_DAGITIM = 1.05;
 const FAT_DB_BIRIM = 1.182457;   // OG Tek Terim Sanayi - TL/kWh
+const FAT_SANAYI_AKTIF = 2.909687;  // Sanayi Tek Terim Aktif Enerji Bedeli - TL/kWh (AKS3 mahsup indirimi icin)
 const FAT_KDV = 0.20;            // %20
 const FAT_AY_ISIM_MAP = {
   '2026-01': 'Ocak 2026',
@@ -3975,8 +3976,10 @@ function fatKartUret(ay, A, ab) {
   const gunler = Object.keys(A.gunler || {}).sort();
   const aylar = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
   let satirlar = '';
-  let ayTutar = 0;
+  let ayTutar = 0;             // Enerji Bedeli (T1/T2: Snr × E.Mal | AKS3: Ham × E.Mal)
   let ayTutarHesaplandi = false;
+  let ayMahsupIndirim = 0;     // Sadece AKS3 icin kullanilir (sistem geneli sayilmaz)
+  let ayMahsupKwh = 0;         // AKS3'un saatlik mahsup kWh toplami
 
   gunler.forEach(function(g) {
     const G = A.gunler[g];
@@ -3995,7 +3998,9 @@ function fatKartUret(ay, A, ab) {
     const gOrtPtf = gPtfCnt ? gPtfTpl / gPtfCnt : null;
     const gOrtMal = gOrtPtf !== null ? fatEnerjiMal(gOrtPtf) : null;
 
-    // Gunluk TUTAR: her saatin (snr × E.Mal) toplami
+    // Gunluk TUTAR: her saatin (faturalanan kWh × E.Mal) toplami
+    // AKS3 icin faturalanan = HAM tuketim, T1/T2 icin = MAHSUP SONRASI tuketim
+    // AKS3 icin ek olarak: saatlik mahsup × 2,909687 = mahsup indirimi (sonra eksilecek)
     // PTF yoksa o saat icin Tutar = null (hesaba katilmaz)
     let gTutar = 0;
     let gHesaplandi = false;
@@ -4003,11 +4008,19 @@ function fatKartUret(ay, A, ab) {
       const saatKey = String(s).padStart(2, '0');
       const S = (G.saatler || {})[saatKey];
       const sSnr = (S && S.sonra) ? (S.sonra[ab.key] || 0) : 0;
+      const sHam = (S && S.tuketim) ? (S.tuketim[ab.key] || 0) : 0;
+      const sMhsKwh = sHam - sSnr;  // o saatin mahsup miktari (her abone icin kendi payi)
+      const sFatura = (ab.key === 'A3') ? sHam : sSnr;
       const sPtf = (gPtfArr && gPtfArr[s] !== undefined && gPtfArr[s] !== null) ? gPtfArr[s] : null;
       if (sPtf !== null) {
         const sMal = fatEnerjiMal(sPtf);
-        gTutar += sSnr * sMal;
+        gTutar += sFatura * sMal;
         gHesaplandi = true;
+      }
+      // AKS3 mahsup indirimi her halukarda hesaplanir (PTF sart degil, 2,909687 sabit)
+      if (ab.key === 'A3') {
+        ayMahsupIndirim += sMhsKwh * FAT_SANAYI_AKTIF;
+        ayMahsupKwh += sMhsKwh;
       }
     }
     const gTutarFmt = gHesaplandi ? fatFmt(gTutar, 2) : '—';
@@ -4063,13 +4076,21 @@ function fatKartUret(ay, A, ab) {
   h += '</div>';
 
   // Fatura Detayi - kalemli hesap
-  // Enerji Bedeli zaten ayTutar (M.Sonrasi × E.Mal)
-  // Dagitim Bedeli = HAM tuketim × DB birim
+  // T1/T2: Enerji Bedeli = M.Sonrasi × E.Mal
+  // AKS3:  Enerji Bedeli = HAM × E.Mal, ayrica Mahsup Indirimi (-) = saatlik_mahsup × 2,909687
+  // Dagitim Bedeli = HAM tuketim × DB birim (her abone icin)
   const enerjiBedeli = ayTutarHesaplandi ? ayTutar : null;
+  const mahsupIndirim = (ab.key === 'A3') ? ayMahsupIndirim : 0;  // sadece AKS3 icin
   const dagitimBedeli = hamAy * FAT_DB_BIRIM;
-  const toplamBedel = (enerjiBedeli !== null) ? (enerjiBedeli + dagitimBedeli) : null;
+  // T1/T2: Toplam = Enerji + Dagitim
+  // AKS3: Toplam = Enerji - Mahsup Indirimi + Dagitim
+  const toplamBedel = (enerjiBedeli !== null) ? (enerjiBedeli - mahsupIndirim + dagitimBedeli) : null;
   const kdv = (toplamBedel !== null) ? (toplamBedel * FAT_KDV) : null;
   const odenecek = (toplamBedel !== null) ? (toplamBedel + kdv) : null;
+
+  // Enerji bedeli icin kullanilan miktar
+  const faturalananKwh = (ab.key === 'A3') ? hamAy : snrAy;
+  const faturalananLbl = (ab.key === 'A3') ? 'Ham Tüketim' : 'M.Sonrası Tüketim';
 
   h += '<div class="fat-bolum-baslik">🧾 Fatura Detayı (' + (FAT_AY_ISIM_MAP[ay] || ay) + ')</div>';
   h += '<div class="fat-fatura-card">';
@@ -4078,7 +4099,7 @@ function fatKartUret(ay, A, ab) {
   h += '<div class="fat-kalem">';
   h += '<div class="fat-kalem-baslik">1) Enerji Bedeli</div>';
   h += '<div class="fat-kalem-formul">';
-  h += '<span>M.Sonrası Tüketim</span><span>' + fatFmt(snrAy, 2) + ' kWh</span>';
+  h += '<span>' + faturalananLbl + '</span><span>' + fatFmt(faturalananKwh, 2) + ' kWh</span>';
   h += '</div>';
   h += '<div class="fat-kalem-formul">';
   h += '<span>× Ort. Enerji Maliyeti</span><span>' + (ortMal !== null ? fatFmt(ortMal, 3) : '—') + ' TL/kWh</span>';
@@ -4088,9 +4109,25 @@ function fatKartUret(ay, A, ab) {
   h += '</div>';
   h += '</div>';
 
+  // 1b. AKS3 ozel: Mahsup Indirimi (sadece AKS3 icin)
+  if (ab.key === 'A3') {
+    h += '<div class="fat-kalem" style="background:rgba(168,85,247,0.06);border-color:rgba(168,85,247,0.2);">';
+    h += '<div class="fat-kalem-baslik">1b) Mahsup İndirimi <span style="font-weight:600;color:#c4b5fd;font-size:10px">(Sanayi Tek Terim Aktif)</span></div>';
+    h += '<div class="fat-kalem-formul">';
+    h += '<span>Saatlik Mahsup Toplamı</span><span>' + fatFmt(ayMahsupKwh, 2) + ' kWh</span>';
+    h += '</div>';
+    h += '<div class="fat-kalem-formul">';
+    h += '<span>× Birim Aktif Enerji Bedeli</span><span>2,909687 TL/kWh</span>';
+    h += '</div>';
+    h += '<div class="fat-kalem-toplam" style="color:#fca5a5;">';
+    h += '<span>Mahsup İndirimi (−)</span><span>−' + fatFmt(mahsupIndirim, 2) + ' TL</span>';
+    h += '</div>';
+    h += '</div>';
+  }
+
   // 2. Dagitim Bedeli
   h += '<div class="fat-kalem">';
-  h += '<div class="fat-kalem-baslik">2) Dağıtım Bedeli <span style="font-weight:600;color:#94a3b8;font-size:10px">(OG Tek Terim Sanayi)</span></div>';
+  h += '<div class="fat-kalem-baslik">' + (ab.key === 'A3' ? '2' : '2') + ') Dağıtım Bedeli <span style="font-weight:600;color:#94a3b8;font-size:10px">(OG Tek Terim Sanayi)</span></div>';
   h += '<div class="fat-kalem-formul">';
   h += '<span>Ham Tüketim</span><span>' + fatFmt(hamAy, 2) + ' kWh</span>';
   h += '</div>';
@@ -4105,7 +4142,12 @@ function fatKartUret(ay, A, ab) {
   // Toplam Bedel + KDV
   h += '<div class="fat-kalem">';
   h += '<div class="fat-kalem-toplam">';
-  h += '<span>TOPLAM BEDEL (Enerji + Dağıtım)</span><span>' + (toplamBedel !== null ? fatFmt(toplamBedel, 2) : '—') + ' TL</span>';
+  if (ab.key === 'A3') {
+    h += '<span>TOPLAM BEDEL (Enerji − Mahsup + Dağıtım)</span>';
+  } else {
+    h += '<span>TOPLAM BEDEL (Enerji + Dağıtım)</span>';
+  }
+  h += '<span>' + (toplamBedel !== null ? fatFmt(toplamBedel, 2) : '—') + ' TL</span>';
   h += '</div>';
   h += '<div class="fat-kalem-toplam" style="color:#fbbf24;">';
   h += '<span>KDV (%20)</span><span>' + (kdv !== null ? fatFmt(kdv, 2) : '—') + ' TL</span>';
@@ -4155,8 +4197,10 @@ function fatSaatlikUret(G, ab, gPtfArr) {
     const sMhs = sHam - sSnr;
     const sPtf = (gPtfArr && gPtfArr[s] !== undefined && gPtfArr[s] !== null) ? gPtfArr[s] : null;
     const sMal = sPtf !== null ? fatEnerjiMal(sPtf) : null;
-    // Tutar = M.Sonrasi (kWh) × E.Mal (TL/kWh) -> TL
-    const sTutar = (sMal !== null) ? (sSnr * sMal) : null;
+    // Tutar = faturalanan_kWh × E.Mal (TL/kWh) -> TL
+    // AKS3 icin faturalanan = HAM, digerleri = M.SONRASI
+    const sFatura = (ab.key === 'A3') ? sHam : sSnr;
+    const sTutar = (sMal !== null) ? (sFatura * sMal) : null;
     if (sTutar !== null) { sTutarTpl += sTutar; sTutarHesaplandi = true; }
     if (sPtf !== null) { sPtfTpl += sPtf; sPtfCnt++; }
     sHamTpl += sHam; sSnrTpl += sSnr;
