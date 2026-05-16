@@ -4222,9 +4222,6 @@ function fatSaatlikUret(G, ab, gPtfArr) {
     const sPtf = (gPtfArr && gPtfArr[s] !== undefined && gPtfArr[s] !== null) ? gPtfArr[s] : null;
     const sMal = sPtf !== null ? fatEnerjiMal(sPtf) : null;
 
-    // Tutar mantigi:
-    // T1/T2: Tutar = M.Sonrasi × E.Mal,  Mahsup Ind = 0
-    // AKS3:  Tutar = (Ham × E.Mal) - (Mahsup × 2,909687),  Mahsup Ind aktif
     const sEnerjiBed = (sMal !== null) ? ((ab.key === 'A3' ? sHam : sSnr) * sMal) : null;
     const sMhsInd = (ab.key === 'A3') ? (sMhs * FAT_SANAYI_AKTIF) : 0;
     const sTutar = (sEnerjiBed !== null) ? (sEnerjiBed - sMhsInd) : null;
@@ -4235,7 +4232,7 @@ function fatSaatlikUret(G, ab, gPtfArr) {
     sMhsIndTpl += sMhsInd;
     sMhsKwhTpl += sMhs;
 
-    // Detay parametrelerini data-* olarak hucrelere koy, JS okuyup gosterir
+    // Data attrs (onclick yerine event delegation kullaniyoruz)
     const dataAttrs = ' data-saat="' + saatKey
       + '" data-ham="' + sHam
       + '" data-snr="' + sSnr
@@ -4252,16 +4249,13 @@ function fatSaatlikUret(G, ab, gPtfArr) {
     h += '<td class="fat-col-ham">' + fatFmt(sHam, 2) + '</td>';
     h += '<td class="fat-col-mhs">' + fatFmt(sMhs, 2) + '</td>';
     h += '<td class="fat-col-snr">' + fatFmt(sSnr, 2) + '</td>';
-    // E.Mal - tiklanabilir
-    h += '<td class="fat-col-mal fat-tiklanabilir" onclick="fatDetayAc(this,\'mal\')"' + dataAttrs + '>';
+    h += '<td class="fat-col-mal fat-tiklanabilir" data-tip="mal"' + dataAttrs + '>';
     h += (sMal !== null ? fatFmt(sMal, 3) : '—');
     h += '<div class="fat-mini-detay"></div></td>';
-    // Mahsup Ind - tiklanabilir
-    h += '<td class="fat-col-mhsind fat-tiklanabilir" onclick="fatDetayAc(this,\'mhsind\')"' + dataAttrs + '>';
+    h += '<td class="fat-col-mhsind fat-tiklanabilir" data-tip="mhsind"' + dataAttrs + '>';
     h += (ab.key === 'A3' ? ('−' + fatFmt(sMhsInd, 2)) : '0,00');
     h += '<div class="fat-mini-detay"></div></td>';
-    // Tutar - tiklanabilir
-    h += '<td class="fat-col-tutar fat-tiklanabilir" onclick="fatDetayAc(this,\'tutar\')"' + dataAttrs + '>';
+    h += '<td class="fat-col-tutar fat-tiklanabilir" data-tip="tutar"' + dataAttrs + '>';
     h += (sTutar !== null ? fatFmt(sTutar, 2) : '—');
     h += '<div class="fat-mini-detay"></div></td>';
     h += '</tr>';
@@ -4281,31 +4275,41 @@ function fatSaatlikUret(G, ab, gPtfArr) {
   return h;
 }
 
-// Hucre tiklandiginda detay ac/kapa
+// Event delegation - tek seferlik kurulum
+// Document'a tiklamayi yakala, fat-tiklanabilir uzerinde mi diye bak
+if (!window.fatDelegated) {
+  document.addEventListener('click', function(e) {
+    const td = e.target.closest('.fat-tiklanabilir');
+    if (!td) return;
+    fatDetayAc(td, td.getAttribute('data-tip'));
+  });
+  window.fatDelegated = true;
+}
+
 function fatDetayAc(td, tip) {
   const detayDiv = td.querySelector('.fat-mini-detay');
   if (!detayDiv) return;
 
   // Bu satirda zaten acik bir detay varsa kapat
   const tr = td.parentElement;
-  const acikOlanlar = tr.querySelectorAll('.fat-mini-detay.acik');
-  acikOlanlar.forEach(function(d) {
-    if (d !== detayDiv) {
-      d.classList.remove('acik');
-      d.innerHTML = '';
-      d.parentElement.classList.remove('acik');
-    }
-  });
+  if (tr) {
+    const acikOlanlar = tr.querySelectorAll('.fat-mini-detay.acik');
+    acikOlanlar.forEach(function(d) {
+      if (d !== detayDiv) {
+        d.classList.remove('acik');
+        d.innerHTML = '';
+        if (d.parentElement) d.parentElement.classList.remove('acik');
+      }
+    });
+  }
 
   if (detayDiv.classList.contains('acik')) {
-    // Zaten acik -> kapat
     detayDiv.classList.remove('acik');
     detayDiv.innerHTML = '';
     td.classList.remove('acik');
     return;
   }
 
-  // Veriyi data-* attribute'larindan oku
   const sHam = parseFloat(td.getAttribute('data-ham')) || 0;
   const sSnr = parseFloat(td.getAttribute('data-snr')) || 0;
   const sMhs = parseFloat(td.getAttribute('data-mhs')) || 0;
@@ -4323,10 +4327,10 @@ function fatDetayAc(td, tip) {
   let icerik = '';
   if (tip === 'mal') {
     icerik += '<div class="fat-mini-baslik">⚡ Enerji Maliyeti</div>';
-    if (sPtf !== null) {
+    if (sPtf !== null && !isNaN(sPtf)) {
       icerik += '<div class="fat-mini-row"><span>PTF</span><span>' + fatFmt(sPtf, 2) + '</span></div>';
       icerik += '<div class="fat-mini-row"><span>+ YEKDEM</span><span>602,51</span></div>';
-      icerik += '<div class="fat-mini-row" style="border-top:1px dashed rgba(255,255,255,0.1);padding-top:3px;"><span>Toplam</span><span>' + fatFmt(sPtf + 602.51, 2) + '</span></div>';
+      icerik += '<div class="fat-mini-row"><span>Toplam</span><span>' + fatFmt(sPtf + 602.51, 2) + '</span></div>';
       icerik += '<div class="fat-mini-row"><span>× 1,05</span><span>' + fatFmt((sPtf + 602.51) * 1.05, 2) + '</span></div>';
       icerik += '<div class="fat-mini-row"><span>÷ 1000</span><span></span></div>';
       icerik += '<div class="fat-mini-sonuc"><span>E.Mal</span><span>' + fatFmt(sMal, 3) + ' TL/kWh</span></div>';
@@ -4336,28 +4340,28 @@ function fatDetayAc(td, tip) {
   } else if (tip === 'mhsind') {
     icerik += '<div class="fat-mini-baslik">🟣 Mahsup İndirimi</div>';
     if (abone === 'A3') {
-      icerik += '<div class="fat-mini-row"><span>Ham Tük.</span><span>' + fatFmt(sHam, 2) + '</span></div>';
+      icerik += '<div class="fat-mini-row"><span>Ham</span><span>' + fatFmt(sHam, 2) + '</span></div>';
       icerik += '<div class="fat-mini-row"><span>M.Sonrası</span><span>' + fatFmt(sSnr, 2) + '</span></div>';
-      icerik += '<div class="fat-mini-row" style="border-top:1px dashed rgba(255,255,255,0.1);padding-top:3px;"><span>Mahsup</span><span>' + fatFmt(sMhs, 2) + ' kWh</span></div>';
+      icerik += '<div class="fat-mini-row"><span>Mahsup</span><span>' + fatFmt(sMhs, 2) + ' kWh</span></div>';
       icerik += '<div class="fat-mini-row"><span>× 2,909687</span><span></span></div>';
       icerik += '<div class="fat-mini-sonuc"><span>İndirim</span><span>−' + fatFmt(sMhsInd, 2) + ' TL</span></div>';
     } else {
-      icerik += '<div class="fat-mini-row">Bu abone için mahsup indirimi yok</div>';
+      icerik += '<div class="fat-mini-row">Mahsup indirimi yok</div>';
     }
   } else if (tip === 'tutar') {
     icerik += '<div class="fat-mini-baslik">💰 Net Tutar</div>';
-    if (sMal !== null) {
+    if (sMal !== null && !isNaN(sMal)) {
       const faturalanan = (abone === 'A3') ? sHam : sSnr;
       const faturalananLbl = (abone === 'A3') ? 'Ham' : 'M.Sonrası';
       icerik += '<div class="fat-mini-row"><span>' + faturalananLbl + '</span><span>' + fatFmt(faturalanan, 2) + '</span></div>';
       icerik += '<div class="fat-mini-row"><span>× E.Mal</span><span>' + fatFmt(sMal, 3) + '</span></div>';
-      icerik += '<div class="fat-mini-row" style="border-top:1px dashed rgba(255,255,255,0.1);padding-top:3px;"><span>A. Enerji B.</span><span>+' + fatFmt(sEb, 2) + '</span></div>';
+      icerik += '<div class="fat-mini-row"><span>A. Enerji</span><span>+' + fatFmt(sEb, 2) + '</span></div>';
       if (abone === 'A3') {
         icerik += '<div class="fat-mini-row"><span>B. Mhs.İnd.</span><span>−' + fatFmt(sMhsInd, 2) + '</span></div>';
       }
-      icerik += '<div class="fat-mini-sonuc"><span>Net (A−B)</span><span>' + fatFmt(sTutar, 2) + ' TL</span></div>';
+      icerik += '<div class="fat-mini-sonuc"><span>Net</span><span>' + fatFmt(sTutar, 2) + ' TL</span></div>';
     } else {
-      icerik += '<div class="fat-mini-row">PTF verisi yok, tutar hesaplanamadi</div>';
+      icerik += '<div class="fat-mini-row">PTF verisi yok</div>';
     }
   }
 
