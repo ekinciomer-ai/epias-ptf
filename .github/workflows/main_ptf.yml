@@ -24,7 +24,7 @@ jobs:
         env:
           EPIAS_KULLANICI: ${{ secrets.EPIAS_KULLANICI }}
           EPIAS_SIFRE: ${{ secrets.EPIAS_SIFRE }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.REPO_TOKEN }}
           TWILIO_SID: ${{ secrets.TWILIO_SID }}
           TWILIO_TOKEN: ${{ secrets.TWILIO_TOKEN }}
           F2POOL_TOKEN: ${{ secrets.F2POOL_TOKEN }}
