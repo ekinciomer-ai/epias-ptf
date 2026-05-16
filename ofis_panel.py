@@ -225,6 +225,66 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 .l4{color:#f87171;}
 .l5{color:#dc2626;font-weight:900;}
 .aylik-table td.kapali-cell{color:#c4b5fd!important;background:linear-gradient(135deg,rgba(124,58,237,0.3),rgba(124,58,237,0.15))!important;border:1px solid rgba(168,85,247,0.6);font-weight:900;}
+.fat-abone-kart{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.06);border-radius:18px;padding:16px;margin-bottom:16px;}
+.fat-abone-kart.ty1{border-left:4px solid #fbbf24;}
+.fat-abone-kart.ty2{border-left:4px solid #60a5fa;}
+.fat-abone-kart.aks3{border-left:4px solid #f87171;}
+.fat-abone-head{display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.05);margin-bottom:14px;}
+.fat-abone-icon{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.fat-abone-kart.ty1 .fat-abone-icon{background:linear-gradient(135deg,#f59e0b,#fbbf24);}
+.fat-abone-kart.ty2 .fat-abone-icon{background:linear-gradient(135deg,#3b82f6,#60a5fa);}
+.fat-abone-kart.aks3 .fat-abone-icon{background:linear-gradient(135deg,#dc2626,#f87171);}
+.fat-abone-name{font-size:16px;font-weight:900;line-height:1.2;}
+.fat-abone-sub{font-size:11px;color:#94a3b8;margin-top:2px;font-weight:600;}
+.fat-bolum-baslik{font-size:10px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 8px;}
+.fat-bilgi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.fat-bilgi-row{background:rgba(255,255,255,0.025);border-radius:10px;padding:9px 11px;}
+.fat-bilgi-lbl{font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
+.fat-bilgi-val{font-size:13px;font-weight:800;margin-top:2px;color:#e2e8f0;}
+.fat-ozet-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.fat-ozet-card{border-radius:12px;padding:11px 8px;text-align:center;border:1px solid;}
+.fat-ozet-card.ham{background:linear-gradient(135deg,rgba(248,113,113,0.18),rgba(248,113,113,0.05));border-color:rgba(248,113,113,0.3);}
+.fat-ozet-card.mhs{background:linear-gradient(135deg,rgba(168,85,247,0.18),rgba(168,85,247,0.05));border-color:rgba(168,85,247,0.3);}
+.fat-ozet-card.snr{background:linear-gradient(135deg,rgba(251,146,60,0.22),rgba(251,146,60,0.06));border-color:rgba(251,146,60,0.4);}
+.fat-ozet-lbl{font-size:9px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;}
+.fat-ozet-val{font-size:16px;font-weight:900;letter-spacing:-0.3px;}
+.fat-ozet-card.ham .fat-ozet-val{color:#fca5a5;}
+.fat-ozet-card.mhs .fat-ozet-val{color:#c4b5fd;}
+.fat-ozet-card.snr .fat-ozet-val{color:#fdba74;}
+.fat-ozet-unit{font-size:9px;color:#64748b;font-weight:700;margin-top:2px;}
+.fat-mal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.fat-mal-card{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:11px 12px;}
+.fat-mal-lbl{font-size:9px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
+.fat-mal-val{font-size:17px;font-weight:900;margin-top:4px;color:#4ade80;}
+.fat-mal-sub{font-size:10px;color:#64748b;margin-top:3px;font-weight:600;}
+.fat-tablo-wrap{overflow-x:auto;margin-top:8px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);background:#050917;}
+.fat-table{width:100%;border-collapse:collapse;font-size:11px;}
+.fat-table th{background:linear-gradient(180deg,#1e293b,#0f172a);color:#94a3b8;font-weight:800;font-size:9px;padding:10px 6px;text-align:center;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;}
+.fat-table th:first-child{text-align:left;padding-left:14px;}
+.fat-table td{padding:9px 6px;text-align:right;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:700;white-space:nowrap;}
+.fat-table td:first-child{text-align:left;padding-left:14px;color:#cbd5e1;font-weight:800;}
+.fat-table tr.fat-gun-satir{cursor:pointer;transition:background 0.15s;}
+.fat-table tr.fat-gun-satir:hover td{background:rgba(255,255,255,0.025);}
+.fat-table tr.fat-gun-satir.acik td{background:rgba(34,197,94,0.07);}
+.fat-table tr.fat-gun-satir.acik td:first-child{color:#4ade80;}
+.fat-table tr.fat-toplam td{background:linear-gradient(180deg,rgba(251,191,36,0.12),rgba(251,191,36,0.04));font-weight:900;border-top:2px solid rgba(251,191,36,0.3);color:#fbbf24;font-size:12px;}
+.fat-table td.fat-col-ham{color:#fca5a5;}
+.fat-table td.fat-col-mhs{color:#c4b5fd;}
+.fat-table td.fat-col-snr{color:#fdba74;font-weight:800;}
+.fat-table td.fat-col-mal{color:#86efac;}
+.fat-table td.fat-col-ptf{color:#93c5fd;}
+.fat-expand-ico{display:inline-block;margin-right:5px;font-size:9px;color:#64748b;transition:transform 0.2s;}
+tr.acik .fat-expand-ico{transform:rotate(90deg);color:#4ade80;}
+.fat-saatlik-row{display:none;}
+.fat-saatlik-row.acik{display:table-row;}
+.fat-saatlik-row td{padding:0;background:#030611;}
+.fat-saatlik-icerik{padding:10px 12px;background:linear-gradient(180deg,rgba(34,197,94,0.04),transparent);border-top:1px dashed rgba(34,197,94,0.2);border-bottom:1px dashed rgba(34,197,94,0.2);}
+.fat-saatlik-icerik table{width:100%;border-collapse:collapse;font-size:10px;}
+.fat-saatlik-icerik th{font-size:8px;color:#64748b;padding:6px 5px;text-align:right;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.fat-saatlik-icerik th:first-child{text-align:left;}
+.fat-saatlik-icerik td{padding:5px;text-align:right;border-bottom:1px solid rgba(255,255,255,0.02);font-weight:700;color:#cbd5e1;background:transparent;}
+.fat-saatlik-icerik td:first-child{text-align:left;color:#4ade80;font-weight:800;}
+.fat-saatlik-icerik tr.gun-tpl td{background:rgba(251,191,36,0.06);color:#fbbf24;font-weight:900;border-top:1px solid rgba(251,191,36,0.2);}
 .f2-summary{background:linear-gradient(135deg,rgba(245,158,11,0.15) 0%,rgba(245,158,11,0.05) 100%);border:1px solid rgba(245,158,11,0.25);border-radius:18px;padding:16px;margin-bottom:14px;}
 .f2-icon-wrap{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
 .f2-icon{width:44px;height:44px;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;}
@@ -345,6 +405,7 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 <div class="tab" onclick="sekme('maliyetler', this)" style="background:linear-gradient(135deg,rgba(239,68,68,0.12),rgba(245,158,11,0.08));border-color:rgba(245,158,11,0.4);">💸 Maliyetler</div>
 <div class="tab" onclick="sekme('veri', this)" style="background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(99,102,241,0.08));border-color:rgba(59,130,246,0.4);">📊 Veri</div>
 <div class="tab" onclick="sekme('mahsuplasma', this)" style="background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(217,70,239,0.08));border-color:rgba(139,92,246,0.4);">🔄 Mahsuplaşma</div>
+<div class="tab" onclick="sekme('faturalandirma', this)" style="background:linear-gradient(135deg,rgba(251,191,36,0.12),rgba(245,158,11,0.08));border-color:rgba(251,191,36,0.4);">🧾 Faturalandırma</div>
 <div class="tab" onclick="sekme('osos', this)">🔋 OSOS</div>
 <div class="tab" onclick="sekme('inverter', this)">🌞 İnverter</div>
 <div class="tab" onclick="sekme('antminer', this)">⛏️ Antminer Saha</div>
@@ -1025,6 +1086,32 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 </div>
 <!-- ====================== MAHSUPLAŞMA SEKMESI SONU ====================== -->
 
+<!-- ====================== FATURALANDIRMA SEKMESI ====================== -->
+<div class="tab-content" id="t-faturalandirma">
+
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 0 16px; border-bottom:1px solid rgba(255,255,255,0.06); margin-bottom:18px; flex-wrap:wrap;">
+    <div>
+      <div style="font-size:20px; font-weight:900; background:linear-gradient(135deg,#fbbf24,#f59e0b); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">🧾 Faturalandırma</div>
+      <div style="font-size:11px; color:#94a3b8; margin-top:3px; font-weight:600;">Mahsup sonrası kalan tüketim · Enerji maliyeti hesabı</div>
+    </div>
+    <select id="fat-ay-secim" onchange="faturaRender()" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:white; padding:8px 12px; border-radius:10px; font-size:12px; font-weight:700; font-family:inherit; cursor:pointer;">
+      <option value="2026-01">Ocak 2026</option>
+      <option value="2026-02">Şubat 2026</option>
+      <option value="2026-03">Mart 2026</option>
+      <option value="2026-04">Nisan 2026</option>
+      <option value="2026-05" selected>Mayıs 2026</option>
+    </select>
+  </div>
+
+  <div style="background:rgba(34,197,94,0.06); border:1px solid rgba(34,197,94,0.15); border-radius:10px; padding:9px 13px; font-size:11px; color:#86efac; margin-bottom:14px; font-weight:600;">
+    📐 <b style="color:#4ade80;">Enerji Maliyeti</b> = (PTF + YEKDEM) × 1,05 / 1000 &nbsp;·&nbsp; <b style="color:#4ade80;">YEKDEM:</b> 602,51 TL/MWh
+  </div>
+
+  <div id="fat-kartlar"><div style="padding:30px; text-align:center; color:#94a3b8; font-size:12px;">Yükleniyor...</div></div>
+
+</div>
+<!-- ====================== FATURALANDIRMA SEKMESI SONU ====================== -->
+
 <!-- Antminer Cihaz Detay Modal -->
 <div class="modal-overlay" id="ant-modal" onclick="if(event.target.id==='ant-modal')kapatAntModal()">
 <div class="modal" style="max-width:500px;">
@@ -1119,6 +1206,7 @@ function sekme(ad, btn) {
   if (ad === 'cihazlarim') antYukle();
   if (ad === 'maliyetler') { mltDropdownDoldur().then(() => mltYukle()); utYukle(); }
   if (ad === 'mahsuplasma') mahsupYukle();
+  if (ad === 'faturalandirma') faturaYukle();
 }
 
 function renkSinif(v) {
@@ -3769,6 +3857,228 @@ function mhsTabloRender() {
 
 // ====================== MAHSUPLAŞMA SEKMESI SONU ======================
 
+// ====================== FATURALANDIRMA SEKMESI ======================
+const FAT_YEKDEM = 602.51;     // TL/MWh
+const FAT_DAGITIM = 1.05;
+const FAT_AY_ISIM_MAP = {
+  '2026-01': 'Ocak 2026',
+  '2026-02': 'Şubat 2026',
+  '2026-03': 'Mart 2026',
+  '2026-04': 'Nisan 2026',
+  '2026-05': 'Mayıs 2026',
+};
+let fatAylikPtf = null;  // aylik_ptf.json - tum aylar
+
+function fatFmt(v, ondalik) {
+  if (ondalik === undefined) ondalik = 0;
+  if (v === null || v === undefined || isNaN(v)) return '—';
+  return Number(v).toLocaleString('tr-TR', {
+    minimumFractionDigits: ondalik,
+    maximumFractionDigits: ondalik,
+  });
+}
+
+// Enerji maliyeti formulu: (PTF + YEKDEM) × 1,05 / 1000 -> TL/kWh
+function fatEnerjiMal(ptf_tl_mwh) {
+  if (ptf_tl_mwh === null || ptf_tl_mwh === undefined) return null;
+  return ((ptf_tl_mwh + FAT_YEKDEM) * FAT_DAGITIM) / 1000;
+}
+
+async function faturaYukle() {
+  // 1. Mahsuplaşma verisini hazirla (mhsData global'i mahsupYukleAsync sonunda dolar)
+  try {
+    if (!mhsData || Object.keys(mhsData).length === 0) {
+      await mahsupYukleAsync();
+    }
+  } catch (e) {
+    console.error('Faturalandirma: mahsup verisi alinamadi', e);
+  }
+  // 2. PTF'yi getir (1 kez yeterli, ay degisiminde yeniden gerekirse cagrilir)
+  if (!fatAylikPtf) {
+    try {
+      const r = await fetch('/api/aylik_ptf?_=' + Date.now());
+      if (r.ok) fatAylikPtf = await r.json();
+      else fatAylikPtf = {};
+    } catch (e) {
+      console.error('Faturalandirma: PTF cekilemedi', e);
+      fatAylikPtf = {};
+    }
+  }
+  faturaRender();
+}
+
+function faturaRender() {
+  const selEl = document.getElementById('fat-ay-secim');
+  if (!selEl) return;
+  const ay = selEl.value;
+  const A = (mhsData || {})[ay];
+  const cont = document.getElementById('fat-kartlar');
+  if (!cont) return;
+
+  if (!A) {
+    cont.innerHTML = '<div style="padding:30px; text-align:center; color:#94a3b8; font-size:12px;">' + (FAT_AY_ISIM_MAP[ay] || ay) + ' için veri yok.</div>';
+    return;
+  }
+
+  const aboneler = [
+    { key: 'T1', kls: 'ty1', icon: '☀️', ad: 'TEKYILDIZ 1', sub: 'GES + Tüketim · Çift Yönlü Sayaç', guc: '960 kW' },
+    { key: 'T2', kls: 'ty2', icon: '⚡', ad: 'TEKYILDIZ 2', sub: 'GES + Tüketim · Çift Yönlü Sayaç', guc: '960 kW' },
+    { key: 'A3', kls: 'aks3', icon: '🏭', ad: 'AKSARAY 3', sub: 'Sadece Tüketim · Tek Yönlü Sayaç', guc: '2.250 kW' },
+  ];
+
+  let html = '';
+  aboneler.forEach(function(ab) { html += fatKartUret(ay, A, ab); });
+  cont.innerHTML = html;
+}
+
+function fatKartUret(ay, A, ab) {
+  // Ay seviyesi toplamlar
+  const hamAy = (A.tuketim && A.tuketim[ab.key]) || 0;
+  const snrAy = (A.sonra && A.sonra[ab.key]) || 0;
+  const mhsAy = hamAy - snrAy;
+
+  // Ay PTF istatistikleri
+  const ayPtf = (fatAylikPtf || {})[ay] || {};
+  let ayPtfTpl = 0, ayPtfCnt = 0, ptfMin = Infinity, ptfMax = -Infinity;
+  Object.entries(ayPtf).forEach(function(entry) {
+    const saatler = entry[1];
+    if (!Array.isArray(saatler)) return;
+    saatler.forEach(function(p) {
+      if (p === null || p === undefined) return;
+      ayPtfTpl += p; ayPtfCnt++;
+      if (p < ptfMin) ptfMin = p;
+      if (p > ptfMax) ptfMax = p;
+    });
+  });
+  const ortPtf = ayPtfCnt ? ayPtfTpl / ayPtfCnt : null;
+  const ortMal = ortPtf !== null ? fatEnerjiMal(ortPtf) : null;
+
+  // Gunluk satirlar
+  const gunler = Object.keys(A.gunler || {}).sort();
+  const aylar = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+  let satirlar = '';
+
+  gunler.forEach(function(g) {
+    const G = A.gunler[g];
+    const gHam = (G.tuketim && G.tuketim[ab.key]) || 0;
+    const gSnr = (G.sonra && G.sonra[ab.key]) || 0;
+    const gMhs = gHam - gSnr;
+
+    const gPtfArr = ayPtf[g] || [];
+    let gPtfTpl = 0, gPtfCnt = 0;
+    gPtfArr.forEach(function(p) {
+      if (p !== null && p !== undefined) { gPtfTpl += p; gPtfCnt++; }
+    });
+    const gOrtPtf = gPtfCnt ? gPtfTpl / gPtfCnt : null;
+    const gOrtMal = gOrtPtf !== null ? fatEnerjiMal(gOrtPtf) : null;
+
+    const d = new Date(g);
+    const tarihLbl = d.getDate() + ' ' + aylar[d.getMonth()];
+
+    satirlar += '<tr class="fat-gun-satir" onclick="fatGunAc(this)">';
+    satirlar += '<td><span class="fat-expand-ico">▶</span>' + tarihLbl + '</td>';
+    satirlar += '<td class="fat-col-ham">' + fatFmt(gHam, 2) + '</td>';
+    satirlar += '<td class="fat-col-mhs">' + fatFmt(gMhs, 2) + '</td>';
+    satirlar += '<td class="fat-col-snr">' + fatFmt(gSnr, 2) + '</td>';
+    satirlar += '<td class="fat-col-mal">' + (gOrtMal !== null ? fatFmt(gOrtMal, 3) : '—') + '</td>';
+    satirlar += '</tr>';
+
+    satirlar += '<tr class="fat-saatlik-row"><td colspan="5"><div class="fat-saatlik-icerik">';
+    satirlar += fatSaatlikUret(G, ab, gPtfArr);
+    satirlar += '</div></td></tr>';
+  });
+
+  // Toplam
+  satirlar += '<tr class="fat-toplam">';
+  satirlar += '<td>TOPLAM</td>';
+  satirlar += '<td>' + fatFmt(hamAy, 2) + '</td>';
+  satirlar += '<td>' + fatFmt(mhsAy, 2) + '</td>';
+  satirlar += '<td>' + fatFmt(snrAy, 2) + '</td>';
+  satirlar += '<td>—</td>';
+  satirlar += '</tr>';
+
+  // Kart HTML
+  let h = '<div class="fat-abone-kart ' + ab.kls + '">';
+  h += '<div class="fat-abone-head"><div class="fat-abone-icon">' + ab.icon + '</div>';
+  h += '<div><div class="fat-abone-name">' + ab.ad + '</div><div class="fat-abone-sub">' + ab.sub + '</div></div></div>';
+
+  h += '<div class="fat-bolum-baslik">📌 Abone Bilgileri</div>';
+  h += '<div class="fat-bilgi-grid">';
+  h += '<div class="fat-bilgi-row"><div class="fat-bilgi-lbl">Firma Adı</div><div class="fat-bilgi-val">—</div></div>';
+  h += '<div class="fat-bilgi-row"><div class="fat-bilgi-lbl">Tesisat No</div><div class="fat-bilgi-val">—</div></div>';
+  h += '<div class="fat-bilgi-row"><div class="fat-bilgi-lbl">Sözleşme Gücü</div><div class="fat-bilgi-val">' + ab.guc + '</div></div>';
+  h += '<div class="fat-bilgi-row"><div class="fat-bilgi-lbl">Çarpan</div><div class="fat-bilgi-val">—</div></div>';
+  h += '</div>';
+
+  h += '<div class="fat-bolum-baslik">📊 Tüketim Özeti</div>';
+  h += '<div class="fat-ozet-grid">';
+  h += '<div class="fat-ozet-card ham"><div class="fat-ozet-lbl">Ham Tüketim</div><div class="fat-ozet-val">' + fatFmt(hamAy) + '</div><div class="fat-ozet-unit">kWh · mahsup öncesi</div></div>';
+  h += '<div class="fat-ozet-card mhs"><div class="fat-ozet-lbl">Mahsuplaşma</div><div class="fat-ozet-val">' + fatFmt(mhsAy) + '</div><div class="fat-ozet-unit">kWh · mahsup edilen</div></div>';
+  h += '<div class="fat-ozet-card snr"><div class="fat-ozet-lbl">Mahsup Sonrası</div><div class="fat-ozet-val">' + fatFmt(snrAy) + '</div><div class="fat-ozet-unit">kWh · faturalanacak</div></div>';
+  h += '</div>';
+
+  h += '<div class="fat-bolum-baslik">⚡ Enerji Maliyeti</div>';
+  h += '<div class="fat-mal-grid">';
+  h += '<div class="fat-mal-card"><div class="fat-mal-lbl">Ortalama PTF</div>';
+  h += '<div class="fat-mal-val">' + (ortPtf !== null ? fatFmt(ortPtf) : '—') + ' <span style="font-size:11px;color:#94a3b8">TL/MWh</span></div>';
+  h += '<div class="fat-mal-sub">Min ' + (ptfMin !== Infinity ? fatFmt(ptfMin) : '—') + ' · Max ' + (ptfMax !== -Infinity ? fatFmt(ptfMax) : '—') + '</div></div>';
+  h += '<div class="fat-mal-card"><div class="fat-mal-lbl">Ort. Enerji Maliyeti</div>';
+  h += '<div class="fat-mal-val">' + (ortMal !== null ? fatFmt(ortMal, 3) : '—') + ' <span style="font-size:11px;color:#94a3b8">TL/kWh</span></div>';
+  h += '<div class="fat-mal-sub">(PTF + 602,51) × 1,05 / 1000</div></div>';
+  h += '</div>';
+
+  h += '<div class="fat-bolum-baslik">📋 Günlük Tüketim Tablosu</div>';
+  h += '<div class="fat-tablo-wrap"><table class="fat-table">';
+  h += '<thead><tr><th>Tarih</th><th>Ham (kWh)</th><th>Mahsup (kWh)</th><th>M.Sonrası (kWh)</th><th>Ort. E.Mal. (TL/kWh)</th></tr></thead>';
+  h += '<tbody>' + satirlar + '</tbody></table></div>';
+
+  h += '</div>';
+  return h;
+}
+
+function fatSaatlikUret(G, ab, gPtfArr) {
+  let h = '<table><thead><tr>';
+  h += '<th>Saat</th><th>Ham (kWh)</th><th>Mahsup (kWh)</th><th>M.Sonrası (kWh)</th><th>PTF (TL/MWh)</th><th>E.Mal. (TL/kWh)</th>';
+  h += '</tr></thead><tbody>';
+
+  let sHamTpl = 0, sSnrTpl = 0;
+  for (let s = 0; s < 24; s++) {
+    const saatKey = String(s).padStart(2, '0');
+    const S = (G.saatler || {})[saatKey];
+    const sHam = (S && S.tuketim) ? (S.tuketim[ab.key] || 0) : 0;
+    const sSnr = (S && S.sonra) ? (S.sonra[ab.key] || 0) : 0;
+    const sMhs = sHam - sSnr;
+    const sPtf = (gPtfArr && gPtfArr[s] !== undefined && gPtfArr[s] !== null) ? gPtfArr[s] : null;
+    const sMal = sPtf !== null ? fatEnerjiMal(sPtf) : null;
+    sHamTpl += sHam; sSnrTpl += sSnr;
+
+    h += '<tr>';
+    h += '<td>' + saatKey + '</td>';
+    h += '<td>' + fatFmt(sHam, 2) + '</td>';
+    h += '<td>' + fatFmt(sMhs, 2) + '</td>';
+    h += '<td>' + fatFmt(sSnr, 2) + '</td>';
+    h += '<td>' + (sPtf !== null ? fatFmt(sPtf) : '—') + '</td>';
+    h += '<td>' + (sMal !== null ? fatFmt(sMal, 3) : '—') + '</td>';
+    h += '</tr>';
+  }
+  h += '<tr class="gun-tpl"><td>GÜN</td>';
+  h += '<td>' + fatFmt(sHamTpl, 2) + '</td>';
+  h += '<td>' + fatFmt(sHamTpl - sSnrTpl, 2) + '</td>';
+  h += '<td>' + fatFmt(sSnrTpl, 2) + '</td>';
+  h += '<td>—</td><td>—</td></tr>';
+  h += '</tbody></table>';
+  return h;
+}
+
+function fatGunAc(satir) {
+  satir.classList.toggle('acik');
+  const sonraki = satir.nextElementSibling;
+  if (sonraki && sonraki.classList.contains('fat-saatlik-row')) {
+    sonraki.classList.toggle('acik');
+  }
+}
+// ====================== FATURALANDIRMA SEKMESI SONU ======================
+
 // ====================== ANTMINER SONU ======================
 
 if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
@@ -3854,6 +4164,16 @@ def osos_raw():
     if "kullanici" not in session:
         return jsonify({"hata":"yetkisiz"}), 401
     data = github_oku("2026_osos_endeks.json")
+    if not data:
+        return jsonify({})
+    return jsonify(data)
+
+@app.route("/api/aylik_ptf")
+def aylik_ptf_endpoint():
+    """Faturalandirma sekmesi icin aylik_ptf.json'u dondur."""
+    if "kullanici" not in session:
+        return jsonify({"hata":"yetkisiz"}), 401
+    data = github_oku("aylik_ptf.json")
     if not data:
         return jsonify({})
     return jsonify(data)
