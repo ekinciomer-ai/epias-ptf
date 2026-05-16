@@ -23,6 +23,6 @@ jobs:
         env:
           TWILIO_SID: ${{ secrets.TWILIO_SID }}
           TWILIO_TOKEN: ${{ secrets.TWILIO_TOKEN }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.REPO_TOKEN }}
           OTOCOIN_URL: ${{ secrets.OTOCOIN_URL }}
         run: python saat_kontrol.py
