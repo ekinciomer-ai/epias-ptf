@@ -290,6 +290,17 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#4ade80;}
 .fat-tutar-val{font-size:24px;font-weight:900;color:#fcd34d;margin-top:6px;letter-spacing:-0.5px;}
 .fat-tutar-sub{font-size:10px;color:#94a3b8;margin-top:4px;font-weight:600;}
 .fat-table td.fat-col-tutar{color:#fcd34d;font-weight:800;}
+.fat-fatura-card{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;}
+.fat-kalem{padding:10px 12px;background:rgba(255,255,255,0.02);border-radius:10px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.04);}
+.fat-kalem:last-child{margin-bottom:0;}
+.fat-kalem-baslik{font-size:12px;font-weight:800;color:#e2e8f0;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.fat-kalem-formul{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#94a3b8;padding:4px 0;font-weight:600;}
+.fat-kalem-formul span:last-child{color:#cbd5e1;font-weight:700;font-family:'Inter',monospace;}
+.fat-kalem-toplam{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#86efac;padding:6px 0 4px;margin-top:4px;border-top:1px dashed rgba(34,197,94,0.2);font-weight:800;}
+.fat-kalem-toplam span:last-child{font-weight:900;font-family:'Inter',monospace;letter-spacing:-0.2px;}
+.fat-odenecek{background:linear-gradient(135deg,rgba(34,197,94,0.18),rgba(22,163,74,0.05));border:1.5px solid rgba(34,197,94,0.4);border-radius:12px;padding:14px 16px;margin-top:12px;text-align:center;}
+.fat-odenecek-lbl{font-size:10px;color:#4ade80;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;}
+.fat-odenecek-val{font-size:26px;font-weight:900;color:#bbf7d0;margin-top:6px;letter-spacing:-0.5px;font-family:'Inter',monospace;}
 .f2-summary{background:linear-gradient(135deg,rgba(245,158,11,0.15) 0%,rgba(245,158,11,0.05) 100%);border:1px solid rgba(245,158,11,0.25);border-radius:18px;padding:16px;margin-bottom:14px;}
 .f2-icon-wrap{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
 .f2-icon{width:44px;height:44px;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;}
@@ -3865,6 +3876,8 @@ function mhsTabloRender() {
 // ====================== FATURALANDIRMA SEKMESI ======================
 const FAT_YEKDEM = 602.51;     // TL/MWh
 const FAT_DAGITIM = 1.05;
+const FAT_DB_BIRIM = 1.182457;   // OG Tek Terim Sanayi - TL/kWh
+const FAT_KDV = 0.20;            // %20
 const FAT_AY_ISIM_MAP = {
   '2026-01': 'Ocak 2026',
   '2026-02': 'Şubat 2026',
@@ -4019,13 +4032,13 @@ function fatKartUret(ay, A, ab) {
     satirlar += '</div></td></tr>';
   });
 
-  // Toplam
+  // Toplam (Ort. E.Mal sütununda ay ortalamasi)
   satirlar += '<tr class="fat-toplam">';
   satirlar += '<td>TOPLAM</td>';
   satirlar += '<td>' + fatFmt(hamAy, 2) + '</td>';
   satirlar += '<td>' + fatFmt(mhsAy, 2) + '</td>';
   satirlar += '<td>' + fatFmt(snrAy, 2) + '</td>';
-  satirlar += '<td>—</td>';
+  satirlar += '<td>' + (ortMal !== null ? fatFmt(ortMal, 3) : '—') + '</td>';
   satirlar += '<td>' + (ayTutarHesaplandi ? fatFmt(ayTutar, 2) : '—') + '</td>';
   satirlar += '</tr>';
 
@@ -4049,6 +4062,64 @@ function fatKartUret(ay, A, ab) {
   h += '<div class="fat-ozet-card snr"><div class="fat-ozet-lbl">Mahsup Sonrası</div><div class="fat-ozet-val">' + fatFmt(snrAy) + '</div><div class="fat-ozet-unit">kWh · faturalanacak</div></div>';
   h += '</div>';
 
+  // Fatura Detayi - kalemli hesap
+  // Enerji Bedeli zaten ayTutar (M.Sonrasi × E.Mal)
+  // Dagitim Bedeli = HAM tuketim × DB birim
+  const enerjiBedeli = ayTutarHesaplandi ? ayTutar : null;
+  const dagitimBedeli = hamAy * FAT_DB_BIRIM;
+  const toplamBedel = (enerjiBedeli !== null) ? (enerjiBedeli + dagitimBedeli) : null;
+  const kdv = (toplamBedel !== null) ? (toplamBedel * FAT_KDV) : null;
+  const odenecek = (toplamBedel !== null) ? (toplamBedel + kdv) : null;
+
+  h += '<div class="fat-bolum-baslik">🧾 Fatura Detayı (' + (FAT_AY_ISIM_MAP[ay] || ay) + ')</div>';
+  h += '<div class="fat-fatura-card">';
+
+  // 1. Enerji Bedeli
+  h += '<div class="fat-kalem">';
+  h += '<div class="fat-kalem-baslik">1) Enerji Bedeli</div>';
+  h += '<div class="fat-kalem-formul">';
+  h += '<span>M.Sonrası Tüketim</span><span>' + fatFmt(snrAy, 2) + ' kWh</span>';
+  h += '</div>';
+  h += '<div class="fat-kalem-formul">';
+  h += '<span>× Ort. Enerji Maliyeti</span><span>' + (ortMal !== null ? fatFmt(ortMal, 3) : '—') + ' TL/kWh</span>';
+  h += '</div>';
+  h += '<div class="fat-kalem-toplam">';
+  h += '<span>Enerji Bedeli</span><span>' + (enerjiBedeli !== null ? fatFmt(enerjiBedeli, 2) : '—') + ' TL</span>';
+  h += '</div>';
+  h += '</div>';
+
+  // 2. Dagitim Bedeli
+  h += '<div class="fat-kalem">';
+  h += '<div class="fat-kalem-baslik">2) Dağıtım Bedeli <span style="font-weight:600;color:#94a3b8;font-size:10px">(OG Tek Terim Sanayi)</span></div>';
+  h += '<div class="fat-kalem-formul">';
+  h += '<span>Ham Tüketim</span><span>' + fatFmt(hamAy, 2) + ' kWh</span>';
+  h += '</div>';
+  h += '<div class="fat-kalem-formul">';
+  h += '<span>× Birim Dağıtım Bedeli</span><span>1,182457 TL/kWh</span>';
+  h += '</div>';
+  h += '<div class="fat-kalem-toplam">';
+  h += '<span>Dağıtım Bedeli</span><span>' + fatFmt(dagitimBedeli, 2) + ' TL</span>';
+  h += '</div>';
+  h += '</div>';
+
+  // Toplam Bedel + KDV
+  h += '<div class="fat-kalem">';
+  h += '<div class="fat-kalem-toplam">';
+  h += '<span>TOPLAM BEDEL (Enerji + Dağıtım)</span><span>' + (toplamBedel !== null ? fatFmt(toplamBedel, 2) : '—') + ' TL</span>';
+  h += '</div>';
+  h += '<div class="fat-kalem-toplam" style="color:#fbbf24;">';
+  h += '<span>KDV (%20)</span><span>' + (kdv !== null ? fatFmt(kdv, 2) : '—') + ' TL</span>';
+  h += '</div>';
+  h += '</div>';
+
+  // ODENECEK
+  h += '<div class="fat-odenecek">';
+  h += '<div class="fat-odenecek-lbl">💵 ÖDENECEK FATURA TUTARI</div>';
+  h += '<div class="fat-odenecek-val">' + (odenecek !== null ? fatFmt(odenecek, 2) : '—') + ' <span style="font-size:14px;color:#94a3b8;font-weight:700">TL</span></div>';
+  h += '</div>';
+
+  h += '</div>';
+
   h += '<div class="fat-bolum-baslik">⚡ Enerji Maliyeti</div>';
   h += '<div class="fat-mal-grid">';
   h += '<div class="fat-mal-card"><div class="fat-mal-lbl">Ortalama PTF</div>';
@@ -4057,14 +4128,6 @@ function fatKartUret(ay, A, ab) {
   h += '<div class="fat-mal-card"><div class="fat-mal-lbl">Ort. Enerji Maliyeti</div>';
   h += '<div class="fat-mal-val">' + (ortMal !== null ? fatFmt(ortMal, 3) : '—') + ' <span style="font-size:11px;color:#94a3b8">TL/kWh</span></div>';
   h += '<div class="fat-mal-sub">(PTF + 602,51) × 1,05 / 1000</div></div>';
-  h += '</div>';
-
-  // Fatura Tutari (vurgulu tek kart)
-  h += '<div class="fat-bolum-baslik">💰 Fatura Tutarı</div>';
-  h += '<div class="fat-tutar-card">';
-  h += '<div class="fat-tutar-lbl">Toplam Tutar (' + (FAT_AY_ISIM_MAP[ay] || ay) + ')</div>';
-  h += '<div class="fat-tutar-val">' + (ayTutarHesaplandi ? fatFmt(ayTutar, 2) : '—') + ' <span style="font-size:13px;color:#94a3b8;font-weight:700">TL</span></div>';
-  h += '<div class="fat-tutar-sub">M.Sonrası Tüketim (kWh) × Enerji Maliyeti (TL/kWh)</div>';
   h += '</div>';
 
   h += '<div class="fat-bolum-baslik">📋 Günlük Tüketim Tablosu</div>';
@@ -4083,6 +4146,7 @@ function fatSaatlikUret(G, ab, gPtfArr) {
 
   let sHamTpl = 0, sSnrTpl = 0, sTutarTpl = 0;
   let sTutarHesaplandi = false;
+  let sPtfTpl = 0, sPtfCnt = 0;  // gun PTF ortalamasi icin
   for (let s = 0; s < 24; s++) {
     const saatKey = String(s).padStart(2, '0');
     const S = (G.saatler || {})[saatKey];
@@ -4094,6 +4158,7 @@ function fatSaatlikUret(G, ab, gPtfArr) {
     // Tutar = M.Sonrasi (kWh) × E.Mal (TL/kWh) -> TL
     const sTutar = (sMal !== null) ? (sSnr * sMal) : null;
     if (sTutar !== null) { sTutarTpl += sTutar; sTutarHesaplandi = true; }
+    if (sPtf !== null) { sPtfTpl += sPtf; sPtfCnt++; }
     sHamTpl += sHam; sSnrTpl += sSnr;
 
     h += '<tr>';
@@ -4106,11 +4171,16 @@ function fatSaatlikUret(G, ab, gPtfArr) {
     h += '<td>' + (sTutar !== null ? fatFmt(sTutar, 2) : '—') + '</td>';
     h += '</tr>';
   }
+  // Gun ortalamalari (PTF olan saatler uzerinden)
+  const gunOrtPtf = sPtfCnt ? sPtfTpl / sPtfCnt : null;
+  const gunOrtMal = gunOrtPtf !== null ? fatEnerjiMal(gunOrtPtf) : null;
+
   h += '<tr class="gun-tpl"><td>GÜN</td>';
   h += '<td>' + fatFmt(sHamTpl, 2) + '</td>';
   h += '<td>' + fatFmt(sHamTpl - sSnrTpl, 2) + '</td>';
   h += '<td>' + fatFmt(sSnrTpl, 2) + '</td>';
-  h += '<td>—</td><td>—</td>';
+  h += '<td>' + (gunOrtPtf !== null ? fatFmt(gunOrtPtf) : '—') + '</td>';
+  h += '<td>' + (gunOrtMal !== null ? fatFmt(gunOrtMal, 3) : '—') + '</td>';
   h += '<td>' + (sTutarHesaplandi ? fatFmt(sTutarTpl, 2) : '—') + '</td></tr>';
   h += '</tbody></table>';
   return h;
