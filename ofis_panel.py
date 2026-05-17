@@ -4170,9 +4170,16 @@ function fatKartUret(ay, A, ab) {
 
   // Kart HTML (sade - sadece baslik + tablo)
   // FATURA HESAP KALEMLERİ (ay toplam)
+  // Mahsuplasma kWh: abonenin AY TOPLAM mahsup payi (mahsuplasma sekmesi ile uyumlu)
+  //   = A.tuketim[ab.key] - A.sonra[ab.key]
+  //   AKS3 icin ornek: 120.516 - 51.741 = 68.775 kWh
+  const ayHamGercek = (A.tuketim && A.tuketim[ab.key]) || 0;
+  const aySnrGercek = (A.sonra && A.sonra[ab.key]) || 0;
+  const ayMhsGercek = ayHamGercek - aySnrGercek;  // 68.775 (AKS3 icin)
+
   const enerjiBedeli = ayHesapVar ? ayTukBed : 0;        // Aktif Enerji Tuketimi (Tuketim Bedeli)
-  const mahsuplasma = ayMhsBed;                           // Mahsuplaşma (eksi)
-  const dagitimBedeli = ayHam * FAT_DB_BIRIM;             // Ham × 1,182457
+  const mahsuplasma = ayMhsGercek * mhsMal;               // AY TOPLAM mahsup × 2,909687
+  const dagitimBedeli = ayHamGercek * FAT_DB_BIRIM;       // Ham (ay toplam) × 1,182457
   const toplam = enerjiBedeli - mahsuplasma + dagitimBedeli;
   const kdv = toplam * FAT_KDV;                           // Toplam × %20
   const odenecek = toplam + kdv;
