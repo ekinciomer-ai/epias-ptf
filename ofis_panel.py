@@ -4184,7 +4184,6 @@ if (!window.fatDelegated) {
   });
   window.fatDelegated = true;
 }
-}
 // ====================== FATURALANDIRMA SEKMESI SONU ======================
 
 // ====================== ANTMINER SONU ======================
