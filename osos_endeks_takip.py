@@ -111,69 +111,34 @@ def tr_float(s):
 # GITHUB JSON OKU/YAZ
 # ═══════════════════════════════════════════════════════
 def github_oku():
-    """2026_osos_endeks.json'i GitHub'dan oku."""
-    if not GH_ENABLED:
-        log.warning("GH_TOKEN tanimli degil")
-        return None
-    url = f"https://api.github.com/repos/{GH_REPO}/contents/{GH_DOSYA}"
-    log.info("  GitHub okuma: %s", url)
-    req = urllib.request.Request(url, headers={
-        "Authorization": f"token {GH_TOKEN}",
-        "Accept": "application/vnd.github.v3+json"
-    })
+    """2026_osos_endeks verisini veritabanından oku (Eski GitHub fonksiyonu)."""
+    log.info("  Veritabani okuma: 2026_osos_endeks")
     try:
-        with urllib.request.urlopen(req, timeout=20) as r:
-            data = json.loads(r.read().decode())
-            content = base64.b64decode(data["content"]).decode("utf-8")
-            return json.loads(content), data.get("sha")
-    except urllib.error.HTTPError as e:
-        if e.code == 404:
-            log.info("2026_osos_endeks.json GitHub'da yok, yenisi olusturulacak")
+        import sys
+        sys.path.append(r"c:\Users\Asus\Google Drive\İndirilenler")
+        import database
+        data, _ = database.db_oku('2026_osos_endeks')
+        if not data:
             return {}, None
-        log.warning("GitHub oku HTTPError: %s %s", e.code, e.reason)
-        try:
-            body = e.read().decode()[:300]
-            log.warning("  Detay: %s", body)
-        except:
-            pass
-        return None
+        return data, "dummy_sha"
     except Exception as e:
-        log.warning("GitHub oku hatasi: %s", e)
+        log.warning("Veritabani oku hatasi: %s", e)
         return None
 
 
 def github_yaz(data, sha=None):
-    """2026_osos_endeks.json'i GitHub'a yaz."""
-    if not GH_ENABLED:
-        log.info("GH_TOKEN yok, push atlandi")
-        return False
-    url = f"https://api.github.com/repos/{GH_REPO}/contents/{GH_DOSYA}"
-    icerik_str = json.dumps(data, ensure_ascii=False, indent=2)
-    icerik_b64 = base64.b64encode(icerik_str.encode("utf-8")).decode("ascii")
-    
-    payload = {
-        "message": f"OSOS endeks guncellemesi {datetime.now().strftime('%Y-%m-%d %H:%M')}",
-        "content": icerik_b64
-    }
-    if sha:
-        payload["sha"] = sha
-    
-    req = urllib.request.Request(
-        url,
-        data=json.dumps(payload).encode("utf-8"),
-        method="PUT",
-        headers={
-            "Authorization": f"token {GH_TOKEN}",
-            "Accept": "application/vnd.github.v3+json",
-            "Content-Type": "application/json"
-        }
-    )
+    """2026_osos_endeks verisini veritabanına yaz (Eski GitHub fonksiyonu)."""
     try:
-        with urllib.request.urlopen(req, timeout=30) as r:
-            log.info("GitHub push BASARILI: %s", GH_DOSYA)
+        import sys
+        sys.path.append(r"c:\Users\Asus\Google Drive\İndirilenler")
+        import database
+        basarili = database.db_yaz('2026_osos_endeks', data)
+        if basarili:
+            log.info("Veritabani yazma BASARILI: 2026_osos_endeks")
             return True
+        return False
     except Exception as e:
-        log.error("GitHub yaz hatasi: %s", e)
+        log.error("Veritabani yaz hatasi: %s", e)
         return False
 
 
