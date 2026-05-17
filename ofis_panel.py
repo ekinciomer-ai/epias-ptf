@@ -3506,19 +3506,39 @@ async function mahsupYukleAsync() {
     // - Mayıs 2026+ → SAATLİK MANTIK
     const SAATLIK_BASLANGIC = '2026-05';
     
-    // Mahsup sonrası tüketim'i T1/T2/A3'e oransal dağıtır
-    function mahsupSonrasiDagit(tuketim, bedelliTuketim) {
-      // bedelliTuketim = TPL - mahsup. Bunu T1/T2/A3'e oransal dağıt
-      const tpl = tuketim.TPL;
-      if (tpl === 0 || bedelliTuketim === 0) {
-        return { T1: 0, T2: 0, A3: 0, TPL: bedelliTuketim };
-      }
-      return {
-        T1: tuketim.T1 / tpl * bedelliTuketim,
-        T2: tuketim.T2 / tpl * bedelliTuketim,
-        A3: tuketim.A3 / tpl * bedelliTuketim,
-        TPL: bedelliTuketim,
-      };
+    // BASAMAKLI MAHSUPLASMA:
+    // - Tuketimleri buyukten kucuge sirala
+    // - Sirayla uretimden dus
+    // - mahsup{T1,T2,A3,TPL} ve sonra{T1,T2,A3,TPL} ve bedelli dondurur
+    function basamakliMahsup(tuketim, uretimTpl) {
+      // Tuketim siralamasi - buyukten kucuge
+      const sira = [
+        { abone: 'T1', tuk: tuketim.T1 || 0 },
+        { abone: 'T2', tuk: tuketim.T2 || 0 },
+        { abone: 'A3', tuk: tuketim.A3 || 0 },
+      ];
+      sira.sort(function(a, b) { return b.tuk - a.tuk; });
+
+      const mahsup = { T1: 0, T2: 0, A3: 0, TPL: 0 };
+      const sonra  = { T1: 0, T2: 0, A3: 0, TPL: 0 };
+      let kalanU = uretimTpl || 0;
+
+      sira.forEach(function(item) {
+        if (kalanU >= item.tuk) {
+          mahsup[item.abone] = item.tuk;
+          sonra[item.abone] = 0;
+          kalanU -= item.tuk;
+        } else {
+          mahsup[item.abone] = kalanU;
+          sonra[item.abone] = item.tuk - kalanU;
+          kalanU = 0;
+        }
+      });
+
+      mahsup.TPL = mahsup.T1 + mahsup.T2 + mahsup.A3;
+      sonra.TPL  = sonra.T1  + sonra.T2  + sonra.A3;
+      const bedelli = kalanU;  // kalan uretim
+      return { mahsup: mahsup, sonra: sonra, bedelli: bedelli };
     }
     
     Object.keys(aylar).forEach(ay => {
@@ -3547,12 +3567,13 @@ async function mahsupYukleAsync() {
           });
           
           if (saatlikMod) {
-            // SAATLİK: her saat ayrı min/max
-            S.mahsup = Math.min(S.uretim.TPL, S.tuketim.TPL);
-            S.bedelli = Math.max(0, S.uretim.TPL - S.tuketim.TPL);
-            const sonraTuk = S.tuketim.TPL - S.mahsup;
-            S.sonra = mahsupSonrasiDagit(S.tuketim, sonraTuk);
-            
+            // SAATLİK basamakli: tuketimleri buyukten kucuge sirala, sirayla dus
+            const r = basamakliMahsup(S.tuketim, S.uretim.TPL);
+            S.mahsup_dagilim = r.mahsup;  // {T1,T2,A3,TPL}
+            S.sonra = r.sonra;            // {T1,T2,A3,TPL}
+            S.mahsup = r.mahsup.TPL;       // tek sayi (eski kullanim icin)
+            S.bedelli = r.bedelli;
+
             gM += S.mahsup;
             gB += S.bedelli;
           } else {
@@ -3560,6 +3581,7 @@ async function mahsupYukleAsync() {
             S.mahsup = 0;
             S.bedelli = 0;
             S.sonra = { T1: 0, T2: 0, A3: 0, TPL: 0 };
+            S.mahsup_dagilim = { T1: 0, T2: 0, A3: 0, TPL: 0 };
           }
         });
         
@@ -3570,31 +3592,55 @@ async function mahsupYukleAsync() {
         });
         
         if (saatlikMod) {
-          // Saatlik mod: gün = saatlerin toplamı
+          // Saatlik mod: gün = saatlerin toplamı (mahsup ve bedelli)
           G.mahsup = gM;
           G.bedelli = gB;
+          // Gun seviyesindeki sonra/mahsup_dagilim icin: saatlerin abone bazinda toplami
+          const gMahsupDag = { T1: 0, T2: 0, A3: 0, TPL: 0 };
+          const gSonraDag  = { T1: 0, T2: 0, A3: 0, TPL: 0 };
+          Object.values(G.saatler).forEach(function(S) {
+            ['T1', 'T2', 'A3', 'TPL'].forEach(function(k) {
+              gMahsupDag[k] += (S.mahsup_dagilim && S.mahsup_dagilim[k]) || 0;
+              gSonraDag[k]  += (S.sonra && S.sonra[k]) || 0;
+            });
+          });
+          G.mahsup_dagilim = gMahsupDag;
+          G.sonra = gSonraDag;
         } else {
-          // Aylık mod: gün için de aylık mantık (toplam üretim vs toplam tüketim)
-          G.mahsup = Math.min(G.uretim.TPL, G.tuketim.TPL);
-          G.bedelli = Math.max(0, G.uretim.TPL - G.tuketim.TPL);
+          // Aylık mod: gün için basamakli mantik (toplam uretim vs toplam tuketim)
+          const r = basamakliMahsup(G.tuketim, G.uretim.TPL);
+          G.mahsup_dagilim = r.mahsup;
+          G.sonra = r.sonra;
+          G.mahsup = r.mahsup.TPL;
+          G.bedelli = r.bedelli;
         }
-        const gSonraTuk = G.tuketim.TPL - G.mahsup;
-        G.sonra = mahsupSonrasiDagit(G.tuketim, gSonraTuk);
       });
       
       if (saatlikMod) {
         // Saatlik mod: ay = günlerin toplamı
         let m = 0, b = 0;
-        Object.values(A.gunler).forEach(G => { m += G.mahsup; b += G.bedelli; });
+        const aMahsupDag = { T1: 0, T2: 0, A3: 0, TPL: 0 };
+        const aSonraDag  = { T1: 0, T2: 0, A3: 0, TPL: 0 };
+        Object.values(A.gunler).forEach(function(G) {
+          m += G.mahsup;
+          b += G.bedelli;
+          ['T1', 'T2', 'A3', 'TPL'].forEach(function(k) {
+            aMahsupDag[k] += (G.mahsup_dagilim && G.mahsup_dagilim[k]) || 0;
+            aSonraDag[k]  += (G.sonra && G.sonra[k]) || 0;
+          });
+        });
         A.mahsup = m;
         A.bedelli = b;
+        A.mahsup_dagilim = aMahsupDag;
+        A.sonra = aSonraDag;
       } else {
-        // Aylık mod: ay sonu toplam üretim vs toplam tüketim
-        A.mahsup = Math.min(A.uretim.TPL, A.tuketim.TPL);
-        A.bedelli = Math.max(0, A.uretim.TPL - A.tuketim.TPL);
+        // Aylık mod: ay sonu basamakli mantik
+        const r = basamakliMahsup(A.tuketim, A.uretim.TPL);
+        A.mahsup_dagilim = r.mahsup;
+        A.sonra = r.sonra;
+        A.mahsup = r.mahsup.TPL;
+        A.bedelli = r.bedelli;
       }
-      const aSonraTuk = A.tuketim.TPL - A.mahsup;
-      A.sonra = mahsupSonrasiDagit(A.tuketim, aSonraTuk);
     });
     
     mhsData = aylar;
@@ -3974,430 +4020,170 @@ function faturaRender() {
 }
 
 function fatKartUret(ay, A, ab) {
-  // Ay seviyesi toplamlar
-  const hamAy = (A.tuketim && A.tuketim[ab.key]) || 0;
-  const snrAy = (A.sonra && A.sonra[ab.key]) || 0;
-  const mhsAy = hamAy - snrAy;
-
-  // Ay PTF istatistikleri
+  // SADE FATURALANDIRMA
+  // Sutunlar: Saat | Ham Tuketim | Mahsup | Enerji Maliyeti | Mahsup Maliyeti
+  //           | Tuketim Bedeli | Mahsup Bedeli | Toplam Bedel
+  // T1/T2: Mahsup Maliyeti = 0,000
+  // AKS3:  Mahsup Maliyeti = 2,909687 (gorsel 3 hane -> 2,910)
   const ayPtf = (fatAylikPtf || {})[ay] || {};
-  let ayPtfTpl = 0, ayPtfCnt = 0, ptfMin = Infinity, ptfMax = -Infinity;
-  Object.entries(ayPtf).forEach(function(entry) {
-    const saatler = entry[1];
-    if (!Array.isArray(saatler)) return;
-    saatler.forEach(function(p) {
-      if (p === null || p === undefined) return;
-      ayPtfTpl += p; ayPtfCnt++;
-      if (p < ptfMin) ptfMin = p;
-      if (p > ptfMax) ptfMax = p;
-    });
-  });
-  const ortPtf = ayPtfCnt ? ayPtfTpl / ayPtfCnt : null;
-  const ortMal = ortPtf !== null ? fatEnerjiMal(ortPtf) : null;
-
-  // Gunluk satirlar
   const gunler = Object.keys(A.gunler || {}).sort();
   const aylar = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+
+  const mhsMal = (ab.key === 'A3') ? FAT_SANAYI_AKTIF : 0;
+
+  // Ay toplamlar (icin gerekli)
+  let ayHam = 0, ayMhs = 0, ayTukBed = 0, ayMhsBed = 0, ayHesapVar = false;
+
+  // Her gun icin: gun satiri + (kapali) saatlik detay satiri
   let satirlar = '';
-  let ayTutar = 0;             // Enerji Bedeli (T1/T2: Snr × E.Mal | AKS3: Ham × E.Mal)
-  let ayTutarHesaplandi = false;
-  let ayMahsupIndirim = 0;     // Sadece AKS3 icin kullanilir (sistem geneli sayilmaz)
-  let ayMahsupKwh = 0;         // AKS3'un saatlik mahsup kWh toplami
 
   gunler.forEach(function(g) {
     const G = A.gunler[g];
-    const gHam = (G.tuketim && G.tuketim[ab.key]) || 0;
-    const gSnr = (G.sonra && G.sonra[ab.key]) || 0;
-    const gMhs = gHam - gSnr;
+    const gPtfArr = ayPtf[g.slice(-2)] || [];
 
-    // PTF anahtari: aylik_ptf.json'da gun key'i "01","02",... (sadece gun numarasi)
-    // Burada g = "2026-05-01" formatinda, son 2 karakteri al
-    const gunKey = g.slice(-2);
-    const gPtfArr = ayPtf[gunKey] || [];
-    let gPtfTpl = 0, gPtfCnt = 0;
-    gPtfArr.forEach(function(p) {
-      if (p !== null && p !== undefined) { gPtfTpl += p; gPtfCnt++; }
-    });
+    let gHam = 0, gMhs = 0, gTukBed = 0, gMhsBed = 0, gPtfTpl = 0, gPtfCnt = 0, gHesapVar = false;
+    let saatRows = '';
+
+    for (let s = 0; s < 24; s++) {
+      const sk = String(s).padStart(2, '0');
+      const S = (G.saatler || {})[sk] || {};
+      const tuk = S.tuketim || {};
+      const mhsDag = S.mahsup_dagilim || {};
+      const sHam = tuk[ab.key] || 0;
+      const sMhs = mhsDag[ab.key] || 0;
+      const sPtf = (gPtfArr && gPtfArr[s] !== undefined && gPtfArr[s] !== null) ? gPtfArr[s] : null;
+      const sMal = sPtf !== null ? fatEnerjiMal(sPtf) : null;
+
+      // Tuketim Bedeli = Ham × Enerji Maliyeti
+      const sTukBed = (sMal !== null) ? (sHam * sMal) : null;
+      // Mahsup Bedeli = Mahsup × Mahsup Maliyeti (AKS3 icin 2,909687, digerleri 0)
+      const sMhsBed = sMhs * mhsMal;
+      // Toplam Bedel = Tuketim Bedeli - Mahsup Bedeli
+      const sToplam = (sTukBed !== null) ? (sTukBed - sMhsBed) : null;
+
+      if (sPtf !== null) { gPtfTpl += sPtf; gPtfCnt++; }
+      gHam += sHam; gMhs += sMhs;
+      if (sTukBed !== null) { gTukBed += sTukBed; gHesapVar = true; }
+      gMhsBed += sMhsBed;
+
+      saatRows += '<tr>';
+      saatRows += '<td>' + sk + '</td>';
+      saatRows += '<td class="fat-col-ham">' + fatFmt(sHam, 2) + '</td>';
+      saatRows += '<td class="fat-col-mhs">' + fatFmt(sMhs, 2) + '</td>';
+      saatRows += '<td class="fat-col-mal">' + (sMal !== null ? fatFmt(sMal, 3) : '—') + '</td>';
+      saatRows += '<td class="fat-col-mhsmal">' + fatFmt(mhsMal, 3) + '</td>';
+      saatRows += '<td class="fat-col-tukbed">' + (sTukBed !== null ? fatFmt(sTukBed, 2) : '—') + '</td>';
+      saatRows += '<td class="fat-col-mhsbed">' + (mhsMal > 0 ? '−' + fatFmt(sMhsBed, 2) : '0,00') + '</td>';
+      saatRows += '<td class="fat-col-toplam">' + (sToplam !== null ? fatFmt(sToplam, 2) : '—') + '</td>';
+      saatRows += '</tr>';
+    }
+    // Gun toplam satiri (saatlik detay icinde)
     const gOrtPtf = gPtfCnt ? gPtfTpl / gPtfCnt : null;
     const gOrtMal = gOrtPtf !== null ? fatEnerjiMal(gOrtPtf) : null;
+    const gToplam = gHesapVar ? (gTukBed - gMhsBed) : null;
+    saatRows += '<tr class="gun-tpl">';
+    saatRows += '<td>GÜN</td>';
+    saatRows += '<td>' + fatFmt(gHam, 2) + '</td>';
+    saatRows += '<td>' + fatFmt(gMhs, 2) + '</td>';
+    saatRows += '<td>' + (gOrtMal !== null ? fatFmt(gOrtMal, 3) : '—') + '</td>';
+    saatRows += '<td>' + fatFmt(mhsMal, 3) + '</td>';
+    saatRows += '<td>' + (gHesapVar ? fatFmt(gTukBed, 2) : '—') + '</td>';
+    saatRows += '<td>' + (mhsMal > 0 ? '−' + fatFmt(gMhsBed, 2) : '0,00') + '</td>';
+    saatRows += '<td>' + (gToplam !== null ? fatFmt(gToplam, 2) : '—') + '</td>';
+    saatRows += '</tr>';
 
-    // Gunluk TUTAR: her saatin (faturalanan kWh × E.Mal) toplami
-    // AKS3 icin faturalanan = HAM tuketim, T1/T2 icin = MAHSUP SONRASI tuketim
-    // AKS3 icin ek olarak: saatlik mahsup × 2,909687 = mahsup indirimi (sonra eksilecek)
-    // PTF yoksa o saat icin Tutar = null (hesaba katilmaz)
-    let gTutar = 0;
-    let gHesaplandi = false;
-    for (let s = 0; s < 24; s++) {
-      const saatKey = String(s).padStart(2, '0');
-      const S = (G.saatler || {})[saatKey];
-      const sSnr = (S && S.sonra) ? (S.sonra[ab.key] || 0) : 0;
-      const sHam = (S && S.tuketim) ? (S.tuketim[ab.key] || 0) : 0;
-      const sMhsKwh = sHam - sSnr;  // o saatin mahsup miktari (her abone icin kendi payi)
-      const sFatura = (ab.key === 'A3') ? sHam : sSnr;
-      const sPtf = (gPtfArr && gPtfArr[s] !== undefined && gPtfArr[s] !== null) ? gPtfArr[s] : null;
-      if (sPtf !== null) {
-        const sMal = fatEnerjiMal(sPtf);
-        gTutar += sFatura * sMal;
-        gHesaplandi = true;
-      }
-      // AKS3 mahsup indirimi her halukarda hesaplanir (PTF sart degil, 2,909687 sabit)
-      if (ab.key === 'A3') {
-        ayMahsupIndirim += sMhsKwh * FAT_SANAYI_AKTIF;
-        ayMahsupKwh += sMhsKwh;
-      }
-    }
-    const gTutarFmt = gHesaplandi ? fatFmt(gTutar, 2) : '—';
-    // Karta ay toplami icin biriktir
-    ayTutar += gTutar;
-    if (gHesaplandi) ayTutarHesaplandi = true;
+    // Ay toplamina ekle
+    ayHam += gHam; ayMhs += gMhs;
+    if (gHesapVar) { ayTukBed += gTukBed; ayHesapVar = true; }
+    ayMhsBed += gMhsBed;
 
+    // Gun satiri (tiklayinca saatler acilir)
     const d = new Date(g);
     const tarihLbl = d.getDate() + ' ' + aylar[d.getMonth()];
 
-    satirlar += '<tr class="fat-gun-satir" onclick="fatGunAc(this)">';
+    satirlar += '<tr class="fat-gun-satir">';
     satirlar += '<td><span class="fat-expand-ico">▶</span>' + tarihLbl + '</td>';
     satirlar += '<td class="fat-col-ham">' + fatFmt(gHam, 2) + '</td>';
     satirlar += '<td class="fat-col-mhs">' + fatFmt(gMhs, 2) + '</td>';
-    satirlar += '<td class="fat-col-snr">' + fatFmt(gSnr, 2) + '</td>';
     satirlar += '<td class="fat-col-mal">' + (gOrtMal !== null ? fatFmt(gOrtMal, 3) : '—') + '</td>';
-    satirlar += '<td class="fat-col-tutar">' + gTutarFmt + '</td>';
+    satirlar += '<td class="fat-col-mhsmal">' + fatFmt(mhsMal, 3) + '</td>';
+    satirlar += '<td class="fat-col-tukbed">' + (gHesapVar ? fatFmt(gTukBed, 2) : '—') + '</td>';
+    satirlar += '<td class="fat-col-mhsbed">' + (mhsMal > 0 ? '−' + fatFmt(gMhsBed, 2) : '0,00') + '</td>';
+    satirlar += '<td class="fat-col-toplam">' + (gToplam !== null ? fatFmt(gToplam, 2) : '—') + '</td>';
     satirlar += '</tr>';
 
-    satirlar += '<tr class="fat-saatlik-row"><td colspan="6"><div class="fat-saatlik-icerik">';
-    satirlar += fatSaatlikUret(G, ab, gPtfArr);
+    // Saatlik detay satiri (kapali baslar)
+    satirlar += '<tr class="fat-saatlik-row"><td colspan="8"><div class="fat-saatlik-icerik">';
+    satirlar += '<table style="width:100%;border-collapse:collapse;font-size:10px;">';
+    satirlar += '<thead><tr style="color:#64748b;">';
+    satirlar += '<th style="text-align:left;padding:4px 6px;">Saat</th>';
+    satirlar += '<th style="text-align:right;padding:4px 6px;">Ham (kWh)</th>';
+    satirlar += '<th style="text-align:right;padding:4px 6px;">Mahsup (kWh)</th>';
+    satirlar += '<th style="text-align:right;padding:4px 6px;">E.Maliyeti (TL/kWh)</th>';
+    satirlar += '<th style="text-align:right;padding:4px 6px;">M.Maliyeti (TL/kWh)</th>';
+    satirlar += '<th style="text-align:right;padding:4px 6px;">Tük.Bedeli (TL)</th>';
+    satirlar += '<th style="text-align:right;padding:4px 6px;">Mhs.Bedeli (TL)</th>';
+    satirlar += '<th style="text-align:right;padding:4px 6px;">Toplam (TL)</th>';
+    satirlar += '</tr></thead><tbody>' + saatRows + '</tbody></table>';
     satirlar += '</div></td></tr>';
   });
 
-  // Toplam (Ort. E.Mal sütununda ay ortalamasi)
+  // Ay toplam satiri
+  // Ay PTF ortalamasi (tum saatler)
+  let ayPtfTpl = 0, ayPtfCnt = 0;
+  Object.values(ayPtf).forEach(function(saatler) {
+    if (!Array.isArray(saatler)) return;
+    saatler.forEach(function(p) {
+      if (p !== null && p !== undefined) { ayPtfTpl += p; ayPtfCnt++; }
+    });
+  });
+  const ayOrtPtf = ayPtfCnt ? ayPtfTpl / ayPtfCnt : null;
+  const ayOrtMal = ayOrtPtf !== null ? fatEnerjiMal(ayOrtPtf) : null;
+  const ayToplam = ayHesapVar ? (ayTukBed - ayMhsBed) : null;
+
   satirlar += '<tr class="fat-toplam">';
   satirlar += '<td>TOPLAM</td>';
-  satirlar += '<td>' + fatFmt(hamAy, 2) + '</td>';
-  satirlar += '<td>' + fatFmt(mhsAy, 2) + '</td>';
-  satirlar += '<td>' + fatFmt(snrAy, 2) + '</td>';
-  satirlar += '<td>' + (ortMal !== null ? fatFmt(ortMal, 3) : '—') + '</td>';
-  satirlar += '<td>' + (ayTutarHesaplandi ? fatFmt(ayTutar, 2) : '—') + '</td>';
+  satirlar += '<td>' + fatFmt(ayHam, 2) + '</td>';
+  satirlar += '<td>' + fatFmt(ayMhs, 2) + '</td>';
+  satirlar += '<td>' + (ayOrtMal !== null ? fatFmt(ayOrtMal, 3) : '—') + '</td>';
+  satirlar += '<td>' + fatFmt(mhsMal, 3) + '</td>';
+  satirlar += '<td>' + (ayHesapVar ? fatFmt(ayTukBed, 2) : '—') + '</td>';
+  satirlar += '<td>' + (mhsMal > 0 ? '−' + fatFmt(ayMhsBed, 2) : '0,00') + '</td>';
+  satirlar += '<td>' + (ayToplam !== null ? fatFmt(ayToplam, 2) : '—') + '</td>';
   satirlar += '</tr>';
 
-  // Kart HTML
+  // Kart HTML (sade - sadece baslik + tablo)
   let h = '<div class="fat-abone-kart ' + ab.kls + '">';
   h += '<div class="fat-abone-head"><div class="fat-abone-icon">' + ab.icon + '</div>';
   h += '<div><div class="fat-abone-name">' + ab.ad + '</div><div class="fat-abone-sub">' + ab.sub + '</div></div></div>';
-
-  h += '<div class="fat-bolum-baslik">📌 Abone Bilgileri</div>';
-  h += '<div class="fat-bilgi-grid">';
-  h += '<div class="fat-bilgi-row"><div class="fat-bilgi-lbl">Firma Adı</div><div class="fat-bilgi-val">—</div></div>';
-  h += '<div class="fat-bilgi-row"><div class="fat-bilgi-lbl">Tesisat No</div><div class="fat-bilgi-val">—</div></div>';
-  h += '<div class="fat-bilgi-row"><div class="fat-bilgi-lbl">Sözleşme Gücü</div><div class="fat-bilgi-val">' + ab.guc + '</div></div>';
-  h += '<div class="fat-bilgi-row"><div class="fat-bilgi-lbl">Çarpan</div><div class="fat-bilgi-val">—</div></div>';
-  h += '</div>';
-
-  h += '<div class="fat-bolum-baslik">📊 Tüketim Özeti</div>';
-  h += '<div class="fat-ozet-grid">';
-  h += '<div class="fat-ozet-card ham"><div class="fat-ozet-lbl">Ham Tüketim</div><div class="fat-ozet-val">' + fatFmt(hamAy) + '</div><div class="fat-ozet-unit">kWh · mahsup öncesi</div></div>';
-  h += '<div class="fat-ozet-card mhs"><div class="fat-ozet-lbl">Mahsuplaşma</div><div class="fat-ozet-val">' + fatFmt(mhsAy) + '</div><div class="fat-ozet-unit">kWh · mahsup edilen</div></div>';
-  h += '<div class="fat-ozet-card snr"><div class="fat-ozet-lbl">Mahsup Sonrası</div><div class="fat-ozet-val">' + fatFmt(snrAy) + '</div><div class="fat-ozet-unit">kWh · faturalanacak</div></div>';
-  h += '</div>';
-
-  // Fatura Detayi - kalemli hesap
-  // T1/T2: Enerji Bedeli = M.Sonrasi × E.Mal
-  // AKS3:  Enerji Bedeli = HAM × E.Mal, ayrica Mahsup Indirimi (-) = (ay_ham - ay_sonra) × 2,909687
-  //        Bu mahsuplasma sekmesindeki AKS3 mahsup payi ile ayni sayidir
-  // Dagitim Bedeli = HAM tuketim × DB birim (her abone icin)
-  const enerjiBedeli = ayTutarHesaplandi ? ayTutar : null;
-  // Ay toplam mahsup payi (saatlik degil) - mahsuplasma sekmesi ile uyumlu
-  const ayMahsupKwhDogru = hamAy - snrAy;
-  const mahsupIndirim = (ab.key === 'A3') ? (ayMahsupKwhDogru * FAT_SANAYI_AKTIF) : 0;
-  const dagitimBedeli = hamAy * FAT_DB_BIRIM;
-  // T1/T2: Toplam = Enerji + Dagitim
-  // AKS3: Toplam = Enerji - Mahsup Indirimi + Dagitim
-  const toplamBedel = (enerjiBedeli !== null) ? (enerjiBedeli - mahsupIndirim + dagitimBedeli) : null;
-  const kdv = (toplamBedel !== null) ? (toplamBedel * FAT_KDV) : null;
-  const odenecek = (toplamBedel !== null) ? (toplamBedel + kdv) : null;
-
-  // Enerji bedeli icin kullanilan miktar
-  const faturalananKwh = (ab.key === 'A3') ? hamAy : snrAy;
-  const faturalananLbl = (ab.key === 'A3') ? 'Ham Tüketim' : 'M.Sonrası Tüketim';
-
-  h += '<div class="fat-bolum-baslik">🧾 Fatura Detayı (' + (FAT_AY_ISIM_MAP[ay] || ay) + ')</div>';
-  h += '<div class="fat-fatura-card">';
-
-  // 1. Enerji Bedeli
-  h += '<div class="fat-kalem">';
-  h += '<div class="fat-kalem-baslik">1) Enerji Bedeli</div>';
-  h += '<div class="fat-kalem-formul">';
-  h += '<span>' + faturalananLbl + '</span><span>' + fatFmt(faturalananKwh, 2) + ' kWh</span>';
-  h += '</div>';
-  h += '<div class="fat-kalem-formul">';
-  h += '<span>× Ort. Enerji Maliyeti</span><span>' + (ortMal !== null ? fatFmt(ortMal, 3) : '—') + ' TL/kWh</span>';
-  h += '</div>';
-  h += '<div class="fat-kalem-toplam">';
-  h += '<span>Enerji Bedeli</span><span>' + (enerjiBedeli !== null ? fatFmt(enerjiBedeli, 2) : '—') + ' TL</span>';
-  h += '</div>';
-  h += '</div>';
-
-  // 1b. AKS3 ozel: Mahsup Indirimi (sadece AKS3 icin)
-  if (ab.key === 'A3') {
-    h += '<div class="fat-kalem" style="background:rgba(168,85,247,0.06);border-color:rgba(168,85,247,0.2);">';
-    h += '<div class="fat-kalem-baslik">1b) Mahsup İndirimi <span style="font-weight:600;color:#c4b5fd;font-size:10px">(Sanayi Tek Terim Aktif)</span></div>';
-    h += '<div class="fat-kalem-formul">';
-    h += '<span>Mahsup (Ay Toplam)</span><span>' + fatFmt(ayMahsupKwhDogru, 2) + ' kWh</span>';
-    h += '</div>';
-    h += '<div class="fat-kalem-formul">';
-    h += '<span>× Birim Aktif Enerji Bedeli</span><span>2,909687 TL/kWh</span>';
-    h += '</div>';
-    h += '<div class="fat-kalem-toplam" style="color:#fca5a5;">';
-    h += '<span>Mahsup İndirimi (−)</span><span>−' + fatFmt(mahsupIndirim, 2) + ' TL</span>';
-    h += '</div>';
-    h += '</div>';
-  }
-
-  // 2. Dagitim Bedeli
-  h += '<div class="fat-kalem">';
-  h += '<div class="fat-kalem-baslik">' + (ab.key === 'A3' ? '2' : '2') + ') Dağıtım Bedeli <span style="font-weight:600;color:#94a3b8;font-size:10px">(OG Tek Terim Sanayi)</span></div>';
-  h += '<div class="fat-kalem-formul">';
-  h += '<span>Ham Tüketim</span><span>' + fatFmt(hamAy, 2) + ' kWh</span>';
-  h += '</div>';
-  h += '<div class="fat-kalem-formul">';
-  h += '<span>× Birim Dağıtım Bedeli</span><span>1,182457 TL/kWh</span>';
-  h += '</div>';
-  h += '<div class="fat-kalem-toplam">';
-  h += '<span>Dağıtım Bedeli</span><span>' + fatFmt(dagitimBedeli, 2) + ' TL</span>';
-  h += '</div>';
-  h += '</div>';
-
-  // Toplam Bedel + KDV
-  h += '<div class="fat-kalem">';
-  h += '<div class="fat-kalem-toplam">';
-  if (ab.key === 'A3') {
-    h += '<span>TOPLAM BEDEL (Enerji − Mahsup + Dağıtım)</span>';
-  } else {
-    h += '<span>TOPLAM BEDEL (Enerji + Dağıtım)</span>';
-  }
-  h += '<span>' + (toplamBedel !== null ? fatFmt(toplamBedel, 2) : '—') + ' TL</span>';
-  h += '</div>';
-  h += '<div class="fat-kalem-toplam" style="color:#fbbf24;">';
-  h += '<span>KDV (%20)</span><span>' + (kdv !== null ? fatFmt(kdv, 2) : '—') + ' TL</span>';
-  h += '</div>';
-  h += '</div>';
-
-  // ODENECEK
-  h += '<div class="fat-odenecek">';
-  h += '<div class="fat-odenecek-lbl">💵 ÖDENECEK FATURA TUTARI</div>';
-  h += '<div class="fat-odenecek-val">' + (odenecek !== null ? fatFmt(odenecek, 2) : '—') + ' <span style="font-size:14px;color:#94a3b8;font-weight:700">TL</span></div>';
-  h += '</div>';
-
-  h += '</div>';
-
-  h += '<div class="fat-bolum-baslik">⚡ Enerji Maliyeti</div>';
-  h += '<div class="fat-mal-grid">';
-  h += '<div class="fat-mal-card"><div class="fat-mal-lbl">Ortalama PTF</div>';
-  h += '<div class="fat-mal-val">' + (ortPtf !== null ? fatFmt(ortPtf) : '—') + ' <span style="font-size:11px;color:#94a3b8">TL/MWh</span></div>';
-  h += '<div class="fat-mal-sub">Min ' + (ptfMin !== Infinity ? fatFmt(ptfMin) : '—') + ' · Max ' + (ptfMax !== -Infinity ? fatFmt(ptfMax) : '—') + '</div></div>';
-  h += '<div class="fat-mal-card"><div class="fat-mal-lbl">Ort. Enerji Maliyeti</div>';
-  h += '<div class="fat-mal-val">' + (ortMal !== null ? fatFmt(ortMal, 3) : '—') + ' <span style="font-size:11px;color:#94a3b8">TL/kWh</span></div>';
-  h += '<div class="fat-mal-sub">(PTF + 602,51) × 1,05 / 1000</div></div>';
-  h += '</div>';
-
-  h += '<div class="fat-bolum-baslik">📋 Günlük Tüketim Tablosu</div>';
   h += '<div class="fat-tablo-wrap"><table class="fat-table">';
-  h += '<thead><tr><th>Tarih</th><th>Ham (kWh)</th><th>Mahsup (kWh)</th><th>M.Sonrası (kWh)</th><th>Ort. E.Mal. (TL/kWh)</th><th>Tutar (TL)</th></tr></thead>';
-  h += '<tbody>' + satirlar + '</tbody></table></div>';
-
+  h += '<thead><tr>';
+  h += '<th>Tarih</th>';
+  h += '<th>Ham Tük. (kWh)</th>';
+  h += '<th>Mahsup (kWh)</th>';
+  h += '<th>E.Maliyeti (TL/kWh)</th>';
+  h += '<th>M.Maliyeti (TL/kWh)</th>';
+  h += '<th>Tük.Bedeli (TL)</th>';
+  h += '<th>Mhs.Bedeli (TL)</th>';
+  h += '<th>Toplam Bedel (TL)</th>';
+  h += '</tr></thead><tbody>' + satirlar + '</tbody></table></div>';
   h += '</div>';
   return h;
 }
 
-function fatSaatlikUret(G, ab, gPtfArr) {
-  let h = '<table class="fat-saat-tbl"><thead><tr>';
-  h += '<th>Saat</th>';
-  h += '<th>Ham (kWh)</th>';
-  h += '<th>Mahsup (kWh)</th>';
-  h += '<th>M.Sonrası (kWh)</th>';
-  h += '<th>E.Mal. (TL/kWh)</th>';
-  h += '<th>Mahsup İnd. (TL)</th>';
-  h += '<th>Tutar (TL)</th>';
-  h += '</tr></thead><tbody>';
-
-  let sHamTpl = 0, sSnrTpl = 0, sTutarTpl = 0;
-  let sTutarHesaplandi = false;
-  let sPtfTpl = 0, sPtfCnt = 0;
-  let sMhsIndTpl = 0;
-  let sMhsKwhTpl = 0;
-
-  for (let s = 0; s < 24; s++) {
-    const saatKey = String(s).padStart(2, '0');
-    const S = (G.saatler || {})[saatKey];
-    const sHam = (S && S.tuketim) ? (S.tuketim[ab.key] || 0) : 0;
-    const sSnr = (S && S.sonra) ? (S.sonra[ab.key] || 0) : 0;
-    const sMhs = sHam - sSnr;
-    const sPtf = (gPtfArr && gPtfArr[s] !== undefined && gPtfArr[s] !== null) ? gPtfArr[s] : null;
-    const sMal = sPtf !== null ? fatEnerjiMal(sPtf) : null;
-
-    const sEnerjiBed = (sMal !== null) ? ((ab.key === 'A3' ? sHam : sSnr) * sMal) : null;
-    const sMhsInd = (ab.key === 'A3') ? (sMhs * FAT_SANAYI_AKTIF) : 0;
-    const sTutar = (sEnerjiBed !== null) ? (sEnerjiBed - sMhsInd) : null;
-
-    if (sTutar !== null) { sTutarTpl += sTutar; sTutarHesaplandi = true; }
-    if (sPtf !== null) { sPtfTpl += sPtf; sPtfCnt++; }
-    sHamTpl += sHam; sSnrTpl += sSnr;
-    sMhsIndTpl += sMhsInd;
-    sMhsKwhTpl += sMhs;
-
-    // Saat satiri - tiklanabilir
-    h += '<tr class="fat-saat-tr"';
-    h += ' data-ham="' + sHam + '"';
-    h += ' data-snr="' + sSnr + '"';
-    h += ' data-mhs="' + sMhs + '"';
-    h += ' data-ptf="' + (sPtf !== null ? sPtf : '') + '"';
-    h += ' data-mal="' + (sMal !== null ? sMal : '') + '"';
-    h += ' data-eb="' + (sEnerjiBed !== null ? sEnerjiBed : '') + '"';
-    h += ' data-mhsind="' + sMhsInd + '"';
-    h += ' data-tutar="' + (sTutar !== null ? sTutar : '') + '"';
-    h += ' data-abone="' + ab.key + '"';
-    h += '>';
-    h += '<td><span class="fat-saat-ico">▶</span>' + saatKey + '</td>';
-    h += '<td class="fat-col-ham">' + fatFmt(sHam, 2) + '</td>';
-    h += '<td class="fat-col-mhs">' + fatFmt(sMhs, 2) + '</td>';
-    h += '<td class="fat-col-snr">' + fatFmt(sSnr, 2) + '</td>';
-    h += '<td class="fat-col-mal">' + (sMal !== null ? fatFmt(sMal, 3) : '—') + '</td>';
-    h += '<td class="fat-col-mhsind">' + (ab.key === 'A3' ? ('−' + fatFmt(sMhsInd, 2)) : '0,00') + '</td>';
-    h += '<td class="fat-col-tutar">' + (sTutar !== null ? fatFmt(sTutar, 2) : '—') + '</td>';
-    h += '</tr>';
-
-    // Saat detay satiri (kapali baslar)
-    h += '<tr class="fat-saat-detay-row"><td colspan="7"></td></tr>';
-  }
-
-  const gunOrtPtf = sPtfCnt ? sPtfTpl / sPtfCnt : null;
-  const gunOrtMal = gunOrtPtf !== null ? fatEnerjiMal(gunOrtPtf) : null;
-
-  h += '<tr class="gun-tpl"><td>GÜN</td>';
-  h += '<td>' + fatFmt(sHamTpl, 2) + '</td>';
-  h += '<td>' + fatFmt(sMhsKwhTpl, 2) + '</td>';
-  h += '<td>' + fatFmt(sSnrTpl, 2) + '</td>';
-  h += '<td>' + (gunOrtMal !== null ? fatFmt(gunOrtMal, 3) : '—') + '</td>';
-  h += '<td>' + (ab.key === 'A3' ? ('−' + fatFmt(sMhsIndTpl, 2)) : '0,00') + '</td>';
-  h += '<td>' + (sTutarHesaplandi ? fatFmt(sTutarTpl, 2) : '—') + '</td></tr>';
-  h += '</tbody></table>';
-  return h;
-}
-
-// Event delegation - saat satirina tiklayinca alt detay satirini ac
+// Event delegation - gun satirina tiklayinca saatlik detay
 if (!window.fatDelegated) {
   document.addEventListener('click', function(e) {
-    const tr = e.target.closest('tr.fat-saat-tr');
+    const tr = e.target.closest('tr.fat-gun-satir');
     if (!tr) return;
-    fatSaatAc(tr);
+    tr.classList.toggle('acik');
+    const sonraki = tr.nextElementSibling;
+    if (sonraki && sonraki.classList.contains('fat-saatlik-row')) {
+      sonraki.classList.toggle('acik');
+    }
   });
   window.fatDelegated = true;
 }
-
-function fatSaatAc(tr) {
-  const detayTr = tr.nextElementSibling;
-  if (!detayTr || !detayTr.classList.contains('fat-saat-detay-row')) return;
-
-  // Bu tablodaki diger acik detaylari kapat
-  const tbody = tr.parentElement;
-  if (tbody) {
-    tbody.querySelectorAll('tr.fat-saat-detay-row.acik').forEach(function(r) {
-      if (r !== detayTr) {
-        r.classList.remove('acik');
-        const td = r.querySelector('td');
-        if (td) td.innerHTML = '';
-        if (r.previousElementSibling) r.previousElementSibling.classList.remove('acik');
-      }
-    });
-  }
-
-  if (detayTr.classList.contains('acik')) {
-    // Zaten acik - kapat
-    detayTr.classList.remove('acik');
-    const td = detayTr.querySelector('td');
-    if (td) td.innerHTML = '';
-    tr.classList.remove('acik');
-    return;
-  }
-
-  // Veriyi data-* attribute'larindan oku
-  const sHam = parseFloat(tr.getAttribute('data-ham')) || 0;
-  const sSnr = parseFloat(tr.getAttribute('data-snr')) || 0;
-  const sMhs = parseFloat(tr.getAttribute('data-mhs')) || 0;
-  const sPtfStr = tr.getAttribute('data-ptf');
-  const sPtf = sPtfStr ? parseFloat(sPtfStr) : null;
-  const sMalStr = tr.getAttribute('data-mal');
-  const sMal = sMalStr ? parseFloat(sMalStr) : null;
-  const sEbStr = tr.getAttribute('data-eb');
-  const sEb = sEbStr ? parseFloat(sEbStr) : null;
-  const sMhsInd = parseFloat(tr.getAttribute('data-mhsind')) || 0;
-  const sTutarStr = tr.getAttribute('data-tutar');
-  const sTutar = sTutarStr ? parseFloat(sTutarStr) : null;
-  const abone = tr.getAttribute('data-abone');
-
-  // 3 yatay kutu olustur
-  let icerik = '<div class="fat-saat-detay-yatay">';
-
-  // E.Mal kutusu
-  icerik += '<div class="fat-detay-kutu mal">';
-  icerik += '<div class="fat-detay-baslik">⚡ ENERJİ MALİYETİ</div>';
-  if (sPtf !== null && !isNaN(sPtf)) {
-    icerik += '<div class="fat-detay-row"><span>PTF</span><span>' + fatFmt(sPtf, 2) + '</span></div>';
-    icerik += '<div class="fat-detay-row"><span>+ YEKDEM</span><span>602,51</span></div>';
-    icerik += '<div class="fat-detay-row"><span>Toplam</span><span>' + fatFmt(sPtf + 602.51, 2) + '</span></div>';
-    icerik += '<div class="fat-detay-row"><span>× 1,05</span><span>' + fatFmt((sPtf + 602.51) * 1.05, 2) + '</span></div>';
-    icerik += '<div class="fat-detay-row"><span>÷ 1000</span><span></span></div>';
-    icerik += '<div class="fat-detay-sonuc"><span>E.Mal</span><span>' + fatFmt(sMal, 3) + ' TL/kWh</span></div>';
-  } else {
-    icerik += '<div class="fat-detay-row"><span>PTF verisi yok</span><span></span></div>';
-  }
-  icerik += '</div>';
-
-  // Mahsup Ind kutusu
-  icerik += '<div class="fat-detay-kutu mhsind">';
-  icerik += '<div class="fat-detay-baslik">🟣 MAHSUP İNDİRİMİ</div>';
-  if (abone === 'A3') {
-    icerik += '<div class="fat-detay-row"><span>Ham</span><span>' + fatFmt(sHam, 2) + '</span></div>';
-    icerik += '<div class="fat-detay-row"><span>M.Sonrası</span><span>' + fatFmt(sSnr, 2) + '</span></div>';
-    icerik += '<div class="fat-detay-row"><span>Mahsup</span><span>' + fatFmt(sMhs, 2) + ' kWh</span></div>';
-    icerik += '<div class="fat-detay-row"><span>× 2,909687</span><span></span></div>';
-    icerik += '<div class="fat-detay-sonuc"><span>İndirim</span><span>−' + fatFmt(sMhsInd, 2) + ' TL</span></div>';
-  } else {
-    icerik += '<div class="fat-detay-row"><span>Bu abone için</span><span></span></div>';
-    icerik += '<div class="fat-detay-row"><span>mahsup indirimi yok</span><span></span></div>';
-  }
-  icerik += '</div>';
-
-  // Tutar kutusu
-  icerik += '<div class="fat-detay-kutu tutar">';
-  icerik += '<div class="fat-detay-baslik">💰 NET TUTAR</div>';
-  if (sMal !== null && !isNaN(sMal)) {
-    const faturalanan = (abone === 'A3') ? sHam : sSnr;
-    const faturalananLbl = (abone === 'A3') ? 'Ham' : 'M.Sonrası';
-    icerik += '<div class="fat-detay-row"><span>' + faturalananLbl + '</span><span>' + fatFmt(faturalanan, 2) + '</span></div>';
-    icerik += '<div class="fat-detay-row"><span>× E.Mal</span><span>' + fatFmt(sMal, 3) + '</span></div>';
-    icerik += '<div class="fat-detay-row"><span>A. Enerji B.</span><span>+' + fatFmt(sEb, 2) + '</span></div>';
-    if (abone === 'A3') {
-      icerik += '<div class="fat-detay-row"><span>B. Mhs.İnd.</span><span>−' + fatFmt(sMhsInd, 2) + '</span></div>';
-    }
-    icerik += '<div class="fat-detay-sonuc"><span>Net (A−B)</span><span>' + fatFmt(sTutar, 2) + ' TL</span></div>';
-  } else {
-    icerik += '<div class="fat-detay-row"><span>PTF yok, hesaplanamadi</span><span></span></div>';
-  }
-  icerik += '</div>';
-
-  icerik += '</div>';
-
-  const td = detayTr.querySelector('td');
-  if (td) td.innerHTML = icerik;
-  detayTr.classList.add('acik');
-  tr.classList.add('acik');
-}
-
-function fatGunAc(satir) {
-  satir.classList.toggle('acik');
-  const sonraki = satir.nextElementSibling;
-  if (sonraki && sonraki.classList.contains('fat-saatlik-row')) {
-    sonraki.classList.toggle('acik');
-  }
 }
 // ====================== FATURALANDIRMA SEKMESI SONU ======================
 
