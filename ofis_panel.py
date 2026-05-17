@@ -340,6 +340,21 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#4ade80;}
 .fat-fo-od-lbl{font-size:11px;font-weight:800;color:#4ade80;text-transform:uppercase;letter-spacing:1.1px;}
 .fat-fo-od-val{font-size:24px;font-weight:900;color:#bbf7d0;letter-spacing:-0.5px;font-family:'Inter',monospace;}
 .fat-detay-lbl{font-size:11px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin:18px 0 8px;}
+/* Tuketim Detayi karti */
+.fat-tuketim-detay{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px 16px;margin:14px 0;}
+.fat-td-title{font-size:11px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.fat-td-grid{display:flex;flex-direction:column;gap:6px;}
+.fat-td-row{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,0.02);font-size:12px;font-weight:700;}
+.fat-td-row.sonra{background:linear-gradient(135deg,rgba(251,146,60,0.18),rgba(251,146,60,0.05));border:1px solid rgba(251,146,60,0.3);margin-top:4px;padding:9px 12px;}
+.fat-td-lbl{color:#cbd5e1;}
+.fat-td-val{font-weight:900;font-family:'Inter',monospace;font-size:13px;}
+.fat-td-val.ham{color:#fca5a5;}
+.fat-td-val.mhs{color:#c4b5fd;}
+.fat-td-val.snr{color:#fdba74;font-size:15px;}
+/* Fatura alt satiri - kalem detay (Ham × Birim Fiyat) */
+.fat-fo-altrow{display:flex;justify-content:space-between;align-items:center;padding:3px 0 9px;border-bottom:1px solid rgba(255,255,255,0.04);margin-bottom:2px;}
+.fat-fo-altlbl{font-size:10px;color:#94a3b8;font-weight:700;font-family:'Inter',monospace;letter-spacing:0.2px;}
+.fat-fo-altaciklama{font-size:9px;color:#64748b;font-weight:600;font-style:italic;}
 .f2-summary{background:linear-gradient(135deg,rgba(245,158,11,0.15) 0%,rgba(245,158,11,0.05) 100%);border:1px solid rgba(245,158,11,0.25);border-radius:18px;padding:16px;margin-bottom:14px;}
 .f2-icon-wrap{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
 .f2-icon{width:44px;height:44px;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;}
@@ -4065,6 +4080,15 @@ function fatEnerjiMal(ptf_tl_mwh) {
 }
 
 async function faturaYukle() {
+  // Guncel ay'i ay seciciye yansit (her sekme aciliminda)
+  const selEl = document.getElementById('fat-ay-secim');
+  if (selEl) {
+    const bugun = new Date();
+    const gunAy = bugun.getFullYear() + '-' + String(bugun.getMonth() + 1).padStart(2, '0');
+    // Eger select icinde guncel ay varsa onu sec
+    const opts = Array.from(selEl.options).map(function(o) { return o.value; });
+    if (opts.indexOf(gunAy) !== -1) selEl.value = gunAy;
+  }
   // 1. Mahsuplaşma verisini hazirla (mhsData global'i mahsupYukleAsync sonunda dolar)
   try {
     if (!mhsData || Object.keys(mhsData).length === 0) {
@@ -4265,26 +4289,50 @@ function fatKartUret(ay, A, ab) {
   h += '<div class="fat-abone-head"><div class="fat-abone-icon">' + ab.icon + '</div>';
   h += '<div><div class="fat-abone-name">' + ab.ad + '</div><div class="fat-abone-sub">' + ab.sub + '</div></div></div>';
 
-  // ===== FATURA OZET KARTI (basligin hemen altinda) =====
-  h += '<div class="fat-fatura-ozet">';
-  h += '<div class="fat-fo-title">🧾 ' + (FAT_AY_ISIM_MAP[ay] || ay) + ' Fatura Özeti</div>';
+  // ===== TUKETIM DETAYI (kWh) =====
+  h += '<div class="fat-tuketim-detay">';
+  h += '<div class="fat-td-title">📊 Tüketim Detayı (kWh)</div>';
+  h += '<div class="fat-td-grid">';
+  h += '<div class="fat-td-row"><div class="fat-td-lbl">Ham Tüketim</div><div class="fat-td-val ham">' + fatFmt(ayHamGercek, 2) + '</div></div>';
+  h += '<div class="fat-td-row"><div class="fat-td-lbl">Mahsup Edilen Enerji</div><div class="fat-td-val mhs">' + fatFmt(ayMhsGercek, 2) + '</div></div>';
+  h += '<div class="fat-td-row sonra"><div class="fat-td-lbl"><b>Mahsup Sonrası Tüketim</b></div><div class="fat-td-val snr"><b>' + fatFmt(aySnrGercek, 2) + '</b></div></div>';
+  h += '</div>';
+  h += '</div>';
 
-  // 1) Aktif Enerji Tuketimi
-  h += '<div class="fat-fo-row">';
-  h += '<div class="fat-fo-lbl"><span class="fat-fo-no">1)</span> Aktif Enerji Tüketimi <span class="fat-fo-aciklama">(Ham × Saatlik E.Maliyeti)</span></div>';
+  // ===== FATURA OZET KARTI =====
+  h += '<div class="fat-fatura-ozet">';
+  h += '<div class="fat-fo-title">🧾 ' + (FAT_AY_ISIM_MAP[ay] || ay) + ' Fatura Detayı (TL)</div>';
+
+  // 1) Aktif Enerji Tuketimi (etkin birim fiyat = tutar/ham)
+  const etkinBirim = (ayHamGercek > 0 && enerjiBedeli !== null) ? (enerjiBedeli / ayHamGercek) : null;
+  h += '<div class="fat-fo-row" style="border-bottom:none;padding-bottom:2px;">';
+  h += '<div class="fat-fo-lbl"><span class="fat-fo-no">1)</span> Aktif Enerji Tüketimi</div>';
   h += '<div class="fat-fo-val">' + fatFmt(enerjiBedeli, 2) + ' <span class="fat-fo-tl">TL</span></div>';
+  h += '</div>';
+  // Alt satir: Ham × Birim
+  h += '<div class="fat-fo-altrow">';
+  h += '<span class="fat-fo-altlbl">' + fatFmt(ayHamGercek, 2) + ' kWh × ' + (etkinBirim !== null ? fatFmt(etkinBirim, 3) : '—') + ' TL/kWh</span>';
+  h += '<span class="fat-fo-altaciklama">Ortalama Saatlik Birim Fiyat</span>';
   h += '</div>';
 
   // 2) Mahsuplasma
-  h += '<div class="fat-fo-row">';
-  h += '<div class="fat-fo-lbl"><span class="fat-fo-no">2)</span> Mahsuplaşma (−) <span class="fat-fo-aciklama">(Mahsup × 2,909687)</span></div>';
+  h += '<div class="fat-fo-row" style="border-bottom:none;padding-bottom:2px;">';
+  h += '<div class="fat-fo-lbl"><span class="fat-fo-no">2)</span> Mahsuplaşma (−)</div>';
   h += '<div class="fat-fo-val negatif">−' + fatFmt(mahsuplasma, 2) + ' <span class="fat-fo-tl">TL</span></div>';
+  h += '</div>';
+  h += '<div class="fat-fo-altrow">';
+  h += '<span class="fat-fo-altlbl">' + fatFmt(ayMhsGercek, 2) + ' kWh × 2,910 TL/kWh</span>';
+  h += '<span class="fat-fo-altaciklama">Sanayi Tek Terim Aktif Enerji Bedeli</span>';
   h += '</div>';
 
   // 3) Dagitim Bedeli
-  h += '<div class="fat-fo-row">';
-  h += '<div class="fat-fo-lbl"><span class="fat-fo-no">3)</span> Dağıtım Bedeli <span class="fat-fo-aciklama">(Ham × 1,182457)</span></div>';
+  h += '<div class="fat-fo-row" style="border-bottom:none;padding-bottom:2px;">';
+  h += '<div class="fat-fo-lbl"><span class="fat-fo-no">3)</span> Dağıtım Bedeli</div>';
   h += '<div class="fat-fo-val">' + fatFmt(dagitimBedeli, 2) + ' <span class="fat-fo-tl">TL</span></div>';
+  h += '</div>';
+  h += '<div class="fat-fo-altrow">';
+  h += '<span class="fat-fo-altlbl">' + fatFmt(ayHamGercek, 2) + ' kWh × 1,182 TL/kWh</span>';
+  h += '<span class="fat-fo-altaciklama">OG Tek Terim Sanayi Dağıtım Bedeli</span>';
   h += '</div>';
 
   // Toplam (vurgulu)
