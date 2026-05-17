@@ -521,8 +521,13 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#4ade80;}
 
 <div class="tab-content" id="t-epias">
 <div class="section-header">
-<div class="section-title">📅 Mayıs 2026 PTF Tablosu</div>
-<div style="font-size:10px;color:#64748b">⏸ Kapalı saatler mor</div>
+<div class="section-title">📅 <span id="epias-baslik">PTF Tablosu</span></div>
+<div style="display:flex;align-items:center;gap:10px;">
+  <select id="epias-ay-secim" onchange="epiasAyDegisti()" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:white; padding:7px 11px; border-radius:9px; font-size:12px; font-weight:700; font-family:inherit; cursor:pointer;">
+    <option value="">Yükleniyor...</option>
+  </select>
+  <div style="font-size:10px;color:#64748b">⏸ Kapalı saatler mor</div>
+</div>
 </div>
 <div class="aylik-wrap">
 <table class="aylik-table" id="aylik-table"><thead id="aylik-thead"></thead><tbody id="aylik-tbody"></tbody></table>
@@ -1298,6 +1303,54 @@ function sekme(ad, btn) {
   if (ad === 'maliyetler') { mltDropdownDoldur().then(() => mltYukle()); utYukle(); }
   if (ad === 'mahsuplasma') mahsupYukle();
   if (ad === 'faturalandirma') faturaYukle();
+  if (ad === 'epias') epiasYukle();
+}
+
+// EPIAS sekmesi - aylik PTF dropdown ile
+let epiasPtfData = null;  // tum aylarin PTF verisi
+
+async function epiasYukle() {
+  // 1. Dropdown'u doldur (eger doluysa atla)
+  const sel = document.getElementById('epias-ay-secim');
+  if (!epiasPtfData) {
+    try {
+      const r = await fetch('/api/aylik_ptf?_=' + Date.now());
+      if (r.ok) epiasPtfData = await r.json();
+      else epiasPtfData = {};
+    } catch (e) {
+      console.error('EPIAS PTF cekilemedi:', e);
+      epiasPtfData = {};
+    }
+    // Dropdown'u doldur - en yeni ay ustte
+    const aylar = Object.keys(epiasPtfData).sort().reverse();
+    if (aylar.length === 0) {
+      sel.innerHTML = '<option value="">Veri yok</option>';
+      return;
+    }
+    const ayIsim = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+    sel.innerHTML = aylar.map(function(ay) {
+      const yil = ay.substring(0, 4);
+      const a = parseInt(ay.substring(5, 7), 10) - 1;
+      return '<option value="' + ay + '">' + ayIsim[a] + ' ' + yil + '</option>';
+    }).join('');
+    // Otomatik guncel ay sec
+    const bugun = new Date();
+    const gunAy = bugun.getFullYear() + '-' + String(bugun.getMonth() + 1).padStart(2, '0');
+    if (aylar.indexOf(gunAy) !== -1) sel.value = gunAy;
+    else sel.value = aylar[0];
+  }
+  epiasAyDegisti();
+}
+
+function epiasAyDegisti() {
+  const sel = document.getElementById('epias-ay-secim');
+  if (!sel || !epiasPtfData) return;
+  const ay = sel.value;
+  const ayIsim = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  const a = parseInt(ay.substring(5, 7), 10) - 1;
+  const yil = ay.substring(0, 4);
+  document.getElementById('epias-baslik').textContent = (ayIsim[a] || ay) + ' ' + yil + ' PTF Tablosu';
+  aylikRender(epiasPtfData[ay] || {});
 }
 
 function renkSinif(v) {
