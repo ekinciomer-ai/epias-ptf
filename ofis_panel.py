@@ -3424,6 +3424,16 @@ const MHS_TY2_MINING_AYLIK = {
   '2026-04': 53609.85
 };
 
+// Manuel AKS3 mahsuplasma verileri (2026 Ocak-Nisan, aylik mod)
+// Bu aylarda mahsuplasma sirasi: AKS3 once -> T2 -> T1 -> Bedelli (basamakli)
+// Mahsup_A3 manuel verilen deger, Tuketim_A3 ise mevcut osos verisinden gelir
+const MHS_MANUEL_AKS3 = {
+  '2026-01': 29373.75,
+  '2026-02': 63949.58,
+  '2026-03': 89689.95,
+  '2026-04': 191206.98
+};
+
 const MHS_AY_ISIM = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
 
 let mhsData = null;       // hesaplanmış data
@@ -3553,7 +3563,43 @@ async function mahsupYukleAsync() {
 
       mahsup.TPL = mahsup.T1 + mahsup.T2 + mahsup.A3;
       sonra.TPL  = sonra.T1  + sonra.T2  + sonra.A3;
-      const bedelli = kalanU;  // kalan uretim
+      const bedelli = kalanU;
+      return { mahsup: mahsup, sonra: sonra, bedelli: bedelli };
+    }
+
+    // MANUEL OVERRIDE: AKS3 once (manuel deger) -> T2 -> T1 -> Bedelli
+    // Mahsup_A3 disardan veriliyor, geri kalan tuketim basamakli inecek
+    function manuelAks3Mahsup(tuketim, uretimTpl, manuelMahsupA3) {
+      const mahsup = { T1: 0, T2: 0, A3: 0, TPL: 0 };
+      const sonra  = { T1: 0, T2: 0, A3: 0, TPL: 0 };
+      let kalanU = uretimTpl || 0;
+
+      // 1. AKS3 manuel mahsubu
+      mahsup.A3 = Math.min(manuelMahsupA3, tuketim.A3 || 0);
+      sonra.A3 = (tuketim.A3 || 0) - mahsup.A3;
+      kalanU -= mahsup.A3;
+
+      // 2. T2 (kalan uretim varsa)
+      if (kalanU > 0 && (tuketim.T2 || 0) > 0) {
+        mahsup.T2 = Math.min(kalanU, tuketim.T2);
+        sonra.T2 = tuketim.T2 - mahsup.T2;
+        kalanU -= mahsup.T2;
+      } else {
+        sonra.T2 = tuketim.T2 || 0;
+      }
+
+      // 3. T1 (kalan uretim varsa)
+      if (kalanU > 0 && (tuketim.T1 || 0) > 0) {
+        mahsup.T1 = Math.min(kalanU, tuketim.T1);
+        sonra.T1 = tuketim.T1 - mahsup.T1;
+        kalanU -= mahsup.T1;
+      } else {
+        sonra.T1 = tuketim.T1 || 0;
+      }
+
+      mahsup.TPL = mahsup.T1 + mahsup.T2 + mahsup.A3;
+      sonra.TPL  = sonra.T1  + sonra.T2  + sonra.A3;
+      const bedelli = Math.max(0, kalanU);
       return { mahsup: mahsup, sonra: sonra, bedelli: bedelli };
     }
     
@@ -3623,12 +3669,11 @@ async function mahsupYukleAsync() {
           G.mahsup_dagilim = gMahsupDag;
           G.sonra = gSonraDag;
         } else {
-          // Aylık mod: gün için basamakli mantik (toplam uretim vs toplam tuketim)
-          const r = basamakliMahsup(G.tuketim, G.uretim.TPL);
-          G.mahsup_dagilim = r.mahsup;
-          G.sonra = r.sonra;
-          G.mahsup = r.mahsup.TPL;
-          G.bedelli = r.bedelli;
+          // Aylık mod: gün seviyesinde mahsup hesabi yok (sadece ay sonu yapilir)
+          G.mahsup_dagilim = { T1: 0, T2: 0, A3: 0, TPL: 0 };
+          G.sonra = { T1: 0, T2: 0, A3: 0, TPL: 0 };
+          G.mahsup = 0;
+          G.bedelli = 0;
         }
       });
       
@@ -3651,11 +3696,20 @@ async function mahsupYukleAsync() {
         A.sonra = aSonraDag;
       } else {
         // Aylık mod: ay sonu basamakli mantik
-        const r = basamakliMahsup(A.tuketim, A.uretim.TPL);
-        A.mahsup_dagilim = r.mahsup;
-        A.sonra = r.sonra;
-        A.mahsup = r.mahsup.TPL;
-        A.bedelli = r.bedelli;
+        // Manuel AKS3 override var mi kontrol et
+        if (MHS_MANUEL_AKS3[ay] !== undefined) {
+          const r = manuelAks3Mahsup(A.tuketim, A.uretim.TPL, MHS_MANUEL_AKS3[ay]);
+          A.mahsup_dagilim = r.mahsup;
+          A.sonra = r.sonra;
+          A.mahsup = r.mahsup.TPL;
+          A.bedelli = r.bedelli;
+        } else {
+          const r = basamakliMahsup(A.tuketim, A.uretim.TPL);
+          A.mahsup_dagilim = r.mahsup;
+          A.sonra = r.sonra;
+          A.mahsup = r.mahsup.TPL;
+          A.bedelli = r.bedelli;
+        }
       }
     });
     
