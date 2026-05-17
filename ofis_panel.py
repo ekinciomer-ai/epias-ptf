@@ -3799,8 +3799,19 @@ function mhsTabloRender() {
     }
     s += td(tuketim.TPL, tColor, tBgT, '600', mhsAboneDetay ? false : 'strong');
     
-    // Mahsup
-    s += '<td style="padding:8px 10px; text-align:right; color:' + mColor + '; font-weight:600; font-size:' + fs + ';' + bdLStrong + 'background:' + (bg || 'transparent') + ';">' + (mahsup ? Math.round(mahsup).toLocaleString('tr-TR') : '<span style="opacity:0.4">—</span>') + '</td>';
+    // Mahsup (abone detayi acik mi?)
+    const mDag = opts.mahsupDag || { T1: 0, T2: 0, A3: 0, TPL: (mahsup || 0) };
+    if (mhsAboneDetay) {
+      // Mor tonları
+      const mBgL = bg || '#faf5ff';
+      const mBgT = bg || '#f3e8ff';
+      s += td(mDag.T1, mColor, mBgL, w, 'strong');
+      s += td(mDag.T2, mColor, mBgL, w);
+      s += td(mDag.A3, mColor, mBgL, w);
+      s += td(mDag.TPL, mColor, mBgT, '600');
+    } else {
+      s += '<td style="padding:8px 10px; text-align:right; color:' + mColor + '; font-weight:600; font-size:' + fs + ';' + bdLStrong + 'background:' + (bg || 'transparent') + ';">' + (mahsup ? Math.round(mahsup).toLocaleString('tr-TR') : '<span style="opacity:0.4">—</span>') + '</td>';
+    }
     
     // MAHSUP SONRASI TÜKETİM
     if (mhsAboneDetay) {
@@ -3826,7 +3837,7 @@ function mhsTabloRender() {
       th += '<th rowspan="2" style="padding:10px 12px; text-align:left; font-weight:600; color:#475569; vertical-align:middle; font-size:12px; position:sticky; left:24px; background:#f8fafc; z-index:3; box-shadow:2px 0 3px -1px rgba(0,0,0,0.08);">Ay / Tarih / Saat</th>';
       th += '<th colspan="4" style="padding:10px; text-align:center; font-weight:600; color:#185fa5; background:#dbeafe; border-left:2px solid #cbd5e1; font-size:12px; letter-spacing:0.5px;">ÜRETİM <span style="font-weight:400; opacity:0.7;">(kWh)</span></th>';
       th += '<th colspan="4" style="padding:10px; text-align:center; font-weight:600; color:#dc2626; background:#fee2e2; border-left:2px solid #cbd5e1; font-size:12px; letter-spacing:0.5px;">TÜKETİM <span style="font-weight:400; opacity:0.7;">(kWh)</span></th>';
-      th += '<th rowspan="2" style="padding:10px; text-align:right; font-weight:600; color:#7c3aed; vertical-align:middle; border-left:2px solid #cbd5e1; font-size:12px;">Mahsup<br><span style="font-size:10px; font-weight:400; opacity:0.7;">(kWh)</span></th>';
+      th += '<th colspan="4" style="padding:10px; text-align:center; font-weight:600; color:#7c3aed; background:#e9d5ff; border-left:2px solid #cbd5e1; font-size:12px; letter-spacing:0.5px;">MAHSUP <span style="font-weight:400; opacity:0.7;">(kWh)</span></th>';
       th += '<th colspan="4" style="padding:10px; text-align:center; font-weight:600; color:#ea580c; background:#fed7aa; border-left:2px solid #cbd5e1; font-size:12px; letter-spacing:0.5px;">MAHSUP SONRASI <span style="font-weight:400; opacity:0.7;">(kWh)</span></th>';
       th += '<th rowspan="2" style="padding:10px; text-align:right; font-weight:600; color:#16a34a; vertical-align:middle; border-left:2px solid #cbd5e1; font-size:12px;">Bedelli<br><span style="font-size:10px; font-weight:400; opacity:0.7;">(kWh)</span></th>';
       th += '</tr>';
@@ -3839,6 +3850,10 @@ function mhsTabloRender() {
       th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#991b1b; background:#fef2f2; font-size:11px;">T2</th>';
       th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#991b1b; background:#fef2f2; font-size:11px;">A3</th>';
       th += '<th style="padding:7px 10px; text-align:right; font-weight:700; color:#dc2626; background:#fecaca; font-size:11px;">TPL</th>';
+      th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#6b21a8; background:#f3e8ff; border-left:2px solid #cbd5e1; font-size:11px;">T1</th>';
+      th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#6b21a8; background:#f3e8ff; font-size:11px;">T2</th>';
+      th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#6b21a8; background:#f3e8ff; font-size:11px;">A3</th>';
+      th += '<th style="padding:7px 10px; text-align:right; font-weight:700; color:#7c3aed; background:#ddd6fe; font-size:11px;">TPL</th>';
       th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#9a3412; background:#fff7ed; border-left:2px solid #cbd5e1; font-size:11px;">T1</th>';
       th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#9a3412; background:#fff7ed; font-size:11px;">T2</th>';
       th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#9a3412; background:#fff7ed; font-size:11px;">A3</th>';
@@ -3868,6 +3883,7 @@ function mhsTabloRender() {
   let topT = { T1:0, T2:0, A3:0, TPL:0 };
   let topM = 0, topB = 0;
   let topS = { T1:0, T2:0, A3:0, TPL:0 };
+  let topMDag = { T1:0, T2:0, A3:0, TPL:0 };
   
   aylar.forEach(ay => {
     const d = mhsData[ay];
@@ -3879,6 +3895,7 @@ function mhsTabloRender() {
       topU[k] += d.uretim[k];
       topT[k] += d.tuketim[k];
       topS[k] += d.sonra[k];
+      topMDag[k] += (d.mahsup_dagilim && d.mahsup_dagilim[k]) || 0;
     });
     topM += d.mahsup;
     topB += d.bedelli;
@@ -3886,6 +3903,7 @@ function mhsTabloRender() {
     // AY satırı - seçilince yumuşak slate-blue
     tbl += renderSatir({
       uretim: d.uretim, tuketim: d.tuketim, mahsup: d.mahsup, 
+      mahsupDag: d.mahsup_dagilim,
       sonra: d.sonra, bedelli: d.bedelli,
       indent: 0, 
       bg: ayAcik ? '#475569' : '#f8fafc',
@@ -3907,6 +3925,7 @@ function mhsTabloRender() {
         
         tbl += renderSatir({
           uretim: g.uretim, tuketim: g.tuketim, mahsup: g.mahsup,
+          mahsupDag: g.mahsup_dagilim,
           sonra: g.sonra, bedelli: g.bedelli,
           indent: 24, 
           bg: gunAcik ? '#64748b' : '',
@@ -3924,11 +3943,13 @@ function mhsTabloRender() {
           saatler.forEach(s => {
             const sv = g.saatler[s];
             const sMahsup = saatlikMod ? sv.mahsup : 0;
+            const sMahsupDag = saatlikMod ? (sv.mahsup_dagilim || { T1:0, T2:0, A3:0, TPL:0 }) : { T1:0, T2:0, A3:0, TPL:0 };
             const sBedelli = saatlikMod ? sv.bedelli : 0;
             const sSonra = saatlikMod ? sv.sonra : { T1:0, T2:0, A3:0, TPL:0 };
             
             tbl += renderSatir({
               uretim: sv.uretim, tuketim: sv.tuketim, mahsup: sMahsup,
+              mahsupDag: sMahsupDag,
               sonra: sSonra, bedelli: sBedelli,
               indent: 48, 
               bg: '#f0f9ff',
@@ -3946,6 +3967,7 @@ function mhsTabloRender() {
   // TOPLAM satırı - büyük vurgu
   tbl += renderSatir({
     uretim: topU, tuketim: topT, mahsup: topM,
+    mahsupDag: topMDag,
     sonra: topS, bedelli: topB,
     indent: 0, bg: '#fff7ed', textColor: '#9a3412', 
     weight: '700', fontSize: '13px',
