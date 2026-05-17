@@ -4188,7 +4188,14 @@ if (!window.fatDelegated) {
 
 // ====================== ANTMINER SONU ======================
 
-if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
+// Service worker DEVRE DISI - cache sorunlarini onlemek icin
+// if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
+// Mevcut SW kaydini kaldir
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function(regs) {
+    regs.forEach(function(r) { r.unregister(); });
+  });
+}
 </script>
 </body></html>"""
 
