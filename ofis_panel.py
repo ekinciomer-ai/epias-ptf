@@ -277,9 +277,9 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 tr.acik .fat-expand-ico{transform:rotate(90deg);color:#4ade80;}
 .fat-saatlik-row{display:none;}
 .fat-saatlik-row.acik{display:table-row;}
-.fat-saatlik-row td{padding:0;background:#030611;}
-.fat-saatlik-icerik{padding:10px 12px;background:linear-gradient(180deg,rgba(34,197,94,0.04),transparent);border-top:1px dashed rgba(34,197,94,0.2);border-bottom:1px dashed rgba(34,197,94,0.2);}
-.fat-saatlik-icerik table{width:100%;border-collapse:collapse;font-size:10px;}
+.fat-saatlik-row td{padding:0;background:#030611;overflow:visible;}
+.fat-saatlik-icerik{padding:10px 12px;background:linear-gradient(180deg,rgba(34,197,94,0.04),transparent);border-top:1px dashed rgba(34,197,94,0.2);border-bottom:1px dashed rgba(34,197,94,0.2);overflow:visible;}
+.fat-saatlik-icerik table{width:100%;border-collapse:collapse;font-size:10px;overflow:visible;}
 .fat-saatlik-icerik th{font-size:8px;color:#64748b;padding:6px 5px;text-align:right;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid rgba(255,255,255,0.05);}
 .fat-saatlik-icerik th:first-child{text-align:left;}
 .fat-saatlik-icerik td{padding:5px;text-align:right;border-bottom:1px solid rgba(255,255,255,0.02);font-weight:700;color:#cbd5e1;background:transparent;}
@@ -355,6 +355,27 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#4ade80;}
 .fat-fo-altrow{display:flex;justify-content:space-between;align-items:center;padding:3px 0 9px;border-bottom:1px solid rgba(255,255,255,0.04);margin-bottom:2px;}
 .fat-fo-altlbl{font-size:10px;color:#94a3b8;font-weight:700;font-family:'Inter',monospace;letter-spacing:0.2px;}
 .fat-fo-altaciklama{font-size:9px;color:#64748b;font-weight:600;font-style:italic;}
+/* Hover Popup - tiklanabilir hesap detayi */
+.fat-hover-cell{position:relative;cursor:help;}
+.fat-hover-cell:hover{background:rgba(34,197,94,0.12)!important;}
+.fat-popup{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);min-width:200px;background:#0f172a;border:1px solid rgba(34,197,94,0.35);border-radius:10px;padding:10px 12px;box-shadow:0 8px 24px rgba(0,0,0,0.5);z-index:9999;text-align:left;white-space:nowrap;pointer-events:none;}
+.fat-popup.mor{border-color:rgba(167,139,250,0.45);}
+.fat-popup.sari{border-color:rgba(251,191,36,0.45);}
+.fat-popup::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:rgba(34,197,94,0.35);}
+.fat-popup.mor::after{border-top-color:rgba(167,139,250,0.45);}
+.fat-popup.sari::after{border-top-color:rgba(251,191,36,0.45);}
+.fat-hover-cell:hover .fat-popup{display:block;}
+.fat-popup-title{font-size:10px;font-weight:800;color:#4ade80;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid rgba(34,197,94,0.2);}
+.fat-popup-title.mor{color:#c4b5fd;border-bottom-color:rgba(167,139,250,0.2);}
+.fat-popup-title.sari{color:#fcd34d;border-bottom-color:rgba(251,191,36,0.2);}
+.fat-popup-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:2px 0;gap:14px;}
+.fat-popup-row span:first-child{color:#94a3b8;font-weight:600;}
+.fat-popup-row span:last-child{color:#e2e8f0;font-weight:800;font-family:'Inter',monospace;}
+.fat-popup-row.sum{border-top:1px dashed rgba(255,255,255,0.1);padding-top:4px;margin-top:2px;}
+.fat-popup-sonuc{display:flex;justify-content:space-between;align-items:center;padding:5px 0 2px;margin-top:5px;border-top:1px solid rgba(34,197,94,0.3);font-size:12px;font-weight:900;gap:14px;color:#4ade80;}
+.fat-popup-sonuc.mor{color:#c4b5fd;border-top-color:rgba(167,139,250,0.3);}
+.fat-popup-sonuc.sari{color:#fcd34d;border-top-color:rgba(251,191,36,0.3);}
+.fat-popup-sonuc span:last-child{font-family:'Inter',monospace;}
 .f2-summary{background:linear-gradient(135deg,rgba(245,158,11,0.15) 0%,rgba(245,158,11,0.05) 100%);border:1px solid rgba(245,158,11,0.25);border-radius:18px;padding:16px;margin-bottom:14px;}
 .f2-icon-wrap{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
 .f2-icon{width:44px;height:44px;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;}
@@ -4186,26 +4207,133 @@ function fatKartUret(ay, A, ab) {
       saatRows += '<td>' + sk + '</td>';
       saatRows += '<td class="fat-col-ham">' + fatFmt(sHam, 2) + '</td>';
       saatRows += '<td class="fat-col-mhs">' + fatFmt(sMhs, 2) + '</td>';
-      saatRows += '<td class="fat-col-mal">' + (sMal !== null ? fatFmt(sMal, 3) : '—') + '</td>';
-      saatRows += '<td class="fat-col-mhsmal">' + fatFmt(mhsMal, 3) + '</td>';
-      saatRows += '<td class="fat-col-tukbed">' + (sTukBed !== null ? fatFmt(sTukBed, 2) : '—') + '</td>';
-      saatRows += '<td class="fat-col-mhsbed">' + '−' + fatFmt(sMhsBed, 2) + '</td>';
-      saatRows += '<td class="fat-col-toplam">' + (sToplam !== null ? fatFmt(sToplam, 2) : '—') + '</td>';
+      // E.Maliyeti - hover'da popup
+      if (sMal !== null && sPtf !== null) {
+        const sToplam_ptf_yek = sPtf + 602.51;
+        const sCarpim = sToplam_ptf_yek * 1.05;
+        saatRows += '<td class="fat-col-mal fat-hover-cell">' + fatFmt(sMal, 3);
+        saatRows += '<div class="fat-popup">';
+        saatRows += '<div class="fat-popup-title">⚡ Enerji Maliyeti</div>';
+        saatRows += '<div class="fat-popup-row"><span>PTF (saat ' + sk + ')</span><span>' + fatFmt(sPtf, 2) + '</span></div>';
+        saatRows += '<div class="fat-popup-row"><span>+ YEKDEM</span><span>602,51</span></div>';
+        saatRows += '<div class="fat-popup-row sum"><span>Toplam</span><span>' + fatFmt(sToplam_ptf_yek, 2) + '</span></div>';
+        saatRows += '<div class="fat-popup-row"><span>× 1,05 (dağıtım)</span><span>' + fatFmt(sCarpim, 2) + '</span></div>';
+        saatRows += '<div class="fat-popup-row"><span>÷ 1000 (MWh→kWh)</span><span></span></div>';
+        saatRows += '<div class="fat-popup-sonuc"><span>E.Maliyeti</span><span>' + fatFmt(sMal, 3) + ' TL/kWh</span></div>';
+        saatRows += '</div>';
+        saatRows += '</td>';
+      } else {
+        saatRows += '<td class="fat-col-mal">—</td>';
+      }
+      // M.Maliyeti - hover popup
+      saatRows += '<td class="fat-col-mhsmal fat-hover-cell">' + fatFmt(mhsMal, 3);
+      saatRows += '<div class="fat-popup mor">';
+      saatRows += '<div class="fat-popup-title mor">🟣 Mahsup Maliyeti</div>';
+      saatRows += '<div class="fat-popup-row"><span>Birim Fiyat (sabit)</span><span>2,909687</span></div>';
+      saatRows += '<div class="fat-popup-sonuc mor"><span>Kaynak</span><span style="font-size:10px;">Sanayi Tek Terim<br>Aktif Enerji Bedeli</span></div>';
+      saatRows += '</div>';
+      saatRows += '</td>';
+      // Tük.Bedeli - hover popup
+      if (sTukBed !== null) {
+        saatRows += '<td class="fat-col-tukbed fat-hover-cell">' + fatFmt(sTukBed, 2);
+        saatRows += '<div class="fat-popup">';
+        saatRows += '<div class="fat-popup-title">💰 Tüketim Bedeli</div>';
+        saatRows += '<div class="fat-popup-row"><span>Ham Tüketim</span><span>' + fatFmt(sHam, 2) + ' kWh</span></div>';
+        saatRows += '<div class="fat-popup-row"><span>× E.Maliyeti</span><span>' + fatFmt(sMal, 3) + ' TL/kWh</span></div>';
+        saatRows += '<div class="fat-popup-sonuc"><span>Tük.Bedeli</span><span>' + fatFmt(sTukBed, 2) + ' TL</span></div>';
+        saatRows += '</div>';
+        saatRows += '</td>';
+      } else {
+        saatRows += '<td class="fat-col-tukbed">—</td>';
+      }
+      // Mhs.Bedeli - hover popup
+      saatRows += '<td class="fat-col-mhsbed fat-hover-cell">' + '−' + fatFmt(sMhsBed, 2);
+      saatRows += '<div class="fat-popup mor">';
+      saatRows += '<div class="fat-popup-title mor">🟣 Mahsup Bedeli</div>';
+      saatRows += '<div class="fat-popup-row"><span>Mahsup</span><span>' + fatFmt(sMhs, 2) + ' kWh</span></div>';
+      saatRows += '<div class="fat-popup-row"><span>× M.Maliyeti</span><span>' + fatFmt(mhsMal, 3) + ' TL/kWh</span></div>';
+      saatRows += '<div class="fat-popup-sonuc mor"><span>Mhs.Bedeli</span><span>−' + fatFmt(sMhsBed, 2) + ' TL</span></div>';
+      saatRows += '</div>';
+      saatRows += '</td>';
+      // Toplam - hover popup
+      if (sToplam !== null) {
+        saatRows += '<td class="fat-col-toplam fat-hover-cell">' + fatFmt(sToplam, 2);
+        saatRows += '<div class="fat-popup sari">';
+        saatRows += '<div class="fat-popup-title sari">💵 Toplam Bedel</div>';
+        saatRows += '<div class="fat-popup-row"><span>Tük.Bedeli</span><span>+' + fatFmt(sTukBed, 2) + '</span></div>';
+        saatRows += '<div class="fat-popup-row"><span>Mhs.Bedeli</span><span>−' + fatFmt(sMhsBed, 2) + '</span></div>';
+        saatRows += '<div class="fat-popup-sonuc sari"><span>Toplam</span><span>' + fatFmt(sToplam, 2) + ' TL</span></div>';
+        saatRows += '</div>';
+        saatRows += '</td>';
+      } else {
+        saatRows += '<td class="fat-col-toplam">—</td>';
+      }
       saatRows += '</tr>';
     }
     // Gun toplam satiri (saatlik detay icinde)
-    const gOrtPtf = gPtfCnt ? gPtfTpl / gPtfCnt : null;
-    const gOrtMal = gOrtPtf !== null ? fatEnerjiMal(gOrtPtf) : null;
+    // E.Mal = gun etkin ortalama (Σ Tük.Bed / Σ Ham) - saatlik toplamla tutarli
+    const gOrtMal = (gHesapVar && gHam > 0) ? (gTukBed / gHam) : null;
     const gToplam = gHesapVar ? (gTukBed - gMhsBed) : null;
     saatRows += '<tr class="gun-tpl">';
     saatRows += '<td>GÜN</td>';
     saatRows += '<td>' + fatFmt(gHam, 2) + '</td>';
     saatRows += '<td>' + fatFmt(gMhs, 2) + '</td>';
-    saatRows += '<td>' + (gOrtMal !== null ? fatFmt(gOrtMal, 3) : '—') + '</td>';
-    saatRows += '<td>' + fatFmt(mhsMal, 3) + '</td>';
-    saatRows += '<td>' + (gHesapVar ? fatFmt(gTukBed, 2) : '—') + '</td>';
-    saatRows += '<td>' + '−' + fatFmt(gMhsBed, 2) + '</td>';
-    saatRows += '<td>' + (gToplam !== null ? fatFmt(gToplam, 2) : '—') + '</td>';
+    // E.Maliyeti popup (gun)
+    if (gOrtMal !== null) {
+      saatRows += '<td class="fat-hover-cell">' + fatFmt(gOrtMal, 3);
+      saatRows += '<div class="fat-popup">';
+      saatRows += '<div class="fat-popup-title">⚡ Etkin Gün E.Maliyeti</div>';
+      saatRows += '<div class="fat-popup-row"><span>Σ Tük.Bedeli</span><span>' + fatFmt(gTukBed, 2) + ' TL</span></div>';
+      saatRows += '<div class="fat-popup-row"><span>÷ Σ Ham Tüketim</span><span>' + fatFmt(gHam, 2) + ' kWh</span></div>';
+      saatRows += '<div class="fat-popup-sonuc"><span>Etkin Birim</span><span>' + fatFmt(gOrtMal, 3) + ' TL/kWh</span></div>';
+      saatRows += '</div>';
+      saatRows += '</td>';
+    } else {
+      saatRows += '<td>—</td>';
+    }
+    // M.Maliyeti popup (gun)
+    saatRows += '<td class="fat-hover-cell">' + fatFmt(mhsMal, 3);
+    saatRows += '<div class="fat-popup mor">';
+    saatRows += '<div class="fat-popup-title mor">🟣 Mahsup Maliyeti</div>';
+    saatRows += '<div class="fat-popup-row"><span>Birim Fiyat (sabit)</span><span>2,909687</span></div>';
+    saatRows += '<div class="fat-popup-sonuc mor"><span>Kaynak</span><span style="font-size:10px;">Sanayi Tek Terim<br>Aktif Enerji Bedeli</span></div>';
+    saatRows += '</div>';
+    saatRows += '</td>';
+    // Tük.Bedeli popup (gun)
+    if (gHesapVar) {
+      saatRows += '<td class="fat-hover-cell">' + fatFmt(gTukBed, 2);
+      saatRows += '<div class="fat-popup">';
+      saatRows += '<div class="fat-popup-title">💰 Gün Tüketim Bedeli</div>';
+      saatRows += '<div class="fat-popup-row"><span>Ham Tüketim</span><span>' + fatFmt(gHam, 2) + ' kWh</span></div>';
+      saatRows += '<div class="fat-popup-row"><span>× Etkin E.Mal</span><span>' + fatFmt(gOrtMal, 3) + ' TL/kWh</span></div>';
+      saatRows += '<div class="fat-popup-sonuc"><span>Gün Tük.Bedeli</span><span>' + fatFmt(gTukBed, 2) + ' TL</span></div>';
+      saatRows += '</div>';
+      saatRows += '</td>';
+    } else {
+      saatRows += '<td>—</td>';
+    }
+    // Mhs.Bedeli popup (gun)
+    saatRows += '<td class="fat-hover-cell">' + '−' + fatFmt(gMhsBed, 2);
+    saatRows += '<div class="fat-popup mor">';
+    saatRows += '<div class="fat-popup-title mor">🟣 Gün Mahsup Bedeli</div>';
+    saatRows += '<div class="fat-popup-row"><span>Mahsup</span><span>' + fatFmt(gMhs, 2) + ' kWh</span></div>';
+    saatRows += '<div class="fat-popup-row"><span>× M.Maliyeti</span><span>' + fatFmt(mhsMal, 3) + '</span></div>';
+    saatRows += '<div class="fat-popup-sonuc mor"><span>Gün Mhs.Bedeli</span><span>−' + fatFmt(gMhsBed, 2) + ' TL</span></div>';
+    saatRows += '</div>';
+    saatRows += '</td>';
+    // Toplam popup (gun)
+    if (gToplam !== null) {
+      saatRows += '<td class="fat-hover-cell">' + fatFmt(gToplam, 2);
+      saatRows += '<div class="fat-popup sari">';
+      saatRows += '<div class="fat-popup-title sari">💵 Gün Toplam Bedel</div>';
+      saatRows += '<div class="fat-popup-row"><span>Tük.Bedeli</span><span>+' + fatFmt(gTukBed, 2) + '</span></div>';
+      saatRows += '<div class="fat-popup-row"><span>Mhs.Bedeli</span><span>−' + fatFmt(gMhsBed, 2) + '</span></div>';
+      saatRows += '<div class="fat-popup-sonuc sari"><span>Gün Toplam</span><span>' + fatFmt(gToplam, 2) + ' TL</span></div>';
+      saatRows += '</div>';
+      saatRows += '</td>';
+    } else {
+      saatRows += '<td>—</td>';
+    }
     saatRows += '</tr>';
 
     // Ay toplamina ekle
@@ -4221,11 +4349,62 @@ function fatKartUret(ay, A, ab) {
     satirlar += '<td><span class="fat-expand-ico">▶</span>' + tarihLbl + '</td>';
     satirlar += '<td class="fat-col-ham">' + fatFmt(gHam, 2) + '</td>';
     satirlar += '<td class="fat-col-mhs">' + fatFmt(gMhs, 2) + '</td>';
-    satirlar += '<td class="fat-col-mal">' + (gOrtMal !== null ? fatFmt(gOrtMal, 3) : '—') + '</td>';
-    satirlar += '<td class="fat-col-mhsmal">' + fatFmt(mhsMal, 3) + '</td>';
-    satirlar += '<td class="fat-col-tukbed">' + (gHesapVar ? fatFmt(gTukBed, 2) : '—') + '</td>';
-    satirlar += '<td class="fat-col-mhsbed">' + '−' + fatFmt(gMhsBed, 2) + '</td>';
-    satirlar += '<td class="fat-col-toplam">' + (gToplam !== null ? fatFmt(gToplam, 2) : '—') + '</td>';
+    // E.Maliyeti popup (ana gun)
+    if (gOrtMal !== null) {
+      satirlar += '<td class="fat-col-mal fat-hover-cell">' + fatFmt(gOrtMal, 3);
+      satirlar += '<div class="fat-popup">';
+      satirlar += '<div class="fat-popup-title">⚡ Etkin Gün E.Maliyeti</div>';
+      satirlar += '<div class="fat-popup-row"><span>Σ Tük.Bedeli</span><span>' + fatFmt(gTukBed, 2) + ' TL</span></div>';
+      satirlar += '<div class="fat-popup-row"><span>÷ Σ Ham</span><span>' + fatFmt(gHam, 2) + ' kWh</span></div>';
+      satirlar += '<div class="fat-popup-sonuc"><span>Etkin Birim</span><span>' + fatFmt(gOrtMal, 3) + ' TL/kWh</span></div>';
+      satirlar += '</div>';
+      satirlar += '</td>';
+    } else {
+      satirlar += '<td class="fat-col-mal">—</td>';
+    }
+    // M.Maliyeti popup (ana gun)
+    satirlar += '<td class="fat-col-mhsmal fat-hover-cell">' + fatFmt(mhsMal, 3);
+    satirlar += '<div class="fat-popup mor">';
+    satirlar += '<div class="fat-popup-title mor">🟣 Mahsup Maliyeti</div>';
+    satirlar += '<div class="fat-popup-row"><span>Birim Fiyat (sabit)</span><span>2,909687</span></div>';
+    satirlar += '<div class="fat-popup-sonuc mor"><span>Kaynak</span><span style="font-size:10px;">Sanayi Tek Terim<br>Aktif Enerji Bedeli</span></div>';
+    satirlar += '</div>';
+    satirlar += '</td>';
+    // Tük.Bedeli popup (ana gun)
+    if (gHesapVar) {
+      satirlar += '<td class="fat-col-tukbed fat-hover-cell">' + fatFmt(gTukBed, 2);
+      satirlar += '<div class="fat-popup">';
+      satirlar += '<div class="fat-popup-title">💰 Gün Tüketim Bedeli</div>';
+      satirlar += '<div class="fat-popup-row"><span>Ham</span><span>' + fatFmt(gHam, 2) + ' kWh</span></div>';
+      satirlar += '<div class="fat-popup-row"><span>× Etkin E.Mal</span><span>' + fatFmt(gOrtMal, 3) + '</span></div>';
+      satirlar += '<div class="fat-popup-sonuc"><span>Tük.Bedeli</span><span>' + fatFmt(gTukBed, 2) + ' TL</span></div>';
+      satirlar += '</div>';
+      satirlar += '</td>';
+    } else {
+      satirlar += '<td class="fat-col-tukbed">—</td>';
+    }
+    // Mhs.Bedeli popup (ana gun)
+    satirlar += '<td class="fat-col-mhsbed fat-hover-cell">' + '−' + fatFmt(gMhsBed, 2);
+    satirlar += '<div class="fat-popup mor">';
+    satirlar += '<div class="fat-popup-title mor">🟣 Gün Mahsup Bedeli</div>';
+    satirlar += '<div class="fat-popup-row"><span>Mahsup</span><span>' + fatFmt(gMhs, 2) + ' kWh</span></div>';
+    satirlar += '<div class="fat-popup-row"><span>× M.Maliyeti</span><span>' + fatFmt(mhsMal, 3) + '</span></div>';
+    satirlar += '<div class="fat-popup-sonuc mor"><span>Mhs.Bedeli</span><span>−' + fatFmt(gMhsBed, 2) + ' TL</span></div>';
+    satirlar += '</div>';
+    satirlar += '</td>';
+    // Toplam popup (ana gun)
+    if (gToplam !== null) {
+      satirlar += '<td class="fat-col-toplam fat-hover-cell">' + fatFmt(gToplam, 2);
+      satirlar += '<div class="fat-popup sari">';
+      satirlar += '<div class="fat-popup-title sari">💵 Gün Toplam Bedel</div>';
+      satirlar += '<div class="fat-popup-row"><span>Tük.Bedeli</span><span>+' + fatFmt(gTukBed, 2) + '</span></div>';
+      satirlar += '<div class="fat-popup-row"><span>Mhs.Bedeli</span><span>−' + fatFmt(gMhsBed, 2) + '</span></div>';
+      satirlar += '<div class="fat-popup-sonuc sari"><span>Gün Toplam</span><span>' + fatFmt(gToplam, 2) + ' TL</span></div>';
+      satirlar += '</div>';
+      satirlar += '</td>';
+    } else {
+      satirlar += '<td class="fat-col-toplam">—</td>';
+    }
     satirlar += '</tr>';
 
     // Saatlik detay satiri (kapali baslar)
@@ -4245,27 +4424,70 @@ function fatKartUret(ay, A, ab) {
   });
 
   // Ay toplam satiri
-  // Ay PTF ortalamasi (tum saatler)
-  let ayPtfTpl = 0, ayPtfCnt = 0;
-  Object.values(ayPtf).forEach(function(saatler) {
-    if (!Array.isArray(saatler)) return;
-    saatler.forEach(function(p) {
-      if (p !== null && p !== undefined) { ayPtfTpl += p; ayPtfCnt++; }
-    });
-  });
-  const ayOrtPtf = ayPtfCnt ? ayPtfTpl / ayPtfCnt : null;
-  const ayOrtMal = ayOrtPtf !== null ? fatEnerjiMal(ayOrtPtf) : null;
+  // E.Mal = ay etkin ortalama (Σ Tük.Bed / Σ Ham) - saatlik toplamla tutarli
+  const ayOrtMal = (ayHesapVar && ayHam > 0) ? (ayTukBed / ayHam) : null;
   const ayToplam = ayHesapVar ? (ayTukBed - ayMhsBed) : null;
 
   satirlar += '<tr class="fat-toplam">';
   satirlar += '<td>TOPLAM</td>';
   satirlar += '<td>' + fatFmt(ayHam, 2) + '</td>';
   satirlar += '<td>' + fatFmt(ayMhs, 2) + '</td>';
-  satirlar += '<td>' + (ayOrtMal !== null ? fatFmt(ayOrtMal, 3) : '—') + '</td>';
-  satirlar += '<td>' + fatFmt(mhsMal, 3) + '</td>';
-  satirlar += '<td>' + (ayHesapVar ? fatFmt(ayTukBed, 2) : '—') + '</td>';
-  satirlar += '<td>' + '−' + fatFmt(ayMhsBed, 2) + '</td>';
-  satirlar += '<td>' + (ayToplam !== null ? fatFmt(ayToplam, 2) : '—') + '</td>';
+  // E.Maliyeti popup (TOPLAM)
+  if (ayOrtMal !== null) {
+    satirlar += '<td class="fat-hover-cell">' + fatFmt(ayOrtMal, 3);
+    satirlar += '<div class="fat-popup">';
+    satirlar += '<div class="fat-popup-title">⚡ Etkin Ay E.Maliyeti</div>';
+    satirlar += '<div class="fat-popup-row"><span>Σ Tük.Bedeli</span><span>' + fatFmt(ayTukBed, 2) + ' TL</span></div>';
+    satirlar += '<div class="fat-popup-row"><span>÷ Σ Ham</span><span>' + fatFmt(ayHam, 2) + ' kWh</span></div>';
+    satirlar += '<div class="fat-popup-sonuc"><span>Etkin Birim</span><span>' + fatFmt(ayOrtMal, 3) + ' TL/kWh</span></div>';
+    satirlar += '</div>';
+    satirlar += '</td>';
+  } else {
+    satirlar += '<td>—</td>';
+  }
+  // M.Maliyeti popup (TOPLAM)
+  satirlar += '<td class="fat-hover-cell">' + fatFmt(mhsMal, 3);
+  satirlar += '<div class="fat-popup mor">';
+  satirlar += '<div class="fat-popup-title mor">🟣 Mahsup Maliyeti</div>';
+  satirlar += '<div class="fat-popup-row"><span>Birim Fiyat (sabit)</span><span>2,909687</span></div>';
+  satirlar += '<div class="fat-popup-sonuc mor"><span>Kaynak</span><span style="font-size:10px;">Sanayi Tek Terim<br>Aktif Enerji Bedeli</span></div>';
+  satirlar += '</div>';
+  satirlar += '</td>';
+  // Tük.Bedeli popup (TOPLAM)
+  if (ayHesapVar) {
+    satirlar += '<td class="fat-hover-cell">' + fatFmt(ayTukBed, 2);
+    satirlar += '<div class="fat-popup">';
+    satirlar += '<div class="fat-popup-title">💰 Ay Tüketim Bedeli</div>';
+    satirlar += '<div class="fat-popup-row"><span>Ham</span><span>' + fatFmt(ayHam, 2) + ' kWh</span></div>';
+    satirlar += '<div class="fat-popup-row"><span>× Etkin E.Mal</span><span>' + fatFmt(ayOrtMal, 3) + '</span></div>';
+    satirlar += '<div class="fat-popup-sonuc"><span>Tük.Bedeli</span><span>' + fatFmt(ayTukBed, 2) + ' TL</span></div>';
+    satirlar += '</div>';
+    satirlar += '</td>';
+  } else {
+    satirlar += '<td>—</td>';
+  }
+  // Mhs.Bedeli popup (TOPLAM)
+  satirlar += '<td class="fat-hover-cell">' + '−' + fatFmt(ayMhsBed, 2);
+  satirlar += '<div class="fat-popup mor">';
+  satirlar += '<div class="fat-popup-title mor">🟣 Ay Mahsup Bedeli</div>';
+  satirlar += '<div class="fat-popup-row"><span>Mahsup</span><span>' + fatFmt(ayMhs, 2) + ' kWh</span></div>';
+  satirlar += '<div class="fat-popup-row"><span>× M.Maliyeti</span><span>' + fatFmt(mhsMal, 3) + '</span></div>';
+  satirlar += '<div class="fat-popup-sonuc mor"><span>Mhs.Bedeli</span><span>−' + fatFmt(ayMhsBed, 2) + ' TL</span></div>';
+  satirlar += '</div>';
+  satirlar += '</td>';
+  // Toplam popup (TOPLAM)
+  if (ayToplam !== null) {
+    satirlar += '<td class="fat-hover-cell">' + fatFmt(ayToplam, 2);
+    satirlar += '<div class="fat-popup sari">';
+    satirlar += '<div class="fat-popup-title sari">💵 Ay Toplam Bedel</div>';
+    satirlar += '<div class="fat-popup-row"><span>Tük.Bedeli</span><span>+' + fatFmt(ayTukBed, 2) + '</span></div>';
+    satirlar += '<div class="fat-popup-row"><span>Mhs.Bedeli</span><span>−' + fatFmt(ayMhsBed, 2) + '</span></div>';
+    satirlar += '<div class="fat-popup-sonuc sari"><span>Ay Toplam</span><span>' + fatFmt(ayToplam, 2) + ' TL</span></div>';
+    satirlar += '</div>';
+    satirlar += '</td>';
+  } else {
+    satirlar += '<td>—</td>';
+  }
   satirlar += '</tr>';
 
   // Kart HTML (sade - sadece baslik + tablo)
