@@ -1199,8 +1199,8 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#4ade80;}
     </select>
   </div>
 
-  <div style="background:rgba(34,197,94,0.06); border:1px solid rgba(34,197,94,0.15); border-radius:10px; padding:9px 13px; font-size:11px; color:#86efac; margin-bottom:14px; font-weight:600;">
-    📐 <b style="color:#4ade80;">Enerji Maliyeti</b> = (PTF + YEKDEM) × 1,05 / 1000 &nbsp;·&nbsp; <b style="color:#4ade80;">YEKDEM:</b> 602,51 TL/MWh
+  <div id="fat-formul-bar" style="background:rgba(34,197,94,0.06); border:1px solid rgba(34,197,94,0.15); border-radius:10px; padding:9px 13px; font-size:11px; color:#86efac; margin-bottom:14px; font-weight:600;">
+    📐 <b style="color:#4ade80;">Enerji Maliyeti</b> = (PTF + YEKDEM) × 1,05 / 1000 &nbsp;·&nbsp; <b style="color:#4ade80;">YEKDEM:</b> <span id="fat-yekdem-bilgi">602,51 TL/MWh</span>
   </div>
 
   <div id="fat-kartlar"><div style="padding:30px; text-align:center; color:#94a3b8; font-size:12px;">Yükleniyor...</div></div>
@@ -4124,7 +4124,16 @@ function mhsTabloRender() {
 // ====================== MAHSUPLAŞMA SEKMESI SONU ======================
 
 // ====================== FATURALANDIRMA SEKMESI ======================
-const FAT_YEKDEM = 602.51;     // TL/MWh
+// Aylik YEKDEM bedelleri (TL/MWh) - EPIAS Seffaflik Platformundan
+// Versiyonlu degerler kullaniliyor: ay sonu kesinlesen "en guncel" surum
+const FAT_YEKDEM_AYLIK = {
+  '2026-01': 162.849,     // Ocak (Nisan revizyonu - kesinlesmis)
+  '2026-02': 480.015,     // Subat (Nisan revizyonu - kesinlesmis)
+  '2026-03': 747.398,     // Mart (Nisan revizyonu - kesinlesmis)
+  '2026-04': 1038.343,    // Nisan (kesinlesmis - gerceklesen)
+  '2026-05': 602.51,      // Mayis (ongorulu - henuz kesinlesmedi, ay sonunda revize edilecek)
+};
+const FAT_YEKDEM_DEFAULT = 602.51;  // Bilinmeyen aylar icin
 const FAT_DAGITIM = 1.05;
 const FAT_DB_BIRIM = 1.182457;   // OG Tek Terim Sanayi - TL/kWh
 const FAT_SANAYI_AKTIF = 2.909687;  // Sanayi Tek Terim Aktif Enerji Bedeli - TL/kWh (AKS3 mahsup indirimi icin)
@@ -4138,6 +4147,12 @@ const FAT_AY_ISIM_MAP = {
 };
 let fatAylikPtf = null;  // aylik_ptf.json - tum aylar
 
+// Bir ay icin YEKDEM bedeli (TL/MWh)
+function fatYekdemAl(ay) {
+  if (ay && FAT_YEKDEM_AYLIK[ay] !== undefined) return FAT_YEKDEM_AYLIK[ay];
+  return FAT_YEKDEM_DEFAULT;
+}
+
 function fatFmt(v, ondalik) {
   if (ondalik === undefined) ondalik = 0;
   if (v === null || v === undefined || isNaN(v)) return '—';
@@ -4148,9 +4163,11 @@ function fatFmt(v, ondalik) {
 }
 
 // Enerji maliyeti formulu: (PTF + YEKDEM) × 1,05 / 1000 -> TL/kWh
-function fatEnerjiMal(ptf_tl_mwh) {
+// ay parametresi opsiyonel - verilmezse default YEKDEM kullanir
+function fatEnerjiMal(ptf_tl_mwh, ay) {
   if (ptf_tl_mwh === null || ptf_tl_mwh === undefined) return null;
-  return ((ptf_tl_mwh + FAT_YEKDEM) * FAT_DAGITIM) / 1000;
+  const yekdem = fatYekdemAl(ay);
+  return ((ptf_tl_mwh + yekdem) * FAT_DAGITIM) / 1000;
 }
 
 async function faturaYukle() {
@@ -4192,6 +4209,15 @@ function faturaRender() {
   const A = (mhsData || {})[ay];
   const cont = document.getElementById('fat-kartlar');
   if (!cont) return;
+
+  // YEKDEM bilgi bar'ini guncelle
+  const yekdemEl = document.getElementById('fat-yekdem-bilgi');
+  if (yekdemEl) {
+    const ayYekdem = fatYekdemAl(ay);
+    const kesinlesti = FAT_YEKDEM_AYLIK[ay] !== undefined && ay !== '2026-05';
+    const not = kesinlesti ? ' <span style="color:#4ade80;">✓ kesinleşmiş</span>' : ' <span style="color:#fbbf24;">(öngörülü)</span>';
+    yekdemEl.innerHTML = fatFmt(ayYekdem, 2) + ' TL/MWh' + not;
+  }
 
   if (!A) {
     cont.innerHTML = '<div style="padding:30px; text-align:center; color:#94a3b8; font-size:12px;">' + (FAT_AY_ISIM_MAP[ay] || ay) + ' için veri yok.</div>';
@@ -4242,7 +4268,7 @@ function fatKartUret(ay, A, ab) {
       const sHam = tuk[ab.key] || 0;
       const sMhs = mhsDag[ab.key] || 0;
       const sPtf = (gPtfArr && gPtfArr[s] !== undefined && gPtfArr[s] !== null) ? gPtfArr[s] : null;
-      const sMal = sPtf !== null ? fatEnerjiMal(sPtf) : null;
+      const sMal = sPtf !== null ? fatEnerjiMal(sPtf, ay) : null;
 
       // Tuketim Bedeli = Ham × Enerji Maliyeti
       const sTukBed = (sMal !== null) ? (sHam * sMal) : null;
@@ -4262,13 +4288,14 @@ function fatKartUret(ay, A, ab) {
       saatRows += '<td class="fat-col-mhs">' + fatFmt(sMhs, 2) + '</td>';
       // E.Maliyeti - hover'da popup
       if (sMal !== null && sPtf !== null) {
-        const sToplam_ptf_yek = sPtf + 602.51;
+        const ayYekdem = fatYekdemAl(ay);
+        const sToplam_ptf_yek = sPtf + ayYekdem;
         const sCarpim = sToplam_ptf_yek * 1.05;
         saatRows += '<td class="fat-col-mal fat-hover-cell">' + fatFmt(sMal, 3);
         saatRows += '<div class="fat-popup">';
         saatRows += '<div class="fat-popup-title">⚡ Enerji Maliyeti</div>';
         saatRows += '<div class="fat-popup-row"><span>PTF (saat ' + sk + ')</span><span>' + fatFmt(sPtf, 2) + '</span></div>';
-        saatRows += '<div class="fat-popup-row"><span>+ YEKDEM</span><span>602,51</span></div>';
+        saatRows += '<div class="fat-popup-row"><span>+ YEKDEM</span><span>' + fatFmt(ayYekdem, 2) + '</span></div>';
         saatRows += '<div class="fat-popup-row sum"><span>Toplam</span><span>' + fatFmt(sToplam_ptf_yek, 2) + '</span></div>';
         saatRows += '<div class="fat-popup-row"><span>× 1,05 (dağıtım)</span><span>' + fatFmt(sCarpim, 2) + '</span></div>';
         saatRows += '<div class="fat-popup-row"><span>÷ 1000 (MWh→kWh)</span><span></span></div>';
