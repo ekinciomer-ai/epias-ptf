@@ -358,6 +358,7 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#4ade80;}
 /* Hover Popup - tiklanabilir hesap detayi */
 .fat-hover-cell{position:relative;cursor:help;}
 .fat-hover-cell:hover{background:rgba(34,197,94,0.12)!important;}
+.fat-yekdem-cell:hover #fat-yekdem-popup{display:block;}
 .fat-popup{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);min-width:200px;background:#0f172a;border:1px solid rgba(34,197,94,0.35);border-radius:10px;padding:10px 12px;box-shadow:0 8px 24px rgba(0,0,0,0.5);z-index:9999;text-align:left;white-space:nowrap;pointer-events:none;}
 .fat-popup.mor{border-color:rgba(167,139,250,0.45);}
 .fat-popup.sari{border-color:rgba(251,191,36,0.45);}
@@ -1199,8 +1200,12 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#4ade80;}
     </select>
   </div>
 
-  <div id="fat-formul-bar" style="background:rgba(34,197,94,0.06); border:1px solid rgba(34,197,94,0.15); border-radius:10px; padding:9px 13px; font-size:11px; color:#86efac; margin-bottom:14px; font-weight:600;">
-    📐 <b style="color:#4ade80;">Enerji Maliyeti</b> = (PTF + YEKDEM) × 1,05 / 1000 &nbsp;·&nbsp; <b style="color:#4ade80;">YEKDEM:</b> <span id="fat-yekdem-bilgi">602,51 TL/MWh</span>
+  <div id="fat-formul-bar" style="background:rgba(34,197,94,0.06); border:1px solid rgba(34,197,94,0.15); border-radius:10px; padding:9px 13px; font-size:11px; color:#86efac; margin-bottom:14px; font-weight:600; position:relative;">
+    📐 <b style="color:#4ade80;">Enerji Maliyeti</b> = (PTF + YEKDEM) × 1,05 / 1000 &nbsp;·&nbsp; 
+    <span class="fat-yekdem-cell" style="position:relative; display:inline-block; cursor:help; border-bottom:1px dashed rgba(255,255,255,0.3);">
+      <b style="color:#4ade80;">YEKDEM:</b> <span id="fat-yekdem-bilgi">1.088,89 TL/MWh ⚡ tahmini</span>
+      <div id="fat-yekdem-popup" class="fat-popup" style="white-space:normal; min-width:280px; left:0; transform:none;"></div>
+    </span>
   </div>
 
   <div id="fat-kartlar"><div style="padding:30px; text-align:center; color:#94a3b8; font-size:12px;">Yükleniyor...</div></div>
@@ -4127,13 +4132,21 @@ function mhsTabloRender() {
 // Aylik YEKDEM bedelleri (TL/MWh) - EPIAS Seffaflik Platformundan
 // Versiyonlu degerler kullaniliyor: ay sonu kesinlesen "en guncel" surum
 const FAT_YEKDEM_AYLIK = {
-  '2026-01': 162.849,     // Ocak (Nisan revizyonu - kesinlesmis)
-  '2026-02': 480.015,     // Subat (Nisan revizyonu - kesinlesmis)
-  '2026-03': 747.398,     // Mart (Nisan revizyonu - kesinlesmis)
-  '2026-04': 1038.343,    // Nisan (kesinlesmis - gerceklesen)
-  '2026-05': 602.51,      // Mayis (ongorulu - henuz kesinlesmedi, ay sonunda revize edilecek)
+  '2026-01': 162.849,     // Ocak - Kesinlesmis (Nisan revizyonu)
+  '2026-02': 480.015,     // Subat - Kesinlesmis (Nisan revizyonu)
+  '2026-03': 747.398,     // Mart - Kesinlesmis (Nisan revizyonu)
+  '2026-04': 1038.343,    // Nisan - Kesinlesmis (gerceklesen)
+  '2026-05': 1088.89,     // Mayis - TAHMINI (Nisan sapmasi 1.8073x × 602.51 ongorulu)
 };
-const FAT_YEKDEM_DEFAULT = 602.51;  // Bilinmeyen aylar icin
+// Aylar icin durum: 'kesin' veya 'tahmin'
+const FAT_YEKDEM_DURUM = {
+  '2026-01': 'kesin',
+  '2026-02': 'kesin',
+  '2026-03': 'kesin',
+  '2026-04': 'kesin',
+  '2026-05': 'tahmin',    // Mayis henuz kesinlesmedi, Nisan sapmasi uyarlandi
+};
+const FAT_YEKDEM_DEFAULT = 1088.89;  // Bilinmeyen aylar icin (en son tahmin)
 const FAT_DAGITIM = 1.05;
 const FAT_DB_BIRIM = 1.182457;   // OG Tek Terim Sanayi - TL/kWh
 const FAT_SANAYI_AKTIF = 2.909687;  // Sanayi Tek Terim Aktif Enerji Bedeli - TL/kWh (AKS3 mahsup indirimi icin)
@@ -4151,6 +4164,11 @@ let fatAylikPtf = null;  // aylik_ptf.json - tum aylar
 function fatYekdemAl(ay) {
   if (ay && FAT_YEKDEM_AYLIK[ay] !== undefined) return FAT_YEKDEM_AYLIK[ay];
   return FAT_YEKDEM_DEFAULT;
+}
+
+// Bir ay icin YEKDEM durumu ('kesin' veya 'tahmin')
+function fatYekdemDurum(ay) {
+  return FAT_YEKDEM_DURUM[ay] || 'tahmin';
 }
 
 function fatFmt(v, ondalik) {
@@ -4212,11 +4230,49 @@ function faturaRender() {
 
   // YEKDEM bilgi bar'ini guncelle
   const yekdemEl = document.getElementById('fat-yekdem-bilgi');
+  const yekdemPopup = document.getElementById('fat-yekdem-popup');
   if (yekdemEl) {
     const ayYekdem = fatYekdemAl(ay);
-    const kesinlesti = FAT_YEKDEM_AYLIK[ay] !== undefined && ay !== '2026-05';
-    const not = kesinlesti ? ' <span style="color:#4ade80;">✓ kesinleşmiş</span>' : ' <span style="color:#fbbf24;">(öngörülü)</span>';
+    const durum = fatYekdemDurum(ay);
+    let not, popupIcerik = '';
+    
+    if (durum === 'kesin') {
+      not = ' <span style="color:#4ade80;">✓ kesinleşmiş</span>';
+      // Kesin YEKDEM popup
+      popupIcerik = '<div class="fat-popup-title">⚡ ' + (FAT_AY_ISIM_MAP[ay] || ay) + ' YEKDEM</div>';
+      popupIcerik += '<div class="fat-popup-row"><span>Bedel</span><span>' + fatFmt(ayYekdem, 2) + ' TL/MWh</span></div>';
+      popupIcerik += '<div class="fat-popup-row"><span>Durum</span><span style="color:#4ade80;">✓ Kesinleşmiş</span></div>';
+      popupIcerik += '<div class="fat-popup-row"><span>Kaynak</span><span>EPİAŞ Şeffaflık</span></div>';
+      popupIcerik += '<div class="fat-popup-sonuc"><span style="font-size:10px;color:#94a3b8;">Versiyonlu değer:</span><span style="font-size:10px;color:#94a3b8;">Sonraki ay revize</span></div>';
+    } else {
+      not = ' <span style="color:#fbbf24;">⚡ tahmini</span>';
+      // Tahmin YEKDEM popup - Nisan sapmasi detaylari
+      const oncekiOngoru = 574.54;       // Nisan ongoru
+      const oncekiGercek = 1038.343;     // Nisan gerceklesen
+      const sapmaKat = oncekiGercek / oncekiOngoru;
+      const sapmaYuzde = (sapmaKat - 1) * 100;
+      const mayisOngoru = 602.51;
+      
+      popupIcerik = '<div class="fat-popup-title" style="color:#fbbf24;">⚡ ' + (FAT_AY_ISIM_MAP[ay] || ay) + ' Tahmini YEKDEM</div>';
+      popupIcerik += '<div style="font-size:10px; color:#94a3b8; margin-bottom:6px; line-height:1.4;">Bir önceki ay (Nisan) öngörü ile gerçekleşme arasında sapma baz alındı.</div>';
+      popupIcerik += '<div class="fat-popup-row"><span>Nisan öngörü</span><span>' + fatFmt(oncekiOngoru, 2) + '</span></div>';
+      popupIcerik += '<div class="fat-popup-row"><span>Nisan gerçekleşen</span><span>' + fatFmt(oncekiGercek, 2) + '</span></div>';
+      popupIcerik += '<div class="fat-popup-row sum"><span>Sapma</span><span style="color:#fbbf24;">+%' + fatFmt(sapmaYuzde, 2) + ' (' + fatFmt(sapmaKat, 4) + '×)</span></div>';
+      popupIcerik += '<div class="fat-popup-row"><span>Mayıs öngörü</span><span>' + fatFmt(mayisOngoru, 2) + '</span></div>';
+      popupIcerik += '<div class="fat-popup-row"><span>× Sapma</span><span>' + fatFmt(sapmaKat, 4) + '×</span></div>';
+      popupIcerik += '<div class="fat-popup-sonuc" style="color:#fbbf24; border-top-color:rgba(251,191,36,0.3);"><span>Tahmini YEKDEM</span><span>' + fatFmt(ayYekdem, 2) + ' TL/MWh</span></div>';
+    }
+    
     yekdemEl.innerHTML = fatFmt(ayYekdem, 2) + ' TL/MWh' + not;
+    if (yekdemPopup) {
+      yekdemPopup.innerHTML = popupIcerik;
+      // Tahmin ise sari renk
+      if (durum !== 'kesin') {
+        yekdemPopup.classList.add('sari');
+      } else {
+        yekdemPopup.classList.remove('sari');
+      }
+    }
   }
 
   if (!A) {
@@ -4289,13 +4345,15 @@ function fatKartUret(ay, A, ab) {
       // E.Maliyeti - hover'da popup
       if (sMal !== null && sPtf !== null) {
         const ayYekdem = fatYekdemAl(ay);
+        const ayDurum = fatYekdemDurum(ay);
+        const yekdemEtiket = ayDurum === 'kesin' ? ' <span style="color:#4ade80; font-size:9px;">✓</span>' : ' <span style="color:#fbbf24; font-size:9px;">⚡tahmini</span>';
         const sToplam_ptf_yek = sPtf + ayYekdem;
         const sCarpim = sToplam_ptf_yek * 1.05;
         saatRows += '<td class="fat-col-mal fat-hover-cell">' + fatFmt(sMal, 3);
         saatRows += '<div class="fat-popup">';
         saatRows += '<div class="fat-popup-title">⚡ Enerji Maliyeti</div>';
         saatRows += '<div class="fat-popup-row"><span>PTF (saat ' + sk + ')</span><span>' + fatFmt(sPtf, 2) + '</span></div>';
-        saatRows += '<div class="fat-popup-row"><span>+ YEKDEM</span><span>' + fatFmt(ayYekdem, 2) + '</span></div>';
+        saatRows += '<div class="fat-popup-row"><span>+ YEKDEM' + yekdemEtiket + '</span><span>' + fatFmt(ayYekdem, 2) + '</span></div>';
         saatRows += '<div class="fat-popup-row sum"><span>Toplam</span><span>' + fatFmt(sToplam_ptf_yek, 2) + '</span></div>';
         saatRows += '<div class="fat-popup-row"><span>× 1,05 (dağıtım)</span><span>' + fatFmt(sCarpim, 2) + '</span></div>';
         saatRows += '<div class="fat-popup-row"><span>÷ 1000 (MWh→kWh)</span><span></span></div>';
