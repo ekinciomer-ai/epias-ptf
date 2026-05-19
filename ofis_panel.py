@@ -211,10 +211,24 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 .section-header{display:flex;align-items:center;justify-content:space-between;margin:14px 0 10px;}
 .section-title{font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;}
 .aylik-wrap{overflow-x:auto;margin-top:8px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);background:#050917;}
+
+/* YEKDEM AYLIK KARTLARI */
+.yekdem-kart{background:rgba(255,255,255,0.02); border-radius:10px; padding:11px 12px; position:relative; transition:transform .15s ease;}
+.yekdem-kart:hover{transform:translateY(-1px);}
+.yekdem-kart .yk-ay{font-size:10px; color:#94a3b8; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;}
+.yekdem-kart .yk-deger{font-size:18px; font-weight:900; line-height:1; margin-bottom:3px; font-family:'Inter',monospace;}
+.yekdem-kart .yk-birim{font-size:9px; color:#64748b; font-weight:600;}
+.yekdem-kart .yk-not{font-size:9px; margin-top:6px; padding-top:6px; border-top:1px solid rgba(255,255,255,0.05); color:#64748b;}
+.yekdem-kart.kesin{background:rgba(34,197,94,0.12); border:1px solid rgba(34,197,94,0.35);}
+.yekdem-kart.kesin .yk-deger{color:#86efac;}
+.yekdem-kart.ongoru{background:rgba(251,146,60,0.12); border:1px solid rgba(251,146,60,0.4);}
+.yekdem-kart.ongoru .yk-deger{color:#fdba74;}
+.yekdem-kart.tahmin{background:rgba(251,191,36,0.12); border:1px solid rgba(251,191,36,0.4);}
+.yekdem-kart.tahmin .yk-deger{color:#fcd34d;}
 .aylik-table{width:100%;border-collapse:collapse;font-size:10px;}
 .aylik-table th{background:linear-gradient(180deg,#1e293b,#0f172a);color:#94a3b8;font-weight:700;font-size:9px;padding:8px 4px;text-align:center;position:sticky;top:0;z-index:2;}
 .aylik-table th.saat-head{background:linear-gradient(180deg,#16a34a,#15803d);color:white;min-width:38px;position:sticky;left:0;z-index:3;}
-.aylik-table td{padding:5px 3px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.03);font-weight:700;min-width:38px;background:#050917;}
+.aylik-table td{padding:5px 3px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.06);font-weight:700;min-width:38px;background:#050917;}
 .aylik-table td.saat-cell{background:#0a0e1a;font-weight:800;color:#4ade80;position:sticky;left:0;z-index:1;border-right:2px solid rgba(34,197,94,0.3);}
 .aylik-table tr:nth-child(odd) td{background:rgba(255,255,255,0.015);}
 .aylik-table tr:nth-child(odd) td.saat-cell{background:#0a0e1a;}
@@ -261,7 +275,7 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 .fat-table{width:100%;border-collapse:collapse;font-size:11px;}
 .fat-table th{background:linear-gradient(180deg,#1e293b,#0f172a);color:#94a3b8;font-weight:800;font-size:9px;padding:10px 6px;text-align:center;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;}
 .fat-table th:first-child{text-align:left;padding-left:14px;}
-.fat-table td{padding:9px 6px;text-align:right;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:700;white-space:nowrap;}
+.fat-table td{padding:9px 6px;text-align:right;border-bottom:1px solid rgba(255,255,255,0.08);font-weight:700;white-space:nowrap;}
 .fat-table td:first-child{text-align:left;padding-left:14px;color:#cbd5e1;font-weight:800;}
 .fat-table tr.fat-gun-satir{cursor:pointer;transition:background 0.15s;}
 .fat-table tr.fat-gun-satir:hover td{background:rgba(255,255,255,0.025);}
@@ -282,7 +296,7 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#4ade80;}
 .fat-saatlik-icerik table{width:100%;border-collapse:collapse;font-size:10px;overflow:visible;}
 .fat-saatlik-icerik th{font-size:8px;color:#64748b;padding:6px 5px;text-align:right;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid rgba(255,255,255,0.05);}
 .fat-saatlik-icerik th:first-child{text-align:left;}
-.fat-saatlik-icerik td{padding:5px;text-align:right;border-bottom:1px solid rgba(255,255,255,0.02);font-weight:700;color:#cbd5e1;background:transparent;}
+.fat-saatlik-icerik td{padding:5px;text-align:right;border-bottom:1px solid rgba(255,255,255,0.06);font-weight:700;color:#cbd5e1;background:transparent;}
 .fat-saatlik-icerik td:first-child{text-align:left;color:#4ade80;font-weight:800;}
 .fat-saatlik-icerik tr.gun-tpl td{background:rgba(251,191,36,0.06);color:#fbbf24;font-weight:900;border-top:1px solid rgba(251,191,36,0.2);}
 .fat-tutar-card{background:linear-gradient(135deg,rgba(251,191,36,0.18),rgba(245,158,11,0.06));border:1px solid rgba(251,191,36,0.35);border-radius:14px;padding:14px 16px;text-align:center;}
@@ -362,9 +376,11 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#4ade80;}
 .fat-popup{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);min-width:200px;background:#0f172a;border:1px solid rgba(34,197,94,0.35);border-radius:10px;padding:10px 12px;box-shadow:0 8px 24px rgba(0,0,0,0.5);z-index:9999;text-align:left;white-space:nowrap;pointer-events:none;}
 .fat-popup.mor{border-color:rgba(167,139,250,0.45);}
 .fat-popup.sari{border-color:rgba(251,191,36,0.45);}
+.fat-popup.turuncu{border-color:rgba(251,146,60,0.45);}
 .fat-popup::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:rgba(34,197,94,0.35);}
 .fat-popup.mor::after{border-top-color:rgba(167,139,250,0.45);}
 .fat-popup.sari::after{border-top-color:rgba(251,191,36,0.45);}
+.fat-popup.turuncu::after{border-top-color:rgba(251,146,60,0.45);}
 .fat-hover-cell:hover .fat-popup{display:block;}
 .fat-popup-title{font-size:10px;font-weight:800;color:#4ade80;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid rgba(34,197,94,0.2);}
 .fat-popup-title.mor{color:#c4b5fd;border-bottom-color:rgba(167,139,250,0.2);}
@@ -521,6 +537,24 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#4ade80;}
 </div>
 
 <div class="tab-content" id="t-epias">
+
+<!-- YEKDEM AYLIK TABLOSU -->
+<div class="section-header">
+<div class="section-title">💰 YEKDEM Birim Bedelleri (TL/MWh)</div>
+<div style="font-size:10px;color:#64748b">EPİAŞ Şeffaflık · Versiyonlu değerler</div>
+</div>
+
+<div class="yekdem-yasal" style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:14px; margin-bottom:18px;">
+  <div id="yekdem-kart-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:10px;"></div>
+
+  <div style="display:flex; gap:14px; flex-wrap:wrap; margin-top:14px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.05); font-size:10px; color:#94a3b8;">
+    <div style="display:flex; align-items:center; gap:6px;"><span style="width:12px; height:12px; border-radius:3px; background:rgba(34,197,94,0.18); border:1px solid rgba(34,197,94,0.5);"></span> Gerçekleşmiş (Kesinleşmiş)</div>
+    <div style="display:flex; align-items:center; gap:6px;"><span style="width:12px; height:12px; border-radius:3px; background:rgba(251,146,60,0.18); border:1px solid rgba(251,146,60,0.5);"></span> Öngörü (Resmi Açıklama)</div>
+    <div style="display:flex; align-items:center; gap:6px;"><span style="width:12px; height:12px; border-radius:3px; background:rgba(251,191,36,0.18); border:1px solid rgba(251,191,36,0.5);"></span> Tahmini (Sapma Uyarlanmış)</div>
+  </div>
+</div>
+
+<!-- PTF TABLOSU -->
 <div class="section-header">
 <div class="section-title">📅 <span id="epias-baslik">PTF Tablosu</span></div>
 <div style="display:flex;align-items:center;gap:10px;">
@@ -1314,8 +1348,108 @@ function sekme(ad, btn) {
 // EPIAS sekmesi - aylik PTF dropdown ile
 let epiasPtfData = null;  // tum aylarin PTF verisi
 
+// YEKDEM aylik veriler (EPIAS Seffaflik kayitlari)
+// 'gercek': ay sonu kesinlesmis bedel (yesil)
+// 'ongoru': resmi olarak yayinlanan ongoru (turuncu - gerceklesmediyse)
+// 'tahmin': onceki ayin sapmasi ile uyarlanmis (sari - sadece gercek+ongoru yoksa)
+const EPIAS_YEKDEM = {
+  '2026-01': {ongoru: 162.727, gercek: 162.849},
+  '2026-02': {ongoru: 479.347, gercek: 480.015},
+  '2026-03': {ongoru: 747.797, gercek: 747.398},
+  '2026-04': {ongoru: 574.54,  gercek: 1038.343},
+  '2026-05': {ongoru: 602.51,  gercek: null},
+  '2026-06': {ongoru: 580.99,  gercek: null},
+  '2026-07': {ongoru: 189.15,  gercek: null},
+  '2026-08': {ongoru: 213.89,  gercek: null},
+};
+
+const AY_ISIM = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+
+// Bir ay icin YEKDEM degeri ve durumunu hesapla
+// Donus: {deger, durum: 'kesin'|'ongoru'|'tahmin', not, ongoru, gercek, kat}
+function yekdemHesapla(ay) {
+  const v = EPIAS_YEKDEM[ay] || {};
+  // 1) Gerceklesme varsa - YESIL
+  if (v.gercek !== null && v.gercek !== undefined) {
+    return {deger: v.gercek, durum: 'kesin', not: '✓ Gerçekleşmiş', ongoru: v.ongoru, gercek: v.gercek};
+  }
+  // 2) Bir onceki ayin sapmasi varsa - SARI (tahmin)
+  // Onceki ay = ay - 1
+  const yil = parseInt(ay.substring(0, 4), 10);
+  const a = parseInt(ay.substring(5, 7), 10);
+  let oncekiYil = yil, oncekiA = a - 1;
+  if (oncekiA < 1) { oncekiA = 12; oncekiYil -= 1; }
+  const oncekiKey = oncekiYil + '-' + String(oncekiA).padStart(2, '0');
+  const onceki = EPIAS_YEKDEM[oncekiKey];
+  if (v.ongoru !== undefined && onceki && onceki.gercek !== null && onceki.ongoru !== undefined) {
+    const kat = onceki.gercek / onceki.ongoru;
+    const tahmin = v.ongoru * kat;
+    return {
+      deger: tahmin,
+      durum: 'tahmin',
+      not: '⚡ Önceki ay sapması (' + kat.toFixed(4) + '×)',
+      ongoru: v.ongoru,
+      gercek: null,
+      kat: kat,
+      oncekiAy: oncekiKey,
+      oncekiOngoru: onceki.ongoru,
+      oncekiGercek: onceki.gercek
+    };
+  }
+  // 3) Sadece ongoru varsa - TURUNCU
+  if (v.ongoru !== undefined) {
+    return {deger: v.ongoru, durum: 'ongoru', not: '📋 Resmi öngörü', ongoru: v.ongoru, gercek: null};
+  }
+  // Hicbiri yoksa
+  return null;
+}
+
+// Tum YEKDEM kartlarini render et
+function yekdemKartlariRender() {
+  const grid = document.getElementById('yekdem-kart-grid');
+  if (!grid) return;
+  const aylar = Object.keys(EPIAS_YEKDEM).sort();
+  let html = '';
+  aylar.forEach(function(ay) {
+    const h = yekdemHesapla(ay);
+    if (!h) return;
+    const yil = ay.substring(0, 4);
+    const a = parseInt(ay.substring(5, 7), 10) - 1;
+    const ayAd = AY_ISIM[a] + ' ' + yil;
+    
+    // Tooltip icerigi - sapma detayi tahmin icin
+    let detay = '';
+    if (h.durum === 'tahmin') {
+      const fark = (h.kat - 1) * 100;
+      detay = '<div class="yk-not">Önceki: ' + ay_fmt(h.oncekiOngoru) + ' → ' + ay_fmt(h.oncekiGercek) + ' (+%' + fark.toFixed(1) + ')</div>';
+    } else if (h.durum === 'kesin' && h.ongoru) {
+      const sapma = ((h.gercek / h.ongoru) - 1) * 100;
+      const isaret = sapma >= 0 ? '+' : '';
+      detay = '<div class="yk-not">Öngörü: ' + ay_fmt(h.ongoru) + ' (sapma ' + isaret + sapma.toFixed(1) + '%)</div>';
+    } else if (h.durum === 'ongoru') {
+      detay = '<div class="yk-not">Ay sonu revize edilecek</div>';
+    }
+    
+    html += '<div class="yekdem-kart ' + h.durum + '">';
+    html += '<div class="yk-ay">' + ayAd + '</div>';
+    html += '<div class="yk-deger">' + ay_fmt(h.deger) + '</div>';
+    html += '<div class="yk-birim">' + h.not + '</div>';
+    html += detay;
+    html += '</div>';
+  });
+  grid.innerHTML = html;
+}
+
+function ay_fmt(v) {
+  if (v === null || v === undefined) return '—';
+  return Number(v).toLocaleString('tr-TR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+}
+
 async function epiasYukle() {
-  // 1. Dropdown'u doldur (eger doluysa atla)
+  // 0. YEKDEM kartlarini render et
+  yekdemKartlariRender();
+  
+  // 1. PTF Dropdown'u doldur (eger doluysa atla)
   const sel = document.getElementById('epias-ay-secim');
   if (!epiasPtfData) {
     try {
@@ -4129,24 +4263,13 @@ function mhsTabloRender() {
 // ====================== MAHSUPLAŞMA SEKMESI SONU ======================
 
 // ====================== FATURALANDIRMA SEKMESI ======================
-// Aylik YEKDEM bedelleri (TL/MWh) - EPIAS Seffaflik Platformundan
-// Versiyonlu degerler kullaniliyor: ay sonu kesinlesen "en guncel" surum
-const FAT_YEKDEM_AYLIK = {
-  '2026-01': 162.849,     // Ocak - Kesinlesmis (Nisan revizyonu)
-  '2026-02': 480.015,     // Subat - Kesinlesmis (Nisan revizyonu)
-  '2026-03': 747.398,     // Mart - Kesinlesmis (Nisan revizyonu)
-  '2026-04': 1038.343,    // Nisan - Kesinlesmis (gerceklesen)
-  '2026-05': 1088.89,     // Mayis - TAHMINI (Nisan sapmasi 1.8073x × 602.51 ongorulu)
-};
-// Aylar icin durum: 'kesin' veya 'tahmin'
-const FAT_YEKDEM_DURUM = {
-  '2026-01': 'kesin',
-  '2026-02': 'kesin',
-  '2026-03': 'kesin',
-  '2026-04': 'kesin',
-  '2026-05': 'tahmin',    // Mayis henuz kesinlesmedi, Nisan sapmasi uyarlandi
-};
-const FAT_YEKDEM_DEFAULT = 1088.89;  // Bilinmeyen aylar icin (en son tahmin)
+// YEKDEM aylik bedelleri EPIAS_YEKDEM sozlugunden okunur (EPİAŞ sekmesi).
+// Karar mantigi (yekdemHesapla fonksiyonunda):
+//  - Gerceklesme varsa -> kesin (yesil)
+//  - Sadece ongoru varsa ve onceki ayin sapmasi varsa -> tahmin (sari)
+//  - Sadece ongoru varsa, onceki ay yoksa -> ongoru (turuncu)
+
+const FAT_YEKDEM_DEFAULT = 602.51;  // Bilinmeyen aylar icin fallback
 const FAT_DAGITIM = 1.05;
 const FAT_DB_BIRIM = 1.182457;   // OG Tek Terim Sanayi - TL/kWh
 const FAT_SANAYI_AKTIF = 2.909687;  // Sanayi Tek Terim Aktif Enerji Bedeli - TL/kWh (AKS3 mahsup indirimi icin)
@@ -4157,18 +4280,22 @@ const FAT_AY_ISIM_MAP = {
   '2026-03': 'Mart 2026',
   '2026-04': 'Nisan 2026',
   '2026-05': 'Mayıs 2026',
+  '2026-06': 'Haziran 2026',
 };
 let fatAylikPtf = null;  // aylik_ptf.json - tum aylar
 
-// Bir ay icin YEKDEM bedeli (TL/MWh)
+// Bir ay icin YEKDEM bedeli (TL/MWh) - merkezi yekdemHesapla'dan al
 function fatYekdemAl(ay) {
-  if (ay && FAT_YEKDEM_AYLIK[ay] !== undefined) return FAT_YEKDEM_AYLIK[ay];
-  return FAT_YEKDEM_DEFAULT;
+  if (!ay) return FAT_YEKDEM_DEFAULT;
+  const h = (typeof yekdemHesapla === 'function') ? yekdemHesapla(ay) : null;
+  return h ? h.deger : FAT_YEKDEM_DEFAULT;
 }
 
-// Bir ay icin YEKDEM durumu ('kesin' veya 'tahmin')
+// Bir ay icin YEKDEM durumu - 'kesin' / 'ongoru' / 'tahmin'
 function fatYekdemDurum(ay) {
-  return FAT_YEKDEM_DURUM[ay] || 'tahmin';
+  if (!ay) return 'tahmin';
+  const h = (typeof yekdemHesapla === 'function') ? yekdemHesapla(ay) : null;
+  return h ? h.durum : 'tahmin';
 }
 
 function fatFmt(v, ondalik) {
@@ -4232,46 +4359,49 @@ function faturaRender() {
   const yekdemEl = document.getElementById('fat-yekdem-bilgi');
   const yekdemPopup = document.getElementById('fat-yekdem-popup');
   if (yekdemEl) {
-    const ayYekdem = fatYekdemAl(ay);
-    const durum = fatYekdemDurum(ay);
-    let not, popupIcerik = '';
+    const h = (typeof yekdemHesapla === 'function') ? yekdemHesapla(ay) : null;
+    const ayYekdem = h ? h.deger : FAT_YEKDEM_DEFAULT;
+    const durum = h ? h.durum : 'tahmin';
+    let not = '', popupIcerik = '';
     
     if (durum === 'kesin') {
-      not = ' <span style="color:#4ade80;">✓ kesinleşmiş</span>';
-      // Kesin YEKDEM popup
+      not = ' <span style="color:#4ade80;">✓ gerçekleşmiş</span>';
       popupIcerik = '<div class="fat-popup-title">⚡ ' + (FAT_AY_ISIM_MAP[ay] || ay) + ' YEKDEM</div>';
-      popupIcerik += '<div class="fat-popup-row"><span>Bedel</span><span>' + fatFmt(ayYekdem, 2) + ' TL/MWh</span></div>';
-      popupIcerik += '<div class="fat-popup-row"><span>Durum</span><span style="color:#4ade80;">✓ Kesinleşmiş</span></div>';
-      popupIcerik += '<div class="fat-popup-row"><span>Kaynak</span><span>EPİAŞ Şeffaflık</span></div>';
-      popupIcerik += '<div class="fat-popup-sonuc"><span style="font-size:10px;color:#94a3b8;">Versiyonlu değer:</span><span style="font-size:10px;color:#94a3b8;">Sonraki ay revize</span></div>';
+      popupIcerik += '<div class="fat-popup-row"><span>Gerçekleşen</span><span>' + fatFmt(h.gercek, 2) + ' TL/MWh</span></div>';
+      if (h.ongoru) {
+        const sapma = ((h.gercek / h.ongoru) - 1) * 100;
+        const isaret = sapma >= 0 ? '+' : '';
+        popupIcerik += '<div class="fat-popup-row"><span>Resmi öngörü</span><span>' + fatFmt(h.ongoru, 2) + '</span></div>';
+        popupIcerik += '<div class="fat-popup-row sum"><span>Sapma</span><span>' + isaret + sapma.toFixed(2) + '%</span></div>';
+      }
+      popupIcerik += '<div class="fat-popup-sonuc"><span>Durum</span><span style="color:#4ade80;">✓ Kesinleşmiş</span></div>';
+    } else if (durum === 'tahmin') {
+      not = ' <span style="color:#fcd34d;">⚡ tahmini</span>';
+      const fark = (h.kat - 1) * 100;
+      const oncekiAyIsmi = h.oncekiAy ? FAT_AY_ISIM_MAP[h.oncekiAy] || h.oncekiAy : 'Önceki ay';
+      popupIcerik = '<div class="fat-popup-title" style="color:#fcd34d;">⚡ ' + (FAT_AY_ISIM_MAP[ay] || ay) + ' Tahmini YEKDEM</div>';
+      popupIcerik += '<div style="font-size:10px; color:#94a3b8; margin-bottom:6px; line-height:1.4;">' + oncekiAyIsmi + ' öngörü/gerçek sapması baz alındı.</div>';
+      popupIcerik += '<div class="fat-popup-row"><span>' + oncekiAyIsmi + ' öngörü</span><span>' + fatFmt(h.oncekiOngoru, 2) + '</span></div>';
+      popupIcerik += '<div class="fat-popup-row"><span>' + oncekiAyIsmi + ' gerçek</span><span>' + fatFmt(h.oncekiGercek, 2) + '</span></div>';
+      popupIcerik += '<div class="fat-popup-row sum"><span>Sapma</span><span style="color:#fcd34d;">+%' + fark.toFixed(2) + ' (' + h.kat.toFixed(4) + '×)</span></div>';
+      popupIcerik += '<div class="fat-popup-row"><span>Bu ay öngörü</span><span>' + fatFmt(h.ongoru, 2) + '</span></div>';
+      popupIcerik += '<div class="fat-popup-row"><span>× Sapma</span><span>' + h.kat.toFixed(4) + '×</span></div>';
+      popupIcerik += '<div class="fat-popup-sonuc" style="color:#fcd34d; border-top-color:rgba(251,191,36,0.3);"><span>Tahmini YEKDEM</span><span>' + fatFmt(h.deger, 2) + ' TL/MWh</span></div>';
     } else {
-      not = ' <span style="color:#fbbf24;">⚡ tahmini</span>';
-      // Tahmin YEKDEM popup - Nisan sapmasi detaylari
-      const oncekiOngoru = 574.54;       // Nisan ongoru
-      const oncekiGercek = 1038.343;     // Nisan gerceklesen
-      const sapmaKat = oncekiGercek / oncekiOngoru;
-      const sapmaYuzde = (sapmaKat - 1) * 100;
-      const mayisOngoru = 602.51;
-      
-      popupIcerik = '<div class="fat-popup-title" style="color:#fbbf24;">⚡ ' + (FAT_AY_ISIM_MAP[ay] || ay) + ' Tahmini YEKDEM</div>';
-      popupIcerik += '<div style="font-size:10px; color:#94a3b8; margin-bottom:6px; line-height:1.4;">Bir önceki ay (Nisan) öngörü ile gerçekleşme arasında sapma baz alındı.</div>';
-      popupIcerik += '<div class="fat-popup-row"><span>Nisan öngörü</span><span>' + fatFmt(oncekiOngoru, 2) + '</span></div>';
-      popupIcerik += '<div class="fat-popup-row"><span>Nisan gerçekleşen</span><span>' + fatFmt(oncekiGercek, 2) + '</span></div>';
-      popupIcerik += '<div class="fat-popup-row sum"><span>Sapma</span><span style="color:#fbbf24;">+%' + fatFmt(sapmaYuzde, 2) + ' (' + fatFmt(sapmaKat, 4) + '×)</span></div>';
-      popupIcerik += '<div class="fat-popup-row"><span>Mayıs öngörü</span><span>' + fatFmt(mayisOngoru, 2) + '</span></div>';
-      popupIcerik += '<div class="fat-popup-row"><span>× Sapma</span><span>' + fatFmt(sapmaKat, 4) + '×</span></div>';
-      popupIcerik += '<div class="fat-popup-sonuc" style="color:#fbbf24; border-top-color:rgba(251,191,36,0.3);"><span>Tahmini YEKDEM</span><span>' + fatFmt(ayYekdem, 2) + ' TL/MWh</span></div>';
+      // ongoru durumu (turuncu)
+      not = ' <span style="color:#fdba74;">📋 öngörü</span>';
+      popupIcerik = '<div class="fat-popup-title" style="color:#fdba74;">📋 ' + (FAT_AY_ISIM_MAP[ay] || ay) + ' Öngörü YEKDEM</div>';
+      popupIcerik += '<div class="fat-popup-row"><span>Resmi Öngörü</span><span>' + fatFmt(h.ongoru, 2) + ' TL/MWh</span></div>';
+      popupIcerik += '<div class="fat-popup-row"><span>Durum</span><span style="color:#fdba74;">Henüz gerçekleşmedi</span></div>';
+      popupIcerik += '<div class="fat-popup-sonuc" style="color:#fdba74;"><span>Kaynak</span><span>EPDK Resmi Açıklama</span></div>';
     }
     
     yekdemEl.innerHTML = fatFmt(ayYekdem, 2) + ' TL/MWh' + not;
     if (yekdemPopup) {
       yekdemPopup.innerHTML = popupIcerik;
-      // Tahmin ise sari renk
-      if (durum !== 'kesin') {
-        yekdemPopup.classList.add('sari');
-      } else {
-        yekdemPopup.classList.remove('sari');
-      }
+      yekdemPopup.classList.remove('sari', 'turuncu');
+      if (durum === 'tahmin') yekdemPopup.classList.add('sari');
+      else if (durum === 'ongoru') yekdemPopup.classList.add('turuncu');
     }
   }
 
