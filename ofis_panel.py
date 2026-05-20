@@ -10,8 +10,8 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.01.02.01"
-PANEL_VERSIYON_TARIH = "20.05.2026 15:45"
+PANEL_VERSIYON = "ver.01.04.01"
+PANEL_VERSIYON_TARIH = "20.05.2026 20:00"
 
 KULLANICILAR = {
     "admin1":    {"sifre": hashlib.sha256("admin1".encode()).hexdigest(),    "rol": "yonetici"},
@@ -279,7 +279,7 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 .fat-mal-lbl{font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
 .fat-mal-val{font-size:17px;font-weight:900;margin-top:4px;color:#16a34a;}
 .fat-mal-sub{font-size:10px;color:#94a3b8;margin-top:3px;font-weight:600;}
-.fat-tablo-wrap{overflow-x:auto;margin-top:8px;border-radius:12px;border:1px solid #e2e8f0;background:#ffffff;}
+.fat-tablo-wrap{overflow-x:auto;overflow-y:visible;margin-top:8px;border-radius:12px;border:1px solid #e2e8f0;background:#ffffff;}
 .fat-table{width:100%;border-collapse:collapse;font-size:11px;}
 .fat-table th{background:#f1f5f9;color:#64748b;font-weight:800;font-size:9px;padding:10px 6px;text-align:center;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;}
 .fat-table th:first-child{text-align:left;padding-left:14px;}
@@ -290,6 +290,9 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 .fat-table tr.fat-gun-satir.acik td{background:rgba(22,163,74,0.06);}
 .fat-table tr.fat-gun-satir.acik td:first-child{color:#16a34a;}
 .fat-table tr.fat-toplam td{background:linear-gradient(180deg,rgba(217,119,6,0.1),rgba(217,119,6,0.03));font-weight:900;border-top:2px solid rgba(217,119,6,0.3);color:#d97706;font-size:12px;}
+.fat-table tr.fat-toplam td.fat-hover-cell{color:#b45309;}
+.fat-table tr.fat-toplam td.fat-col-mal{color:#16a34a;}
+.fat-table tr.fat-toplam td.fat-col-tutar{color:#d97706;}
 .fat-table td.fat-col-ham{color:#dc2626;}
 .fat-table td.fat-col-mhs{color:#7c3aed;}
 .fat-table td.fat-col-snr{color:#d97706;font-weight:800;}
@@ -312,6 +315,10 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 .fat-tutar-val{font-size:24px;font-weight:900;color:#b45309;margin-top:6px;letter-spacing:-0.5px;}
 .fat-tutar-sub{font-size:10px;color:#94a3b8;margin-top:4px;font-weight:600;}
 .fat-table td.fat-col-tutar{color:#d97706;font-weight:800;}
+.fat-table td.fat-col-mhsmal{color:#7c3aed;}
+.fat-table td.fat-col-tukbed{color:#16a34a;}
+.fat-table td.fat-col-mhsbed{color:#dc2626;}
+.fat-table td.fat-col-toplam{color:#d97706;font-weight:800;}
 .fat-fatura-card{background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:14px;}
 .fat-kalem{padding:10px 12px;background:#f8fafc;border-radius:10px;margin-bottom:10px;border:1px solid #f1f5f9;}
 .fat-kalem:last-child{margin-bottom:0;}
@@ -381,14 +388,19 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 .fat-hover-cell{position:relative;cursor:help;}
 .fat-hover-cell:hover{background:rgba(22,163,74,0.08)!important;}
 .fat-yekdem-cell:hover #fat-yekdem-popup{display:block;}
-.fat-popup{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);min-width:200px;background:#ffffff;border:1px solid #cbd5e1;border-radius:10px;padding:10px 12px;box-shadow:0 8px 28px rgba(15,23,42,0.18);z-index:9999;text-align:left;white-space:nowrap;pointer-events:none;}
+.fat-popup{display:none;position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);min-width:200px;background:#ffffff;border:1px solid #cbd5e1;border-radius:10px;padding:10px 12px;box-shadow:0 8px 28px rgba(15,23,42,0.18);z-index:9999;text-align:left;white-space:nowrap;pointer-events:none;}
+.fat-popup.yukari{top:auto;bottom:calc(100% + 8px);}
 .fat-popup.mor{border-color:rgba(124,58,237,0.4);}
 .fat-popup.sari{border-color:rgba(217,119,6,0.4);}
 .fat-popup.turuncu{border-color:rgba(234,88,12,0.4);}
-.fat-popup::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#ffffff;}
-.fat-popup.mor::after{border-top-color:#ffffff;}
-.fat-popup.sari::after{border-top-color:#ffffff;}
-.fat-popup.turuncu::after{border-top-color:#ffffff;}
+.fat-popup::after{content:'';position:absolute;bottom:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-bottom-color:#ffffff;}
+.fat-popup.yukari::after{bottom:auto;top:100%;border-bottom-color:transparent;border-top-color:#ffffff;}
+.fat-popup.mor::after{border-bottom-color:#ffffff;}
+.fat-popup.mor.yukari::after{border-bottom-color:transparent;border-top-color:#ffffff;}
+.fat-popup.sari::after{border-bottom-color:#ffffff;}
+.fat-popup.sari.yukari::after{border-bottom-color:transparent;border-top-color:#ffffff;}
+.fat-popup.turuncu::after{border-bottom-color:#ffffff;}
+.fat-popup.turuncu.yukari::after{border-bottom-color:transparent;border-top-color:#ffffff;}
 .fat-hover-cell:hover .fat-popup{display:block;}
 .fat-popup-title{font-size:10px;font-weight:800;color:#16a34a;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid rgba(22,163,74,0.2);}
 .fat-popup-title.mor{color:#7c3aed;border-bottom-color:rgba(124,58,237,0.2);}
@@ -4886,6 +4898,31 @@ if (!window.fatDelegated) {
     }
   });
   window.fatDelegated = true;
+}
+
+// Akilli popup konumlama - hover olunca ust/alt yer durumuna gore yon belirle
+if (!window.fatPopupDelegated) {
+  document.addEventListener('mouseover', function(e) {
+    const cell = e.target.closest('.fat-hover-cell');
+    if (!cell) return;
+    const popup = cell.querySelector('.fat-popup');
+    if (!popup) return;
+    // Hucrenin ekrandaki konumu
+    const rect = cell.getBoundingClientRect();
+    // Popup yuksekligini tahmin et (gorunur degilse olc)
+    const popupYukseklik = popup.offsetHeight || 160;
+    const ustBosluk = rect.top;            // hucre ustunde kalan alan
+    const altBosluk = window.innerHeight - rect.bottom;  // hucre altinda kalan alan
+    // Eger ustte yeterli yer varsa YUKARI ac, yoksa ASAGI ac
+    if (ustBosluk > popupYukseklik + 20) {
+      popup.classList.add('yukari');
+      popup.classList.remove('asagi');
+    } else {
+      popup.classList.add('asagi');
+      popup.classList.remove('yukari');
+    }
+  });
+  window.fatPopupDelegated = true;
 }
 // ====================== FATURALANDIRMA SEKMESI SONU ======================
 
