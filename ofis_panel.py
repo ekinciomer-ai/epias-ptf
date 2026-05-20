@@ -239,159 +239,159 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 .l4{color:#f87171;}
 .l5{color:#dc2626;font-weight:900;}
 .aylik-table td.kapali-cell{color:#c4b5fd!important;background:linear-gradient(135deg,rgba(124,58,237,0.3),rgba(124,58,237,0.15))!important;border:1px solid rgba(168,85,247,0.6);font-weight:900;}
-.fat-abone-kart{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.06);border-radius:18px;padding:16px;margin-bottom:16px;}
-.fat-abone-kart.ty1{border-left:4px solid #fbbf24;}
-.fat-abone-kart.ty2{border-left:4px solid #60a5fa;}
-.fat-abone-kart.aks3{border-left:4px solid #f87171;}
-.fat-abone-head{display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.05);margin-bottom:14px;}
+.fat-abone-kart{background:#ffffff;border:1px solid #e2e8f0;border-radius:18px;padding:16px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+.fat-abone-kart.ty1{border-left:4px solid #d97706;}
+.fat-abone-kart.ty2{border-left:4px solid #2563eb;}
+.fat-abone-kart.aks3{border-left:4px solid #dc2626;}
+.fat-abone-head{display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid #f1f5f9;margin-bottom:14px;}
 .fat-abone-icon{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
 .fat-abone-kart.ty1 .fat-abone-icon{background:linear-gradient(135deg,#f59e0b,#fbbf24);}
 .fat-abone-kart.ty2 .fat-abone-icon{background:linear-gradient(135deg,#3b82f6,#60a5fa);}
 .fat-abone-kart.aks3 .fat-abone-icon{background:linear-gradient(135deg,#dc2626,#f87171);}
-.fat-abone-name{font-size:16px;font-weight:900;line-height:1.2;}
-.fat-abone-sub{font-size:11px;color:#94a3b8;margin-top:2px;font-weight:600;}
-.fat-bolum-baslik{font-size:10px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 8px;}
+.fat-abone-name{font-size:16px;font-weight:900;line-height:1.2;color:#1e293b;}
+.fat-abone-sub{font-size:11px;color:#64748b;margin-top:2px;font-weight:600;}
+.fat-bolum-baslik{font-size:10px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 8px;}
 .fat-bilgi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
-.fat-bilgi-row{background:rgba(255,255,255,0.025);border-radius:10px;padding:9px 11px;}
-.fat-bilgi-lbl{font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
-.fat-bilgi-val{font-size:13px;font-weight:800;margin-top:2px;color:#e2e8f0;}
+.fat-bilgi-row{background:#f8fafc;border-radius:10px;padding:9px 11px;border:1px solid #f1f5f9;}
+.fat-bilgi-lbl{font-size:9px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
+.fat-bilgi-val{font-size:13px;font-weight:800;margin-top:2px;color:#1e293b;}
 .fat-ozet-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
 .fat-ozet-card{border-radius:12px;padding:11px 8px;text-align:center;border:1px solid;}
-.fat-ozet-card.ham{background:linear-gradient(135deg,rgba(248,113,113,0.18),rgba(248,113,113,0.05));border-color:rgba(248,113,113,0.3);}
-.fat-ozet-card.mhs{background:linear-gradient(135deg,rgba(168,85,247,0.18),rgba(168,85,247,0.05));border-color:rgba(168,85,247,0.3);}
-.fat-ozet-card.snr{background:linear-gradient(135deg,rgba(251,146,60,0.22),rgba(251,146,60,0.06));border-color:rgba(251,146,60,0.4);}
-.fat-ozet-lbl{font-size:9px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;}
+.fat-ozet-card.ham{background:linear-gradient(135deg,rgba(220,38,38,0.08),rgba(220,38,38,0.02));border-color:rgba(220,38,38,0.25);}
+.fat-ozet-card.mhs{background:linear-gradient(135deg,rgba(124,58,237,0.08),rgba(124,58,237,0.02));border-color:rgba(124,58,237,0.25);}
+.fat-ozet-card.snr{background:linear-gradient(135deg,rgba(217,119,6,0.1),rgba(217,119,6,0.03));border-color:rgba(217,119,6,0.3);}
+.fat-ozet-lbl{font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;}
 .fat-ozet-val{font-size:16px;font-weight:900;letter-spacing:-0.3px;}
-.fat-ozet-card.ham .fat-ozet-val{color:#fca5a5;}
-.fat-ozet-card.mhs .fat-ozet-val{color:#c4b5fd;}
-.fat-ozet-card.snr .fat-ozet-val{color:#fdba74;}
-.fat-ozet-unit{font-size:9px;color:#64748b;font-weight:700;margin-top:2px;}
+.fat-ozet-card.ham .fat-ozet-val{color:#dc2626;}
+.fat-ozet-card.mhs .fat-ozet-val{color:#7c3aed;}
+.fat-ozet-card.snr .fat-ozet-val{color:#d97706;}
+.fat-ozet-unit{font-size:9px;color:#94a3b8;font-weight:700;margin-top:2px;}
 .fat-mal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
-.fat-mal-card{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:11px 12px;}
-.fat-mal-lbl{font-size:9px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
-.fat-mal-val{font-size:17px;font-weight:900;margin-top:4px;color:#4ade80;}
-.fat-mal-sub{font-size:10px;color:#64748b;margin-top:3px;font-weight:600;}
-.fat-tablo-wrap{overflow-x:auto;margin-top:8px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);background:#050917;}
+.fat-mal-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:11px 12px;}
+.fat-mal-lbl{font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
+.fat-mal-val{font-size:17px;font-weight:900;margin-top:4px;color:#16a34a;}
+.fat-mal-sub{font-size:10px;color:#94a3b8;margin-top:3px;font-weight:600;}
+.fat-tablo-wrap{overflow-x:auto;margin-top:8px;border-radius:12px;border:1px solid #e2e8f0;background:#ffffff;}
 .fat-table{width:100%;border-collapse:collapse;font-size:11px;}
-.fat-table th{background:linear-gradient(180deg,#1e293b,#0f172a);color:#94a3b8;font-weight:800;font-size:9px;padding:10px 6px;text-align:center;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;}
+.fat-table th{background:#f1f5f9;color:#64748b;font-weight:800;font-size:9px;padding:10px 6px;text-align:center;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;}
 .fat-table th:first-child{text-align:left;padding-left:14px;}
-.fat-table td{padding:9px 6px;text-align:right;border-bottom:1px solid rgba(255,255,255,0.08);font-weight:700;white-space:nowrap;}
-.fat-table td:first-child{text-align:left;padding-left:14px;color:#cbd5e1;font-weight:800;}
+.fat-table td{padding:9px 6px;text-align:right;border-bottom:1px solid #f1f5f9;font-weight:700;white-space:nowrap;}
+.fat-table td:first-child{text-align:left;padding-left:14px;color:#475569;font-weight:800;}
 .fat-table tr.fat-gun-satir{cursor:pointer;transition:background 0.15s;}
-.fat-table tr.fat-gun-satir:hover td{background:rgba(255,255,255,0.025);}
-.fat-table tr.fat-gun-satir.acik td{background:rgba(34,197,94,0.07);}
-.fat-table tr.fat-gun-satir.acik td:first-child{color:#4ade80;}
-.fat-table tr.fat-toplam td{background:linear-gradient(180deg,rgba(251,191,36,0.12),rgba(251,191,36,0.04));font-weight:900;border-top:2px solid rgba(251,191,36,0.3);color:#fbbf24;font-size:12px;}
-.fat-table td.fat-col-ham{color:#fca5a5;}
-.fat-table td.fat-col-mhs{color:#c4b5fd;}
-.fat-table td.fat-col-snr{color:#fdba74;font-weight:800;}
-.fat-table td.fat-col-mal{color:#86efac;}
-.fat-table td.fat-col-ptf{color:#93c5fd;}
-.fat-expand-ico{display:inline-block;margin-right:5px;font-size:9px;color:#64748b;transition:transform 0.2s;}
-tr.acik .fat-expand-ico{transform:rotate(90deg);color:#4ade80;}
+.fat-table tr.fat-gun-satir:hover td{background:#f8fafc;}
+.fat-table tr.fat-gun-satir.acik td{background:rgba(22,163,74,0.06);}
+.fat-table tr.fat-gun-satir.acik td:first-child{color:#16a34a;}
+.fat-table tr.fat-toplam td{background:linear-gradient(180deg,rgba(217,119,6,0.1),rgba(217,119,6,0.03));font-weight:900;border-top:2px solid rgba(217,119,6,0.3);color:#d97706;font-size:12px;}
+.fat-table td.fat-col-ham{color:#dc2626;}
+.fat-table td.fat-col-mhs{color:#7c3aed;}
+.fat-table td.fat-col-snr{color:#d97706;font-weight:800;}
+.fat-table td.fat-col-mal{color:#16a34a;}
+.fat-table td.fat-col-ptf{color:#2563eb;}
+.fat-expand-ico{display:inline-block;margin-right:5px;font-size:9px;color:#94a3b8;transition:transform 0.2s;}
+tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 .fat-saatlik-row{display:none;}
 .fat-saatlik-row.acik{display:table-row;}
-.fat-saatlik-row td{padding:0;background:#030611;overflow:visible;}
-.fat-saatlik-icerik{padding:10px 12px;background:linear-gradient(180deg,rgba(34,197,94,0.04),transparent);border-top:1px dashed rgba(34,197,94,0.2);border-bottom:1px dashed rgba(34,197,94,0.2);overflow:visible;}
+.fat-saatlik-row td{padding:0;background:#f8fafc;overflow:visible;}
+.fat-saatlik-icerik{padding:10px 12px;background:linear-gradient(180deg,rgba(22,163,74,0.04),transparent);border-top:1px dashed rgba(22,163,74,0.2);border-bottom:1px dashed rgba(22,163,74,0.2);overflow:visible;}
 .fat-saatlik-icerik table{width:100%;border-collapse:collapse;font-size:10px;overflow:visible;}
-.fat-saatlik-icerik th{font-size:8px;color:#64748b;padding:6px 5px;text-align:right;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.fat-saatlik-icerik th{font-size:8px;color:#94a3b8;padding:6px 5px;text-align:right;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #e2e8f0;}
 .fat-saatlik-icerik th:first-child{text-align:left;}
-.fat-saatlik-icerik td{padding:5px;text-align:right;border-bottom:1px solid rgba(255,255,255,0.06);font-weight:700;color:#cbd5e1;background:transparent;}
-.fat-saatlik-icerik td:first-child{text-align:left;color:#4ade80;font-weight:800;}
-.fat-saatlik-icerik tr.gun-tpl td{background:rgba(251,191,36,0.06);color:#fbbf24;font-weight:900;border-top:1px solid rgba(251,191,36,0.2);}
-.fat-tutar-card{background:linear-gradient(135deg,rgba(251,191,36,0.18),rgba(245,158,11,0.06));border:1px solid rgba(251,191,36,0.35);border-radius:14px;padding:14px 16px;text-align:center;}
-.fat-tutar-lbl{font-size:10px;color:#fbbf24;font-weight:800;text-transform:uppercase;letter-spacing:1px;}
-.fat-tutar-val{font-size:24px;font-weight:900;color:#fcd34d;margin-top:6px;letter-spacing:-0.5px;}
+.fat-saatlik-icerik td{padding:5px;text-align:right;border-bottom:1px solid #f1f5f9;font-weight:700;color:#475569;background:transparent;}
+.fat-saatlik-icerik td:first-child{text-align:left;color:#16a34a;font-weight:800;}
+.fat-saatlik-icerik tr.gun-tpl td{background:rgba(217,119,6,0.07);color:#d97706;font-weight:900;border-top:1px solid rgba(217,119,6,0.25);}
+.fat-tutar-card{background:linear-gradient(135deg,rgba(217,119,6,0.1),rgba(245,158,11,0.03));border:1px solid rgba(217,119,6,0.3);border-radius:14px;padding:14px 16px;text-align:center;}
+.fat-tutar-lbl{font-size:10px;color:#d97706;font-weight:800;text-transform:uppercase;letter-spacing:1px;}
+.fat-tutar-val{font-size:24px;font-weight:900;color:#b45309;margin-top:6px;letter-spacing:-0.5px;}
 .fat-tutar-sub{font-size:10px;color:#94a3b8;margin-top:4px;font-weight:600;}
-.fat-table td.fat-col-tutar{color:#fcd34d;font-weight:800;}
-.fat-fatura-card{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;}
-.fat-kalem{padding:10px 12px;background:rgba(255,255,255,0.02);border-radius:10px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.04);}
+.fat-table td.fat-col-tutar{color:#d97706;font-weight:800;}
+.fat-fatura-card{background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:14px;}
+.fat-kalem{padding:10px 12px;background:#f8fafc;border-radius:10px;margin-bottom:10px;border:1px solid #f1f5f9;}
 .fat-kalem:last-child{margin-bottom:0;}
-.fat-kalem-baslik{font-size:12px;font-weight:800;color:#e2e8f0;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.05);}
-.fat-kalem-formul{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#94a3b8;padding:4px 0;font-weight:600;}
-.fat-kalem-formul span:last-child{color:#cbd5e1;font-weight:700;font-family:'Inter',monospace;}
-.fat-kalem-toplam{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#86efac;padding:6px 0 4px;margin-top:4px;border-top:1px dashed rgba(34,197,94,0.2);font-weight:800;}
+.fat-kalem-baslik{font-size:12px;font-weight:800;color:#1e293b;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #e2e8f0;}
+.fat-kalem-formul{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#64748b;padding:4px 0;font-weight:600;}
+.fat-kalem-formul span:last-child{color:#475569;font-weight:700;font-family:'Inter',monospace;}
+.fat-kalem-toplam{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#16a34a;padding:6px 0 4px;margin-top:4px;border-top:1px dashed rgba(22,163,74,0.25);font-weight:800;}
 .fat-kalem-toplam span:last-child{font-weight:900;font-family:'Inter',monospace;letter-spacing:-0.2px;}
-.fat-odenecek{background:linear-gradient(135deg,rgba(34,197,94,0.18),rgba(22,163,74,0.05));border:1.5px solid rgba(34,197,94,0.4);border-radius:12px;padding:14px 16px;margin-top:12px;text-align:center;}
-.fat-odenecek-lbl{font-size:10px;color:#4ade80;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;}
-.fat-odenecek-val{font-size:26px;font-weight:900;color:#bbf7d0;margin-top:6px;letter-spacing:-0.5px;font-family:'Inter',monospace;}
+.fat-odenecek{background:linear-gradient(135deg,rgba(22,163,74,0.1),rgba(22,163,74,0.03));border:1.5px solid rgba(22,163,74,0.35);border-radius:12px;padding:14px 16px;margin-top:12px;text-align:center;}
+.fat-odenecek-lbl{font-size:10px;color:#16a34a;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;}
+.fat-odenecek-val{font-size:26px;font-weight:900;color:#15803d;margin-top:6px;letter-spacing:-0.5px;font-family:'Inter',monospace;}
 .fat-saat-tr{cursor:pointer;transition:background 0.15s;}
-.fat-saat-tr:hover td{background:rgba(34,197,94,0.06)!important;}
-.fat-saat-tr.acik td{background:rgba(34,197,94,0.12)!important;color:#4ade80;}
-.fat-saat-ico{display:inline-block;margin-right:5px;font-size:8px;color:#64748b;transition:transform 0.2s;}
-.fat-saat-tr.acik .fat-saat-ico{transform:rotate(90deg);color:#4ade80;}
+.fat-saat-tr:hover td{background:rgba(22,163,74,0.05)!important;}
+.fat-saat-tr.acik td{background:rgba(22,163,74,0.1)!important;color:#16a34a;}
+.fat-saat-ico{display:inline-block;margin-right:5px;font-size:8px;color:#94a3b8;transition:transform 0.2s;}
+.fat-saat-tr.acik .fat-saat-ico{transform:rotate(90deg);color:#16a34a;}
 .fat-saat-detay-row{display:none;}
 .fat-saat-detay-row.acik{display:table-row;}
-.fat-saat-detay-row td{padding:0;background:#030611;}
-.fat-saat-detay-yatay{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px;background:linear-gradient(180deg,rgba(34,197,94,0.04),transparent);border-top:1px dashed rgba(34,197,94,0.2);border-bottom:1px dashed rgba(34,197,94,0.2);}
-.fat-detay-kutu{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:8px 10px;}
-.fat-detay-kutu.mal{border-left:3px solid #4ade80;}
-.fat-detay-kutu.mhsind{border-left:3px solid #a78bfa;}
-.fat-detay-kutu.tutar{border-left:3px solid #fbbf24;}
-.fat-detay-baslik{font-size:9px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.fat-saat-detay-row td{padding:0;background:#f8fafc;}
+.fat-saat-detay-yatay{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px;background:linear-gradient(180deg,rgba(22,163,74,0.04),transparent);border-top:1px dashed rgba(22,163,74,0.2);border-bottom:1px dashed rgba(22,163,74,0.2);}
+.fat-detay-kutu{background:#ffffff;border:1px solid #e2e8f0;border-radius:8px;padding:8px 10px;}
+.fat-detay-kutu.mal{border-left:3px solid #16a34a;}
+.fat-detay-kutu.mhsind{border-left:3px solid #7c3aed;}
+.fat-detay-kutu.tutar{border-left:3px solid #d97706;}
+.fat-detay-baslik{font-size:9px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid #f1f5f9;}
 .fat-detay-row{display:flex;justify-content:space-between;align-items:center;font-size:10px;padding:2px 0;gap:6px;}
-.fat-detay-row span:first-child{color:#94a3b8;font-weight:600;}
-.fat-detay-row span:last-child{color:#e2e8f0;font-weight:800;font-family:'Inter',monospace;}
-.fat-detay-sonuc{display:flex;justify-content:space-between;align-items:center;padding:5px 0 2px;margin-top:5px;border-top:1px solid rgba(34,197,94,0.3);font-size:11px;font-weight:900;}
-.fat-detay-kutu.mal .fat-detay-sonuc{color:#4ade80;}
-.fat-detay-kutu.mhsind .fat-detay-sonuc{color:#fca5a5;}
-.fat-detay-kutu.tutar .fat-detay-sonuc{color:#fcd34d;}
+.fat-detay-row span:first-child{color:#64748b;font-weight:600;}
+.fat-detay-row span:last-child{color:#1e293b;font-weight:800;font-family:'Inter',monospace;}
+.fat-detay-sonuc{display:flex;justify-content:space-between;align-items:center;padding:5px 0 2px;margin-top:5px;border-top:1px solid #e2e8f0;font-size:11px;font-weight:900;}
+.fat-detay-kutu.mal .fat-detay-sonuc{color:#16a34a;}
+.fat-detay-kutu.mhsind .fat-detay-sonuc{color:#dc2626;}
+.fat-detay-kutu.tutar .fat-detay-sonuc{color:#d97706;}
 .fat-detay-sonuc span:last-child{font-family:'Inter',monospace;}
-.fat-saat-tbl td.fat-col-mhsind{color:#c4b5fd;font-weight:700;}
+.fat-saat-tbl td.fat-col-mhsind{color:#7c3aed;font-weight:700;}
 /* Fatura Ozet Karti */
-.fat-fatura-ozet{background:linear-gradient(135deg,rgba(34,197,94,0.05),rgba(34,197,94,0.02));border:1px solid rgba(34,197,94,0.15);border-radius:14px;padding:14px 16px;margin:14px 0 18px;}
-.fat-fo-title{font-size:11px;font-weight:800;color:#4ade80;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(34,197,94,0.15);}
-.fat-fo-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);gap:12px;}
+.fat-fatura-ozet{background:linear-gradient(135deg,rgba(22,163,74,0.05),rgba(22,163,74,0.01));border:1px solid rgba(22,163,74,0.18);border-radius:14px;padding:14px 16px;margin:14px 0 18px;}
+.fat-fo-title{font-size:11px;font-weight:800;color:#16a34a;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(22,163,74,0.18);}
+.fat-fo-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f1f5f9;gap:12px;}
 .fat-fo-row:last-of-type{border-bottom:none;}
-.fat-fo-row.toplam{background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.25);border-radius:8px;padding:9px 12px;margin:6px 0;color:#fbbf24;}
-.fat-fo-lbl{font-size:12px;color:#cbd5e1;font-weight:700;flex:1;}
-.fat-fo-no{color:#64748b;font-weight:800;margin-right:4px;}
-.fat-fo-aciklama{color:#64748b;font-size:10px;font-weight:600;margin-left:6px;}
-.fat-fo-val{font-size:13px;font-weight:800;color:#e2e8f0;font-family:'Inter',monospace;white-space:nowrap;}
-.fat-fo-val.negatif{color:#fca5a5;}
+.fat-fo-row.toplam{background:rgba(217,119,6,0.07);border:1px solid rgba(217,119,6,0.25);border-radius:8px;padding:9px 12px;margin:6px 0;color:#d97706;}
+.fat-fo-lbl{font-size:12px;color:#475569;font-weight:700;flex:1;}
+.fat-fo-no{color:#94a3b8;font-weight:800;margin-right:4px;}
+.fat-fo-aciklama{color:#94a3b8;font-size:10px;font-weight:600;margin-left:6px;}
+.fat-fo-val{font-size:13px;font-weight:800;color:#1e293b;font-family:'Inter',monospace;white-space:nowrap;}
+.fat-fo-val.negatif{color:#dc2626;}
 .fat-fo-tl{font-size:10px;color:#94a3b8;font-weight:700;margin-left:2px;}
-.fat-fo-odenecek{background:linear-gradient(135deg,rgba(34,197,94,0.2),rgba(22,163,74,0.06));border:1.5px solid rgba(34,197,94,0.45);border-radius:12px;padding:14px 16px;margin-top:12px;display:flex;justify-content:space-between;align-items:center;gap:12px;}
-.fat-fo-od-lbl{font-size:11px;font-weight:800;color:#4ade80;text-transform:uppercase;letter-spacing:1.1px;}
-.fat-fo-od-val{font-size:24px;font-weight:900;color:#bbf7d0;letter-spacing:-0.5px;font-family:'Inter',monospace;}
-.fat-detay-lbl{font-size:11px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin:18px 0 8px;}
+.fat-fo-odenecek{background:linear-gradient(135deg,rgba(22,163,74,0.1),rgba(22,163,74,0.03));border:1.5px solid rgba(22,163,74,0.4);border-radius:12px;padding:14px 16px;margin-top:12px;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.fat-fo-od-lbl{font-size:11px;font-weight:800;color:#16a34a;text-transform:uppercase;letter-spacing:1.1px;}
+.fat-fo-od-val{font-size:24px;font-weight:900;color:#15803d;letter-spacing:-0.5px;font-family:'Inter',monospace;}
+.fat-detay-lbl{font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin:18px 0 8px;}
 /* Tuketim Detayi karti */
-.fat-tuketim-detay{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px 16px;margin:14px 0;}
-.fat-td-title{font-size:11px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.fat-tuketim-detay{background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:14px 16px;margin:14px 0;}
+.fat-td-title{font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #e2e8f0;}
 .fat-td-grid{display:flex;flex-direction:column;gap:6px;}
-.fat-td-row{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,0.02);font-size:12px;font-weight:700;}
-.fat-td-row.sonra{background:linear-gradient(135deg,rgba(251,146,60,0.18),rgba(251,146,60,0.05));border:1px solid rgba(251,146,60,0.3);margin-top:4px;padding:9px 12px;}
-.fat-td-lbl{color:#cbd5e1;}
+.fat-td-row{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-radius:8px;background:#ffffff;font-size:12px;font-weight:700;border:1px solid #f1f5f9;}
+.fat-td-row.sonra{background:linear-gradient(135deg,rgba(217,119,6,0.1),rgba(217,119,6,0.03));border:1px solid rgba(217,119,6,0.3);margin-top:4px;padding:9px 12px;}
+.fat-td-lbl{color:#475569;}
 .fat-td-val{font-weight:900;font-family:'Inter',monospace;font-size:13px;}
-.fat-td-val.ham{color:#fca5a5;}
-.fat-td-val.mhs{color:#c4b5fd;}
-.fat-td-val.snr{color:#fdba74;font-size:15px;}
+.fat-td-val.ham{color:#dc2626;}
+.fat-td-val.mhs{color:#7c3aed;}
+.fat-td-val.snr{color:#d97706;font-size:15px;}
 /* Fatura alt satiri - kalem detay (Ham × Birim Fiyat) */
-.fat-fo-altrow{display:flex;justify-content:space-between;align-items:center;padding:3px 0 9px;border-bottom:1px solid rgba(255,255,255,0.04);margin-bottom:2px;}
-.fat-fo-altlbl{font-size:10px;color:#94a3b8;font-weight:700;font-family:'Inter',monospace;letter-spacing:0.2px;}
-.fat-fo-altaciklama{font-size:9px;color:#64748b;font-weight:600;font-style:italic;}
+.fat-fo-altrow{display:flex;justify-content:space-between;align-items:center;padding:3px 0 9px;border-bottom:1px solid #f1f5f9;margin-bottom:2px;}
+.fat-fo-altlbl{font-size:10px;color:#64748b;font-weight:700;font-family:'Inter',monospace;letter-spacing:0.2px;}
+.fat-fo-altaciklama{font-size:9px;color:#94a3b8;font-weight:600;font-style:italic;}
 /* Hover Popup - tiklanabilir hesap detayi */
 .fat-hover-cell{position:relative;cursor:help;}
-.fat-hover-cell:hover{background:rgba(34,197,94,0.12)!important;}
+.fat-hover-cell:hover{background:rgba(22,163,74,0.08)!important;}
 .fat-yekdem-cell:hover #fat-yekdem-popup{display:block;}
-.fat-popup{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);min-width:200px;background:#0f172a;border:1px solid rgba(34,197,94,0.35);border-radius:10px;padding:10px 12px;box-shadow:0 8px 24px rgba(0,0,0,0.5);z-index:9999;text-align:left;white-space:nowrap;pointer-events:none;}
-.fat-popup.mor{border-color:rgba(167,139,250,0.45);}
-.fat-popup.sari{border-color:rgba(251,191,36,0.45);}
-.fat-popup.turuncu{border-color:rgba(251,146,60,0.45);}
-.fat-popup::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:rgba(34,197,94,0.35);}
-.fat-popup.mor::after{border-top-color:rgba(167,139,250,0.45);}
-.fat-popup.sari::after{border-top-color:rgba(251,191,36,0.45);}
-.fat-popup.turuncu::after{border-top-color:rgba(251,146,60,0.45);}
+.fat-popup{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);min-width:200px;background:#ffffff;border:1px solid #cbd5e1;border-radius:10px;padding:10px 12px;box-shadow:0 8px 28px rgba(15,23,42,0.18);z-index:9999;text-align:left;white-space:nowrap;pointer-events:none;}
+.fat-popup.mor{border-color:rgba(124,58,237,0.4);}
+.fat-popup.sari{border-color:rgba(217,119,6,0.4);}
+.fat-popup.turuncu{border-color:rgba(234,88,12,0.4);}
+.fat-popup::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#ffffff;}
+.fat-popup.mor::after{border-top-color:#ffffff;}
+.fat-popup.sari::after{border-top-color:#ffffff;}
+.fat-popup.turuncu::after{border-top-color:#ffffff;}
 .fat-hover-cell:hover .fat-popup{display:block;}
-.fat-popup-title{font-size:10px;font-weight:800;color:#4ade80;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid rgba(34,197,94,0.2);}
-.fat-popup-title.mor{color:#c4b5fd;border-bottom-color:rgba(167,139,250,0.2);}
-.fat-popup-title.sari{color:#fcd34d;border-bottom-color:rgba(251,191,36,0.2);}
+.fat-popup-title{font-size:10px;font-weight:800;color:#16a34a;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid rgba(22,163,74,0.2);}
+.fat-popup-title.mor{color:#7c3aed;border-bottom-color:rgba(124,58,237,0.2);}
+.fat-popup-title.sari{color:#d97706;border-bottom-color:rgba(217,119,6,0.2);}
 .fat-popup-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:2px 0;gap:14px;}
-.fat-popup-row span:first-child{color:#94a3b8;font-weight:600;}
-.fat-popup-row span:last-child{color:#e2e8f0;font-weight:800;font-family:'Inter',monospace;}
-.fat-popup-row.sum{border-top:1px dashed rgba(255,255,255,0.1);padding-top:4px;margin-top:2px;}
-.fat-popup-sonuc{display:flex;justify-content:space-between;align-items:center;padding:5px 0 2px;margin-top:5px;border-top:1px solid rgba(34,197,94,0.3);font-size:12px;font-weight:900;gap:14px;color:#4ade80;}
-.fat-popup-sonuc.mor{color:#c4b5fd;border-top-color:rgba(167,139,250,0.3);}
-.fat-popup-sonuc.sari{color:#fcd34d;border-top-color:rgba(251,191,36,0.3);}
+.fat-popup-row span:first-child{color:#64748b;font-weight:600;}
+.fat-popup-row span:last-child{color:#1e293b;font-weight:800;font-family:'Inter',monospace;}
+.fat-popup-row.sum{border-top:1px dashed #e2e8f0;padding-top:4px;margin-top:2px;}
+.fat-popup-sonuc{display:flex;justify-content:space-between;align-items:center;padding:5px 0 2px;margin-top:5px;border-top:1px solid rgba(22,163,74,0.3);font-size:12px;font-weight:900;gap:14px;color:#16a34a;}
+.fat-popup-sonuc.mor{color:#7c3aed;border-top-color:rgba(124,58,237,0.3);}
+.fat-popup-sonuc.sari{color:#d97706;border-top-color:rgba(217,119,6,0.3);}
 .fat-popup-sonuc span:last-child{font-family:'Inter',monospace;}
 .f2-summary{background:linear-gradient(135deg,rgba(245,158,11,0.15) 0%,rgba(245,158,11,0.05) 100%);border:1px solid rgba(245,158,11,0.25);border-radius:18px;padding:16px;margin-bottom:14px;}
 .f2-icon-wrap{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
@@ -1218,14 +1218,14 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#4ade80;}
 <!-- ====================== MAHSUPLAŞMA SEKMESI SONU ====================== -->
 
 <!-- ====================== FATURALANDIRMA SEKMESI ====================== -->
-<div class="tab-content" id="t-faturalandirma">
+<div class="tab-content" id="t-faturalandirma" style="background:#f1f5f9; border-radius:16px; padding:16px; margin-top:8px;">
 
-  <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 0 16px; border-bottom:1px solid rgba(255,255,255,0.06); margin-bottom:18px; flex-wrap:wrap;">
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 0 16px; border-bottom:1px solid #e2e8f0; margin-bottom:18px; flex-wrap:wrap;">
     <div>
-      <div style="font-size:20px; font-weight:900; background:linear-gradient(135deg,#fbbf24,#f59e0b); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">🧾 Faturalandırma</div>
-      <div style="font-size:11px; color:#94a3b8; margin-top:3px; font-weight:600;">Mahsup sonrası kalan tüketim · Enerji maliyeti hesabı</div>
+      <div style="font-size:20px; font-weight:900; background:linear-gradient(135deg,#d97706,#f59e0b); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">🧾 Faturalandırma</div>
+      <div style="font-size:11px; color:#64748b; margin-top:3px; font-weight:600;">Mahsup sonrası kalan tüketim · Enerji maliyeti hesabı</div>
     </div>
-    <select id="fat-ay-secim" onchange="faturaRender()" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:white; padding:8px 12px; border-radius:10px; font-size:12px; font-weight:700; font-family:inherit; cursor:pointer;">
+    <select id="fat-ay-secim" onchange="faturaRender()" style="background:#ffffff; border:1px solid #cbd5e1; color:#1e293b; padding:8px 12px; border-radius:10px; font-size:12px; font-weight:700; font-family:inherit; cursor:pointer;">
       <option value="2026-01">Ocak 2026</option>
       <option value="2026-02">Şubat 2026</option>
       <option value="2026-03">Mart 2026</option>
@@ -1234,15 +1234,15 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#4ade80;}
     </select>
   </div>
 
-  <div id="fat-formul-bar" style="background:rgba(34,197,94,0.06); border:1px solid rgba(34,197,94,0.15); border-radius:10px; padding:9px 13px; font-size:11px; color:#86efac; margin-bottom:14px; font-weight:600; position:relative;">
-    📐 <b style="color:#4ade80;">Enerji Maliyeti</b> = (PTF + YEKDEM) × 1,035 / 1000 &nbsp;·&nbsp; 
-    <span class="fat-yekdem-cell" style="position:relative; display:inline-block; cursor:help; border-bottom:1px dashed rgba(255,255,255,0.3);">
-      <b style="color:#4ade80;">YEKDEM:</b> <span id="fat-yekdem-bilgi">1.088,89 TL/MWh ⚡ tahmini</span>
+  <div id="fat-formul-bar" style="background:rgba(22,163,74,0.06); border:1px solid rgba(22,163,74,0.2); border-radius:10px; padding:9px 13px; font-size:11px; color:#15803d; margin-bottom:14px; font-weight:600; position:relative;">
+    📐 <b style="color:#16a34a;">Enerji Maliyeti</b> = (PTF + YEKDEM) × 1,035 / 1000 &nbsp;·&nbsp; 
+    <span class="fat-yekdem-cell" style="position:relative; display:inline-block; cursor:help; border-bottom:1px dashed #94a3b8;">
+      <b style="color:#16a34a;">YEKDEM:</b> <span id="fat-yekdem-bilgi">1.088,89 TL/MWh ⚡ tahmini</span>
       <div id="fat-yekdem-popup" class="fat-popup" style="white-space:normal; min-width:280px; left:0; transform:none;"></div>
     </span>
   </div>
 
-  <div id="fat-kartlar"><div style="padding:30px; text-align:center; color:#94a3b8; font-size:12px;">Yükleniyor...</div></div>
+  <div id="fat-kartlar"><div style="padding:30px; text-align:center; color:#64748b; font-size:12px;">Yükleniyor...</div></div>
 
 </div>
 <!-- ====================== FATURALANDIRMA SEKMESI SONU ====================== -->
@@ -4376,24 +4376,24 @@ function faturaRender() {
       }
       popupIcerik += '<div class="fat-popup-sonuc"><span>Durum</span><span style="color:#4ade80;">✓ Kesinleşmiş</span></div>';
     } else if (durum === 'tahmin') {
-      not = ' <span style="color:#fcd34d;">⚡ tahmini</span>';
+      not = ' <span style="color:#d97706;">⚡ tahmini</span>';
       const fark = (h.kat - 1) * 100;
       const oncekiAyIsmi = h.oncekiAy ? FAT_AY_ISIM_MAP[h.oncekiAy] || h.oncekiAy : 'Önceki ay';
-      popupIcerik = '<div class="fat-popup-title" style="color:#fcd34d;">⚡ ' + (FAT_AY_ISIM_MAP[ay] || ay) + ' Tahmini YEKDEM</div>';
+      popupIcerik = '<div class="fat-popup-title" style="color:#d97706;">⚡ ' + (FAT_AY_ISIM_MAP[ay] || ay) + ' Tahmini YEKDEM</div>';
       popupIcerik += '<div style="font-size:10px; color:#94a3b8; margin-bottom:6px; line-height:1.4;">' + oncekiAyIsmi + ' öngörü/gerçek sapması baz alındı.</div>';
       popupIcerik += '<div class="fat-popup-row"><span>' + oncekiAyIsmi + ' öngörü</span><span>' + fatFmt(h.oncekiOngoru, 2) + '</span></div>';
       popupIcerik += '<div class="fat-popup-row"><span>' + oncekiAyIsmi + ' gerçek</span><span>' + fatFmt(h.oncekiGercek, 2) + '</span></div>';
-      popupIcerik += '<div class="fat-popup-row sum"><span>Sapma</span><span style="color:#fcd34d;">+%' + fark.toFixed(2) + ' (' + h.kat.toFixed(4) + '×)</span></div>';
+      popupIcerik += '<div class="fat-popup-row sum"><span>Sapma</span><span style="color:#d97706;">+%' + fark.toFixed(2) + ' (' + h.kat.toFixed(4) + '×)</span></div>';
       popupIcerik += '<div class="fat-popup-row"><span>Bu ay öngörü</span><span>' + fatFmt(h.ongoru, 2) + '</span></div>';
       popupIcerik += '<div class="fat-popup-row"><span>× Sapma</span><span>' + h.kat.toFixed(4) + '×</span></div>';
-      popupIcerik += '<div class="fat-popup-sonuc" style="color:#fcd34d; border-top-color:rgba(251,191,36,0.3);"><span>Tahmini YEKDEM</span><span>' + fatFmt(h.deger, 2) + ' TL/MWh</span></div>';
+      popupIcerik += '<div class="fat-popup-sonuc" style="color:#d97706; border-top-color:rgba(217,119,6,0.3);"><span>Tahmini YEKDEM</span><span>' + fatFmt(h.deger, 2) + ' TL/MWh</span></div>';
     } else {
       // ongoru durumu (turuncu)
-      not = ' <span style="color:#fdba74;">📋 öngörü</span>';
-      popupIcerik = '<div class="fat-popup-title" style="color:#fdba74;">📋 ' + (FAT_AY_ISIM_MAP[ay] || ay) + ' Öngörü YEKDEM</div>';
+      not = ' <span style="color:#ea580c;">📋 öngörü</span>';
+      popupIcerik = '<div class="fat-popup-title" style="color:#ea580c;">📋 ' + (FAT_AY_ISIM_MAP[ay] || ay) + ' Öngörü YEKDEM</div>';
       popupIcerik += '<div class="fat-popup-row"><span>Resmi Öngörü</span><span>' + fatFmt(h.ongoru, 2) + ' TL/MWh</span></div>';
-      popupIcerik += '<div class="fat-popup-row"><span>Durum</span><span style="color:#fdba74;">Henüz gerçekleşmedi</span></div>';
-      popupIcerik += '<div class="fat-popup-sonuc" style="color:#fdba74;"><span>Kaynak</span><span>EPDK Resmi Açıklama</span></div>';
+      popupIcerik += '<div class="fat-popup-row"><span>Durum</span><span style="color:#ea580c;">Henüz gerçekleşmedi</span></div>';
+      popupIcerik += '<div class="fat-popup-sonuc" style="color:#ea580c;"><span>Kaynak</span><span>EPDK Resmi Açıklama</span></div>';
     }
     
     yekdemEl.innerHTML = fatFmt(ayYekdem, 2) + ' TL/MWh' + not;
