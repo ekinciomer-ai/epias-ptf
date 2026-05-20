@@ -952,7 +952,7 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#4ade80;}
   <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
     <div>
       <div style="font-size:18px; font-weight:600; color:#1e293b;">⚡ Aksaray 3 - Elektrik Maliyeti</div>
-      <div style="font-size:12px; color:#64748b; margin-top:2px;">(PTF + YEKDEM) × 1.05 × Tüketim</div>
+      <div style="font-size:12px; color:#64748b; margin-top:2px;">(PTF + YEKDEM) × 1.035 × Tüketim</div>
     </div>
     <select id="mlt-ay" onchange="mltYukle()" style="background:#fff; border:1px solid #cbd5e1; color:#1e293b; padding:6px 10px; border-radius:6px; font-size:13px;">
       <option value="">Mevcut Ay</option>
@@ -1235,7 +1235,7 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#4ade80;}
   </div>
 
   <div id="fat-formul-bar" style="background:rgba(34,197,94,0.06); border:1px solid rgba(34,197,94,0.15); border-radius:10px; padding:9px 13px; font-size:11px; color:#86efac; margin-bottom:14px; font-weight:600; position:relative;">
-    📐 <b style="color:#4ade80;">Enerji Maliyeti</b> = (PTF + YEKDEM) × 1,05 / 1000 &nbsp;·&nbsp; 
+    📐 <b style="color:#4ade80;">Enerji Maliyeti</b> = (PTF + YEKDEM) × 1,035 / 1000 &nbsp;·&nbsp; 
     <span class="fat-yekdem-cell" style="position:relative; display:inline-block; cursor:help; border-bottom:1px dashed rgba(255,255,255,0.3);">
       <b style="color:#4ade80;">YEKDEM:</b> <span id="fat-yekdem-bilgi">1.088,89 TL/MWh ⚡ tahmini</span>
       <div id="fat-yekdem-popup" class="fat-popup" style="white-space:normal; min-width:280px; left:0; transform:none;"></div>
@@ -3087,7 +3087,7 @@ function mltTabloRender() {
       tbl += '</tr></thead><tbody>';
       
       g.saatler.forEach(s => {
-        const enerji = (s.ptf/1000 + 602.51/1000) * 1.05;
+        const enerji = (s.ptf/1000 + 602.51/1000) * 1.035;
         const pahalı = s.ptf > 2000;
         const renkPtf = pahalı ? '#993c1d' : '#64748b';
         const renkTutar = pahalı ? '#993c1d' : '#1e293b';
@@ -4270,7 +4270,7 @@ function mhsTabloRender() {
 //  - Sadece ongoru varsa, onceki ay yoksa -> ongoru (turuncu)
 
 const FAT_YEKDEM_DEFAULT = 602.51;  // Bilinmeyen aylar icin fallback
-const FAT_DAGITIM = 1.05;
+const FAT_DAGITIM = 1.035;  // %3,5 dagitim/kayip katsayisi (MEPAŞ faturasi ile dogrulandi)
 const FAT_DB_BIRIM = 1.182457;   // OG Tek Terim Sanayi - TL/kWh
 const FAT_SANAYI_AKTIF = 2.909687;  // Sanayi Tek Terim Aktif Enerji Bedeli - TL/kWh (AKS3 mahsup indirimi icin)
 const FAT_KDV = 0.20;            // %20
@@ -4307,7 +4307,7 @@ function fatFmt(v, ondalik) {
   });
 }
 
-// Enerji maliyeti formulu: (PTF + YEKDEM) × 1,05 / 1000 -> TL/kWh
+// Enerji maliyeti formulu: (PTF + YEKDEM) × 1,035 / 1000 -> TL/kWh
 // ay parametresi opsiyonel - verilmezse default YEKDEM kullanir
 function fatEnerjiMal(ptf_tl_mwh, ay) {
   if (ptf_tl_mwh === null || ptf_tl_mwh === undefined) return null;
@@ -4478,14 +4478,14 @@ function fatKartUret(ay, A, ab) {
         const ayDurum = fatYekdemDurum(ay);
         const yekdemEtiket = ayDurum === 'kesin' ? ' <span style="color:#4ade80; font-size:9px;">✓</span>' : ' <span style="color:#fbbf24; font-size:9px;">⚡tahmini</span>';
         const sToplam_ptf_yek = sPtf + ayYekdem;
-        const sCarpim = sToplam_ptf_yek * 1.05;
+        const sCarpim = sToplam_ptf_yek * 1.035;
         saatRows += '<td class="fat-col-mal fat-hover-cell">' + fatFmt(sMal, 3);
         saatRows += '<div class="fat-popup">';
         saatRows += '<div class="fat-popup-title">⚡ Enerji Maliyeti</div>';
         saatRows += '<div class="fat-popup-row"><span>PTF (saat ' + sk + ')</span><span>' + fatFmt(sPtf, 2) + '</span></div>';
         saatRows += '<div class="fat-popup-row"><span>+ YEKDEM' + yekdemEtiket + '</span><span>' + fatFmt(ayYekdem, 2) + '</span></div>';
         saatRows += '<div class="fat-popup-row sum"><span>Toplam</span><span>' + fatFmt(sToplam_ptf_yek, 2) + '</span></div>';
-        saatRows += '<div class="fat-popup-row"><span>× 1,05 (dağıtım)</span><span>' + fatFmt(sCarpim, 2) + '</span></div>';
+        saatRows += '<div class="fat-popup-row"><span>× 1,035 (dağıtım)</span><span>' + fatFmt(sCarpim, 2) + '</span></div>';
         saatRows += '<div class="fat-popup-row"><span>÷ 1000 (MWh→kWh)</span><span></span></div>';
         saatRows += '<div class="fat-popup-sonuc"><span>E.Maliyeti</span><span>' + fatFmt(sMal, 3) + ' TL/kWh</span></div>';
         saatRows += '</div>';
@@ -5287,7 +5287,7 @@ def onay_sayfa(onay_id):
 def api_maliyet_aksaray3():
     """Aksaray 3 saatlik elektrik maliyet hesabi.
     
-    Formul: (PTF[saat]/1000 + YEKDEM/1000) * 1.05 * tuketim[saat]
+    Formul: (PTF[saat]/1000 + YEKDEM/1000) * 1.035 * tuketim[saat]
     PTF: TL/MWh -> TL/kWh icin /1000
     YEKDEM: 602.51 kr/MWh -> TL/kWh icin /1000
     """
@@ -5295,7 +5295,7 @@ def api_maliyet_aksaray3():
         return jsonify({"hata": "yetkisiz"}), 401
     
     YEKDEM_KR_MWH = 602.51
-    DAGITIM_KATSAYI = 1.05  # %5 dagitim/kayip
+    DAGITIM_KATSAYI = 1.035  # %3,5 dagitim/kayip (MEPAŞ faturasi ile dogrulandi)
     
     ay = request.args.get("ay")  # "2026-05" - bos ise mevcut ay, "2026" tum yil
     if not ay:
