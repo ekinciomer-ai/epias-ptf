@@ -5,6 +5,14 @@ import datetime
 app = Flask(__name__)
 app.secret_key = "otocoin-ofis-2026"
 
+# === VERSIYON TAKIBI ===
+# Format: ver.AA.BB.CC
+#   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
+#   BB = sekil/gorsel degisikligi (tema, renk, layout)
+#   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
+PANEL_VERSIYON = "ver.01.02.01"
+PANEL_VERSIYON_TARIH = "20.05.2026 15:45"
+
 KULLANICILAR = {
     "admin1":    {"sifre": hashlib.sha256("admin1".encode()).hexdigest(),    "rol": "yonetici"},
     "admin2":    {"sifre": hashlib.sha256("admin2".encode()).hexdigest(),    "rol": "yonetici"},
@@ -497,6 +505,9 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 </head><body>
+<div id="versiyon-damgasi" style="position:fixed; bottom:10px; right:10px; z-index:99999; background:rgba(15,23,42,0.92); border:1px solid rgba(34,197,94,0.4); border-radius:8px; padding:5px 10px; font-size:10px; font-weight:700; color:#4ade80; font-family:'Inter',monospace; box-shadow:0 2px 12px rgba(0,0,0,0.4); pointer-events:none; letter-spacing:0.3px;">
+  {{ panel_versiyon }} · <span style="color:#94a3b8;">{{ panel_versiyon_tarih }}</span>
+</div>
 <div class="header">
 <div class="brand"><div class="brand-logo">⚡</div><div class="brand-text">Otocoin</div></div>
 <div style="display:flex;align-items:center;gap:8px">
@@ -4907,7 +4918,7 @@ def sw():
 def index():
     if "kullanici" not in session:
         return redirect("/giris")
-    return render_template_string(PANEL_HTML, kullanici=session["kullanici"], rol=session["rol"])
+    return render_template_string(PANEL_HTML, kullanici=session["kullanici"], rol=session["rol"], panel_versiyon=PANEL_VERSIYON, panel_versiyon_tarih=PANEL_VERSIYON_TARIH)
 
 @app.route("/giris", methods=["GET","POST"])
 def giris():
