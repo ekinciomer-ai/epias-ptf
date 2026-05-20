@@ -2,9 +2,12 @@ name: EPİAŞ PTF - main.py
 
 on:
   schedule:
-    # Türkiye saati 13:00-18:00 her saat
-    - cron: '0 10-15 * * *'
+    # Her 3 saatte bir (gece dahil, gün boyu)
+    - cron: '0 */3 * * *'
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   ptf-cek:
@@ -24,7 +27,7 @@ jobs:
         env:
           EPIAS_KULLANICI: ${{ secrets.EPIAS_KULLANICI }}
           EPIAS_SIFRE: ${{ secrets.EPIAS_SIFRE }}
-          GH_TOKEN: ${{ secrets.REPO_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TWILIO_SID: ${{ secrets.TWILIO_SID }}
           TWILIO_TOKEN: ${{ secrets.TWILIO_TOKEN }}
           F2POOL_TOKEN: ${{ secrets.F2POOL_TOKEN }}
