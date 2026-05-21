@@ -10,8 +10,8 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.01.08.03"
-PANEL_VERSIYON_TARIH = "21.05.2026 10:00"
+PANEL_VERSIYON = "ver.01.08.04"
+PANEL_VERSIYON_TARIH = "21.05.2026 10:15"
 
 KULLANICILAR = {
     "admin1":    {"sifre": hashlib.sha256("admin1".encode()).hexdigest(),    "rol": "yonetici"},
@@ -2428,6 +2428,7 @@ function ososGunSec(tarih, btn) {
 
 function yukle() {
   fetch('/api/ozet').then(r => r.json()).then(d => {
+    try {
     if (d.sinyal) {
       const kart = document.getElementById('status-card');
       const ico = document.getElementById('status-icon');
@@ -2436,10 +2437,14 @@ function yukle() {
       document.getElementById('status-title').textContent = d.sinyal.veri_var ? (d.sinyal.karli ? 'ÇALIŞMA VAR' : 'ÇALIŞMA YOK') : 'Veri Bekleniyor';
       document.getElementById('status-sub').textContent = d.sinyal.mesaj || '';
     }
+    } catch(e) { console.error('sinyal render:', e); }
+    try {
     if (d.btc) {
       document.getElementById('btc-tl').textContent = d.btc.tl;
       document.getElementById('btc-usd').textContent = '$' + d.btc.usd + ' USD';
     }
+    } catch(e) { console.error('btc render:', e); }
+    try {
     if (d.f2pool) {
       document.getElementById('bugun-btc').textContent = d.f2pool.bugun_btc;
       document.getElementById('bugun-tl').textContent = '~' + d.f2pool.bugun_tl + ' TL';
@@ -2447,6 +2452,8 @@ function yukle() {
       document.getElementById('dun-tl').textContent = '~' + d.f2pool.dun_tl + ' TL';
       document.getElementById('toplam-hash').innerHTML = d.f2pool.hash + ' <span style="font-size:14px;color:#64748b">TH/s</span>';
     }
+    } catch(e) { console.error('f2pool render:', e); }
+    try {
     if (d.aylik) {
       document.getElementById('ay-kar').textContent = '+' + d.aylik.kar;
       document.getElementById('ay-gun').textContent = 'TL | ' + d.aylik.gun + ' gün';
@@ -2455,19 +2462,20 @@ function yukle() {
       document.getElementById('f2-big').innerHTML = d.aylik.btc + '<span> BTC</span>';
       document.getElementById('f2-small').textContent = '~' + d.aylik.tl + ' TL';
     }
-    if (d.aylik_ptf) aylikRender(d.aylik_ptf);
+    } catch(e) { console.error('aylik render:', e); }
+    try { if (d.aylik_ptf) aylikRender(d.aylik_ptf); } catch(e) { console.error('aylikRender:', e); }
+    try {
     if (d.gunluk_ham) {
       window.f2GunlukHam = d.gunluk_ham;
       window.f2BtcKur = d.btc_kur || 0;
       f2AySeceneksDoldur();
       f2Render();
     }
-    if (d.gunluk_liste) {
-      window.f2GunlukListe = d.gunluk_liste;
-    }
-    if (d.workers) cihazRender(d.workers);
-    document.getElementById('guncelleme').textContent = 'Güncellendi: ' + new Date().toLocaleTimeString('tr-TR');
-  });
+    } catch(e) { console.error('f2Render:', e); }
+    try { if (d.gunluk_liste) { window.f2GunlukListe = d.gunluk_liste; } } catch(e) {}
+    try { if (d.workers) cihazRender(d.workers); } catch(e) { console.error('cihazRender:', e); }
+    try { document.getElementById('guncelleme').textContent = 'Güncellendi: ' + new Date().toLocaleTimeString('tr-TR'); } catch(e) {}
+  }).catch(e => { console.error('yukle fetch:', e); });
 }
 yukle();
 setInterval(yukle, 60000);
