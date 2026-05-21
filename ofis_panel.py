@@ -10,8 +10,8 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.01.05.02"
-PANEL_VERSIYON_TARIH = "21.05.2026 09:00"
+PANEL_VERSIYON = "ver.01.06.02"
+PANEL_VERSIYON_TARIH = "21.05.2026 10:00"
 
 KULLANICILAR = {
     "admin1":    {"sifre": hashlib.sha256("admin1".encode()).hexdigest(),    "rol": "yonetici"},
@@ -421,12 +421,40 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 .f2-big{font-size:26px;font-weight:900;}
 .f2-big span{color:#fbbf24;}
 .f2-small{font-size:12px;color:#94a3b8;margin-top:2px;}
-.daily-item{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);border-radius:12px;padding:10px 12px;margin-bottom:6px;}
-.daily-date{font-size:11px;color:#94a3b8;font-weight:600;min-width:80px;}
-.daily-btc{font-size:13px;font-weight:800;}
-.daily-hash{font-size:10px;color:#64748b;margin-top:1px;}
+/* F2Pool derli toplu tasarim */
+.f2-hero{display:flex;justify-content:space-between;align-items:center;gap:12px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:16px;padding:16px 18px;margin-bottom:14px;box-shadow:0 4px 16px rgba(217,119,6,0.25);}
+.f2-hero-left{display:flex;align-items:center;gap:13px;}
+.f2-hero-ico{width:46px;height:46px;background:rgba(255,255,255,0.2);border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.f2-hero-lbl{font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
+.f2-hero-btc{font-size:25px;font-weight:900;color:#fff;line-height:1.1;margin-top:2px;}
+.f2-hero-btc span{font-size:14px;opacity:0.85;}
+.f2-hero-right{text-align:right;}
+.f2-hero-tl{font-size:19px;font-weight:900;color:#fff;}
+.f2-hero-sub{font-size:11px;color:rgba(255,255,255,0.8);font-weight:600;margin-top:2px;}
+.f2-kontrol{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.f2-zaman-grup{display:flex;gap:3px;background:#f1f5f9;border-radius:10px;padding:3px;border:1px solid #e2e8f0;}
+.f2-ay-sec{margin-left:auto;background:#fff;border:1px solid #cbd5e1;color:#1e293b;padding:8px 12px;border-radius:9px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;}
+.f2-chart-card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+.f2-chart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+.f2-chart-baslik{font-size:13px;font-weight:800;color:#1e293b;}
+.f2-metric-grup{display:flex;gap:4px;}
+.f2-kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.f2-kpi{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:11px 10px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+.f2-kpi-lbl{font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;}
+.f2-kpi-val{font-size:18px;font-weight:900;margin:4px 0 2px;letter-spacing:-0.3px;}
+.f2-kpi-sub{font-size:9px;color:#94a3b8;font-weight:600;}
+.daily-item{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:10px 12px;margin-bottom:6px;}
+.daily-date{font-size:11px;color:#64748b;font-weight:600;min-width:80px;}
+.daily-btc{font-size:13px;font-weight:800;color:#1e293b;}
+.daily-hash{font-size:10px;color:#94a3b8;margin-top:1px;}
 .daily-tl{margin-left:auto;text-align:right;}
-.daily-tl-val{font-size:13px;font-weight:800;color:#4ade80;}
+.daily-tl-val{font-size:13px;font-weight:800;color:#16a34a;}
+.f2-zaman-btn{background:transparent;border:none;color:#64748b;padding:6px 13px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.15s;}
+.f2-zaman-btn.active{background:#d97706;color:#fff;}
+.f2-metric-btn{background:#f1f5f9;border:1px solid #e2e8f0;color:#64748b;padding:5px 10px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.15s;}
+.f2-metric-btn.active{background:#2563eb;border-color:#2563eb;color:#fff;}
+.f2-hafta-baslik{font-size:11px;font-weight:800;color:#d97706;margin:14px 0 6px;padding:7px 11px;background:rgba(217,119,6,0.08);border-radius:8px;border-left:3px solid #d97706;}
+.f2-hafta-ozet{font-size:10px;color:#64748b;font-weight:600;margin-left:auto;}
 .cihaz-ozet{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px;}
 .cihaz-ozet-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:10px 6px;text-align:center;}
 .cihaz-ozet-val{font-size:18px;font-weight:900;}
@@ -592,18 +620,79 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 </div>
 </div>
 
-<div class="tab-content" id="t-f2pool">
-<div class="f2-summary">
-<div class="f2-icon-wrap">
-<div class="f2-icon">₿</div>
-<div><div class="f2-title" id="f2-title">Aylık Toplam</div><div class="f2-subtitle" id="f2-subtitle">—</div></div>
+<div class="tab-content" id="t-f2pool" style="background:#f1f5f9; border-radius:16px; padding:16px; margin-top:8px;">
+
+<!-- Hero: donem ozeti -->
+<div class="f2-hero">
+  <div class="f2-hero-left">
+    <div class="f2-hero-ico">₿</div>
+    <div>
+      <div class="f2-hero-lbl" id="f2-hero-lbl">Tüm Dönem (30 gün)</div>
+      <div class="f2-hero-btc" id="f2-hero-btc">— <span>BTC</span></div>
+    </div>
+  </div>
+  <div class="f2-hero-right">
+    <div class="f2-hero-tl" id="f2-hero-tl">— ₺</div>
+    <div class="f2-hero-sub" id="f2-hero-sub">—</div>
+  </div>
 </div>
-<div class="f2-big" id="f2-big">—<span> BTC</span></div>
-<div class="f2-small" id="f2-small">—</div>
+
+<!-- Kontroller: zaman + ay -->
+<div class="f2-kontrol">
+  <div class="f2-zaman-grup">
+    <button class="f2-zaman-btn active" data-zaman="gunluk" onclick="f2ZamanSec('gunluk', this)">Günlük</button>
+    <button class="f2-zaman-btn" data-zaman="haftalik" onclick="f2ZamanSec('haftalik', this)">Haftalık</button>
+    <button class="f2-zaman-btn" data-zaman="aylik" onclick="f2ZamanSec('aylik', this)">Aylık</button>
+  </div>
+  <select id="f2-ay-secim" onchange="f2Render()" class="f2-ay-sec">
+    <option value="tum">Tüm Veriler</option>
+  </select>
 </div>
-<div class="section-title">📅 Günlük Üretim</div>
+
+<!-- Grafik karti -->
+<div class="f2-chart-card">
+  <div class="f2-chart-head">
+    <div class="f2-chart-baslik" id="f2-chart-baslik">📊 Günlük BTC Kazanç</div>
+    <div class="f2-metric-grup">
+      <button class="f2-metric-btn active" data-metric="btc" onclick="f2MetricSec('btc', this)">₿ BTC</button>
+      <button class="f2-metric-btn" data-metric="tl" onclick="f2MetricSec('tl', this)">₺ TL</button>
+      <button class="f2-metric-btn" data-metric="hash" onclick="f2MetricSec('hash', this)">⚡ Hash</button>
+    </div>
+  </div>
+  <canvas id="f2-chart" style="width:100%; height:190px;"></canvas>
+</div>
+
+<!-- KPI seridi: 3 ana metrik -->
+<div class="f2-kpi-grid">
+  <div class="f2-kpi">
+    <div class="f2-kpi-lbl">Günlük Ortalama</div>
+    <div class="f2-kpi-val" id="f2-ist-ort" style="color:#16a34a;">—</div>
+    <div class="f2-kpi-sub" id="f2-ist-ort-sub">BTC/gün</div>
+  </div>
+  <div class="f2-kpi">
+    <div class="f2-kpi-lbl">Ort. Hashrate</div>
+    <div class="f2-kpi-val" id="f2-ist-hash" style="color:#2563eb;">—</div>
+    <div class="f2-kpi-sub">TH/s</div>
+  </div>
+  <div class="f2-kpi">
+    <div class="f2-kpi-lbl">Çalışan Cihaz</div>
+    <div class="f2-kpi-val" id="f2-ist-cihaz" style="color:#d97706;">—</div>
+    <div class="f2-kpi-sub" id="f2-ist-fiyat-sub">aktif / toplam</div>
+  </div>
+</div>
+
+<!-- Gizli alanlar (eski JS uyumlulugu) -->
+<span id="f2-ist-top" style="display:none;"></span>
+<span id="f2-ist-fiyat" style="display:none;"></span>
+<span id="f2-title" style="display:none;"></span>
+<span id="f2-subtitle" style="display:none;"></span>
+<span id="f2-big" style="display:none;"></span>
+<span id="f2-small" style="display:none;"></span>
+
+<div class="section-title" id="f2-liste-baslik" style="margin-top:6px;">📅 Günlük Üretim</div>
 <div id="daily-list" style="margin-top:8px"><div class="empty-state">Yükleniyor...</div></div>
 </div>
+
 
 <div class="tab-content" id="t-cihazlar">
 <div class="cihaz-ozet">
@@ -1564,9 +1653,230 @@ function durumBilgisi(durum) {
   return {label:'Kapalı', cls:'badge-off', ico:'❌', renk:'#f87171'};
 }
 
-function cihazRender(workers) {
-  if (!workers || workers.length === 0) {
-    document.getElementById('cihaz-grid').innerHTML = '<div class="empty-state" style="grid-column:1/-1">Cihaz yok</div>';
+// ════════════════ F2POOL GRAFIK + ZAMAN DILIMI ════════════════
+window.f2Zaman = 'gunluk';
+window.f2Metric = 'btc';
+
+function f2ZamanSec(z, btn) {
+  window.f2Zaman = z;
+  document.querySelectorAll('.f2-zaman-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  f2Render();
+}
+function f2MetricSec(m, btn) {
+  window.f2Metric = m;
+  document.querySelectorAll('.f2-metric-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  f2Render();
+}
+
+function f2AySeceneksDoldur() {
+  const ham = window.f2GunlukHam || [];
+  const aylar = {};
+  ham.forEach(g => { aylar[g.iso.slice(0,7)] = true; });
+  const sel = document.getElementById('f2-ay-secim');
+  if (!sel) return;
+  const mevcut = sel.value;
+  let html = '<option value="tum">Tüm Veriler (30 gün)</option>';
+  const ayAd = ['','Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  Object.keys(aylar).sort().reverse().forEach(ay => {
+    const [yil, m] = ay.split('-');
+    html += '<option value="' + ay + '">' + ayAd[parseInt(m)] + ' ' + yil + '</option>';
+  });
+  sel.innerHTML = html;
+  if (mevcut && sel.querySelector('option[value="' + mevcut + '"]')) sel.value = mevcut;
+}
+
+function f2VeriFiltrele() {
+  let ham = (window.f2GunlukHam || []).slice();
+  const ay = document.getElementById('f2-ay-secim') ? document.getElementById('f2-ay-secim').value : 'tum';
+  if (ay !== 'tum') ham = ham.filter(g => g.iso.slice(0,7) === ay);
+  return ham;
+}
+
+// ISO tarihten hafta anahtari (yil-hafta no)
+function f2HaftaKey(iso) {
+  const d = new Date(iso + 'T00:00:00');
+  const onceki = new Date(d);
+  onceki.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // Pazartesi'ye git
+  return onceki.toISOString().slice(0,10);
+}
+
+function f2Grupla(ham, zaman) {
+  // Donus: [{etiket, btc, tl, hash_ort, gun_sayisi, iso_bas}]
+  if (zaman === 'gunluk') {
+    return ham.map(g => ({
+      etiket: g.iso.slice(8,10) + '.' + g.iso.slice(5,7),
+      btc: g.btc, tl: g.tl, hash_ort: g.hash, gun_sayisi: 1, iso_bas: g.iso
+    }));
+  }
+  const gruplar = {};
+  ham.forEach(g => {
+    const key = (zaman === 'haftalik') ? f2HaftaKey(g.iso) : g.iso.slice(0,7);
+    if (!gruplar[key]) gruplar[key] = { btc:0, tl:0, hash_top:0, gun:0, iso_bas:g.iso };
+    gruplar[key].btc += g.btc;
+    gruplar[key].tl += g.tl;
+    gruplar[key].hash_top += g.hash;
+    gruplar[key].gun++;
+    if (g.iso < gruplar[key].iso_bas) gruplar[key].iso_bas = g.iso;
+  });
+  const ayAd = ['','Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+  return Object.keys(gruplar).sort().map(key => {
+    const gr = gruplar[key];
+    let etiket;
+    if (zaman === 'haftalik') {
+      const d = new Date(key + 'T00:00:00');
+      etiket = d.getDate() + '.' + ayAd[d.getMonth()+1];
+    } else {
+      const [yil, m] = key.split('-');
+      etiket = ayAd[parseInt(m)] + ' ' + yil.slice(2);
+    }
+    return { etiket: etiket, btc: gr.btc, tl: gr.tl, hash_ort: gr.hash_top/gr.gun, gun_sayisi: gr.gun, iso_bas: gr.iso_bas, key: key };
+  });
+}
+
+function f2Render() {
+  const ham = f2VeriFiltrele();
+  if (ham.length === 0) {
+    document.getElementById('daily-list').innerHTML = '<div class="empty-state">Veri yok</div>';
+    return;
+  }
+  const zaman = window.f2Zaman, metric = window.f2Metric;
+  const gruplar = f2Grupla(ham, zaman);
+
+  // Baslik
+  const zamanAd = { gunluk:'Günlük', haftalik:'Haftalık', aylik:'Aylık' };
+  const metricAd = { btc:'BTC Kazanç', tl:'TL Kazanç', hash:'Hashrate' };
+  document.getElementById('f2-chart-baslik').textContent = '📊 ' + zamanAd[zaman] + ' ' + metricAd[metric];
+  document.getElementById('f2-liste-baslik').textContent = '📅 ' + zamanAd[zaman] + ' Üretim';
+
+  // Grafik verisi
+  const degerler = gruplar.map(g => metric === 'btc' ? g.btc : (metric === 'tl' ? g.tl : g.hash_ort));
+  const etiketler = gruplar.map(g => g.etiket);
+  f2ChartCiz(etiketler, degerler, metric);
+
+  // Istatistikler
+  const topBtc = ham.reduce((s,g) => s+g.btc, 0);
+  const topTl = ham.reduce((s,g) => s+g.tl, 0);
+  const ortHash = ham.reduce((s,g) => s+g.hash, 0) / ham.length;
+  const gunSayisi = ham.length;
+  const ortBtcFiyat = window.f2BtcKur || 0;
+
+  // Hero karti - donem ozeti
+  const heroLblEl = document.getElementById('f2-hero-lbl');
+  const aySecim = document.getElementById('f2-ay-secim');
+  if (heroLblEl) {
+    let donemAd = 'Tüm Dönem (' + gunSayisi + ' gün)';
+    if (aySecim && aySecim.value !== 'tum') {
+      const opt = aySecim.options[aySecim.selectedIndex];
+      donemAd = (opt ? opt.text : '') + ' (' + gunSayisi + ' gün)';
+    }
+    heroLblEl.textContent = donemAd;
+  }
+  const heroBtcEl = document.getElementById('f2-hero-btc');
+  if (heroBtcEl) heroBtcEl.innerHTML = topBtc.toFixed(5) + ' <span>BTC</span>';
+  const heroTlEl = document.getElementById('f2-hero-tl');
+  if (heroTlEl) heroTlEl.textContent = Math.round(topTl).toLocaleString('tr-TR') + ' ₺';
+  const heroSubEl = document.getElementById('f2-hero-sub');
+  if (heroSubEl) heroSubEl.textContent = 'Ort. ' + Math.round(topTl/gunSayisi).toLocaleString('tr-TR') + ' ₺/gün';
+
+  // KPI: gunluk ortalama (her zaman BTC bazli, net)
+  const ortEl = document.getElementById('f2-ist-ort');
+  const ortSubEl = document.getElementById('f2-ist-ort-sub');
+  if (metric === 'tl') {
+    if (ortEl) ortEl.textContent = Math.round(topTl/gunSayisi).toLocaleString('tr-TR') + ' ₺';
+    if (ortSubEl) ortSubEl.textContent = 'TL/gün';
+  } else {
+    if (ortEl) ortEl.textContent = (topBtc/gunSayisi).toFixed(5);
+    if (ortSubEl) ortSubEl.textContent = 'BTC/gün';
+  }
+  const topEl = document.getElementById('f2-ist-top');
+  if (topEl) topEl.textContent = topBtc.toFixed(5);
+  const hashEl = document.getElementById('f2-ist-hash');
+  if (hashEl) hashEl.textContent = Math.round(ortHash).toLocaleString('tr-TR');
+  const fiyatEl = document.getElementById('f2-ist-fiyat');
+  if (fiyatEl) fiyatEl.textContent = ortBtcFiyat > 0 ? (Math.round(ortBtcFiyat).toLocaleString('tr-TR') + ' ₺') : '—';
+
+  // Liste (haftalik/aylik dilimli)
+  f2ListeRender(ham, zaman, gruplar);
+}
+
+function f2ListeRender(ham, zaman, gruplar) {
+  let html = '';
+  if (zaman === 'gunluk') {
+    // Gunluk: haftalik dilimlere bol
+    const haftalar = {};
+    ham.slice().reverse().forEach(g => {
+      const hk = f2HaftaKey(g.iso);
+      if (!haftalar[hk]) haftalar[hk] = [];
+      haftalar[hk].push(g);
+    });
+    const ayAd = ['','Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+    Object.keys(haftalar).sort().reverse().forEach(hk => {
+      const gunler = haftalar[hk];
+      const hBtc = gunler.reduce((s,g)=>s+g.btc,0);
+      const hTl = gunler.reduce((s,g)=>s+g.tl,0);
+      const d = new Date(hk + 'T00:00:00');
+      const son = new Date(d); son.setDate(d.getDate()+6);
+      html += '<div class="f2-hafta-baslik" style="display:flex; align-items:center;">📆 ' + d.getDate() + '.' + ayAd[d.getMonth()+1] + ' - ' + son.getDate() + '.' + ayAd[son.getMonth()+1];
+      html += '<span class="f2-hafta-ozet">' + hBtc.toFixed(5) + ' BTC · ' + Math.round(hTl).toLocaleString('tr-TR') + ' ₺</span></div>';
+      gunler.forEach(g => {
+        const tarih = g.iso.slice(8,10) + '.' + g.iso.slice(5,7) + '.' + g.iso.slice(0,4);
+        html += '<div class="daily-item"><div class="daily-date">' + tarih + '</div><div><div class="daily-btc">' + g.btc.toFixed(5) + ' BTC</div><div class="daily-hash">' + Math.round(g.hash).toLocaleString('tr-TR') + ' TH/s</div></div><div class="daily-tl"><div class="daily-tl-val">' + Math.round(g.tl).toLocaleString('tr-TR') + ' TL</div></div></div>';
+      });
+    });
+  } else {
+    // Haftalik/Aylik: grup ozet satirlari
+    gruplar.slice().reverse().forEach(gr => {
+      html += '<div class="daily-item"><div class="daily-date">' + gr.etiket + '</div><div><div class="daily-btc">' + gr.btc.toFixed(5) + ' BTC</div><div class="daily-hash">' + Math.round(gr.hash_ort).toLocaleString('tr-TR') + ' TH/s ort · ' + gr.gun_sayisi + ' gün</div></div><div class="daily-tl"><div class="daily-tl-val">' + Math.round(gr.tl).toLocaleString('tr-TR') + ' TL</div></div></div>';
+    });
+  }
+  document.getElementById('daily-list').innerHTML = html || '<div class="empty-state">Veri yok</div>';
+}
+
+function f2ChartCiz(etiketler, degerler, metric) {
+  const canvas = document.getElementById('f2-chart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.clientWidth, H = 190;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0,0,W,H);
+  if (degerler.length === 0) return;
+
+  const padL = 8, padR = 8, padT = 16, padB = 24;
+  const cw = W - padL - padR, ch = H - padT - padB;
+  const maxV = Math.max(...degerler) * 1.1 || 1;
+  const renk = metric === 'btc' ? '#d97706' : (metric === 'tl' ? '#16a34a' : '#2563eb');
+  const n = degerler.length;
+  const barW = Math.min(cw / n * 0.7, 40);
+  const gap = cw / n;
+
+  degerler.forEach((v, i) => {
+    const x = padL + gap * i + (gap - barW)/2;
+    const h = (v / maxV) * ch;
+    const y = padT + ch - h;
+    // Bar
+    const grad = ctx.createLinearGradient(0, y, 0, padT+ch);
+    grad.addColorStop(0, renk);
+    grad.addColorStop(1, renk + '44');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x, y, barW, h, [4,4,0,0]);
+    else ctx.rect(x, y, barW, h);
+    ctx.fill();
+    // Etiket (alt)
+    if (n <= 16 || i % Math.ceil(n/16) === 0) {
+      ctx.fillStyle = '#64748b';
+      ctx.font = '8px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(etiketler[i], x + barW/2, H - 8);
+    }
+  });
+}
+
+
     return;
   }
   let calisan = 0, uyuyan = 0, kapali = 0, toplam = 0;
@@ -1580,6 +1890,12 @@ function cihazRender(workers) {
   document.getElementById('cihaz-uyku').textContent = uyuyan;
   document.getElementById('cihaz-kapali').textContent = kapali;
   document.getElementById('cihaz-toplam').textContent = Math.round(toplam);
+  // F2Pool sekmesindeki calisan cihaz kartini da guncelle
+  window.f2CalisanCihaz = calisan;
+  const f2c = document.getElementById('f2-ist-cihaz');
+  if (f2c) f2c.textContent = calisan + ' / ' + workers.length;
+  const f2cs = document.getElementById('f2-ist-fiyat-sub');
+  if (f2cs) f2cs.textContent = 'aktif / toplam';
   let html = '';
   workers.sort((a,b) => a.name.localeCompare(b.name)).forEach(w => {
     const d = durumBilgisi(w.durum);
@@ -1894,12 +2210,14 @@ function yukle() {
       document.getElementById('f2-small').textContent = '~' + d.aylik.tl + ' TL';
     }
     if (d.aylik_ptf) aylikRender(d.aylik_ptf);
+    if (d.gunluk_ham) {
+      window.f2GunlukHam = d.gunluk_ham;
+      window.f2BtcKur = d.btc_kur || 0;
+      f2AySeceneksDoldur();
+      f2Render();
+    }
     if (d.gunluk_liste) {
-      let html = '';
-      d.gunluk_liste.forEach(g => {
-        html += '<div class="daily-item"><div class="daily-date">' + g.tarih + '</div><div><div class="daily-btc">' + g.btc + ' BTC</div><div class="daily-hash">' + g.hash + ' TH/s</div></div><div class="daily-tl"><div class="daily-tl-val">' + g.tl + ' TL</div></div></div>';
-      });
-      document.getElementById('daily-list').innerHTML = html || '<div class="empty-state">Veri yok</div>';
+      window.f2GunlukListe = d.gunluk_liste;
     }
     if (d.workers) cihazRender(d.workers);
     document.getElementById('guncelleme').textContent = 'Güncellendi: ' + new Date().toLocaleTimeString('tr-TR');
@@ -5153,6 +5471,19 @@ def ozet():
         ths = t["mining_extra"]["hash_rate"] / 1e12
         gunluk.append({"tarih": tarih, "btc": f"{btc:.5f}", "hash": f"{ths:,.0f}", "tl": f"{btc * btc_try:,.0f}"})
     sonuc["gunluk_liste"] = gunluk
+    # Ham gunluk veri dizisi (grafik + haftalik/aylik gruplama icin)
+    # ISO tarih + ham sayisal degerler (formatlanmamis)
+    gunluk_ham = []
+    for t in sorted(transactions, key=lambda t: t["mining_extra"]["mining_date"]):
+        dt = datetime.datetime.fromtimestamp(t["mining_extra"]["mining_date"], tz=datetime.timezone.utc)
+        gunluk_ham.append({
+            "iso": dt.strftime("%Y-%m-%d"),
+            "btc": t["changed_balance"],
+            "hash": t["mining_extra"]["hash_rate"] / 1e12,
+            "tl": t["changed_balance"] * btc_try
+        })
+    sonuc["gunluk_ham"] = gunluk_ham
+    sonuc["btc_kur"] = btc_try
     workers = f2pool_workers()
     worker_list = []
     for w in workers:
