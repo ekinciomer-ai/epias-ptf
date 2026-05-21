@@ -10,8 +10,8 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.01.06.02"
-PANEL_VERSIYON_TARIH = "21.05.2026 10:00"
+PANEL_VERSIYON = "ver.01.06.03"
+PANEL_VERSIYON_TARIH = "21.05.2026 11:00"
 
 KULLANICILAR = {
     "admin1":    {"sifre": hashlib.sha256("admin1".encode()).hexdigest(),    "rol": "yonetici"},
@@ -1877,6 +1877,9 @@ function f2ChartCiz(etiketler, degerler, metric) {
 }
 
 
+function cihazRender(workers) {
+  if (!workers || workers.length === 0) {
+    document.getElementById('cihaz-grid').innerHTML = '<div class="empty-state" style="grid-column:1/-1">Cihaz yok</div>';
     return;
   }
   let calisan = 0, uyuyan = 0, kapali = 0, toplam = 0;
