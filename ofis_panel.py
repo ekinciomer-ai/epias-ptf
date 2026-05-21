@@ -10,8 +10,8 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.01.04.01"
-PANEL_VERSIYON_TARIH = "20.05.2026 20:00"
+PANEL_VERSIYON = "ver.01.04.02"
+PANEL_VERSIYON_TARIH = "21.05.2026 08:00"
 
 KULLANICILAR = {
     "admin1":    {"sifre": hashlib.sha256("admin1".encode()).hexdigest(),    "rol": "yonetici"},
