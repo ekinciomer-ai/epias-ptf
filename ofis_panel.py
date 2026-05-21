@@ -10,8 +10,8 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.01.07.03"
-PANEL_VERSIYON_TARIH = "21.05.2026 12:00"
+PANEL_VERSIYON = "ver.01.08.03"
+PANEL_VERSIYON_TARIH = "21.05.2026 13:00"
 
 KULLANICILAR = {
     "admin1":    {"sifre": hashlib.sha256("admin1".encode()).hexdigest(),    "rol": "yonetici"},
@@ -441,6 +441,25 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 .f2-lejant{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:10px;padding-top:10px;border-top:1px solid #f1f5f9;}
 .f2-lej{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:#64748b;}
 .f2-lej-renk{width:11px;height:11px;border-radius:3px;display:inline-block;}
+/* Drill-down: gun -> saat -> cihaz */
+.f2-gun-ok{display:inline-block;font-size:8px;color:#94a3b8;transition:transform 0.2s;margin-right:3px;}
+.f2-saat-konteyner{margin:0 0 6px;}
+.f2-saat-yukleniyor,.f2-saat-bos,.f2-cihaz-bos{padding:14px;text-align:center;color:#94a3b8;font-size:11px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;}
+.f2-saat-tablo{background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:6px;}
+.f2-saat-row{display:grid;grid-template-columns:1fr 1.1fr 1fr 1fr 0.6fr;gap:6px;padding:8px 11px;font-size:11px;align-items:center;border-bottom:1px solid #f1f5f9;}
+.f2-saat-row span{text-align:right;}
+.f2-saat-row span:first-child{text-align:left;}
+.f2-saat-head{background:#f1f5f9;font-size:9px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:0.3px;}
+.f2-saat-tikla{cursor:pointer;transition:background 0.12s;}
+.f2-saat-tikla:hover{background:#f8fafc;}
+.f2-saat-no{font-weight:800;color:#1e293b;}
+.f2-saat-ok{display:inline-block;font-size:7px;color:#94a3b8;margin-right:4px;}
+.f2-saat-row small{font-size:8px;color:#94a3b8;font-weight:600;}
+.f2-cihaz-liste{background:#f8fafc;border-left:2px solid #2563eb;}
+.f2-cihaz-satir{display:grid;grid-template-columns:2fr 1fr 1fr;gap:6px;padding:6px 11px 6px 22px;font-size:10px;align-items:center;border-bottom:1px solid #eef2f6;}
+.f2-cihaz-satir span{text-align:right;}
+.f2-cihaz-ad{text-align:left!important;color:#475569;font-weight:700;}
+.f2-cihaz-ad small{color:#94a3b8;font-weight:600;}
 .f2-kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
 .f2-kpi{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:11px 10px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
 .f2-kpi-lbl{font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;}
@@ -1848,7 +1867,11 @@ function f2ListeRender(ham, zaman, gruplar) {
       html += '<span class="f2-hafta-ozet">' + hBtc.toFixed(5) + ' BTC · ' + Math.round(hTl).toLocaleString('tr-TR') + ' ₺</span></div>';
       gunler.forEach(g => {
         const tarih = g.iso.slice(8,10) + '.' + g.iso.slice(5,7) + '.' + g.iso.slice(0,4);
-        html += '<div class="daily-item"><div class="daily-date">' + tarih + '</div><div><div class="daily-btc">' + g.btc.toFixed(5) + ' BTC</div><div class="daily-hash">' + Math.round(g.hash).toLocaleString('tr-TR') + ' TH/s</div></div><div class="daily-tl"><div class="daily-tl-val">' + Math.round(g.tl).toLocaleString('tr-TR') + ' TL</div></div></div>';
+        html += '<div class="daily-item f2-gun-tikla" onclick="f2GunAc(&quot;' + g.iso + '&quot;, this)" style="cursor:pointer;">'
+          + '<div class="daily-date"><span class="f2-gun-ok">▶</span> ' + tarih + '</div>'
+          + '<div><div class="daily-btc">' + g.btc.toFixed(5) + ' BTC</div><div class="daily-hash">' + Math.round(g.hash).toLocaleString('tr-TR') + ' TH/s</div></div>'
+          + '<div class="daily-tl"><div class="daily-tl-val">' + Math.round(g.tl).toLocaleString('tr-TR') + ' TL</div></div></div>';
+        html += '<div class="f2-saat-konteyner" id="f2-saat-' + g.iso + '"></div>';
       });
     });
   } else {
@@ -1858,6 +1881,119 @@ function f2ListeRender(ham, zaman, gruplar) {
     });
   }
   document.getElementById('daily-list').innerHTML = html || '<div class="empty-state">Veri yok</div>';
+}
+
+// Drill-down: gune tikla -> saatleri ac
+window.f2AcikGun = null;
+function f2GunAc(iso, el) {
+  const kon = document.getElementById('f2-saat-' + iso);
+  if (!kon) return;
+  // Acik olani kapat (toggle)
+  if (window.f2AcikGun === iso) {
+    kon.innerHTML = '';
+    window.f2AcikGun = null;
+    if (el) el.querySelector('.f2-gun-ok').textContent = '▶';
+    return;
+  }
+  // Onceki acigi kapat
+  if (window.f2AcikGun) {
+    const onceki = document.getElementById('f2-saat-' + window.f2AcikGun);
+    if (onceki) onceki.innerHTML = '';
+    document.querySelectorAll('.f2-gun-ok').forEach(o => o.textContent = '▶');
+  }
+  window.f2AcikGun = iso;
+  if (el) el.querySelector('.f2-gun-ok').textContent = '▼';
+  kon.innerHTML = '<div class="f2-saat-yukleniyor">⏳ Saatlik veri yükleniyor...</div>';
+
+  fetch('/api/f2pool_saatlik?gun=' + iso)
+    .then(r => r.json())
+    .then(d => {
+      if (!d.veri_var) {
+        kon.innerHTML = '<div class="f2-saat-bos">📭 Bu gün için saatlik veri yok<br><span style="font-size:9px;">(F2Pool sadece son ~48 saati saklar)</span></div>';
+        return;
+      }
+      // Ortalama verimlilik (tuketim icin)
+      let ortJth = 25.0;
+      if (window.antData && window.antData.devices) {
+        let tW=0, tH=0;
+        window.antData.devices.forEach(x => { const hr=x.hashrate_TH||0; if(hr>0){tW+=hr*antVerimlilik(x.model); tH+=hr;} });
+        if (tH>0) ortJth = tW/tH;
+      }
+      let h = '<div class="f2-saat-tablo">';
+      h += '<div class="f2-saat-row f2-saat-head"><span>Saat</span><span>Hashrate</span><span>Üretim</span><span>Tüketim</span><span>Cihaz</span></div>';
+      d.saatler.forEach(s => {
+        if (s.hash <= 0) return;  // bos saati atla
+        const tuketim = (s.hash * ortJth) / 1000;  // kWh (1 saat)
+        h += '<div class="f2-saat-row f2-saat-tikla" onclick="f2SaatAc(&quot;' + iso + '&quot;,&quot;' + s.saat + '&quot;,this)">'
+          + '<span class="f2-saat-no"><span class="f2-saat-ok">▸</span>' + s.saat + ':00</span>'
+          + '<span style="color:#2563eb;font-weight:800;">' + Math.round(s.hash).toLocaleString('tr-TR') + ' <small>TH/s</small></span>'
+          + '<span style="color:#d97706;font-weight:800;">' + s.btc.toFixed(6) + '</span>'
+          + '<span style="color:#dc2626;font-weight:800;">' + tuketim.toFixed(1) + ' <small>kWh</small></span>'
+          + '<span style="color:#16a34a;font-weight:800;">' + s.cihaz_sayisi + '</span>'
+          + '</div>';
+        h += '<div class="f2-cihaz-konteyner" id="f2-cihaz-' + iso + '-' + s.saat + '"></div>';
+      });
+      h += '</div>';
+      // Saatlik veriyi sakla (cihaz drill icin)
+      window.f2SaatlikVeri = window.f2SaatlikVeri || {};
+      window.f2SaatlikVeri[iso] = d.saatler;
+      window.f2SaatlikJth = ortJth;
+      kon.innerHTML = h;
+    })
+    .catch(e => {
+      kon.innerHTML = '<div class="f2-saat-bos">⚠️ Veri alınamadı</div>';
+    });
+}
+
+// Drill-down: saate tikla -> cihazlari ac
+window.f2AcikSaat = null;
+function f2SaatAc(iso, saat, el) {
+  const kon = document.getElementById('f2-cihaz-' + iso + '-' + saat);
+  if (!kon) return;
+  const anahtar = iso + '-' + saat;
+  if (window.f2AcikSaat === anahtar) {
+    kon.innerHTML = '';
+    window.f2AcikSaat = null;
+    if (el) el.querySelector('.f2-saat-ok').textContent = '▸';
+    return;
+  }
+  if (window.f2AcikSaat) {
+    const o = document.getElementById('f2-cihaz-' + window.f2AcikSaat);
+    if (o) o.innerHTML = '';
+    document.querySelectorAll('.f2-saat-ok').forEach(x => x.textContent = '▸');
+  }
+  window.f2AcikSaat = anahtar;
+  if (el) el.querySelector('.f2-saat-ok').textContent = '▾';
+
+  const saatler = (window.f2SaatlikVeri || {})[iso] || [];
+  const s = saatler.find(x => x.saat === saat);
+  if (!s || !s.cihazlar || Object.keys(s.cihazlar).length === 0) {
+    kon.innerHTML = '<div class="f2-cihaz-bos">Cihaz verisi yok</div>';
+    return;
+  }
+  const ortJth = window.f2SaatlikJth || 25.0;
+  // Cihaz model bilgisi (antData'dan eslesti)
+  const modelMap = {};
+  if (window.antData && window.antData.devices) {
+    window.antData.devices.forEach(d => {
+      const w = d.havuz_worker || d.actual_worker || d.saha_worker || d.name;
+      if (w) modelMap[w] = d.model;
+    });
+  }
+  let h = '<div class="f2-cihaz-liste">';
+  const sirali = Object.entries(s.cihazlar).sort((a,b) => b[1]-a[1]);
+  sirali.forEach(([name, hash]) => {
+    const model = modelMap[name] || '';
+    const jth = model ? antVerimlilik(model) : ortJth;
+    const guc = (hash * jth) / 1000;  // kW
+    h += '<div class="f2-cihaz-satir">'
+      + '<span class="f2-cihaz-ad">⛏️ ' + name + (model ? ' <small>(' + model + ')</small>' : '') + '</span>'
+      + '<span style="color:#2563eb;font-weight:700;">' + Math.round(hash) + ' TH/s</span>'
+      + '<span style="color:#dc2626;font-weight:700;">' + guc.toFixed(2) + ' kW</span>'
+      + '</div>';
+  });
+  h += '</div>';
+  kon.innerHTML = h;
 }
 
 function f2ChartCiz(etiketler, degerler, metric) {
@@ -5559,7 +5695,94 @@ def cihaz_detay(name):
         "gunluk_btc": cihaz_btc, "gunluk_tl": cihaz_btc * btc_try, "gunluk_usd": cihaz_btc * btc_usd
     })
 
-@app.route("/api/ozet")
+@app.route("/api/f2pool_saatlik")
+def f2pool_saatlik():
+    """Belirli bir gun icin saatlik hashrate + cihaz dagilimi.
+    Tum cihazlarin hashrate_history'sini toplar. F2Pool sadece son ~48 saat verir,
+    bu yuzden eski gunler bos donebilir.
+    Query: ?gun=YYYY-MM-DD
+    """
+    if "kullanici" not in session:
+        return jsonify({"hata":"yetkisiz"}), 401
+    gun = request.args.get("gun", "")
+    if not gun:
+        return jsonify({"hata":"gun parametresi gerekli"}), 400
+
+    sinyal = github_oku("sinyal.json")
+    btc_try = sinyal.get("btc_try", 0) if sinyal else 0
+
+    # Gunun toplam BTC kazancini bul (gunluk transactions'tan)
+    transactions = f2pool_son_gunler(30)
+    gun_btc = 0
+    for t in transactions:
+        t_tarih = datetime.datetime.fromtimestamp(t["mining_extra"]["mining_date"], tz=datetime.timezone.utc).strftime("%Y-%m-%d")
+        if t_tarih == gun:
+            gun_btc = t["changed_balance"]
+            break
+
+    # Tum cihazlarin history'sini cek, saate gore topla
+    workers = f2pool_workers()
+    # saatlik: { "00": {hash_top, cihazlar: {name: hash}}, ... }
+    saatlik = {f"{h:02d}": {"hash_top": 0.0, "cihaz_sayisi": 0, "cihazlar": {}} for h in range(24)}
+    gun_toplam_hash = 0.0
+
+    for w in workers:
+        name = w["hash_rate_info"]["name"]
+        legacy = f2pool_legacy(f"bitcoin/{F2POOL_USER}/{name}")
+        if not legacy:
+            continue
+        hist = legacy.get("hashrate_history", {})
+        # hist: { "2026-05-21 14:00:00": hashrate_raw, ... } 10dk araliklarla
+        # Saate gore grupla (ortalama)
+        saat_buf = {}
+        for ts, hr in hist.items():
+            if not ts.startswith(gun):
+                continue
+            try:
+                saat = ts[11:13]  # "14"
+            except:
+                continue
+            saat_buf.setdefault(saat, []).append(hr / 1e12)  # TH/s
+        for saat, arr in saat_buf.items():
+            if saat not in saatlik:
+                continue
+            ort = sum(arr) / len(arr) if arr else 0
+            if ort > 0:
+                saatlik[saat]["cihazlar"][name] = round(ort, 2)
+                saatlik[saat]["hash_top"] += ort
+                saatlik[saat]["cihaz_sayisi"] += 1
+
+    # Gunun toplam hash'i (saatlerin ortalamasi) - BTC dagitimi icin
+    saatli_hashlar = [saatlik[f"{h:02d}"]["hash_top"] for h in range(24)]
+    gun_hash_toplam = sum(saatli_hashlar)
+
+    # Her saate: tahmini BTC (hash oranina gore), tuketim hesabi frontend'de (model J/TH)
+    sonuc_saatler = []
+    for h in range(24):
+        sk = f"{h:02d}"
+        s = saatlik[sk]
+        oran = (s["hash_top"] / gun_hash_toplam) if gun_hash_toplam > 0 else 0
+        saat_btc = gun_btc * oran
+        sonuc_saatler.append({
+            "saat": sk,
+            "hash": round(s["hash_top"], 1),
+            "cihaz_sayisi": s["cihaz_sayisi"],
+            "btc": round(saat_btc, 8),
+            "tl": round(saat_btc * btc_try, 2),
+            "cihazlar": s["cihazlar"]
+        })
+
+    veri_var = gun_hash_toplam > 0
+    return jsonify({
+        "gun": gun,
+        "veri_var": veri_var,
+        "gun_btc": gun_btc,
+        "gun_hash_ort": round(gun_hash_toplam / 24, 1) if veri_var else 0,
+        "btc_kur": btc_try,
+        "saatler": sonuc_saatler
+    })
+
+
 def ozet():
     if "kullanici" not in session:
         return jsonify({"hata":"yetkisiz"}), 401
