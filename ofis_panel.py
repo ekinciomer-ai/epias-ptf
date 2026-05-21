@@ -10,8 +10,8 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.01.04.02"
-PANEL_VERSIYON_TARIH = "21.05.2026 08:00"
+PANEL_VERSIYON = "ver.01.05.02"
+PANEL_VERSIYON_TARIH = "21.05.2026 09:00"
 
 KULLANICILAR = {
     "admin1":    {"sifre": hashlib.sha256("admin1".encode()).hexdigest(),    "rol": "yonetici"},
@@ -4494,7 +4494,27 @@ function fatKartUret(ay, A, ab) {
       saatRows += '<tr>';
       saatRows += '<td>' + sk + '</td>';
       saatRows += '<td class="fat-col-ham">' + fatFmt(sHam, 2) + '</td>';
-      saatRows += '<td class="fat-col-mhs">' + fatFmt(sMhs, 2) + '</td>';
+      // Mahsup - hover popup (o saatte hangi GES'ten ne kadar mahsup)
+      if (sMhs > 0) {
+        const sUretimTpl = (S.uretim && S.uretim.TPL) || 0;
+        const sSonraAb = (S.sonra && S.sonra[ab.key] !== undefined) ? S.sonra[ab.key] : (sHam - sMhs);
+        const sBedelli = S.bedelli || 0;
+        saatRows += '<td class="fat-col-mhs fat-hover-cell">' + fatFmt(sMhs, 2);
+        saatRows += '<div class="fat-popup mor">';
+        saatRows += '<div class="fat-popup-title mor">🔄 Mahsup Detayı (saat ' + sk + ')</div>';
+        saatRows += '<div class="fat-popup-row"><span>GES Üretimi (T1+T2)</span><span>' + fatFmt(sUretimTpl, 2) + '</span></div>';
+        saatRows += '<div class="fat-popup-row"><span>' + ab.ad + ' Tüketim</span><span>' + fatFmt(sHam, 2) + '</span></div>';
+        saatRows += '<div class="fat-popup-row sum"><span>↳ Mahsup edilen</span><span style="color:#7c3aed;">' + fatFmt(sMhs, 2) + '</span></div>';
+        saatRows += '<div class="fat-popup-row"><span>↳ Şebekeden (net)</span><span>' + fatFmt(sSonraAb, 2) + '</span></div>';
+        if (sBedelli > 0) {
+          saatRows += '<div class="fat-popup-row"><span>Artan üretim (satış)</span><span style="color:#16a34a;">' + fatFmt(sBedelli, 2) + '</span></div>';
+        }
+        saatRows += '<div class="fat-popup-sonuc mor"><span>Mahsup oranı</span><span>%' + fatFmt(sHam > 0 ? (sMhs/sHam*100) : 0, 1) + '</span></div>';
+        saatRows += '</div>';
+        saatRows += '</td>';
+      } else {
+        saatRows += '<td class="fat-col-mhs">' + fatFmt(sMhs, 2) + '</td>';
+      }
       // E.Maliyeti - hover'da popup
       if (sMal !== null && sPtf !== null) {
         const ayYekdem = fatYekdemAl(ay);
