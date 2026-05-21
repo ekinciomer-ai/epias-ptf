@@ -10,8 +10,8 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.01.08.05"
-PANEL_VERSIYON_TARIH = "21.05.2026 10:30"
+PANEL_VERSIYON = "ver.01.09.05"
+PANEL_VERSIYON_TARIH = "21.05.2026 10:45"
 
 KULLANICILAR = {
     "admin1":    {"sifre": hashlib.sha256("admin1".encode()).hexdigest(),    "rol": "yonetici"},
@@ -1483,6 +1483,7 @@ function sekme(ad, btn) {
   if (ad === 'mahsuplasma') mahsupYukle();
   if (ad === 'faturalandirma') faturaYukle();
   if (ad === 'epias') epiasYukle();
+  if (ad === 'f2pool') { try { if (window.f2GunlukHam && window.f2GunlukHam.length) f2Render(); } catch(e) { console.error('f2 sekme render:', e); } }
 }
 
 // EPIAS sekmesi - aylik PTF dropdown ile
@@ -2043,7 +2044,8 @@ function f2ChartCokKatman(k) {
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
-  const W = canvas.clientWidth, H = 200;
+  let W = canvas.clientWidth, H = 200;
+  if (W < 50) W = (canvas.parentElement ? canvas.parentElement.clientWidth : 0) || 320;  // sekme gizliyken fallback
   canvas.width = W * dpr; canvas.height = H * dpr;
   ctx.scale(dpr, dpr);
   ctx.clearRect(0,0,W,H);
