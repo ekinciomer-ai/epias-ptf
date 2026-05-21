@@ -10,8 +10,8 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.01.08.04"
-PANEL_VERSIYON_TARIH = "21.05.2026 10:15"
+PANEL_VERSIYON = "ver.01.08.05"
+PANEL_VERSIYON_TARIH = "21.05.2026 10:30"
 
 KULLANICILAR = {
     "admin1":    {"sifre": hashlib.sha256("admin1".encode()).hexdigest(),    "rol": "yonetici"},
@@ -5791,6 +5791,7 @@ def f2pool_saatlik():
     })
 
 
+@app.route("/api/ozet")
 def ozet():
     if "kullanici" not in session:
         return jsonify({"hata":"yetkisiz"}), 401
