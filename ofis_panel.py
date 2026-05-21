@@ -10,8 +10,8 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.01.06.03"
-PANEL_VERSIYON_TARIH = "21.05.2026 11:00"
+PANEL_VERSIYON = "ver.01.07.03"
+PANEL_VERSIYON_TARIH = "21.05.2026 12:00"
 
 KULLANICILAR = {
     "admin1":    {"sifre": hashlib.sha256("admin1".encode()).hexdigest(),    "rol": "yonetici"},
@@ -438,6 +438,9 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 .f2-chart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
 .f2-chart-baslik{font-size:13px;font-weight:800;color:#1e293b;}
 .f2-metric-grup{display:flex;gap:4px;}
+.f2-lejant{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:10px;padding-top:10px;border-top:1px solid #f1f5f9;}
+.f2-lej{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:#64748b;}
+.f2-lej-renk{width:11px;height:11px;border-radius:3px;display:inline-block;}
 .f2-kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
 .f2-kpi{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:11px 10px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
 .f2-kpi-lbl{font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;}
@@ -652,15 +655,21 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 <!-- Grafik karti -->
 <div class="f2-chart-card">
   <div class="f2-chart-head">
-    <div class="f2-chart-baslik" id="f2-chart-baslik">📊 Günlük BTC Kazanç</div>
-    <div class="f2-metric-grup">
-      <button class="f2-metric-btn active" data-metric="btc" onclick="f2MetricSec('btc', this)">₿ BTC</button>
-      <button class="f2-metric-btn" data-metric="tl" onclick="f2MetricSec('tl', this)">₺ TL</button>
-      <button class="f2-metric-btn" data-metric="hash" onclick="f2MetricSec('hash', this)">⚡ Hash</button>
-    </div>
+    <div class="f2-chart-baslik" id="f2-chart-baslik">📊 Günlük Genel Görünüm</div>
   </div>
-  <canvas id="f2-chart" style="width:100%; height:190px;"></canvas>
+  <canvas id="f2-chart" style="width:100%; height:200px;"></canvas>
+  <div class="f2-lejant">
+    <span class="f2-lej"><span class="f2-lej-renk" style="background:rgba(37,99,235,0.7);"></span>Hashrate</span>
+    <span class="f2-lej"><span class="f2-lej-renk" style="background:#d97706;"></span>BTC Üretim</span>
+    <span class="f2-lej"><span class="f2-lej-renk" style="background:#dc2626;"></span>Elektrik</span>
+    <span class="f2-lej"><span class="f2-lej-renk" style="background:#7c3aed;"></span>BTC Fiyatı</span>
+  </div>
 </div>
+<span id="f2-metric-gizli" style="display:none;">
+  <button class="f2-metric-btn" data-metric="btc"></button>
+  <button class="f2-metric-btn" data-metric="tl"></button>
+  <button class="f2-metric-btn" data-metric="hash"></button>
+</span>
 
 <!-- KPI seridi: 3 ana metrik -->
 <div class="f2-kpi-grid">
@@ -1746,14 +1755,31 @@ function f2Render() {
 
   // Baslik
   const zamanAd = { gunluk:'Günlük', haftalik:'Haftalık', aylik:'Aylık' };
-  const metricAd = { btc:'BTC Kazanç', tl:'TL Kazanç', hash:'Hashrate' };
-  document.getElementById('f2-chart-baslik').textContent = '📊 ' + zamanAd[zaman] + ' ' + metricAd[metric];
+  document.getElementById('f2-chart-baslik').textContent = '📊 ' + zamanAd[zaman] + ' Genel Görünüm';
   document.getElementById('f2-liste-baslik').textContent = '📅 ' + zamanAd[zaman] + ' Üretim';
 
-  // Grafik verisi
-  const degerler = gruplar.map(g => metric === 'btc' ? g.btc : (metric === 'tl' ? g.tl : g.hash_ort));
-  const etiketler = gruplar.map(g => g.etiket);
-  f2ChartCiz(etiketler, degerler, metric);
+  // Cok katmanli grafik verisi hazirla
+  // Ortalama verimlilik (J/TH) - antData'dan, yoksa varsayilan 25
+  let ortJth = 25.0;
+  if (window.antData && window.antData.devices && window.antData.devices.length > 0) {
+    let topW = 0, topHr = 0;
+    window.antData.devices.forEach(d => {
+      const hr = d.hashrate_TH || 0;
+      if (hr > 0) { topW += hr * antVerimlilik(d.model); topHr += hr; }
+    });
+    if (topHr > 0) ortJth = topW / topHr;
+  }
+  const btcKur = window.f2BtcKur || 0;
+  const katmanlar = {
+    etiketler: gruplar.map(g => g.etiket),
+    hashrate: gruplar.map(g => g.hash_ort),                                  // TH/s ortalama
+    uretim:   gruplar.map(g => g.btc),                                       // BTC (donem toplami)
+    // Elektrik tuketimi (kWh): hashrate(TH/s) x J/TH x saat / 1000
+    //   gunluk: 24 saat, haftalik: gun_sayisi*24, aylik: gun_sayisi*24
+    tuketim:  gruplar.map(g => (g.hash_ort * ortJth * (g.gun_sayisi * 24)) / 1000),
+    fiyat:    gruplar.map(() => btcKur),                                     // BTC fiyati (anlik, sabit cizgi)
+  };
+  f2ChartCokKatman(katmanlar);
 
   // Istatistikler
   const topBtc = ham.reduce((s,g) => s+g.btc, 0);
@@ -1857,7 +1883,6 @@ function f2ChartCiz(etiketler, degerler, metric) {
     const x = padL + gap * i + (gap - barW)/2;
     const h = (v / maxV) * ch;
     const y = padT + ch - h;
-    // Bar
     const grad = ctx.createLinearGradient(0, y, 0, padT+ch);
     grad.addColorStop(0, renk);
     grad.addColorStop(1, renk + '44');
@@ -1866,12 +1891,94 @@ function f2ChartCiz(etiketler, degerler, metric) {
     if (ctx.roundRect) ctx.roundRect(x, y, barW, h, [4,4,0,0]);
     else ctx.rect(x, y, barW, h);
     ctx.fill();
-    // Etiket (alt)
     if (n <= 16 || i % Math.ceil(n/16) === 0) {
       ctx.fillStyle = '#64748b';
       ctx.font = '8px Inter, sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText(etiketler[i], x + barW/2, H - 8);
+    }
+  });
+}
+
+// Cok katmanli grafik: hashrate (sutun) + uretim/tuketim/fiyat (cizgiler)
+// Sol eksen: hashrate & tuketim (kWh/TH-s) | Sag eksen: BTC & fiyat
+function f2ChartCokKatman(k) {
+  const canvas = document.getElementById('f2-chart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.clientWidth, H = 200;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0,0,W,H);
+  const n = k.etiketler.length;
+  if (n === 0) return;
+
+  const padL = 6, padR = 6, padT = 14, padB = 22;
+  const cw = W - padL - padR, ch = H - padT - padB;
+  const gap = cw / n;
+
+  // Olcekler (her seri kendi maksimumuna gore normalize - karismasin)
+  const maxHash = Math.max(...k.hashrate, 0.001) * 1.15;
+  const maxUret = Math.max(...k.uretim, 0.0000001) * 1.25;
+  const maxTuk  = Math.max(...k.tuketim, 0.001) * 1.25;
+  const maxFiyat= Math.max(...k.fiyat, 1) * 1.1;
+  const minFiyat= Math.min(...k.fiyat.filter(v=>v>0), maxFiyat);
+
+  // 1) HASHRATE - sutun (acik mavi, arka plan)
+  const barW = Math.min(gap * 0.55, 32);
+  k.hashrate.forEach((v, i) => {
+    const x = padL + gap * i + (gap - barW)/2;
+    const h = (v / maxHash) * ch;
+    const y = padT + ch - h;
+    const grad = ctx.createLinearGradient(0, y, 0, padT+ch);
+    grad.addColorStop(0, 'rgba(37,99,235,0.55)');
+    grad.addColorStop(1, 'rgba(37,99,235,0.12)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x, y, barW, h, [3,3,0,0]);
+    else ctx.rect(x, y, barW, h);
+    ctx.fill();
+  });
+
+  // Cizgi cizici yardimci
+  function cizgi(dizi, maxV, renk, kalin, minV) {
+    const lo = minV !== undefined ? minV : 0;
+    const aralik = (maxV - lo) || 1;
+    ctx.beginPath();
+    dizi.forEach((v, i) => {
+      const x = padL + gap * i + gap/2;
+      const y = padT + ch - ((v - lo) / aralik) * ch;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.strokeStyle = renk;
+    ctx.lineWidth = kalin;
+    ctx.stroke();
+    // Noktalar
+    dizi.forEach((v, i) => {
+      const x = padL + gap * i + gap/2;
+      const y = padT + ch - ((v - lo) / aralik) * ch;
+      ctx.beginPath();
+      ctx.arc(x, y, kalin === 2.5 ? 2.5 : 2, 0, Math.PI*2);
+      ctx.fillStyle = renk;
+      ctx.fill();
+    });
+  }
+
+  // 2) ELEKTRIK TUKETIMI - kirmizi cizgi
+  cizgi(k.tuketim, maxTuk, '#dc2626', 2);
+  // 3) BTC URETIMI - turuncu cizgi
+  cizgi(k.uretim, maxUret, '#d97706', 2.5);
+  // 4) BTC FIYATI - mor cizgi (dar aralikta, min-max ile gorunur)
+  cizgi(k.fiyat, maxFiyat, '#7c3aed', 1.5, minFiyat * 0.98);
+
+  // Etiketler (alt - tarih)
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '8px Inter, sans-serif';
+  ctx.textAlign = 'center';
+  k.etiketler.forEach((et, i) => {
+    if (n <= 14 || i % Math.ceil(n/14) === 0) {
+      ctx.fillText(et, padL + gap*i + gap/2, H - 7);
     }
   });
 }
@@ -2563,6 +2670,42 @@ function kapatInvModal() { document.getElementById('inv-modal').classList.remove
 // ====================== ANTMINER SAHA ======================
 let antData = null;
 
+// Model bazli verimlilik (J/TH) - nominal degerler
+// Guc(W) = Hashrate(TH/s) x J/TH. Tuketim(kWh) = Guc(W) x saat / 1000
+const ANTMINER_VERIMLILIK = {
+  'S19': 34.5, 'S19 Pro': 29.5, 'S19j': 34.5, 'S19j Pro': 30.5,
+  'S19j Pro+': 27.5, 'S19 XP': 21.5, 'S19 XP Hyd': 20.8, 'S19 Pro+ Hyd': 21.0,
+  'S19 Hydro': 28.0, 'S19k Pro': 23.0, 'T19': 37.5,
+  'S21': 17.5, 'S21 Pro': 15.0, 'S21+': 16.5, 'S21 XP': 13.5, 'S21 Hyd': 16.0, 'S21e XP Hyd': 11.5,
+  'T21': 19.0, 'S17': 45.0, 'T17': 55.0
+};
+// Model adindan J/TH bul (kismi eslesme - en uzun eslesen kazanir)
+function antVerimlilik(model) {
+  if (!model) return 25.0; // varsayilan (modern karma filo ortalamasi)
+  const m = String(model).trim();
+  // Tam eslesme
+  if (ANTMINER_VERIMLILIK[m]) return ANTMINER_VERIMLILIK[m];
+  // Kismi eslesme - model adi icinde gecen en uzun anahtar
+  let best = null, bestLen = 0;
+  Object.keys(ANTMINER_VERIMLILIK).forEach(k => {
+    if (m.toUpperCase().indexOf(k.toUpperCase()) >= 0 && k.length > bestLen) {
+      best = k; bestLen = k.length;
+    }
+  });
+  return best ? ANTMINER_VERIMLILIK[best] : 25.0;
+}
+// Cihaz listesinden toplam anlik guc (kW) - hashrate x model verimliligi
+function antToplamGucKW(devices) {
+  let toplamW = 0;
+  (devices || []).forEach(d => {
+    const hr = d.hashrate_TH || 0;
+    if (hr <= 0) return;
+    const jth = antVerimlilik(d.model);
+    toplamW += hr * jth;  // W = TH/s x J/TH
+  });
+  return toplamW / 1000;  // kW
+}
+
 function antYukle() {
   document.getElementById('ant-info-title').textContent = 'Yükleniyor...';
   fetch('/api/antminer').then(r => r.json()).then(d => {
@@ -2572,6 +2715,7 @@ function antYukle() {
       return;
     }
     antData = d;
+    window.antData = d;
     antRender();
     cmmRender();  // Cihazlarim sekmesini de guncelle
   }).catch(e => {
@@ -2702,11 +2846,13 @@ function antRender() {
   });
   Object.entries(grouped).forEach(([model, info]) => {
     const eff = info.target > 0 ? (info.hashrate / info.target * 100).toFixed(1) : '—';
+    const jth = antVerimlilik(model);
+    const gucKW = (info.hashrate * jth) / 1000;  // toplam guc kW
     modelHtml += '<div class="yillik-card">'
-      + '<div class="yillik-title">⛏️ ' + model + ' × ' + info.count + ' adet</div>'
+      + '<div class="yillik-title">⛏️ ' + model + ' × ' + info.count + ' adet <span style="font-size:10px;color:#94a3b8;font-weight:600;">(' + jth + ' J/TH)</span></div>'
       + '<div class="yillik-grid">'
       + '<div class="yillik-stat"><div class="yillik-lbl">Toplam Hash</div><div class="yillik-val" style="color:#fbbf24">' + Math.round(info.hashrate).toLocaleString('tr-TR') + '</div><div class="yillik-lbl">TH/s</div></div>'
-      + '<div class="yillik-stat"><div class="yillik-lbl">Hedef</div><div class="yillik-val" style="color:#60a5fa">' + Math.round(info.target).toLocaleString('tr-TR') + '</div><div class="yillik-lbl">TH/s</div></div>'
+      + '<div class="yillik-stat"><div class="yillik-lbl">Güç</div><div class="yillik-val" style="color:#ef4444">' + gucKW.toFixed(1) + '</div><div class="yillik-lbl">kW</div></div>'
       + '<div class="yillik-stat"><div class="yillik-lbl">Verimlilik</div><div class="yillik-val" style="color:#4ade80">' + eff + '</div><div class="yillik-lbl">%</div></div>'
       + '<div class="yillik-stat"><div class="yillik-lbl">Aktif</div><div class="yillik-val" style="color:#22c55e">' + info.online + '/' + info.count + '</div><div class="yillik-lbl">cihaz</div></div>'
       + '</div></div>';
