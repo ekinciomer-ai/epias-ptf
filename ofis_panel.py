@@ -10,8 +10,8 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.01.14.08"
-PANEL_VERSIYON_TARIH = "23.05.2026 15:00"
+PANEL_VERSIYON = "ver.01.16.08"
+PANEL_VERSIYON_TARIH = "23.05.2026 15:45"
 
 # Sistem bilesenleri - her biri kendi son guncellemesini tutar
 # Damgada gosterilir, boylece tum sistemin durumu tek bakista gorulur
@@ -400,6 +400,12 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 .fat-ud-val.uret{color:#16a34a;}
 .fat-ud-val.mhsk{color:#7c3aed;}
 .fat-ud-val.sat{color:#16a34a;font-size:15px;}
+/* Uretim faturasi (GES) - yesil tema */
+.fat-uretim-fatura{background:linear-gradient(135deg,rgba(22,163,74,0.07),rgba(22,163,74,0.02));border:1.5px solid rgba(22,163,74,0.3);border-radius:16px;padding:16px;margin:16px 0;}
+.fat-uf-baslik{font-size:13px;font-weight:900;color:#16a34a;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;text-align:center;padding-bottom:8px;border-bottom:1px solid rgba(22,163,74,0.2);}
+.fat-uf-net{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:12px 14px;background:#fff;border-radius:12px;border:1.5px solid rgba(22,163,74,0.3);}
+.fat-uf-net-lbl{font-size:12px;font-weight:800;color:#475569;}
+.fat-uf-net-val{font-size:20px;font-weight:900;font-family:'Inter',monospace;}
 /* Fatura alt satiri - kalem detay (Ham × Birim Fiyat) */
 .fat-fo-altrow{display:flex;justify-content:space-between;align-items:center;padding:3px 0 9px;border-bottom:1px solid #f1f5f9;margin-bottom:2px;}
 .fat-fo-altlbl{font-size:10px;color:#64748b;font-weight:700;font-family:'Inter',monospace;letter-spacing:0.2px;}
@@ -413,6 +419,17 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 .fat-popup.mor{border-color:rgba(124,58,237,0.4);}
 .fat-popup.sari{border-color:rgba(217,119,6,0.4);}
 .fat-popup.turuncu{border-color:rgba(234,88,12,0.4);}
+.fat-popup.kirmizi{border-color:rgba(220,38,38,0.4);}
+.fat-popup-aciklama{font-size:9px;color:#94a3b8;font-style:italic;margin-top:6px;padding-top:6px;border-top:1px solid #f1f5f9;text-align:center;}
+/* Fayda analizi (GES) */
+.fat-fayda{background:linear-gradient(135deg,rgba(37,99,235,0.06),rgba(37,99,235,0.01));border:1.5px solid rgba(37,99,235,0.25);border-radius:16px;padding:16px;margin:16px 0;}
+.fat-fayda-baslik{font-size:13px;font-weight:900;color:#2563eb;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;text-align:center;padding-bottom:8px;border-bottom:1px solid rgba(37,99,235,0.2);}
+.fat-fayda-row{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-radius:10px;background:#fff;font-size:12px;font-weight:700;border:1px solid #eef2f6;margin-bottom:6px;position:relative;cursor:help;}
+.fat-fayda-lbl{color:#475569;}
+.fat-fayda-val{font-weight:900;font-family:'Inter',monospace;font-size:13px;}
+.fat-fayda-toplam{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:13px 14px;background:#fff;border-radius:12px;border:1.5px solid rgba(37,99,235,0.35);}
+.fat-fayda-top-lbl{font-size:12px;font-weight:800;color:#1e293b;}
+.fat-fayda-top-val{font-size:21px;font-weight:900;font-family:'Inter',monospace;}
 .fat-popup::after{content:'';position:absolute;bottom:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-bottom-color:#ffffff;}
 .fat-popup.yukari::after{bottom:auto;top:100%;border-bottom-color:transparent;border-top-color:#ffffff;}
 .fat-popup.mor::after{border-bottom-color:#ffffff;}
@@ -5010,6 +5027,7 @@ const FAT_YEKDEM_DEFAULT = 602.51;  // Bilinmeyen aylar icin fallback
 const FAT_DAGITIM = 1.035;  // %3,5 dagitim/kayip katsayisi (MEPAŞ faturasi ile dogrulandi)
 const FAT_DB_BIRIM = 1.182457;   // OG Tek Terim Sanayi - TL/kWh
 const FAT_SANAYI_AKTIF = 2.909687;  // Sanayi Tek Terim Aktif Enerji Bedeli - TL/kWh (AKS3 mahsup indirimi icin)
+const FAT_URETIM_SKB = 0.656008;    // Veris yonu Sistem Kullanim Bedeli - TL/kWh (GES uretim faturasi)
 const FAT_KDV = 0.20;            // %20
 const FAT_AY_ISIM_MAP = {
   '2026-01': 'Ocak 2026',
@@ -5684,6 +5702,86 @@ function fatKartUret(ay, A, ab) {
 
   h += '</div>';
   // ===== /FATURA OZET KARTI =====
+
+  // ===== URETIM FATURASI (sadece GES: T1, T2) =====
+  if (gesMi) {
+    const uretimGeliri = ayUretBedelli * FAT_SANAYI_AKTIF;        // bedelli × 2,909687
+    const skbKesinti = ayUretim * FAT_URETIM_SKB;                 // toplam uretim × 0,656008
+    const netUretim = uretimGeliri - skbKesinti;
+    h += '<div class="fat-uretim-fatura">';
+    h += '<div class="fat-uf-baslik">☀️ ÜRETİM FATURASI</div>';
+    // 1) Uretim geliri
+    h += '<div class="fat-fo-row">';
+    h += '<div class="fat-fo-lbl"><span class="fat-fo-no">1)</span> Üretim Geliri <span class="fat-fo-aciklama">(Bedelli × 2,909687)</span></div>';
+    h += '<div class="fat-fo-val" style="color:#16a34a;">' + fatFmt(uretimGeliri, 2) + ' <span class="fat-fo-tl">TL</span></div>';
+    h += '</div>';
+    h += '<div class="fat-fo-altrow"><div class="fat-fo-altlbl">' + fatFmt(ayUretBedelli, 2) + ' kWh × 2,909687</div></div>';
+    // 2) SKB kesinti
+    h += '<div class="fat-fo-row">';
+    h += '<div class="fat-fo-lbl"><span class="fat-fo-no">2)</span> Sistem Kullanım Bedeli (−) <span class="fat-fo-aciklama">(Toplam Üretim × 0,656008)</span></div>';
+    h += '<div class="fat-fo-val" style="color:#dc2626;">−' + fatFmt(skbKesinti, 2) + ' <span class="fat-fo-tl">TL</span></div>';
+    h += '</div>';
+    h += '<div class="fat-fo-altrow"><div class="fat-fo-altlbl">' + fatFmt(ayUretim, 2) + ' kWh × 0,656008</div><div class="fat-fo-altaciklama">mahsup + bedelli toplamı</div></div>';
+    // Net
+    h += '<div class="fat-uf-net">';
+    h += '<div class="fat-uf-net-lbl">💰 NET ÜRETİM GELİRİ <span style="font-size:9px;color:#94a3b8;">(1 − 2)</span></div>';
+    h += '<div class="fat-uf-net-val" style="color:' + (netUretim >= 0 ? '#16a34a' : '#dc2626') + ';">' + fatFmt(netUretim, 2) + ' <span style="font-size:14px;color:#94a3b8;font-weight:700;">TL</span></div>';
+    h += '</div>';
+    h += '</div>';
+  }
+  // ===== /URETIM FATURASI =====
+
+  // ===== FAYDA ANALIZI (sadece GES: T1, T2) =====
+  if (gesMi) {
+    const mahsupFayda = ayUretMhs * FAT_SANAYI_AKTIF;      // mahsup × 2,909687
+    const bedelliGelir = ayUretBedelli * FAT_SANAYI_AKTIF; // bedelli × 2,909687
+    const skbTop = ayUretim * FAT_URETIM_SKB;              // (mahsup+bedelli) × 0,656008
+    const toplamFayda = mahsupFayda + bedelliGelir - skbTop;
+    h += '<div class="fat-fayda">';
+    h += '<div class="fat-fayda-baslik">📊 FAYDA ANALİZİ</div>';
+    // 1) Mahsup faydasi
+    h += '<div class="fat-fayda-row fat-hover-cell">';
+    h += '<div class="fat-fayda-lbl"><span class="fat-fo-no">+</span> Mahsup Faydası</div>';
+    h += '<div class="fat-fayda-val" style="color:#7c3aed;">' + fatFmt(mahsupFayda, 2) + ' <span style="font-size:10px;color:#94a3b8;">TL</span></div>';
+    h += '<div class="fat-popup mor">';
+    h += '<div class="fat-popup-title mor">🔄 Mahsup Faydası</div>';
+    h += '<div class="fat-popup-row"><span>Mahsup Edilen Üretim</span><span>' + fatFmt(ayUretMhs, 2) + ' kWh</span></div>';
+    h += '<div class="fat-popup-row"><span>Birim Fiyat (OG aktif)</span><span>2,909687</span></div>';
+    h += '<div class="fat-popup-sonuc mor"><span>= Mahsup Faydası</span><span>' + fatFmt(mahsupFayda, 2) + ' TL</span></div>';
+    h += '<div class="fat-popup-aciklama">Mahsup sayesinde ödenmeyen tüketim bedeli</div>';
+    h += '</div></div>';
+    // 2) Bedelli geliri
+    h += '<div class="fat-fayda-row fat-hover-cell">';
+    h += '<div class="fat-fayda-lbl"><span class="fat-fo-no">+</span> Bedelli Geliri (Satış)</div>';
+    h += '<div class="fat-fayda-val" style="color:#16a34a;">' + fatFmt(bedelliGelir, 2) + ' <span style="font-size:10px;color:#94a3b8;">TL</span></div>';
+    h += '<div class="fat-popup">';
+    h += '<div class="fat-popup-title">💚 Bedelli Geliri</div>';
+    h += '<div class="fat-popup-row"><span>Bedelli (Satılan) Üretim</span><span>' + fatFmt(ayUretBedelli, 2) + ' kWh</span></div>';
+    h += '<div class="fat-popup-row"><span>Birim Fiyat (OG aktif)</span><span>2,909687</span></div>';
+    h += '<div class="fat-popup-sonuc"><span>= Bedelli Geliri</span><span>' + fatFmt(bedelliGelir, 2) + ' TL</span></div>';
+    h += '<div class="fat-popup-aciklama">Şebekeye satılan üretimden gelen</div>';
+    h += '</div></div>';
+    // 3) SKB kesinti
+    h += '<div class="fat-fayda-row fat-hover-cell">';
+    h += '<div class="fat-fayda-lbl"><span class="fat-fo-no">−</span> Sistem Kullanım Bedeli</div>';
+    h += '<div class="fat-fayda-val" style="color:#dc2626;">−' + fatFmt(skbTop, 2) + ' <span style="font-size:10px;color:#94a3b8;">TL</span></div>';
+    h += '<div class="fat-popup kirmizi">';
+    h += '<div class="fat-popup-title" style="color:#dc2626;">⚡ Sistem Kullanım Bedeli</div>';
+    h += '<div class="fat-popup-row"><span>Toplam Üretim</span><span>' + fatFmt(ayUretim, 2) + ' kWh</span></div>';
+    h += '<div class="fat-popup-row"><span>↳ Mahsup edilen</span><span>' + fatFmt(ayUretMhs, 2) + '</span></div>';
+    h += '<div class="fat-popup-row"><span>↳ Bedelli</span><span>' + fatFmt(ayUretBedelli, 2) + '</span></div>';
+    h += '<div class="fat-popup-row"><span>SKB Birim</span><span>0,656008</span></div>';
+    h += '<div class="fat-popup-sonuc" style="background:rgba(220,38,38,0.1);"><span>= SKB Kesintisi</span><span style="color:#dc2626;">' + fatFmt(skbTop, 2) + ' TL</span></div>';
+    h += '<div class="fat-popup-aciklama">Tüm üretim için sistem kullanım bedeli</div>';
+    h += '</div></div>';
+    // Toplam fayda
+    h += '<div class="fat-fayda-toplam">';
+    h += '<div class="fat-fayda-top-lbl">🎯 TOPLAM FAYDA <span style="font-size:9px;color:#94a3b8;">(Mahsup + Bedelli − SKB)</span></div>';
+    h += '<div class="fat-fayda-top-val" style="color:' + (toplamFayda >= 0 ? '#16a34a' : '#dc2626') + ';">' + fatFmt(toplamFayda, 2) + ' <span style="font-size:14px;color:#94a3b8;font-weight:700;">TL</span></div>';
+    h += '</div>';
+    h += '</div>';
+  }
+  // ===== /FAYDA ANALIZI =====
 
   // Detay tablo basligi
   h += '<div class="fat-detay-lbl">📋 Aylık Detay Tablosu</div>';
