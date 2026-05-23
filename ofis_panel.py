@@ -10,8 +10,8 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.01.09.07"
-PANEL_VERSIYON_TARIH = "23.05.2026 13:30"
+PANEL_VERSIYON = "ver.01.11.07"
+PANEL_VERSIYON_TARIH = "23.05.2026 14:00"
 
 # Sistem bilesenleri - her biri kendi son guncellemesini tutar
 # Damgada gosterilir, boylece tum sistemin durumu tek bakista gorulur
@@ -389,6 +389,17 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 .fat-td-val.ham{color:#dc2626;}
 .fat-td-val.mhs{color:#7c3aed;}
 .fat-td-val.snr{color:#d97706;font-size:15px;}
+/* Uretim detayi (GES T1/T2) - yesil tema, asil is vurgusu */
+.fat-uretim-detay{background:linear-gradient(135deg,rgba(22,163,74,0.06),rgba(22,163,74,0.01));border:1px solid rgba(22,163,74,0.25);border-radius:14px;padding:14px 16px;margin:14px 0;}
+.fat-ud-title{font-size:11px;font-weight:800;color:#16a34a;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(22,163,74,0.2);}
+.fat-ud-grid{display:flex;flex-direction:column;gap:6px;}
+.fat-ud-row{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-radius:8px;background:#ffffff;font-size:12px;font-weight:700;border:1px solid rgba(22,163,74,0.1);}
+.fat-ud-row.sebeke{background:linear-gradient(135deg,rgba(22,163,74,0.12),rgba(22,163,74,0.03));border:1px solid rgba(22,163,74,0.35);margin-top:4px;padding:9px 12px;}
+.fat-ud-lbl{color:#475569;}
+.fat-ud-val{font-weight:900;font-family:'Inter',monospace;font-size:13px;}
+.fat-ud-val.uret{color:#16a34a;}
+.fat-ud-val.mhsk{color:#7c3aed;}
+.fat-ud-val.sat{color:#16a34a;font-size:15px;}
 /* Fatura alt satiri - kalem detay (Ham × Birim Fiyat) */
 .fat-fo-altrow{display:flex;justify-content:space-between;align-items:center;padding:3px 0 9px;border-bottom:1px solid #f1f5f9;margin-bottom:2px;}
 .fat-fo-altlbl{font-size:10px;color:#64748b;font-weight:700;font-family:'Inter',monospace;letter-spacing:0.2px;}
@@ -576,10 +587,16 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 </head><body>
-<div id="versiyon-damgasi" style="position:fixed; bottom:10px; right:10px; z-index:99999; background:rgba(15,23,42,0.92); border:1px solid rgba(34,197,94,0.4); border-radius:8px; padding:5px 10px; font-size:10px; font-weight:700; color:#4ade80; font-family:'Inter',monospace; box-shadow:0 2px 12px rgba(0,0,0,0.4); pointer-events:none; letter-spacing:0.3px; text-align:right; line-height:1.5;">
-  {{ panel_versiyon }} · <span style="color:#94a3b8;">{{ panel_versiyon_tarih }}</span>
-  <div style="font-size:8px; color:#64748b; font-weight:600; margin-top:1px;">
-    📦 Arşiv {{ sistem_durum.arsiv }} · ⚡ PTF {{ sistem_durum.ptf }} · 📊 OSOS {{ sistem_durum.osos }}
+<div id="versiyon-damgasi" onclick="versiyonPopupAc(event)" style="position:fixed; bottom:10px; right:10px; z-index:99999; background:rgba(15,23,42,0.92); border:1px solid rgba(34,197,94,0.4); border-radius:8px; padding:5px 10px; font-size:10px; font-weight:700; color:#4ade80; font-family:'Inter',monospace; box-shadow:0 2px 12px rgba(0,0,0,0.4); cursor:pointer; letter-spacing:0.3px; text-align:right; user-select:none;">
+  {{ panel_versiyon }} <span style="color:#64748b; font-size:9px;">ⓘ</span>
+  <div id="versiyon-popup" style="display:none; position:absolute; bottom:calc(100% + 8px); right:0; background:#0f172a; border:1px solid rgba(34,197,94,0.4); border-radius:12px; padding:14px 16px; min-width:240px; box-shadow:0 8px 32px rgba(0,0,0,0.5); text-align:left; cursor:default;">
+    <div style="font-size:12px; font-weight:900; color:#4ade80; margin-bottom:3px;">{{ panel_versiyon }}</div>
+    <div style="font-size:10px; color:#94a3b8; font-weight:600; margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid rgba(148,163,184,0.2);">{{ panel_versiyon_tarih }}</div>
+    <div style="display:flex; flex-direction:column; gap:7px;">
+      <div style="display:flex; justify-content:space-between; gap:16px; font-size:10px;"><span style="color:#64748b; font-weight:600;">📦 Arşiv</span><span style="color:#e2e8f0; font-weight:700;">{{ sistem_durum.arsiv }}</span></div>
+      <div style="display:flex; justify-content:space-between; gap:16px; font-size:10px;"><span style="color:#64748b; font-weight:600;">⚡ PTF</span><span style="color:#e2e8f0; font-weight:700;">{{ sistem_durum.ptf }}</span></div>
+      <div style="display:flex; justify-content:space-between; gap:16px; font-size:10px;"><span style="color:#64748b; font-weight:600;">📊 OSOS</span><span style="color:#e2e8f0; font-weight:700;">{{ sistem_durum.osos }}</span></div>
+    </div>
   </div>
 </div>
 <div class="header">
@@ -2439,6 +2456,18 @@ function ososGunSec(tarih, btn) {
     + '<td class="saat-cell" style="font-weight:900;color:' + ((tC-tV) > 0 ? '#f87171' : '#4ade80') + '">' + Math.round(tC-tV).toLocaleString('tr-TR') + '</td></tr>';
   document.getElementById('osos-saatlik-body').innerHTML = tbody;
 }
+
+function versiyonPopupAc(e) {
+  e.stopPropagation();
+  var p = document.getElementById('versiyon-popup');
+  if (!p) return;
+  p.style.display = (p.style.display === 'none' || !p.style.display) ? 'block' : 'none';
+}
+document.addEventListener('click', function(e) {
+  var d = document.getElementById('versiyon-damgasi');
+  var p = document.getElementById('versiyon-popup');
+  if (p && d && !d.contains(e.target)) p.style.display = 'none';
+});
 
 function yukle() {
   fetch('/api/ozet').then(r => r.json()).then(d => {
@@ -5083,6 +5112,7 @@ function fatKartUret(ay, A, ab) {
 
   // Ay toplamlar (icin gerekli)
   let ayHam = 0, ayMhs = 0, ayTukBed = 0, ayMhsBed = 0, ayHesapVar = false;
+  let ayUretim = 0;  // GES uretimi (T1/T2 icin veris kWh)
 
   // Her gun icin: gun satiri + (kapali) saatlik detay satiri
   let satirlar = '';
@@ -5113,6 +5143,9 @@ function fatKartUret(ay, A, ab) {
 
       if (sPtf !== null) { gPtfTpl += sPtf; gPtfCnt++; }
       gHam += sHam; gMhs += sMhs;
+      // GES uretimi (bu abonenin o saatteki verisi)
+      const sUret = (S.uretim && S.uretim[ab.key]) || 0;
+      ayUretim += sUret;
       if (sTukBed !== null) { gTukBed += sTukBed; gHesapVar = true; }
       gMhsBed += sMhsBed;
 
@@ -5446,6 +5479,19 @@ function fatKartUret(ay, A, ab) {
   let h = '<div class="fat-abone-kart ' + ab.kls + '">';
   h += '<div class="fat-abone-head"><div class="fat-abone-icon">' + ab.icon + '</div>';
   h += '<div><div class="fat-abone-name">' + ab.ad + '</div><div class="fat-abone-sub">' + ab.sub + '</div></div></div>';
+
+  // ===== URETIM DETAYI (sadece GES aboneleri: T1, T2) =====
+  const gesMi = (ab.key === 'T1' || ab.key === 'T2');
+  if (gesMi) {
+    h += '<div class="fat-uretim-detay">';
+    h += '<div class="fat-ud-title">☀️ Üretim Detayı (kWh) — Asıl İş: GES</div>';
+    h += '<div class="fat-ud-grid">';
+    h += '<div class="fat-ud-row sebeke"><div class="fat-ud-lbl"><b>Toplam Üretim (' + (FAT_AY_ISIM_MAP[ay] || ay) + ')</b></div><div class="fat-ud-val sat"><b>' + fatFmt(ayUretim, 2) + '</b></div></div>';
+    h += '<div class="fat-ud-row"><div class="fat-ud-lbl">Günlük Ortalama</div><div class="fat-ud-val uret">' + fatFmt(gunler.length > 0 ? ayUretim/gunler.length : 0, 2) + '</div></div>';
+    h += '<div class="fat-ud-row"><div class="fat-ud-lbl">MWh Karşılığı</div><div class="fat-ud-val uret">' + fatFmt(ayUretim/1000, 2) + ' MWh</div></div>';
+    h += '</div>';
+    h += '</div>';
+  }
 
   // ===== TUKETIM DETAYI (kWh) =====
   h += '<div class="fat-tuketim-detay">';
