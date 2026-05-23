@@ -10,8 +10,17 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.01.09.05"
-PANEL_VERSIYON_TARIH = "21.05.2026 10:45"
+PANEL_VERSIYON = "ver.01.09.06"
+PANEL_VERSIYON_TARIH = "22.05.2026 18:45"
+
+# Sistem bilesenleri - her biri kendi son guncellemesini tutar
+# Damgada gosterilir, boylece tum sistemin durumu tek bakista gorulur
+SISTEM_DURUM = {
+    "panel":  "v1.9.6",        # ofis_panel.py
+    "arsiv":  "v1 · 22May",    # arsiv_kaydet.py (F2Pool+Antminer saatlik)
+    "ptf":    "23May",         # aylik_ptf.json son gun
+    "osos":   "21May",         # 2026_osos_endeks.json son gun
+}
 
 KULLANICILAR = {
     "admin1":    {"sifre": hashlib.sha256("admin1".encode()).hexdigest(),    "rol": "yonetici"},
@@ -567,8 +576,11 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 </head><body>
-<div id="versiyon-damgasi" style="position:fixed; bottom:10px; right:10px; z-index:99999; background:rgba(15,23,42,0.92); border:1px solid rgba(34,197,94,0.4); border-radius:8px; padding:5px 10px; font-size:10px; font-weight:700; color:#4ade80; font-family:'Inter',monospace; box-shadow:0 2px 12px rgba(0,0,0,0.4); pointer-events:none; letter-spacing:0.3px;">
+<div id="versiyon-damgasi" style="position:fixed; bottom:10px; right:10px; z-index:99999; background:rgba(15,23,42,0.92); border:1px solid rgba(34,197,94,0.4); border-radius:8px; padding:5px 10px; font-size:10px; font-weight:700; color:#4ade80; font-family:'Inter',monospace; box-shadow:0 2px 12px rgba(0,0,0,0.4); pointer-events:none; letter-spacing:0.3px; text-align:right; line-height:1.5;">
   {{ panel_versiyon }} · <span style="color:#94a3b8;">{{ panel_versiyon_tarih }}</span>
+  <div style="font-size:8px; color:#64748b; font-weight:600; margin-top:1px;">
+    📦 Arşiv {{ sistem_durum.arsiv }} · ⚡ PTF {{ sistem_durum.ptf }} · 📊 OSOS {{ sistem_durum.osos }}
+  </div>
 </div>
 <div class="header">
 <div class="brand"><div class="brand-logo">⚡</div><div class="brand-text">Otocoin</div></div>
@@ -5588,7 +5600,7 @@ def sw():
 def index():
     if "kullanici" not in session:
         return redirect("/giris")
-    return render_template_string(PANEL_HTML, kullanici=session["kullanici"], rol=session["rol"], panel_versiyon=PANEL_VERSIYON, panel_versiyon_tarih=PANEL_VERSIYON_TARIH)
+    return render_template_string(PANEL_HTML, kullanici=session["kullanici"], rol=session["rol"], panel_versiyon=PANEL_VERSIYON, panel_versiyon_tarih=PANEL_VERSIYON_TARIH, sistem_durum=SISTEM_DURUM)
 
 @app.route("/giris", methods=["GET","POST"])
 def giris():
