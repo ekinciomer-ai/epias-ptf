@@ -10,8 +10,8 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.01.12.07"
-PANEL_VERSIYON_TARIH = "23.05.2026 14:15"
+PANEL_VERSIYON = "ver.01.14.08"
+PANEL_VERSIYON_TARIH = "23.05.2026 15:00"
 
 # Sistem bilesenleri - her biri kendi son guncellemesini tutar
 # Damgada gosterilir, boylece tum sistemin durumu tek bakista gorulur
@@ -4472,6 +4472,63 @@ async function mahsupYukleAsync() {
       return { mahsup: mahsup, sonra: sonra, bedelli: bedelli };
     }
 
+    // KAYNAK TAKIPLI HAVUZ MAHSUBU (bu ay modeli)
+    //   Uretimi buyukten kucuge sirala (U1>U2 ise once U1)
+    //   Her ureticiden, tuketimleri buyukten kucuge mahsup et
+    //   Uretici bitince sonrakine gec. Artan = bedelli
+    //   Donen: kaynak matrisi (hangi GES'ten hangi tukeciye + bedelli)
+    function havuzMahsupKaynakli(uretim, tuketim) {
+      // uretim: {T1, T2} (GES uretimleri), tuketim: {T1, T2, A3}
+      // Ureticiler buyukten kucuge
+      const ureticiler = [
+        { ges: 'T1', kalan: uretim.T1 || 0 },
+        { ges: 'T2', kalan: uretim.T2 || 0 },
+      ].sort((a, b) => b.kalan - a.kalan);
+
+      // Tuketiciler buyukten kucuge (her seferinde guncel kalan tuketimle)
+      const tuk = { T1: tuketim.T1 || 0, T2: tuketim.T2 || 0, A3: tuketim.A3 || 0 };
+
+      // kaynak[ges][tukeci] = mahsup miktari ; kaynak[ges].bedelli = satilan
+      const kaynak = {
+        T1: { T1: 0, T2: 0, A3: 0, bedelli: 0 },
+        T2: { T1: 0, T2: 0, A3: 0, bedelli: 0 },
+      };
+      // toplam abone bazli mahsup (eski uyumluluk)
+      const mahsup = { T1: 0, T2: 0, A3: 0, TPL: 0 };
+
+      ureticiler.forEach(function(u) {
+        if (u.kalan <= 0) return;
+        // Tuketimleri buyukten kucuge sirala (guncel kalanlarla)
+        const sira = [
+          { ab: 'T1', tuk: tuk.T1 },
+          { ab: 'T2', tuk: tuk.T2 },
+          { ab: 'A3', tuk: tuk.A3 },
+        ].sort((a, b) => b.tuk - a.tuk);
+
+        sira.forEach(function(t) {
+          if (u.kalan <= 0 || tuk[t.ab] <= 0) return;
+          const mhs = Math.min(u.kalan, tuk[t.ab]);
+          kaynak[u.ges][t.ab] += mhs;
+          mahsup[t.ab] += mhs;
+          u.kalan -= mhs;
+          tuk[t.ab] -= mhs;
+        });
+        // Bu ureticiden artan = bedelli
+        if (u.kalan > 0) {
+          kaynak[u.ges].bedelli += u.kalan;
+          u.kalan = 0;
+        }
+      });
+
+      mahsup.TPL = mahsup.T1 + mahsup.T2 + mahsup.A3;
+      const sonra = {
+        T1: tuk.T1, T2: tuk.T2, A3: tuk.A3,
+        TPL: tuk.T1 + tuk.T2 + tuk.A3
+      };
+      const bedelli = kaynak.T1.bedelli + kaynak.T2.bedelli;
+      return { mahsup: mahsup, sonra: sonra, bedelli: bedelli, kaynak: kaynak };
+    }
+
     // MANUEL OVERRIDE: AKS3 once (manuel deger) -> T2 -> T1 -> Bedelli
     // Mahsup_A3 disardan veriliyor, geri kalan tuketim basamakli inecek
     function manuelAks3Mahsup(tuketim, uretimTpl, manuelMahsupA3) {
@@ -4534,12 +4591,14 @@ async function mahsupYukleAsync() {
           });
           
           if (saatlikMod) {
-            // SAATLİK basamakli: tuketimleri buyukten kucuge sirala, sirayla dus
-            const r = basamakliMahsup(S.tuketim, S.uretim.TPL);
+            // SAATLİK kaynak takipli havuz mahsubu (bu ay modeli)
+            // Once buyuk uretici, her ureticiden buyuk tuketim, artan bedelli
+            const r = havuzMahsupKaynakli(S.uretim, S.tuketim);
             S.mahsup_dagilim = r.mahsup;  // {T1,T2,A3,TPL}
             S.sonra = r.sonra;            // {T1,T2,A3,TPL}
             S.mahsup = r.mahsup.TPL;       // tek sayi (eski kullanim icin)
             S.bedelli = r.bedelli;
+            S.kaynak = r.kaynak;           // {T1:{T1,T2,A3,bedelli}, T2:{...}}
 
             gM += S.mahsup;
             gB += S.bedelli;
@@ -4549,6 +4608,7 @@ async function mahsupYukleAsync() {
             S.bedelli = 0;
             S.sonra = { T1: 0, T2: 0, A3: 0, TPL: 0 };
             S.mahsup_dagilim = { T1: 0, T2: 0, A3: 0, TPL: 0 };
+            S.kaynak = { T1:{T1:0,T2:0,A3:0,bedelli:0}, T2:{T1:0,T2:0,A3:0,bedelli:0} };
           }
         });
         
@@ -5114,6 +5174,7 @@ function fatKartUret(ay, A, ab) {
   // Ay toplamlar (icin gerekli)
   let ayHam = 0, ayMhs = 0, ayTukBed = 0, ayMhsBed = 0, ayHesapVar = false;
   let ayUretim = 0;  // GES uretimi (T1/T2 icin veris kWh)
+  let ayUretMhs = 0, ayUretBedelli = 0;  // uretimden mahsup edilen / bedelli (satilan)
 
   // Her gun icin: gun satiri + (kapali) saatlik detay satiri
   let satirlar = '';
@@ -5124,6 +5185,7 @@ function fatKartUret(ay, A, ab) {
 
     let gHam = 0, gMhs = 0, gTukBed = 0, gMhsBed = 0, gPtfTpl = 0, gPtfCnt = 0, gHesapVar = false;
     let gUret = 0;  // gunluk GES uretimi
+    let gUretMhs = 0, gUretBedelli = 0;  // gunluk uretimden mahsup / bedelli
     let saatRows = '';
 
     for (let s = 0; s < 24; s++) {
@@ -5147,13 +5209,40 @@ function fatKartUret(ay, A, ab) {
       gHam += sHam; gMhs += sMhs;
       // GES uretimi (bu abonenin o saatteki verisi)
       const sUret = (S.uretim && S.uretim[ab.key]) || 0;
+      // Kaynak takipli: bu GES'in uretimi nereye gitti (gercek, oranlama yok)
+      const sKaynak = (S.kaynak && S.kaynak[ab.key]) || {T1:0,T2:0,A3:0,bedelli:0};
+      const sUretMhs = (sKaynak.T1||0) + (sKaynak.T2||0) + (sKaynak.A3||0);  // bu GES'ten mahsuba giden
+      const sUretBedelli = sKaynak.bedelli || 0;  // bu GES'ten satilan
       ayUretim += sUret;
       gUret += sUret;
+      ayUretMhs += sUretMhs; gUretMhs += sUretMhs;
+      ayUretBedelli += sUretBedelli; gUretBedelli += sUretBedelli;
       if (sTukBed !== null) { gTukBed += sTukBed; gHesapVar = true; }
       gMhsBed += sMhsBed;
 
       saatRows += '<tr>';
       saatRows += '<td>' + sk + '</td>';
+      if (gesMi) {
+        saatRows += '<td style="color:#16a34a;font-weight:700;text-align:right;">' + fatFmt(sUret, 2) + '</td>';
+        // Mahsup Edilen (uretimden) - popup: hangi aboneye ne kadar (GERCEK kaynak)
+        saatRows += '<td class="fat-hover-cell" style="color:#7c3aed;font-weight:700;text-align:right;">' + fatFmt(sUretMhs, 2);
+        saatRows += '<div class="fat-popup mor">';
+        saatRows += '<div class="fat-popup-title mor">🔄 Üretimden Mahsup (saat ' + sk + ')</div>';
+        saatRows += '<div class="fat-popup-row"><span>' + ab.ad + ' Üretimi</span><span>' + fatFmt(sUret, 2) + ' kWh</span></div>';
+        if (sKaynak.T1 > 0) saatRows += '<div class="fat-popup-row"><span>↳ TEKYILDIZ 1 tüketimine</span><span>' + fatFmt(sKaynak.T1, 2) + '</span></div>';
+        if (sKaynak.T2 > 0) saatRows += '<div class="fat-popup-row"><span>↳ TEKYILDIZ 2 tüketimine</span><span>' + fatFmt(sKaynak.T2, 2) + '</span></div>';
+        if (sKaynak.A3 > 0) saatRows += '<div class="fat-popup-row"><span>↳ AKSARAY 3 tüketimine</span><span>' + fatFmt(sKaynak.A3, 2) + '</span></div>';
+        saatRows += '<div class="fat-popup-sonuc mor"><span>Toplam Mahsup</span><span>' + fatFmt(sUretMhs, 2) + ' kWh</span></div>';
+        saatRows += '</div></td>';
+        // Bedelli - popup
+        saatRows += '<td class="fat-hover-cell" style="color:#16a34a;font-weight:700;text-align:right;">' + fatFmt(sUretBedelli, 2);
+        saatRows += '<div class="fat-popup">';
+        saatRows += '<div class="fat-popup-title">💚 Bedelli Üretim (saat ' + sk + ')</div>';
+        saatRows += '<div class="fat-popup-row"><span>' + ab.ad + ' Üretimi</span><span>' + fatFmt(sUret, 2) + ' kWh</span></div>';
+        saatRows += '<div class="fat-popup-row"><span>− Mahsup Edilen</span><span style="color:#7c3aed;">' + fatFmt(sUretMhs, 2) + '</span></div>';
+        saatRows += '<div class="fat-popup-sonuc"><span>= Bedelli (Satılan)</span><span style="color:#16a34a;">' + fatFmt(sUretBedelli, 2) + ' kWh</span></div>';
+        saatRows += '</div></td>';
+      }
       saatRows += '<td class="fat-col-ham">' + fatFmt(sHam, 2) + '</td>';
       // Mahsup - hover popup (o saatte hangi GES'ten ne kadar mahsup)
       if (sMhs > 0) {
@@ -5248,6 +5337,11 @@ function fatKartUret(ay, A, ab) {
     const gToplam = gHesapVar ? (gTukBed - gMhsBed) : null;
     saatRows += '<tr class="gun-tpl">';
     saatRows += '<td>GÜN</td>';
+    if (gesMi) {
+      saatRows += '<td style="color:#16a34a;">' + fatFmt(gUret, 2) + '</td>';
+      saatRows += '<td style="color:#7c3aed;">' + fatFmt(gUretMhs, 2) + '</td>';
+      saatRows += '<td style="color:#16a34a;">' + fatFmt(gUretBedelli, 2) + '</td>';
+    }
     saatRows += '<td>' + fatFmt(gHam, 2) + '</td>';
     saatRows += '<td>' + fatFmt(gMhs, 2) + '</td>';
     // E.Maliyeti popup (gun)
@@ -5319,7 +5413,25 @@ function fatKartUret(ay, A, ab) {
 
     satirlar += '<tr class="fat-gun-satir">';
     satirlar += '<td><span class="fat-expand-ico">▶</span>' + tarihLbl + '</td>';
-    if (gesMi) satirlar += '<td style="color:#16a34a;font-weight:700;">' + fatFmt(gUret, 2) + '</td>';
+    if (gesMi) {
+      satirlar += '<td style="color:#16a34a;font-weight:700;">' + fatFmt(gUret, 2) + '</td>';
+      // Mahsup edilen - popup
+      satirlar += '<td class="fat-col-mhs fat-hover-cell" style="color:#7c3aed;">' + fatFmt(gUretMhs, 2);
+      satirlar += '<div class="fat-popup mor">';
+      satirlar += '<div class="fat-popup-title mor">🔄 Üretimden Mahsup (' + tarihLbl + ')</div>';
+      satirlar += '<div class="fat-popup-row"><span>' + ab.ad + ' Üretimi</span><span>' + fatFmt(gUret, 2) + ' kWh</span></div>';
+      satirlar += '<div class="fat-popup-row sum"><span>↳ Mahsup edilen</span><span style="color:#7c3aed;">' + fatFmt(gUretMhs, 2) + '</span></div>';
+      satirlar += '<div class="fat-popup-sonuc mor"><span>Mahsup oranı</span><span>%' + fatFmt(gUret > 0 ? (gUretMhs/gUret*100) : 0, 1) + '</span></div>';
+      satirlar += '</div></td>';
+      // Bedelli - popup
+      satirlar += '<td class="fat-hover-cell" style="color:#16a34a;font-weight:700;">' + fatFmt(gUretBedelli, 2);
+      satirlar += '<div class="fat-popup">';
+      satirlar += '<div class="fat-popup-title">💚 Bedelli Üretim (' + tarihLbl + ')</div>';
+      satirlar += '<div class="fat-popup-row"><span>Üretim</span><span>' + fatFmt(gUret, 2) + ' kWh</span></div>';
+      satirlar += '<div class="fat-popup-row"><span>− Mahsup Edilen</span><span style="color:#7c3aed;">' + fatFmt(gUretMhs, 2) + '</span></div>';
+      satirlar += '<div class="fat-popup-sonuc"><span>= Bedelli (Satılan)</span><span style="color:#16a34a;">' + fatFmt(gUretBedelli, 2) + ' kWh</span></div>';
+      satirlar += '</div></td>';
+    }
     satirlar += '<td class="fat-col-ham">' + fatFmt(gHam, 2) + '</td>';
     satirlar += '<td class="fat-col-mhs">' + fatFmt(gMhs, 2) + '</td>';
     // E.Maliyeti popup (ana gun)
@@ -5381,10 +5493,15 @@ function fatKartUret(ay, A, ab) {
     satirlar += '</tr>';
 
     // Saatlik detay satiri (kapali baslar)
-    satirlar += '<tr class="fat-saatlik-row"><td colspan="' + (gesMi ? 9 : 8) + '"><div class="fat-saatlik-icerik">';
+    satirlar += '<tr class="fat-saatlik-row"><td colspan="' + (gesMi ? 11 : 8) + '"><div class="fat-saatlik-icerik">';
     satirlar += '<table style="width:100%;border-collapse:collapse;font-size:10px;">';
     satirlar += '<thead><tr style="color:#64748b;">';
     satirlar += '<th style="text-align:left;padding:4px 6px;">Saat</th>';
+    if (gesMi) {
+      satirlar += '<th style="text-align:right;padding:4px 6px;color:#16a34a;">Üretim (kWh)</th>';
+      satirlar += '<th style="text-align:right;padding:4px 6px;color:#7c3aed;">Mahsup Edilen</th>';
+      satirlar += '<th style="text-align:right;padding:4px 6px;color:#16a34a;">Bedeli</th>';
+    }
     satirlar += '<th style="text-align:right;padding:4px 6px;">Ham (kWh)</th>';
     satirlar += '<th style="text-align:right;padding:4px 6px;">Mahsup (kWh)</th>';
     satirlar += '<th style="text-align:right;padding:4px 6px;">E.Maliyeti (TL/kWh)</th>';
@@ -5403,7 +5520,11 @@ function fatKartUret(ay, A, ab) {
 
   satirlar += '<tr class="fat-toplam">';
   satirlar += '<td>TOPLAM</td>';
-  if (gesMi) satirlar += '<td style="color:#16a34a;">' + fatFmt(ayUretim, 2) + '</td>';
+  if (gesMi) {
+    satirlar += '<td style="color:#16a34a;">' + fatFmt(ayUretim, 2) + '</td>';
+    satirlar += '<td style="color:#7c3aed;">' + fatFmt(ayUretMhs, 2) + '</td>';
+    satirlar += '<td style="color:#16a34a;">' + fatFmt(ayUretBedelli, 2) + '</td>';
+  }
   satirlar += '<td>' + fatFmt(ayHam, 2) + '</td>';
   satirlar += '<td>' + fatFmt(ayMhs, 2) + '</td>';
   // E.Maliyeti popup (TOPLAM)
@@ -5569,7 +5690,11 @@ function fatKartUret(ay, A, ab) {
   h += '<div class="fat-tablo-wrap"><table class="fat-table">';
   h += '<thead><tr>';
   h += '<th>Tarih</th>';
-  if (gesMi) h += '<th style="color:#16a34a;">Üretim (kWh)</th>';
+  if (gesMi) {
+    h += '<th style="color:#16a34a;">Üretim (kWh)</th>';
+    h += '<th style="color:#7c3aed;">Mahsup Edilen</th>';
+    h += '<th style="color:#16a34a;">Bedeli</th>';
+  }
   h += '<th>Ham Tük. (kWh)</th>';
   h += '<th>Mahsup (kWh)</th>';
   h += '<th>E.Maliyeti (TL/kWh)</th>';
