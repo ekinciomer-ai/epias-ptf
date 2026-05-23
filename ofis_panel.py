@@ -10,16 +10,16 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.01.09.06"
-PANEL_VERSIYON_TARIH = "22.05.2026 18:45"
+PANEL_VERSIYON = "ver.01.09.07"
+PANEL_VERSIYON_TARIH = "23.05.2026 13:30"
 
 # Sistem bilesenleri - her biri kendi son guncellemesini tutar
 # Damgada gosterilir, boylece tum sistemin durumu tek bakista gorulur
 SISTEM_DURUM = {
-    "panel":  "v1.9.6",        # ofis_panel.py
+    "panel":  "v1.9.7",        # ofis_panel.py
     "arsiv":  "v1 · 22May",    # arsiv_kaydet.py (F2Pool+Antminer saatlik)
     "ptf":    "23May",         # aylik_ptf.json son gun
-    "osos":   "21May",         # 2026_osos_endeks.json son gun
+    "osos":   "23May",         # 2026_osos_endeks.json son gun
 }
 
 KULLANICILAR = {
