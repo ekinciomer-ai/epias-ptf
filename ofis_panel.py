@@ -10,8 +10,8 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.01.11.07"
-PANEL_VERSIYON_TARIH = "23.05.2026 14:00"
+PANEL_VERSIYON = "ver.01.12.07"
+PANEL_VERSIYON_TARIH = "23.05.2026 14:15"
 
 # Sistem bilesenleri - her biri kendi son guncellemesini tutar
 # Damgada gosterilir, boylece tum sistemin durumu tek bakista gorulur
@@ -5109,6 +5109,7 @@ function fatKartUret(ay, A, ab) {
   const aylar = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
 
   const mhsMal = FAT_SANAYI_AKTIF;  // 2,909687 - tum aboneler icin
+  const gesMi = (ab.key === 'T1' || ab.key === 'T2');  // GES aboneleri (uretim kolonu icin)
 
   // Ay toplamlar (icin gerekli)
   let ayHam = 0, ayMhs = 0, ayTukBed = 0, ayMhsBed = 0, ayHesapVar = false;
@@ -5122,6 +5123,7 @@ function fatKartUret(ay, A, ab) {
     const gPtfArr = ayPtf[g.slice(-2)] || [];
 
     let gHam = 0, gMhs = 0, gTukBed = 0, gMhsBed = 0, gPtfTpl = 0, gPtfCnt = 0, gHesapVar = false;
+    let gUret = 0;  // gunluk GES uretimi
     let saatRows = '';
 
     for (let s = 0; s < 24; s++) {
@@ -5146,6 +5148,7 @@ function fatKartUret(ay, A, ab) {
       // GES uretimi (bu abonenin o saatteki verisi)
       const sUret = (S.uretim && S.uretim[ab.key]) || 0;
       ayUretim += sUret;
+      gUret += sUret;
       if (sTukBed !== null) { gTukBed += sTukBed; gHesapVar = true; }
       gMhsBed += sMhsBed;
 
@@ -5316,6 +5319,7 @@ function fatKartUret(ay, A, ab) {
 
     satirlar += '<tr class="fat-gun-satir">';
     satirlar += '<td><span class="fat-expand-ico">▶</span>' + tarihLbl + '</td>';
+    if (gesMi) satirlar += '<td style="color:#16a34a;font-weight:700;">' + fatFmt(gUret, 2) + '</td>';
     satirlar += '<td class="fat-col-ham">' + fatFmt(gHam, 2) + '</td>';
     satirlar += '<td class="fat-col-mhs">' + fatFmt(gMhs, 2) + '</td>';
     // E.Maliyeti popup (ana gun)
@@ -5377,7 +5381,7 @@ function fatKartUret(ay, A, ab) {
     satirlar += '</tr>';
 
     // Saatlik detay satiri (kapali baslar)
-    satirlar += '<tr class="fat-saatlik-row"><td colspan="8"><div class="fat-saatlik-icerik">';
+    satirlar += '<tr class="fat-saatlik-row"><td colspan="' + (gesMi ? 9 : 8) + '"><div class="fat-saatlik-icerik">';
     satirlar += '<table style="width:100%;border-collapse:collapse;font-size:10px;">';
     satirlar += '<thead><tr style="color:#64748b;">';
     satirlar += '<th style="text-align:left;padding:4px 6px;">Saat</th>';
@@ -5399,6 +5403,7 @@ function fatKartUret(ay, A, ab) {
 
   satirlar += '<tr class="fat-toplam">';
   satirlar += '<td>TOPLAM</td>';
+  if (gesMi) satirlar += '<td style="color:#16a34a;">' + fatFmt(ayUretim, 2) + '</td>';
   satirlar += '<td>' + fatFmt(ayHam, 2) + '</td>';
   satirlar += '<td>' + fatFmt(ayMhs, 2) + '</td>';
   // E.Maliyeti popup (TOPLAM)
@@ -5481,7 +5486,6 @@ function fatKartUret(ay, A, ab) {
   h += '<div><div class="fat-abone-name">' + ab.ad + '</div><div class="fat-abone-sub">' + ab.sub + '</div></div></div>';
 
   // ===== URETIM DETAYI (sadece GES aboneleri: T1, T2) =====
-  const gesMi = (ab.key === 'T1' || ab.key === 'T2');
   if (gesMi) {
     h += '<div class="fat-uretim-detay">';
     h += '<div class="fat-ud-title">☀️ Üretim Detayı (kWh) — Asıl İş: GES</div>';
@@ -5565,6 +5569,7 @@ function fatKartUret(ay, A, ab) {
   h += '<div class="fat-tablo-wrap"><table class="fat-table">';
   h += '<thead><tr>';
   h += '<th>Tarih</th>';
+  if (gesMi) h += '<th style="color:#16a34a;">Üretim (kWh)</th>';
   h += '<th>Ham Tük. (kWh)</th>';
   h += '<th>Mahsup (kWh)</th>';
   h += '<th>E.Maliyeti (TL/kWh)</th>';
