@@ -10,8 +10,8 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.01.16.08"
-PANEL_VERSIYON_TARIH = "23.05.2026 15:45"
+PANEL_VERSIYON = "ver.02.00.08"
+PANEL_VERSIYON_TARIH = "23.05.2026 16:15"
 
 # Sistem bilesenleri - her biri kendi son guncellemesini tutar
 # Damgada gosterilir, boylece tum sistemin durumu tek bakista gorulur
@@ -460,6 +460,31 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 .f2-small{font-size:12px;color:#94a3b8;margin-top:2px;}
 /* F2Pool derli toplu tasarim */
 .f2-hero{display:flex;justify-content:space-between;align-items:center;gap:12px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:16px;padding:16px 18px;margin-bottom:14px;box-shadow:0 4px 16px rgba(217,119,6,0.25);}
+/* F2Pool alt sekmeler */
+.f2-alt-tabs{display:flex;gap:4px;background:#fff;border-radius:12px;padding:4px;margin-bottom:14px;border:1px solid #e2e8f0;}
+.f2-alt-tab{flex:1;background:transparent;border:none;color:#64748b;padding:9px 8px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.15s;}
+.f2-alt-tab.active{background:#d97706;color:#fff;}
+.f2-alt-content{display:none;}
+.f2-alt-content.active{display:block;}
+/* Kiyas */
+.f2-kiyas-aciklama{font-size:11px;color:#64748b;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin-bottom:12px;line-height:1.5;}
+.f2-kiyas-zaman{background:transparent;border:none;color:#64748b;padding:6px 13px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+.f2-kiyas-zaman.active{background:#d97706;color:#fff;}
+.f2-kiyas-ozet{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;}
+.f2-kiyas-kart{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+.f2-kiyas-kart-lbl{font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;}
+.f2-kiyas-kart-val{font-size:17px;font-weight:900;margin-top:4px;font-family:'Inter',monospace;}
+.f2-kiyas-kart-sub{font-size:9px;color:#94a3b8;font-weight:600;margin-top:2px;}
+.f2-harita-card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+.f2-harita-baslik{font-size:12px;font-weight:800;color:#1e293b;margin-bottom:12px;}
+.f2-harita-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;}
+.f2-harita-saat{aspect-ratio:1;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#fff;cursor:help;position:relative;}
+.f2-harita-lejant{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:12px;padding-top:10px;border-top:1px solid #f1f5f9;}
+.f2-hl{display:flex;align-items:center;gap:4px;font-size:9px;font-weight:700;color:#64748b;}
+.f2-hl-renk{width:10px;height:10px;border-radius:3px;display:inline-block;}
+.f2-kiyas-row{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:9px 12px;margin-bottom:5px;font-size:11px;position:relative;cursor:help;}
+.f2-kiyas-saat{font-weight:800;color:#1e293b;min-width:42px;}
+.f2-kiyas-net{margin-left:auto;font-weight:900;font-family:'Inter',monospace;}
 .f2-hero-left{display:flex;align-items:center;gap:13px;}
 .f2-hero-ico{width:46px;height:46px;background:rgba(255,255,255,0.2);border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
 .f2-hero-lbl{font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
@@ -690,6 +715,16 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 
 <div class="tab-content" id="t-f2pool" style="background:#f1f5f9; border-radius:16px; padding:16px; margin-top:8px;">
 
+<!-- F2Pool alt sekmeler -->
+<div class="f2-alt-tabs">
+  <button class="f2-alt-tab" data-alt="cihazlar" onclick="f2AltSekme('cihazlar', this)">🖥️ Cihazlar</button>
+  <button class="f2-alt-tab active" data-alt="kazanc" onclick="f2AltSekme('kazanc', this)">💰 Kazanç</button>
+  <button class="f2-alt-tab" data-alt="kiyas" onclick="f2AltSekme('kiyas', this)">⚖️ Kıyas</button>
+</div>
+
+<!-- ===== ALT SEKME: KAZANÇ ===== -->
+<div class="f2-alt-content active" id="f2-alt-kazanc">
+
 <!-- Hero: donem ozeti -->
 <div class="f2-hero">
   <div class="f2-hero-left">
@@ -765,6 +800,59 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 
 <div class="section-title" id="f2-liste-baslik" style="margin-top:6px;">📅 Günlük Üretim</div>
 <div id="daily-list" style="margin-top:8px"><div class="empty-state">Yükleniyor...</div></div>
+</div>
+<!-- ===== /ALT SEKME: KAZANÇ ===== -->
+
+<!-- ===== ALT SEKME: CIHAZLAR ===== -->
+<div class="f2-alt-content" id="f2-alt-cihazlar">
+<div class="cihaz-ozet">
+<div class="cihaz-ozet-card"><div class="cihaz-ozet-val" style="color:#16a34a" id="f2c-aktif">—</div><div class="cihaz-ozet-lbl">Çalışan</div></div>
+<div class="cihaz-ozet-card"><div class="cihaz-ozet-val" style="color:#d97706" id="f2c-uyku">—</div><div class="cihaz-ozet-lbl">Uyuyan</div></div>
+<div class="cihaz-ozet-card"><div class="cihaz-ozet-val" style="color:#dc2626" id="f2c-kapali">—</div><div class="cihaz-ozet-lbl">Kapalı</div></div>
+<div class="cihaz-ozet-card"><div class="cihaz-ozet-val" style="color:#2563eb" id="f2c-toplam">—</div><div class="cihaz-ozet-lbl">TH/s</div></div>
+</div>
+<div class="section-header">
+<div class="section-title">🖥️ Cihaz Listesi</div>
+<div style="font-size:10px;color:#64748b">Detay için dokunun</div>
+</div>
+<div class="cihaz-grid" id="f2c-grid"><div class="empty-state" style="grid-column:1/-1">Yükleniyor...</div></div>
+</div>
+<!-- ===== /ALT SEKME: CIHAZLAR ===== -->
+
+<!-- ===== ALT SEKME: KIYAS (Madencilik Karliligi) ===== -->
+<div class="f2-alt-content" id="f2-alt-kiyas">
+<div class="f2-kiyas-aciklama">⚖️ Madencilik kârlılığı: BTC geliri vs elektrik gideri (T2 tüketimi = madencilik). Tüketim şimdilik hashrate'ten tahmini.</div>
+
+<!-- Gun secici -->
+<div class="f2-kontrol">
+  <div class="f2-zaman-grup">
+    <button class="f2-kiyas-zaman active" data-kz="gun" onclick="f2KiyasZaman('gun', this)">Günlük</button>
+    <button class="f2-kiyas-zaman" data-kz="ay" onclick="f2KiyasZaman('ay', this)">Aylık</button>
+  </div>
+  <input type="date" id="f2-kiyas-tarih" onchange="f2KiyasRender()" class="f2-ay-sec" style="cursor:pointer;">
+</div>
+
+<!-- Ozet kartlari -->
+<div class="f2-kiyas-ozet" id="f2-kiyas-ozet"></div>
+
+<!-- Verimlilik haritasi (24 saat) -->
+<div class="f2-harita-card">
+  <div class="f2-harita-baslik">🗺️ Günlük Verimlilik Haritası <span style="font-size:9px;color:#94a3b8;font-weight:600;">(yeşil=kârlı, kırmızı=zararlı)</span></div>
+  <div class="f2-harita-grid" id="f2-harita-grid"></div>
+  <div class="f2-harita-lejant">
+    <span class="f2-hl"><span class="f2-hl-renk" style="background:#16a34a;"></span>Kârlı</span>
+    <span class="f2-hl"><span class="f2-hl-renk" style="background:#fbbf24;"></span>Başabaş</span>
+    <span class="f2-hl"><span class="f2-hl-renk" style="background:#dc2626;"></span>Zararlı</span>
+    <span class="f2-hl"><span class="f2-hl-renk" style="background:#e2e8f0;"></span>Veri yok</span>
+  </div>
+</div>
+
+<!-- Saatlik kiyas tablosu -->
+<div class="section-title" style="margin-top:14px;">📋 Saatlik Kıyas</div>
+<div id="f2-kiyas-liste"><div class="empty-state">Gün seçin</div></div>
+</div>
+<!-- ===== /ALT SEKME: KIYAS ===== -->
+
 </div>
 
 
@@ -2480,6 +2568,175 @@ function versiyonPopupAc(e) {
   if (!p) return;
   p.style.display = (p.style.display === 'none' || !p.style.display) ? 'block' : 'none';
 }
+
+// F2Pool alt sekme gecisi
+function f2AltSekme(ad, btn) {
+  document.querySelectorAll('.f2-alt-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.f2-alt-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('f2-alt-' + ad).classList.add('active');
+  if (ad === 'kazanc') { try { if (window.f2GunlukHam && window.f2GunlukHam.length) f2Render(); } catch(e){} }
+  if (ad === 'cihazlar') { try { if (window.f2Workers) f2CihazRender(window.f2Workers); } catch(e){} }
+  if (ad === 'kiyas') { try { f2KiyasRender(); } catch(e){ console.error('kiyas:', e); } }
+}
+
+// F2Pool Cihazlar alt sekmesi (kendi ID'leri ile)
+function f2CihazRender(workers) {
+  if (!workers || workers.length === 0) {
+    const g = document.getElementById('f2c-grid');
+    if (g) g.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Cihaz yok</div>';
+    return;
+  }
+  let calisan=0, uyuyan=0, kapali=0, toplam=0;
+  let html = '';
+  workers.forEach(w => {
+    const info = w.hash_rate_info || {};
+    const ad = info.name || '?';
+    const anlik = (info.hash_rate || 0) / 1e12;
+    const h24 = (info.h24_hash_rate || 0) / 1e12;
+    toplam += anlik;
+    let durum, renk;
+    if (anlik > 0) { durum='Çalışıyor'; renk='#16a34a'; calisan++; }
+    else if ((info.h1_hash_rate||0) > 0) { durum='Yavaşlıyor'; renk='#d97706'; uyuyan++; }
+    else if (h24 > 0) { durum='Uyuyor'; renk='#d97706'; uyuyan++; }
+    else { durum='Kapalı'; renk='#dc2626'; kapali++; }
+    html += '<div class="cihaz-card" onclick="cihazDetay(&quot;' + ad + '&quot;)">'
+      + '<div class="cihaz-card-head"><div class="cihaz-ad">' + ad + '</div><div class="cihaz-durum" style="color:' + renk + '">●</div></div>'
+      + '<div class="cihaz-hash" style="color:#d97706">' + (anlik ? anlik.toFixed(1) : '—') + ' <span style="font-size:11px;color:#64748b">TH/s</span></div>'
+      + '<div style="font-size:10px;color:#64748b;margin-top:2px;">' + durum + ' · 24s: ' + h24.toFixed(0) + '</div>'
+      + '</div>';
+  });
+  const set = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
+  set('f2c-aktif', calisan); set('f2c-uyku', uyuyan); set('f2c-kapali', kapali); set('f2c-toplam', Math.round(toplam));
+  const g = document.getElementById('f2c-grid');
+  if (g) g.innerHTML = html;
+}
+
+// ===== KIYAS: Madencilik karliligi =====
+window.f2KiyasZamanTip = 'gun';
+function f2KiyasZaman(tip, btn) {
+  window.f2KiyasZamanTip = tip;
+  document.querySelectorAll('.f2-kiyas-zaman').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  f2KiyasRender();
+}
+
+function f2KiyasRender() {
+  const tarihEl = document.getElementById('f2-kiyas-tarih');
+  if (!tarihEl) return;
+  // Varsayilan tarih: bugun
+  if (!tarihEl.value) {
+    const bugun = new Date();
+    tarihEl.value = bugun.toISOString().slice(0,10);
+  }
+  const gun = tarihEl.value;
+
+  // Saatlik F2Pool verisi cek (hashrate -> tuketim) + PTF
+  fetch('/api/f2pool_saatlik?gun=' + gun)
+    .then(r => r.json())
+    .then(d => {
+      f2KiyasHesapla(d, gun);
+    })
+    .catch(e => {
+      document.getElementById('f2-kiyas-liste').innerHTML = '<div class="empty-state">Veri alınamadı</div>';
+    });
+}
+
+function f2KiyasHesapla(d, gun) {
+  const MHS_FIYAT = 2.909687;  // mahsup fiyati TL/kWh
+  const btcKur = window.f2BtcKur || (d.btc_kur || 0);
+  // Ortalama verimlilik (J/TH)
+  let ortJth = 25.0;
+  if (window.antData && window.antData.devices) {
+    let tW=0, tH=0;
+    window.antData.devices.forEach(x => { const hr=x.hashrate_TH||0; if(hr>0){tW+=hr*antVerimlilik(x.model); tH+=hr;} });
+    if (tH>0) ortJth = tW/tH;
+  }
+  // PTF verisi (aylik_ptf.json) - o gunun saatlik
+  const ay = gun.slice(0,7);
+  const gunNo = String(parseInt(gun.slice(8,10)));
+  const ptfAy = (window.fatAylikPtf && window.fatAylikPtf[ay]) || {};
+  const ptfGun = ptfAy[gunNo] || ptfAy[gun] || [];
+
+  const saatler = (d.saatler || []).filter(s => s.hash > 0);
+  if (saatler.length === 0) {
+    document.getElementById('f2-harita-grid').innerHTML = '';
+    document.getElementById('f2-kiyas-liste').innerHTML = '<div class="empty-state">📭 Bu gün için saatlik veri yok (F2Pool son ~48 saat)</div>';
+    document.getElementById('f2-kiyas-ozet').innerHTML = '';
+    return;
+  }
+
+  let topGelir=0, topGiderPtf=0, topGiderMhs=0, topTuketim=0, topBtc=0;
+  const saatVeri = [];
+  for (let h=0; h<24; h++) {
+    const sk = String(h).padStart(2,'0');
+    const s = saatler.find(x => x.saat === sk);
+    if (!s) { saatVeri.push(null); continue; }
+    const tuketim = (s.hash * ortJth) / 1000;  // kWh
+    const gelir = (s.btc || 0) * btcKur;        // TL
+    const ptf = (ptfGun[h] !== undefined ? ptfGun[h] : 0) / 1000;  // PTF TL/MWh -> TL/kWh
+    const giderPtf = tuketim * ptf;
+    const giderMhs = tuketim * MHS_FIYAT;  // mahsup fiyati ile
+    const netPtf = gelir - giderPtf;
+    const netMhs = gelir - giderMhs;
+    topGelir += gelir; topGiderPtf += giderPtf; topGiderMhs += giderMhs;
+    topTuketim += tuketim; topBtc += (s.btc||0);
+    saatVeri.push({ saat:sk, tuketim, gelir, ptf:ptfGun[h]||0, giderPtf, giderMhs, netPtf, netMhs, hash:s.hash, btc:s.btc||0 });
+  }
+
+  const netPtfTop = topGelir - topGiderPtf;
+  const netMhsTop = topGelir - topGiderMhs;
+
+  // Ozet kartlari
+  let ozet = '';
+  ozet += '<div class="f2-kiyas-kart"><div class="f2-kiyas-kart-lbl">💰 BTC Geliri</div><div class="f2-kiyas-kart-val" style="color:#d97706;">' + Math.round(topGelir).toLocaleString('tr-TR') + ' ₺</div><div class="f2-kiyas-kart-sub">' + topBtc.toFixed(6) + ' BTC</div></div>';
+  ozet += '<div class="f2-kiyas-kart"><div class="f2-kiyas-kart-lbl">⚡ Tüketim</div><div class="f2-kiyas-kart-val" style="color:#2563eb;">' + Math.round(topTuketim).toLocaleString('tr-TR') + '</div><div class="f2-kiyas-kart-sub">kWh (tahmini)</div></div>';
+  ozet += '<div class="f2-kiyas-kart"><div class="f2-kiyas-kart-lbl">📈 Net (PTF)</div><div class="f2-kiyas-kart-val" style="color:' + (netPtfTop>=0?'#16a34a':'#dc2626') + ';">' + Math.round(netPtfTop).toLocaleString('tr-TR') + ' ₺</div><div class="f2-kiyas-kart-sub">gelir − PTF gideri</div></div>';
+  ozet += '<div class="f2-kiyas-kart"><div class="f2-kiyas-kart-lbl">🔄 Net (Mahsup)</div><div class="f2-kiyas-kart-val" style="color:' + (netMhsTop>=0?'#16a34a':'#dc2626') + ';">' + Math.round(netMhsTop).toLocaleString('tr-TR') + ' ₺</div><div class="f2-kiyas-kart-sub">gelir − 2,90×tüketim</div></div>';
+  document.getElementById('f2-kiyas-ozet').innerHTML = ozet;
+
+  // Verimlilik haritasi (24 saat, net PTF'ye gore renk)
+  let harita = '';
+  for (let h=0; h<24; h++) {
+    const v = saatVeri[h];
+    let renk = '#e2e8f0', baslik = h + ':00 veri yok';
+    if (v) {
+      if (v.netPtf > 5) renk = '#16a34a';
+      else if (v.netPtf >= -5) renk = '#fbbf24';
+      else renk = '#dc2626';
+      baslik = h + ':00 → Net: ' + Math.round(v.netPtf) + ' TL';
+    }
+    harita += '<div class="f2-harita-saat" style="background:' + renk + ';" title="' + baslik + '">' + h + '</div>';
+  }
+  document.getElementById('f2-harita-grid').innerHTML = harita;
+
+  // Saatlik kiyas listesi (popuplı)
+  let liste = '';
+  saatVeri.forEach((v, h) => {
+    if (!v) return;
+    const netRenk = v.netPtf >= 0 ? '#16a34a' : '#dc2626';
+    liste += '<div class="f2-kiyas-row">';
+    liste += '<span class="f2-kiyas-saat">' + v.saat + ':00</span>';
+    liste += '<span style="color:#d97706;">' + Math.round(v.gelir) + '₺</span>';
+    liste += '<span style="color:#2563eb;font-size:10px;">' + v.tuketim.toFixed(1) + 'kWh</span>';
+    liste += '<span class="f2-kiyas-net" style="color:' + netRenk + ';">' + Math.round(v.netPtf) + '₺</span>';
+    // Popup
+    liste += '<div class="fat-popup">';
+    liste += '<div class="fat-popup-title">⚖️ Saat ' + v.saat + ':00 Kıyas</div>';
+    liste += '<div class="fat-popup-row"><span>Hashrate</span><span>' + Math.round(v.hash) + ' TH/s</span></div>';
+    liste += '<div class="fat-popup-row"><span>Tüketim (tahmini)</span><span>' + v.tuketim.toFixed(2) + ' kWh</span></div>';
+    liste += '<div class="fat-popup-row"><span>BTC Üretim</span><span>' + v.btc.toFixed(6) + '</span></div>';
+    liste += '<div class="fat-popup-row sum"><span>💰 BTC Geliri</span><span style="color:#d97706;">' + Math.round(v.gelir) + ' ₺</span></div>';
+    liste += '<div class="fat-popup-row"><span>PTF (' + v.saat + ':00)</span><span>' + fatFmt(v.ptf, 2) + ' TL/MWh</span></div>';
+    liste += '<div class="fat-popup-row"><span>− Gider (PTF)</span><span style="color:#dc2626;">' + Math.round(v.giderPtf) + ' ₺</span></div>';
+    liste += '<div class="fat-popup-sonuc"><span>= Net (PTF)</span><span style="color:' + netRenk + ';">' + Math.round(v.netPtf) + ' ₺</span></div>';
+    liste += '<div class="fat-popup-row"><span>− Gider (Mahsup 2,90)</span><span style="color:#dc2626;">' + Math.round(v.giderMhs) + ' ₺</span></div>';
+    liste += '<div class="fat-popup-sonuc"><span>= Net (Mahsup)</span><span style="color:' + (v.netMhs>=0?'#16a34a':'#dc2626') + ';">' + Math.round(v.netMhs) + ' ₺</span></div>';
+    liste += '</div>';
+    liste += '</div>';
+  });
+  document.getElementById('f2-kiyas-liste').innerHTML = liste || '<div class="empty-state">Veri yok</div>';
+}
 document.addEventListener('click', function(e) {
   var d = document.getElementById('versiyon-damgasi');
   var p = document.getElementById('versiyon-popup');
@@ -2533,7 +2790,7 @@ function yukle() {
     }
     } catch(e) { console.error('f2Render:', e); }
     try { if (d.gunluk_liste) { window.f2GunlukListe = d.gunluk_liste; } } catch(e) {}
-    try { if (d.workers) cihazRender(d.workers); } catch(e) { console.error('cihazRender:', e); }
+    try { if (d.workers) { window.f2Workers = d.workers; cihazRender(d.workers); f2CihazRender(d.workers); } } catch(e) { console.error('cihazRender:', e); }
     try { document.getElementById('guncelleme').textContent = 'Güncellendi: ' + new Date().toLocaleTimeString('tr-TR'); } catch(e) {}
   }).catch(e => { console.error('yukle fetch:', e); });
 }
@@ -5094,6 +5351,7 @@ async function faturaYukle() {
       const r = await fetch('/api/aylik_ptf?_=' + Date.now());
       if (r.ok) fatAylikPtf = await r.json();
       else fatAylikPtf = {};
+      window.fatAylikPtf = fatAylikPtf;
     } catch (e) {
       console.error('Faturalandirma: PTF cekilemedi', e);
       fatAylikPtf = {};
