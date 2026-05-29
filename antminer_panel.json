@@ -1,26 +1,24 @@
 {
-  "timestamp": "2026-05-29T19:01:38.563403",
+  "timestamp": "2026-05-29T19:03:02.115928",
   "source": "Tek Yildiz 2 GES - Saha PC",
   "summary": {
     "total": 29,
-    "online": 5,
+    "online": 0,
     "sleeping": 0,
-    "offline": 24,
-    "total_hashrate_TH": 1544.97,
-    "total_target_TH": 1491.0,
-    "efficiency_pct": 103.6,
-    "avg_temp_C": 59.4,
-    "avg_water_temp_C": 52.8,
+    "offline": 29,
+    "total_hashrate_TH": 0,
+    "total_target_TH": 0,
+    "efficiency_pct": 0,
+    "avg_temp_C": 0,
+    "avg_water_temp_C": 0,
     "models": {
-      "S19e XP Hyd": 1,
-      "S21e Hyd": 4,
-      "?": 24
+      "?": 29
     },
     "f2pool": {
       "enabled": true,
       "total_workers": 1,
-      "matched_devices": 27,
-      "unmatched_devices": 2
+      "matched_devices": 29,
+      "unmatched_devices": 0
     },
     "earnings": {
       "today_btc": 0.0,
@@ -45,34 +43,98 @@
     {
       "ip": "192.168.0.100",
       "suffix": 100,
-      "name": "S19e XP Hyd-100",
-      "model": "S19e XP Hyd",
-      "mac": "EC:84:39:2D:17:25",
-      "serial": "OLTTFLUBEAAAD04BY",
-      "saha_worker": "saha.1725",
-      "havuz_worker": "mehmetas.027",
-      "actual_worker": "mehmetas.027",
-      "hashrate_TH": 254.21,
-      "target_hashrate_TH": 251.0,
-      "efficiency_pct": 101.3,
-      "temp_max": 66,
-      "temp_water": 66,
-      "elapsed_hours": 14.4,
-      "fan_avg_rpm": 0,
-      "status": "ONLINE",
-      "online": true,
+      "name": "Miner-100",
+      "model": "?",
+      "mac": null,
+      "serial": null,
+      "saha_worker": null,
+      "havuz_worker": null,
+      "actual_worker": null,
+      "hashrate_TH": null,
+      "target_hashrate_TH": null,
+      "efficiency_pct": null,
+      "temp_max": null,
+      "temp_water": null,
+      "elapsed_hours": null,
+      "fan_avg_rpm": null,
+      "status": "OFFLINE",
+      "online": false,
       "sleeping": false,
-      "is_hydro": true,
-      "accepted": 1963,
-      "rejected": 0,
-      "hw_errors_total": 2269,
+      "is_hydro": null,
+      "accepted": null,
+      "rejected": null,
+      "hw_errors_total": null,
       "f2pool_name": null,
-      "f2pool_hashrate_TH": null,
-      "f2pool_h1_TH": null,
-      "f2pool_h24_TH": null,
-      "f2pool_last_share": null,
+      "f2pool_hashrate_TH": 0.0,
+      "f2pool_h1_TH": 0.0,
+      "f2pool_h24_TH": 0.0,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
-      "f2pool_matched": false,
+      "f2pool_matched": true,
+      "hashrate_diff_pct": null,
+      "earn_today_btc": null,
+      "earn_yesterday_btc": null,
+      "earn_7d_btc": null,
+      "earn_total_btc": null,
+      "earn_today_usd": null,
+      "earn_yesterday_usd": null,
+      "earn_7d_usd": null,
+      "earn_total_usd": null,
+      "earn_today_try": null,
+      "earn_yesterday_try": null,
+      "earn_7d_try": null,
+      "earn_total_try": null,
+      "health_issues": [
+        {
+          "severity": "high",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
+          "solutions": [
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
+          ]
+        }
+      ],
+      "daily_history": [],
+      "monthly_history": [],
+      "label": null,
+      "physical_location": null
+    },
+    {
+      "ip": "192.168.0.101",
+      "suffix": 101,
+      "name": "Miner-101",
+      "model": "?",
+      "mac": null,
+      "serial": null,
+      "saha_worker": null,
+      "havuz_worker": null,
+      "actual_worker": null,
+      "hashrate_TH": null,
+      "target_hashrate_TH": null,
+      "efficiency_pct": null,
+      "temp_max": null,
+      "temp_water": null,
+      "elapsed_hours": null,
+      "fan_avg_rpm": null,
+      "status": "OFFLINE",
+      "online": false,
+      "sleeping": false,
+      "is_hydro": null,
+      "accepted": null,
+      "rejected": null,
+      "hw_errors_total": null,
+      "f2pool_name": null,
+      "f2pool_hashrate_TH": 0.0,
+      "f2pool_h1_TH": 0.0,
+      "f2pool_h24_TH": 0.0,
+      "f2pool_last_share": 1780070458,
+      "f2pool_state": null,
+      "f2pool_matched": true,
       "hashrate_diff_pct": null,
       "earn_today_btc": null,
       "earn_yesterday_btc": null,
@@ -89,727 +151,52 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "WATER_HOT",
-          "icon": "💧",
-          "title": "Su Sicakligi Yuksek (66°C)",
-          "reason": "Soguma sistemi yetersiz",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Radyatoru kontrol et (toz, tikanma)",
-            "Dis fan calisiyor mu?",
-            "Dis ortam sicakligi cok yuksek olabilir"
-          ]
-        },
-        {
-          "severity": "medium",
-          "code": "HIGH_HW_ERRORS",
-          "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (2269)",
-          "reason": "Chip asinmasi veya asiri overclock",
-          "solutions": [
-            "Hangi board'da fazla?",
-            "Frekansi dusur",
-            "O board'u degistirmeyi planla"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
-      "daily_history": [
-        {
-          "date": "2026-04-30",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-01",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-02",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-03",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-04",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-05",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-06",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-07",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-08",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-09",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-10",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-11",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-12",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-13",
-          "avg_hash_TH": 254.3,
-          "uptime_pct": 100.0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-14",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-15",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-16",
-          "avg_hash_TH": 245.8,
-          "uptime_pct": 98.0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-17",
-          "avg_hash_TH": 251.7,
-          "uptime_pct": 99.3,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-18",
-          "avg_hash_TH": 253.4,
-          "uptime_pct": 99.8,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-19",
-          "avg_hash_TH": 252.9,
-          "uptime_pct": 99.7,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-20",
-          "avg_hash_TH": 253.1,
-          "uptime_pct": 99.7,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-21",
-          "avg_hash_TH": 253.1,
-          "uptime_pct": 99.6,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-22",
-          "avg_hash_TH": 248.7,
-          "uptime_pct": 98.4,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-23",
-          "avg_hash_TH": 253.1,
-          "uptime_pct": 99.7,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-24",
-          "avg_hash_TH": 248.1,
-          "uptime_pct": 98.3,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-25",
-          "avg_hash_TH": 252.2,
-          "uptime_pct": 99.3,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-26",
-          "avg_hash_TH": 252.8,
-          "uptime_pct": 99.7,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-27",
-          "avg_hash_TH": 251.9,
-          "uptime_pct": 99.7,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-28",
-          "avg_hash_TH": 249.3,
-          "uptime_pct": 98.7,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-29",
-          "avg_hash_TH": 251.1,
-          "uptime_pct": 99.7,
-          "earn_btc": 0
-        }
-      ],
-      "monthly_history": [
-        {
-          "month": "2026-05",
-          "avg_hash_TH": 251.4,
-          "earn_btc": 0,
-          "days": 15
-        }
-      ],
-      "label": null,
-      "physical_location": null
-    },
-    {
-      "ip": "192.168.0.101",
-      "suffix": 101,
-      "name": "S21e Hyd-101",
-      "model": "S21e Hyd",
-      "mac": "EC:84:39:7F:F2:40",
-      "serial": "OLTTGBUBEAAAA01ZH",
-      "saha_worker": "saha.F240",
-      "havuz_worker": "mehmetas.013",
-      "actual_worker": "mehmetas.013",
-      "hashrate_TH": 322.32,
-      "target_hashrate_TH": 310.0,
-      "efficiency_pct": 104.0,
-      "temp_max": 58,
-      "temp_water": 49,
-      "elapsed_hours": 13.5,
-      "fan_avg_rpm": 0,
-      "status": "ONLINE",
-      "online": true,
-      "sleeping": false,
-      "is_hydro": true,
-      "accepted": 1941,
-      "rejected": 1,
-      "hw_errors_total": 413,
-      "f2pool_name": null,
-      "f2pool_hashrate_TH": null,
-      "f2pool_h1_TH": null,
-      "f2pool_h24_TH": null,
-      "f2pool_last_share": null,
-      "f2pool_state": null,
-      "f2pool_matched": false,
-      "hashrate_diff_pct": null,
-      "earn_today_btc": null,
-      "earn_yesterday_btc": null,
-      "earn_7d_btc": null,
-      "earn_total_btc": null,
-      "earn_today_usd": null,
-      "earn_yesterday_usd": null,
-      "earn_7d_usd": null,
-      "earn_total_usd": null,
-      "earn_today_try": null,
-      "earn_yesterday_try": null,
-      "earn_7d_try": null,
-      "earn_total_try": null,
-      "health_issues": [],
-      "daily_history": [
-        {
-          "date": "2026-04-30",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-01",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-02",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-03",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-04",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-05",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-06",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-07",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-08",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-09",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-10",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-11",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-12",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-13",
-          "avg_hash_TH": 322.3,
-          "uptime_pct": 100.0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-14",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-15",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-16",
-          "avg_hash_TH": 285.9,
-          "uptime_pct": 91.8,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-17",
-          "avg_hash_TH": 318.0,
-          "uptime_pct": 99.0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-18",
-          "avg_hash_TH": 319.9,
-          "uptime_pct": 99.5,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-19",
-          "avg_hash_TH": 320.2,
-          "uptime_pct": 99.5,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-20",
-          "avg_hash_TH": 319.7,
-          "uptime_pct": 99.5,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-21",
-          "avg_hash_TH": 320.1,
-          "uptime_pct": 99.5,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-22",
-          "avg_hash_TH": 313.8,
-          "uptime_pct": 98.1,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-23",
-          "avg_hash_TH": 320.2,
-          "uptime_pct": 99.5,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-24",
-          "avg_hash_TH": 314.5,
-          "uptime_pct": 98.3,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-25",
-          "avg_hash_TH": 320.1,
-          "uptime_pct": 99.6,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-26",
-          "avg_hash_TH": 319.8,
-          "uptime_pct": 99.5,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-27",
-          "avg_hash_TH": 319.2,
-          "uptime_pct": 99.5,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-28",
-          "avg_hash_TH": 317.0,
-          "uptime_pct": 99.1,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-29",
-          "avg_hash_TH": 317.0,
-          "uptime_pct": 99.5,
-          "earn_btc": 0
-        }
-      ],
-      "monthly_history": [
-        {
-          "month": "2026-05",
-          "avg_hash_TH": 316.5,
-          "earn_btc": 0,
-          "days": 15
-        }
-      ],
+      "daily_history": [],
+      "monthly_history": [],
       "label": null,
       "physical_location": null
     },
     {
       "ip": "192.168.0.102",
       "suffix": 102,
-      "name": "S21e Hyd-102",
-      "model": "S21e Hyd",
-      "mac": "EC:84:39:06:CF:41",
-      "serial": "OLTTGBUBEAAAA01NW",
-      "saha_worker": "saha.CF41",
-      "havuz_worker": null,
-      "actual_worker": null,
-      "hashrate_TH": 323.14,
-      "target_hashrate_TH": 310.0,
-      "efficiency_pct": 104.2,
-      "temp_max": 58,
-      "temp_water": 50,
-      "elapsed_hours": 13.5,
-      "fan_avg_rpm": 0,
-      "status": "ONLINE",
-      "online": true,
-      "sleeping": false,
-      "is_hydro": true,
-      "accepted": 1943,
-      "rejected": 2,
-      "hw_errors_total": 888,
-      "f2pool_name": null,
-      "f2pool_hashrate_TH": 0.0,
-      "f2pool_h1_TH": 0.0,
-      "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
-      "f2pool_state": null,
-      "f2pool_matched": true,
-      "hashrate_diff_pct": null,
-      "earn_today_btc": null,
-      "earn_yesterday_btc": null,
-      "earn_7d_btc": null,
-      "earn_total_btc": null,
-      "earn_today_usd": null,
-      "earn_yesterday_usd": null,
-      "earn_7d_usd": null,
-      "earn_total_usd": null,
-      "earn_today_try": null,
-      "earn_yesterday_try": null,
-      "earn_7d_try": null,
-      "earn_total_try": null,
-      "health_issues": [],
-      "daily_history": [
-        {
-          "date": "2026-04-30",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-01",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-02",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-03",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-04",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-05",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-06",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-07",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-08",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-09",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-10",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-11",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-12",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-13",
-          "avg_hash_TH": 322.5,
-          "uptime_pct": 100.0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-14",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-15",
-          "avg_hash_TH": 0,
-          "uptime_pct": 0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-16",
-          "avg_hash_TH": 159.6,
-          "uptime_pct": 52.0,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-17",
-          "avg_hash_TH": 262.6,
-          "uptime_pct": 82.4,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-18",
-          "avg_hash_TH": 320.5,
-          "uptime_pct": 99.5,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-19",
-          "avg_hash_TH": 320.5,
-          "uptime_pct": 99.4,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-20",
-          "avg_hash_TH": 320.8,
-          "uptime_pct": 99.5,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-21",
-          "avg_hash_TH": 320.6,
-          "uptime_pct": 99.5,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-22",
-          "avg_hash_TH": 313.7,
-          "uptime_pct": 97.9,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-23",
-          "avg_hash_TH": 320.4,
-          "uptime_pct": 99.5,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-24",
-          "avg_hash_TH": 310.8,
-          "uptime_pct": 97.4,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-25",
-          "avg_hash_TH": 320.1,
-          "uptime_pct": 99.4,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-26",
-          "avg_hash_TH": 319.0,
-          "uptime_pct": 99.2,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-27",
-          "avg_hash_TH": 319.6,
-          "uptime_pct": 99.5,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-28",
-          "avg_hash_TH": 315.9,
-          "uptime_pct": 98.6,
-          "earn_btc": 0
-        },
-        {
-          "date": "2026-05-29",
-          "avg_hash_TH": 317.5,
-          "uptime_pct": 99.4,
-          "earn_btc": 0
-        }
-      ],
-      "monthly_history": [
-        {
-          "month": "2026-05",
-          "avg_hash_TH": 304.3,
-          "earn_btc": 0,
-          "days": 15
-        }
-      ],
-      "label": null,
-      "physical_location": null
-    },
-    {
-      "ip": "192.168.0.103",
-      "suffix": 103,
-      "name": "S21e Hyd-103",
-      "model": "S21e Hyd",
+      "name": "Miner-102",
+      "model": "?",
       "mac": null,
       "serial": null,
       "saha_worker": null,
       "havuz_worker": null,
       "actual_worker": null,
-      "hashrate_TH": 322.53,
-      "target_hashrate_TH": 310.0,
-      "efficiency_pct": 104.0,
-      "temp_max": 57,
-      "temp_water": 50,
-      "elapsed_hours": 13.5,
-      "fan_avg_rpm": 0,
-      "status": "ONLINE",
-      "online": true,
+      "hashrate_TH": null,
+      "target_hashrate_TH": null,
+      "efficiency_pct": null,
+      "temp_max": null,
+      "temp_water": null,
+      "elapsed_hours": null,
+      "fan_avg_rpm": null,
+      "status": "OFFLINE",
+      "online": false,
       "sleeping": false,
-      "is_hydro": true,
-      "accepted": 1915,
-      "rejected": 0,
-      "hw_errors_total": 6420,
+      "is_hydro": null,
+      "accepted": null,
+      "rejected": null,
+      "hw_errors_total": null,
       "f2pool_name": null,
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -827,15 +214,16 @@
       "earn_total_try": null,
       "health_issues": [
         {
-          "severity": "medium",
-          "code": "HIGH_HW_ERRORS",
-          "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (6420)",
-          "reason": "Chip asinmasi veya asiri overclock",
+          "severity": "high",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Hangi board'da fazla?",
-            "Frekansi dusur",
-            "O board'u degistirmeyi planla"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -845,34 +233,34 @@
       "physical_location": null
     },
     {
-      "ip": "192.168.0.104",
-      "suffix": 104,
-      "name": "S21e Hyd-104",
-      "model": "S21e Hyd",
+      "ip": "192.168.0.103",
+      "suffix": 103,
+      "name": "Miner-103",
+      "model": "?",
       "mac": null,
       "serial": null,
       "saha_worker": null,
       "havuz_worker": null,
       "actual_worker": null,
-      "hashrate_TH": 322.77,
-      "target_hashrate_TH": 310.0,
-      "efficiency_pct": 104.1,
-      "temp_max": 58,
-      "temp_water": 49,
-      "elapsed_hours": 13.5,
-      "fan_avg_rpm": 0,
-      "status": "ONLINE",
-      "online": true,
+      "hashrate_TH": null,
+      "target_hashrate_TH": null,
+      "efficiency_pct": null,
+      "temp_max": null,
+      "temp_water": null,
+      "elapsed_hours": null,
+      "fan_avg_rpm": null,
+      "status": "OFFLINE",
+      "online": false,
       "sleeping": false,
-      "is_hydro": true,
-      "accepted": 1945,
-      "rejected": 0,
-      "hw_errors_total": 444,
+      "is_hydro": null,
+      "accepted": null,
+      "rejected": null,
+      "hw_errors_total": null,
       "f2pool_name": null,
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -888,7 +276,85 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [],
+      "health_issues": [
+        {
+          "severity": "high",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
+          "solutions": [
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
+          ]
+        }
+      ],
+      "daily_history": [],
+      "monthly_history": [],
+      "label": null,
+      "physical_location": null
+    },
+    {
+      "ip": "192.168.0.104",
+      "suffix": 104,
+      "name": "Miner-104",
+      "model": "?",
+      "mac": null,
+      "serial": null,
+      "saha_worker": null,
+      "havuz_worker": null,
+      "actual_worker": null,
+      "hashrate_TH": null,
+      "target_hashrate_TH": null,
+      "efficiency_pct": null,
+      "temp_max": null,
+      "temp_water": null,
+      "elapsed_hours": null,
+      "fan_avg_rpm": null,
+      "status": "OFFLINE",
+      "online": false,
+      "sleeping": false,
+      "is_hydro": null,
+      "accepted": null,
+      "rejected": null,
+      "hw_errors_total": null,
+      "f2pool_name": null,
+      "f2pool_hashrate_TH": 0.0,
+      "f2pool_h1_TH": 0.0,
+      "f2pool_h24_TH": 0.0,
+      "f2pool_last_share": 1780070458,
+      "f2pool_state": null,
+      "f2pool_matched": true,
+      "hashrate_diff_pct": null,
+      "earn_today_btc": null,
+      "earn_yesterday_btc": null,
+      "earn_7d_btc": null,
+      "earn_total_btc": null,
+      "earn_today_usd": null,
+      "earn_yesterday_usd": null,
+      "earn_7d_usd": null,
+      "earn_total_usd": null,
+      "earn_today_try": null,
+      "earn_yesterday_try": null,
+      "earn_7d_try": null,
+      "earn_total_try": null,
+      "health_issues": [
+        {
+          "severity": "high",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
+          "solutions": [
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
+          ]
+        }
+      ],
       "daily_history": [],
       "monthly_history": [],
       "label": null,
@@ -911,7 +377,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -922,7 +388,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -941,15 +407,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -975,7 +441,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -986,7 +452,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -1005,15 +471,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -1039,7 +505,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -1050,7 +516,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -1069,15 +535,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -1103,7 +569,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -1114,7 +580,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -1133,15 +599,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -1167,7 +633,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -1178,7 +644,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -1197,15 +663,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -1231,7 +697,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -1242,7 +708,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -1261,15 +727,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -1295,7 +761,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -1306,7 +772,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -1325,15 +791,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -1359,7 +825,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -1370,7 +836,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -1389,15 +855,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -1423,7 +889,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -1434,7 +900,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -1453,15 +919,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -1487,7 +953,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -1498,7 +964,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -1517,15 +983,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -1551,7 +1017,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -1562,7 +1028,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -1581,15 +1047,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -1615,7 +1081,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -1626,7 +1092,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -1645,15 +1111,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -1679,7 +1145,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -1690,7 +1156,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -1709,15 +1175,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -1743,7 +1209,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -1754,7 +1220,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -1773,15 +1239,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -1807,7 +1273,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -1818,7 +1284,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -1837,15 +1303,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -1871,7 +1337,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -1882,7 +1348,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -1901,15 +1367,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -1935,7 +1401,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -1946,7 +1412,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -1965,15 +1431,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -1999,7 +1465,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -2010,7 +1476,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -2029,15 +1495,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -2063,7 +1529,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -2074,7 +1540,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -2093,15 +1559,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -2127,7 +1593,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -2138,7 +1604,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -2157,15 +1623,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -2191,7 +1657,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -2202,7 +1668,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -2221,15 +1687,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -2255,7 +1721,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -2266,7 +1732,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -2285,15 +1751,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -2319,7 +1785,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -2330,7 +1796,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -2349,15 +1815,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -2383,7 +1849,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -2394,7 +1860,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1780070272,
+      "f2pool_last_share": 1780070458,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -2413,15 +1879,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
