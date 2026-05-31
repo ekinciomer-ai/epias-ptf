@@ -1,13 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-ARSIV KAYDEDICI - Otocoin Veri Kutuphanesi
-Her saat F2Pool snapshot'ini GitHub'daki aylik arsiv dosyalarina ekler.
-F2Pool fonksiyonlari ofis_panel.py'deki CALISAN kodlardan birebir alindi.
+ARSIV KAYDEDICI - Otocoin Veri Kutuphanesi (v2 - 31.05.2026)
 
-Cikti:
-  arsiv_f2pool_YYYY-MM.json  -> saatlik havuz ozeti
-  arsiv_cihaz_YYYY-MM.json   -> saatlik cihaz bazli durum
+YENI MANTIK: "Geri donuk cek + arsive ekle"
+  - F2Pool hashrate_history endpoint'i her cihaz icin son ~48 saatin
+    10 dakikalik tum verisini doner.
+  - Her cron calistiginda bu 48 saati cekip arsivdeki eksik saatleri doldururuz.
+  - Cron 24 saatte 1 calissa bile, tum saatler yakalanir.
+  - Mevcut saatlerin uzerine YAZMAZ (idempotent ekleme).
+
+YAZILAN DOSYALAR:
+  arsiv_f2pool_YYYY-MM.json   -> saatlik havuz ozeti
+  arsiv_cihaz_YYYY-MM.json    -> saatlik cihaz bazli (kod -> {h, d})
+  arsiv_antminer_YYYY-MM.json -> anlik Pi saha verisi (sadece bu saatlik)
+
+DUZELTILEN HATALAR:
+  - 409 Conflict: gh_yaz retry'li + SHA yenileme
+  - Eski "anlik snapshot" yerine "48 saat geri doldurma"
 """
 import os, json, datetime, base64, urllib.request, urllib.error, time
 
@@ -19,7 +29,9 @@ GH_REPO      = os.environ.get("GH_REPO", "ekinciomer-ai/epias-ptf")
 def log(*a):
     print(datetime.datetime.now().strftime("%H:%M:%S"), *a, flush=True)
 
-# === F2POOL API (ofis_panel.py'den birebir) ===
+# ============================================================
+# F2POOL API
+# ============================================================
 def f2pool_post(endpoint, body):
     try:
         data = json.dumps(body).encode()
@@ -28,8 +40,23 @@ def f2pool_post(endpoint, body):
         with urllib.request.urlopen(req, timeout=15) as r:
             return json.loads(r.read())
     except Exception as e:
-        log("f2pool_post hata:", endpoint, str(e)[:80])
+        log(f"  f2pool_post hata ({endpoint}):", str(e)[:80])
         return None
+
+def f2pool_legacy(path):
+    try:
+        req = urllib.request.Request(f"https://api.f2pool.com/{path}",
+            headers={"F2P-API-SECRET":F2POOL_TOKEN})
+        with urllib.request.urlopen(req, timeout=15) as r:
+            return json.loads(r.read())
+    except Exception as e:
+        log(f"  f2pool_legacy hata ({path}):", str(e)[:80])
+        return None
+
+def f2pool_workers():
+    result = f2pool_post("hash_rate/worker/list", {
+        "currency": "bitcoin", "mining_user_name": F2POOL_USER})
+    return result.get("workers", []) if result else []
 
 def f2pool_hashrate():
     result = f2pool_post("hash_rate/info", {
@@ -41,28 +68,24 @@ def f2pool_hashrate():
                 "h24": info.get("h24_hash_rate", 0)/1e12}
     return {"anlik": 0, "h1": 0, "h24": 0}
 
-def f2pool_workers():
-    result = f2pool_post("hash_rate/worker/list", {
-        "currency": "bitcoin", "mining_user_name": F2POOL_USER})
-    return result.get("workers", []) if result else []
-
 def f2pool_bugun_tahmini():
     result = f2pool_post("assets/balance", {
         "currency": "bitcoin", "mining_user_name": F2POOL_USER,
         "calculate_estimated_income": True})
     return result.get("balance_info", {}).get("estimated_today_income", 0) if result else 0
 
-def cihaz_durum(info):
-    anlik = info.get("hash_rate", 0)
-    h1 = info.get("h1_hash_rate", 0)
-    h24 = info.get("h24_hash_rate", 0)
-    if anlik > 0: return "calisiyor"
-    elif h1 > 0: return "yavasliyor"
-    elif h24 > 0: return "uyuyor"
-    return "kapali"
+def cihaz_durum_kod(anlik, h1, h24):
+    """c=calisiyor, y=yavasliyor, u=uyuyor, k=kapali"""
+    if anlik > 0: return "c"
+    if h1 > 0:    return "y"
+    if h24 > 0:   return "u"
+    return "k"
 
-# === GITHUB OKUMA/YAZMA ===
+# ============================================================
+# GITHUB
+# ============================================================
 def gh_oku(dosya):
+    """Dosyayi oku. Donus: (icerik_dict, sha) veya (None, None)."""
     url = f"https://api.github.com/repos/{GH_REPO}/contents/{dosya}"
     req = urllib.request.Request(url, headers={
         "Authorization": f"token {GH_TOKEN}", "Accept": "application/vnd.github+json"})
@@ -76,9 +99,8 @@ def gh_oku(dosya):
         raise
 
 def gh_yaz(dosya, veri, sha=None):
-    """GitHub'a dosya yaz. 409 Conflict'te SHA'yi yenileyip 3 kez dener.
-    Sorun: ayni anda 3 dosyaya art arda yazinca GitHub bir oncekinin commit'i
-    sebebiyle repo durumu degisir ve eski SHA reddedilir."""
+    """GitHub'a yaz. 409 Conflict'te SHA'yi yenileyip 3 kez dener.
+    Geriye True/False doner, exception ustte yakalansa bile diger islemler devam etsin."""
     url = f"https://api.github.com/repos/{GH_REPO}/contents/{dosya}"
     icerik = json.dumps(veri, ensure_ascii=False, separators=(',', ':'))
 
@@ -98,84 +120,61 @@ def gh_yaz(dosya, veri, sha=None):
                 return r.status in (200, 201)
         except urllib.error.HTTPError as e:
             if e.code == 409 and deneme < 2:
-                # SHA cakismasi - dosyayi yeniden oku, guncel SHA al
                 log(f"  409 Conflict ({dosya}), SHA yenileniyor (deneme {deneme+1}/3)")
-                time.sleep(1)  # GitHub indeks gecikmesine pay
+                time.sleep(1)
                 _, yeni_sha = gh_oku(dosya)
                 if yeni_sha:
                     sha = yeni_sha
                     continue
             log(f"  gh_yaz hatasi ({dosya}): {e.code} {e.reason}")
-            raise
+            return False
     return False
 
-# === ARSIVLE ===
-def arsivle():
-    if not F2POOL_TOKEN:
-        log("HATA: F2POOL_TOKEN yok"); return
-    if not GH_TOKEN:
-        log("HATA: GH_TOKEN yok"); return
+# ============================================================
+# CIHAZ GECMISI: 48 saatlik hashrate_history -> saatlik ortalama
+# ============================================================
+def cihaz_saatlik_gecmis(worker_name):
+    """Bir cihazin son ~48 saatlik 10dk verisini saatlik ortalamaya cevir.
+    F2Pool hashrate_history formati: { "2026-05-31 14:00:00": hash_raw, ... }
+    Donus: { "2026-05-31 14:00": {"h": ortalama_TH, "d": durum_kodu} }"""
+    legacy = f2pool_legacy(f"bitcoin/{F2POOL_USER}/{worker_name}")
+    if not legacy:
+        return {}
+    hist = legacy.get("hashrate_history", {})
+    if not hist:
+        return {}
 
-    simdi = datetime.datetime.now()
-    ts = simdi.strftime("%Y-%m-%d %H:%M")
-    gun = simdi.strftime("%Y-%m-%d")
-    ay = gun[:7]
+    # 10dk kayitlari saate gore grupla
+    saat_grup = {}  # {"YYYY-MM-DD HH:00": [hash_th, ...]}
+    for ts, hr in hist.items():
+        if len(ts) < 16:
+            continue
+        saat_anahtar = ts[:13] + ":00"
+        saat_grup.setdefault(saat_anahtar, []).append(hr / 1e12)
 
-    # Havuz hashrate
-    hr = f2pool_hashrate()
-    # Cihazlar
-    workers = f2pool_workers()
-    calisan = 0
-    cihazlar = {}
-    for w in workers:
-        info = w.get("hash_rate_info", {})
-        name = info.get("name", "?")
-        durum = cihaz_durum(info)
-        cihazlar[name] = {"h": round(info.get("hash_rate", 0)/1e12, 1), "d": durum[0]}
-        if durum == "calisiyor":
-            calisan += 1
-    # Bugunku tahmini BTC
-    bugun_btc = f2pool_bugun_tahmini()
+    # Her saatin ortalamasini al + durum belirle
+    sonuc = {}
+    for sa, arr in saat_grup.items():
+        if not arr:
+            continue
+        ort = sum(arr) / len(arr)
+        dolu_sayisi = sum(1 for x in arr if x > 0)
+        if dolu_sayisi == len(arr):
+            durum = "c"
+        elif dolu_sayisi > len(arr) / 2:
+            durum = "y"
+        elif dolu_sayisi > 0:
+            durum = "u"
+        else:
+            durum = "k"
+        sonuc[sa] = {"h": round(ort, 1), "d": durum}
+    return sonuc
 
-    log(f"Snapshot: {hr['anlik']:.0f} TH/s, {calisan}/{len(workers)} cihaz, {bugun_btc} BTC")
-
-    if hr['anlik'] == 0 and len(workers) == 0:
-        log("UYARI: F2Pool'dan veri gelmedi (token/baglanti?), kayit atlandi")
-        return
-
-    # 1) Havuz ozeti
-    ozet_dosya = f"arsiv_f2pool_{ay}.json"
-    ozet, sha = gh_oku(ozet_dosya)
-    if ozet is None: ozet = {}
-    ozet[ts] = {
-        "hash": round(hr['anlik'], 1),
-        "hash_h1": round(hr['h1'], 1),
-        "hash_h24": round(hr['h24'], 1),
-        "calisan": calisan,
-        "toplam": len(workers),
-        "btc": round(bugun_btc, 8) if bugun_btc else 0,
-    }
-    gh_yaz(ozet_dosya, ozet, sha)
-    log(f"  {ozet_dosya}: {len(ozet)} kayit")
-
-    # 2) Cihaz bazli (F2Pool)
-    cihaz_dosya = f"arsiv_cihaz_{ay}.json"
-    cveri, csha = gh_oku(cihaz_dosya)
-    if cveri is None: cveri = {}
-    cveri[ts] = cihazlar
-    gh_yaz(cihaz_dosya, cveri, csha)
-    log(f"  {cihaz_dosya}: {len(cveri)} kayit")
-
-    # 3) Antminer saha verisi (Pi'nin topladigi - gercek guc dahil)
-    arsivle_antminer(ts, ay)
-
-    log("Arsivleme tamamlandi.")
-
+# ============================================================
+# ANTMINER (Pi saha verisi - anlik snapshot)
+# ============================================================
 def arsivle_antminer(ts, ay):
-    """antminer_panel.json'u oku, her cihazin o anki verilerini arsivle.
-    NOT: Antminer device'inda gercek guc (Watt) YOK - sadece hashrate var.
-    Guc, hashrate x model verimliligi (J/TH) ile TAHMIN edilir."""
-    # Model -> J/TH verimlilik tablosu (nominal)
+    """antminer_panel.json'dan anlik snapshot."""
     VERIM = {
         'S19': 34.5, 'S19 Pro': 29.5, 'S19j': 34.5, 'S19j Pro': 30.5, 'S19j Pro+': 27.5,
         'S19 XP': 21.5, 'S19 XP Hyd': 20.8, 'S19 Hydro': 28.0, 'S19k Pro': 23.0, 'T19': 37.5,
@@ -194,7 +193,7 @@ def arsivle_antminer(ts, ay):
 
     panel, _ = gh_oku("antminer_panel.json")
     if not panel:
-        log("  antminer_panel.json yok/bos, antminer arsivi atlandi")
+        log("  antminer_panel.json yok, atlandi")
         return
     devices = panel.get("devices", [])
     if not devices:
@@ -202,18 +201,17 @@ def arsivle_antminer(ts, ay):
         return
 
     snap = {}
-    toplam_guc = 0.0
-    toplam_hash = 0.0
+    toplam_guc = toplam_hash = 0.0
     for d in devices:
         ad = d.get("havuz_worker") or d.get("actual_worker") or d.get("saha_worker") or "?"
         hr = d.get("hashrate_TH", 0) or 0
         model = d.get("model", "")
-        guc = (hr * jth(model)) / 1000.0  # kW (TAHMINI - hashrate x J/TH)
+        guc = (hr * jth(model)) / 1000.0
         toplam_guc += guc
         toplam_hash += hr
         snap[ad] = {
             "hash": round(hr, 1),
-            "guc_tahmini": round(guc, 3),               # kW (tahmini)
+            "guc_tahmini": round(guc, 3),
             "verim": d.get("efficiency_pct", 0),
             "temp": d.get("temp_max", 0),
             "su": d.get("temp_water", 0),
@@ -222,8 +220,8 @@ def arsivle_antminer(ts, ay):
             "uptime": round(d.get("elapsed_hours", 0), 1),
         }
 
-    arsiv_dosya = f"arsiv_antminer_{ay}.json"
-    av, ash = gh_oku(arsiv_dosya)
+    dosya = f"arsiv_antminer_{ay}.json"
+    av, ash = gh_oku(dosya)
     if av is None: av = {}
     av[ts] = {
         "toplam_hash_TH": round(toplam_hash, 1),
@@ -231,8 +229,114 @@ def arsivle_antminer(ts, ay):
         "cihaz_sayisi": len(devices),
         "cihazlar": snap,
     }
-    gh_yaz(arsiv_dosya, av, ash)
-    log(f"  {arsiv_dosya}: {len(av)} kayit ({round(toplam_hash,0)} TH/s, ~{round(toplam_guc,1)} kW)")
+    if gh_yaz(dosya, av, ash):
+        log(f"  {dosya}: {len(av)} kayit (anlik snapshot)")
+
+# ============================================================
+# ANA ARSIVLE FONKSIYONU
+# ============================================================
+def arsivle():
+    if not F2POOL_TOKEN:
+        log("HATA: F2POOL_TOKEN yok"); return
+    if not GH_TOKEN:
+        log("HATA: GH_TOKEN yok"); return
+
+    simdi = datetime.datetime.now()
+    ts_simdi = simdi.strftime("%Y-%m-%d %H:%M")
+
+    log("F2Pool veri cekiliyor...")
+    workers = f2pool_workers()
+    hr_info = f2pool_hashrate()
+    bugun_btc = f2pool_bugun_tahmini()
+    log(f"  {len(workers)} cihaz, havuz hash {hr_info['anlik']:.0f} TH/s, bugun ~{bugun_btc:.6f} BTC")
+
+    if not workers:
+        log("UYARI: F2Pool'dan cihaz gelmedi, kayit atlandi")
+        return
+
+    # ============================================================
+    # ARSIV_CIHAZ: HER CIHAZ icin 48 SAATLIK GERI DOLDURMA
+    # ============================================================
+    log("Cihaz hashrate gecmisleri cekiliyor (48 saat geri)...")
+    tum_cihaz_saatler = {}  # {"YYYY-MM-DD HH:00": {kod: {h, d}}}
+
+    for w in workers:
+        info = w.get("hash_rate_info", {})
+        name = info.get("name", "")
+        if not name or "." not in name:
+            continue
+        kod = name.split(".")[-1]
+        saatlik = cihaz_saatlik_gecmis(name)
+        for sa, deg in saatlik.items():
+            tum_cihaz_saatler.setdefault(sa, {})[kod] = deg
+
+    log(f"  Toplam {len(tum_cihaz_saatler)} farkli saat icin veri toplandi")
+
+    # Ay bazinda dosyalara dagit (bazi saatler bir onceki aya dusebilir)
+    aylar = set(sa[:7] for sa in tum_cihaz_saatler.keys())
+    for ay in aylar:
+        dosya = f"arsiv_cihaz_{ay}.json"
+        mevcut, sha = gh_oku(dosya)
+        if mevcut is None:
+            mevcut = {}
+        eklenen = 0
+        guncellenen = 0
+        for sa, cihaz_kayit in tum_cihaz_saatler.items():
+            if not sa.startswith(ay):
+                continue
+            if sa in mevcut:
+                # Mevcut saat: sadece eksik cihazlari ekle (mevcut kayda dokunma)
+                degisti = False
+                for kod, deg in cihaz_kayit.items():
+                    if kod not in mevcut[sa]:
+                        mevcut[sa][kod] = deg
+                        degisti = True
+                if degisti:
+                    guncellenen += 1
+            else:
+                mevcut[sa] = cihaz_kayit
+                eklenen += 1
+        if eklenen > 0 or guncellenen > 0:
+            if gh_yaz(dosya, mevcut, sha):
+                log(f"  {dosya}: +{eklenen} yeni saat, {guncellenen} saat tamamlandi (toplam {len(mevcut)})")
+            else:
+                log(f"  {dosya}: YAZMA BASARISIZ!")
+        else:
+            log(f"  {dosya}: degisiklik yok (toplam {len(mevcut)})")
+
+    # ============================================================
+    # ARSIV_F2POOL: HAVUZ OZETI - bu saat icin tek snapshot
+    # ============================================================
+    ay_simdi = ts_simdi[:7]
+    dosya = f"arsiv_f2pool_{ay_simdi}.json"
+    ozet, sha = gh_oku(dosya)
+    if ozet is None:
+        ozet = {}
+    saat_anahtar = ts_simdi[:13] + ":00"
+    calisan = 0
+    for w in workers:
+        info = w.get("hash_rate_info", {})
+        if cihaz_durum_kod(info.get("hash_rate",0),
+                           info.get("h1_hash_rate",0),
+                           info.get("h24_hash_rate",0)) == "c":
+            calisan += 1
+    ozet[saat_anahtar] = {
+        "hash": round(hr_info['anlik'], 1),
+        "hash_h1": round(hr_info['h1'], 1),
+        "hash_h24": round(hr_info['h24'], 1),
+        "calisan": calisan,
+        "toplam": len(workers),
+        "btc": round(bugun_btc, 8) if bugun_btc else 0,
+    }
+    if gh_yaz(dosya, ozet, sha):
+        log(f"  {dosya}: {len(ozet)} kayit (anlik havuz)")
+
+    # ============================================================
+    # ARSIV_ANTMINER: Pi anlik snapshot
+    # ============================================================
+    arsivle_antminer(ts_simdi, ay_simdi)
+
+    log("Arsivleme tamamlandi.")
 
 if __name__ == "__main__":
     try:
@@ -240,3 +344,4 @@ if __name__ == "__main__":
     except Exception as e:
         log("KRITIK HATA:", str(e))
         import traceback; traceback.print_exc()
+        import sys; sys.exit(1)
