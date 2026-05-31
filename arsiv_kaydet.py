@@ -139,9 +139,13 @@ def cihaz_saatlik_gecmis(worker_name):
     Donus: { "2026-05-31 14:00": {"h": ortalama_TH, "d": durum_kodu} }"""
     legacy = f2pool_legacy(f"bitcoin/{F2POOL_USER}/{worker_name}")
     if not legacy:
+        log(f"  [{worker_name}] legacy boş döndü")
         return {}
     hist = legacy.get("hashrate_history", {})
     if not hist:
+        # Detayli debug: legacy ne döndü?
+        anahtarlar = list(legacy.keys())[:10]
+        log(f"  [{worker_name}] hashrate_history yok. Gelen anahtarlar: {anahtarlar}")
         return {}
 
     # 10dk kayitlari saate gore grupla
@@ -259,14 +263,19 @@ def arsivle():
     # ============================================================
     log("Cihaz hashrate gecmisleri cekiliyor (48 saat geri)...")
     tum_cihaz_saatler = {}  # {"YYYY-MM-DD HH:00": {kod: {h, d}}}
+    debug_sayac = 0
 
     for w in workers:
         info = w.get("hash_rate_info", {})
         name = info.get("name", "")
-        if not name or "." not in name:
+        if not name:
             continue
-        kod = name.split(".")[-1]
+        # name zaten "027", "013" gibi cihaz kodudur (panel arşivindeki anahtarla aynı)
+        kod = name.split(".")[-1] if "." in name else name
         saatlik = cihaz_saatlik_gecmis(name)
+        debug_sayac += 1
+        if debug_sayac <= 2:  # ilk 2 cihaz için debug
+            log(f"  [DEBUG] {name} -> {len(saatlik)} saat")
         for sa, deg in saatlik.items():
             tum_cihaz_saatler.setdefault(sa, {})[kod] = deg
 
