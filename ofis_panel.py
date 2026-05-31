@@ -10,8 +10,8 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.02.00.12"
-PANEL_VERSIYON_TARIH = "31.05.2026 13:00"
+PANEL_VERSIYON = "ver.02.00.13"
+PANEL_VERSIYON_TARIH = "31.05.2026 13:36"
 
 # Sistem bilesenleri - her biri kendi son guncellemesini tutar
 # Damgada gosterilir, boylece tum sistemin durumu tek bakista gorulur
@@ -2281,7 +2281,7 @@ function f2GunAc(iso, el) {
     .then(r => r.json())
     .then(d => {
       if (!d.veri_var) {
-        kon.innerHTML = '<div class="f2-saat-bos">📭 Bu gün için saatlik veri yok<br><span style="font-size:9px;">(F2Pool sadece son ~48 saati saklar)</span></div>';
+        kon.innerHTML = '<div class="f2-saat-bos">📭 Bu gün için saatlik veri yok<br><span style="font-size:9px;">(arşivde bu güne ait kayıt bulunamadı)</span></div>';
         return;
       }
       // Ortalama verimlilik (tuketim icin)
@@ -2896,7 +2896,7 @@ function f2KiyasHesapla(d, gun) {
   const dolukSaat = saatler.filter(s => s.hash > 0);
   if (saatler.length === 0 || dolukSaat.length === 0) {
     document.getElementById('f2-harita-grid').innerHTML = '';
-    document.getElementById('f2-kiyas-liste').innerHTML = '<div class="empty-state">📭 Bu gün için saatlik veri yok (F2Pool son ~48 saat)</div>';
+    document.getElementById('f2-kiyas-liste').innerHTML = '<div class="empty-state">📭 Bu gün için saatlik veri yok (arşivde bu güne ait kayıt bulunamadı)</div>';
     document.getElementById('f2-kiyas-ozet').innerHTML = '';
     return;
   }
