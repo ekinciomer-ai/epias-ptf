@@ -10,8 +10,8 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.02.00.13"
-PANEL_VERSIYON_TARIH = "31.05.2026 13:36"
+PANEL_VERSIYON = "ver.02.00.14·b1"
+PANEL_VERSIYON_TARIH = "31.05.2026 16:10"
 
 # Sistem bilesenleri - her biri kendi son guncellemesini tutar
 # Damgada gosterilir, boylece tum sistemin durumu tek bakista gorulur
@@ -120,7 +120,7 @@ def github_yaz(dosya, payload):
 # ============================================================
 
 _GECMIS_CACHE = {}   # {dosya: (timestamp, veri)}
-_GECMIS_CACHE_TTL = 900  # 15 dk
+_GECMIS_CACHE_TTL = 60  # 1 dk (kisa cache - panel her zaman guncel)
 
 def _gecmis_oku(dosya):
     """github_oku'nun cache'li versiyonu."""
