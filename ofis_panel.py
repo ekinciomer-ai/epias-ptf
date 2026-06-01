@@ -10,8 +10,8 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.02.00.14·b1"
-PANEL_VERSIYON_TARIH = "31.05.2026 16:10"
+PANEL_VERSIYON = "ver.02.00.14·b2"
+PANEL_VERSIYON_TARIH = "02.06.2026 02:10"
 
 # Sistem bilesenleri - her biri kendi son guncellemesini tutar
 # Damgada gosterilir, boylece tum sistemin durumu tek bakista gorulur
@@ -1741,7 +1741,8 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
       <option value="2026-02">Şubat 2026</option>
       <option value="2026-03">Mart 2026</option>
       <option value="2026-04">Nisan 2026</option>
-      <option value="2026-05" selected>Mayıs 2026</option>
+      <option value="2026-05">Mayıs 2026</option>
+      <option value="2026-06" selected>Haziran 2026</option>
     </select>
   </div>
 
