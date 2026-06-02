@@ -10,17 +10,89 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.02.00.14·b2"
-PANEL_VERSIYON_TARIH = "02.06.2026 02:10"
+PANEL_VERSIYON = "ver.02.00.14·b3"
+PANEL_VERSIYON_TARIH = "02.06.2026 02:30"
 
 # Sistem bilesenleri - her biri kendi son guncellemesini tutar
 # Damgada gosterilir, boylece tum sistemin durumu tek bakista gorulur
-SISTEM_DURUM = {
+SISTEM_DURUM_VARSAYILAN = {
     "panel":  "v1.9.7",        # ofis_panel.py
-    "arsiv":  "v1 · 22May",    # arsiv_kaydet.py (F2Pool+Antminer saatlik)
-    "ptf":    "23May",         # aylik_ptf.json son gun
-    "osos":   "24May",         # 2026_osos_endeks.json son gun
+    "arsiv":  "?",             # arsiv_kaydet.py (F2Pool+Antminer saatlik) - dinamik
+    "ptf":    "?",             # aylik_ptf.json son gun - dinamik
+    "osos":   "?",             # 2026_osos_endeks.json son gun - dinamik
 }
+
+AY_KISA = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara']
+
+def _tarih_kisa(iso):
+    """'2026-06-02' -> '2Haz', '2026-05-31 14:00' -> '31May 14:00'"""
+    try:
+        if not iso or len(iso) < 10:
+            return "?"
+        y, m, g = iso[:4], iso[5:7], iso[8:10]
+        ay = AY_KISA[int(m)-1]
+        sonuc = f"{int(g)}{ay}"
+        # Saat varsa ekle
+        if len(iso) >= 16 and iso[10] in (' ', 'T'):
+            sonuc += f" {iso[11:16]}"
+        return sonuc
+    except:
+        return "?"
+
+def sistem_durum_hesapla():
+    """Her panel acilisinda JSON dosyalarinin son tarihlerini cikarir.
+    Cache: 60 sn (dosya okuma maliyetli)."""
+    simdi = datetime.datetime.now().timestamp()
+    if hasattr(sistem_durum_hesapla, '_cache'):
+        ts, veri = sistem_durum_hesapla._cache
+        if simdi - ts < 60:
+            return veri
+
+    durum = dict(SISTEM_DURUM_VARSAYILAN)
+
+    # OSOS son gun
+    try:
+        osos = github_oku("2026_osos_endeks.json")
+        if osos:
+            tum_gunler = set()
+            for ab in osos.values():
+                tum_gunler.update((ab.get("veri") or {}).keys())
+            if tum_gunler:
+                durum["osos"] = _tarih_kisa(max(tum_gunler))
+    except:
+        pass
+
+    # PTF son gun
+    try:
+        ptf = github_oku("aylik_ptf.json")
+        if ptf:
+            tum_aygun = []
+            for ay, gunler in ptf.items():
+                for g in gunler.keys():
+                    tum_aygun.append(f"{ay}-{g}")
+            if tum_aygun:
+                durum["ptf"] = _tarih_kisa(max(tum_aygun))
+    except:
+        pass
+
+    # Arsiv son saat (arsiv_cihaz_YYYY-MM.json - en yeni ay)
+    try:
+        # Bugunki ve oncekiyi dene
+        bugun = datetime.date.today()
+        for fark in range(2):
+            tarih = bugun - datetime.timedelta(days=fark*30)
+            ay_str = tarih.strftime("%Y-%m")
+            arsiv = github_oku(f"arsiv_cihaz_{ay_str}.json")
+            if arsiv:
+                if arsiv:
+                    son = max(arsiv.keys())
+                    durum["arsiv"] = "v2 · " + _tarih_kisa(son)
+                    break
+    except:
+        pass
+
+    sistem_durum_hesapla._cache = (simdi, durum)
+    return durum
 
 KULLANICILAR = {
     "admin1":    {"sifre": hashlib.sha256("admin1".encode()).hexdigest(),    "rol": "yonetici"},
@@ -6378,7 +6450,7 @@ def sw():
 def index():
     if "kullanici" not in session:
         return redirect("/giris")
-    return render_template_string(PANEL_HTML, kullanici=session["kullanici"], rol=session["rol"], panel_versiyon=PANEL_VERSIYON, panel_versiyon_tarih=PANEL_VERSIYON_TARIH, sistem_durum=SISTEM_DURUM)
+    return render_template_string(PANEL_HTML, kullanici=session["kullanici"], rol=session["rol"], panel_versiyon=PANEL_VERSIYON, panel_versiyon_tarih=PANEL_VERSIYON_TARIH, sistem_durum=sistem_durum_hesapla())
 
 @app.route("/giris", methods=["GET","POST"])
 def giris():
