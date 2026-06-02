@@ -10,8 +10,8 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.02.00.14·b3"
-PANEL_VERSIYON_TARIH = "02.06.2026 02:30"
+PANEL_VERSIYON = "ver.02.01.0·b1"
+PANEL_VERSIYON_TARIH = "02.06.2026 23:30"
 
 # Sistem bilesenleri - her biri kendi son guncellemesini tutar
 # Damgada gosterilir, boylece tum sistemin durumu tek bakista gorulur
@@ -777,6 +777,24 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 .f2-alt-content.active{display:block;}
 /* Kiyas */
 .f2-kiyas-aciklama{font-size:11px;color:#64748b;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin-bottom:12px;line-height:1.5;}
+/* Rapor sekmesi (ver.02.01.0+) */
+.rpr-saat{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;border-radius:14px;padding:18px 16px;margin-bottom:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);}
+.rpr-saat-lbl{font-size:10px;letter-spacing:1.2px;color:#94a3b8;text-transform:uppercase;font-weight:700;margin-bottom:4px;}
+.rpr-saat-deger{font-size:24px;font-weight:800;letter-spacing:0.5px;}
+.rpr-saat-sub{font-size:11px;color:#64748b;margin-top:6px;}
+.rpr-gun-grup{background:#fff;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:10px;overflow:hidden;}
+.rpr-gun-bas{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;background:linear-gradient(135deg,#f8fafc,#f1f5f9);border-bottom:1px solid #e2e8f0;cursor:pointer;}
+.rpr-gun-tarih{font-size:12px;font-weight:700;color:#0f172a;}
+.rpr-gun-sayi{font-size:10px;color:#64748b;font-weight:600;background:#e2e8f0;padding:3px 8px;border-radius:10px;}
+.rpr-kayit{display:flex;gap:10px;padding:9px 14px;border-bottom:1px solid #f1f5f9;align-items:flex-start;}
+.rpr-kayit:last-child{border-bottom:none;}
+.rpr-kayit-saat{font-size:11px;font-weight:700;color:#64748b;min-width:42px;font-family:monospace;}
+.rpr-kayit-ikon{font-size:14px;min-width:20px;}
+.rpr-kayit-icerik{flex:1;min-width:0;}
+.rpr-kayit-etiket{font-size:11px;font-weight:800;color:#0f172a;margin-bottom:2px;}
+.rpr-kayit-mesaj{font-size:10px;color:#64748b;line-height:1.4;word-break:break-all;}
+.rpr-bilgi{font-size:11px;color:#64748b;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin-bottom:12px;line-height:1.5;}
+.rpr-yenile{font-size:11px;font-weight:700;background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff;border:none;border-radius:8px;padding:7px 14px;cursor:pointer;font-family:inherit;}
 .f2-kiyas-zaman{background:transparent;border:none;color:#64748b;padding:6px 13px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
 .f2-kiyas-zaman.active{background:#d97706;color:#fff;}
 .f2-kiyas-ozet{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;}
@@ -970,6 +988,7 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 <div class="tab" onclick="sekme('osos', this)">🔋 OSOS</div>
 <div class="tab" onclick="sekme('inverter', this)">🌞 İnverter</div>
 <div class="tab" onclick="sekme('antminer', this)">⛏️ Antminer Saha</div>
+<div class="tab" onclick="sekme('rapor', this)" style="background:linear-gradient(135deg,rgba(100,116,139,0.12),rgba(71,85,105,0.08));border-color:rgba(100,116,139,0.4);">📋 Rapor</div>
 </div>
 <div class="content">
 
@@ -1415,6 +1434,28 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 
 </div>
 <!-- ====================== ANTMINER SEKME SONU ====================== -->
+
+
+<!-- ====================== RAPOR SEKMESI ====================== -->
+<div class="tab-content" id="t-rapor">
+
+<div class="rpr-bilgi">📋 Sistem aktivite raporu — GitHub commits API'den son güncellemeler. Saat değerleri TR (UTC+3).</div>
+
+<div class="rpr-saat">
+  <div class="rpr-saat-lbl">🕐 Sistem Saati (TR)</div>
+  <div class="rpr-saat-deger" id="rpr-saat-deger">--:--</div>
+  <div class="rpr-saat-sub" id="rpr-saat-sub">Yükleniyor...</div>
+</div>
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+  <div style="font-size:13px; font-weight:800; color:#0f172a;">🔔 Güncelleme Geçmişi</div>
+  <button class="rpr-yenile" onclick="raporYukle()">🔄 Yenile</button>
+</div>
+
+<div id="rpr-icerik"><div class="empty-state">Yükleniyor...</div></div>
+
+</div>
+<!-- ====================== RAPOR SEKMESI SONU ====================== -->
 
 
 <!-- ====================== CIHAZLARIM SEKMESI ====================== -->
@@ -1928,6 +1969,81 @@ function sekme(ad, btn) {
   if (ad === 'faturalandirma') faturaYukle();
   if (ad === 'epias') epiasYukle();
   if (ad === 'f2pool') { try { if (window.f2GunlukHam && window.f2GunlukHam.length) f2Render(); } catch(e) { console.error('f2 sekme render:', e); } }
+  if (ad === 'rapor') raporYukle();
+}
+
+// === RAPOR SEKMESI ===
+let raporSaatTimer = null;
+
+function raporSaatGuncelle() {
+  // TR saati: tarayicinin saatini kullan (kullanici zaten TR'de)
+  // Backend'den gelen sistem_saati referans olsun, sonra her sn arttiralim
+  const el = document.getElementById('rpr-saat-deger');
+  const sub = document.getElementById('rpr-saat-sub');
+  if (!el) return;
+  const now = new Date();
+  const gun = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'][now.getDay()];
+  const tarih = now.toLocaleDateString('tr-TR', {day:'2-digit', month:'long', year:'numeric'});
+  const saat = now.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  el.textContent = saat;
+  sub.textContent = gun + ' · ' + tarih;
+}
+
+function raporYukle() {
+  // Saat timer'ini baslat
+  if (raporSaatTimer) clearInterval(raporSaatTimer);
+  raporSaatGuncelle();
+  raporSaatTimer = setInterval(raporSaatGuncelle, 1000);
+
+  const kon = document.getElementById('rpr-icerik');
+  if (!kon) return;
+  kon.innerHTML = '<div class="empty-state">⏳ GitHub commits çekiliyor...</div>';
+
+  fetch('/api/rapor')
+    .then(r => r.json())
+    .then(d => {
+      if (d.hata) {
+        kon.innerHTML = '<div class="empty-state">❌ ' + d.hata + '</div>';
+        return;
+      }
+      if (!d.olaylar || d.olaylar.length === 0) {
+        kon.innerHTML = '<div class="empty-state">📭 Henüz aktivite kaydı yok.</div>';
+        return;
+      }
+      let html = '';
+      d.olaylar.forEach((grup, idx) => {
+        const gunIso = grup.gun;
+        const [y, m, g] = gunIso.split('-');
+        const aylar = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+        const tarihEt = parseInt(g) + ' ' + aylar[parseInt(m)-1] + ' ' + y;
+        // Hafta günü
+        const d2 = new Date(y, parseInt(m)-1, g);
+        const gunAdi = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'][d2.getDay()];
+
+        html += '<div class="rpr-gun-grup">';
+        html += '<div class="rpr-gun-bas">';
+        html += '  <span class="rpr-gun-tarih">📅 ' + tarihEt + ' · ' + gunAdi + '</span>';
+        html += '  <span class="rpr-gun-sayi">' + grup.kayitlar.length + ' kayıt</span>';
+        html += '</div>';
+        grup.kayitlar.forEach(k => {
+          html += '<div class="rpr-kayit">';
+          html += '  <div class="rpr-kayit-saat">' + k.saat + '</div>';
+          html += '  <div class="rpr-kayit-ikon">' + k.ikon + '</div>';
+          html += '  <div class="rpr-kayit-icerik">';
+          html += '    <div class="rpr-kayit-etiket">' + k.etiket;
+          if (k.dosya) html += ' <span style="color:#94a3b8;font-weight:600;">· ' + k.dosya + '</span>';
+          html += '</div>';
+          html += '    <div class="rpr-kayit-mesaj">' + (k.mesaj || '') + '</div>';
+          html += '  </div>';
+          html += '</div>';
+        });
+        html += '</div>';
+      });
+      kon.innerHTML = html;
+    })
+    .catch(e => {
+      kon.innerHTML = '<div class="empty-state">❌ Bağlantı hatası: ' + e.message + '</div>';
+    });
 }
 
 // EPIAS sekmesi - aylik PTF dropdown ile
@@ -6526,6 +6642,154 @@ def aylik_ptf_endpoint():
     if not data:
         return jsonify({})
     return jsonify(data)
+
+
+# ============================================================
+# RAPOR SEKMESI - Sistem aktivite raporu
+# GitHub commits API'den son N commiti cekip Turkce ozetler.
+# ============================================================
+
+_RAPOR_CACHE = {"ts": 0, "veri": None}
+_RAPOR_TTL = 120  # 2 dk
+
+# Dosya turune gore icon ve aciklama eslestir
+_DOSYA_TIPLERI = {
+    "ofis_panel.py":         ("⚙️", "Panel", "yeni panel surumu"),
+    "main.py":               ("⚙️", "Panel", "EPIAS cron kodu guncellendi"),
+    "arsiv_kaydet.py":       ("⚙️", "Panel", "Arsiv kodu guncellendi"),
+    "aylik_ptf.json":        ("⚡", "PTF",   "EPIAS Piyasa Takas Fiyati"),
+    "2026_osos_endeks.json": ("📊", "OSOS",  "Sayac okumalari"),
+    "antminer_panel.json":   ("⛏️", "Antminer", "Pi saha verisi"),
+    "sinyal.json":           ("🔔", "Sinyal", "Yarinki karlilik sinyali"),
+    "gunluk_arsiv.json":     ("📅", "Karlilik", "Gunluk karlilik arsivi"),
+    "son_gonderim.json":     ("✉️", "WhatsApp", "Mesaj gonderim takibi"),
+    "bekleyen_onaylar.json": ("⏳", "Onay", "Bekleyen onaylar"),
+}
+
+def _dosya_etiketi(dosya):
+    """Dosya yolundan tur etiketleri uretir. Arsiv dosyalari ayri ele alinir."""
+    if dosya.startswith("arsiv_f2pool_"):
+        return ("📦", "Arsiv F2Pool", "havuz saatlik kayit")
+    if dosya.startswith("arsiv_cihaz_"):
+        return ("📦", "Arsiv Cihaz", "cihaz bazli saatlik kayit")
+    if dosya.startswith("arsiv_antminer_"):
+        return ("📦", "Arsiv Antminer", "Pi anlik snapshot")
+    if dosya.startswith("aylik_2026"):
+        return ("📅", "Aylik Ozet", "ay birikimleri")
+    return _DOSYA_TIPLERI.get(dosya, ("📄", "Dosya", dosya))
+
+def _utc_to_tr(iso_utc):
+    """'2026-06-02T19:35:12Z' -> '2026-06-02 22:35' (TR saati, UTC+3)"""
+    try:
+        # ISO format: 2026-06-02T19:35:12Z
+        tarih = iso_utc.replace("Z", "+00:00")
+        dt = datetime.datetime.fromisoformat(tarih)
+        # UTC+3
+        tr = dt + datetime.timedelta(hours=3)
+        return tr.strftime("%Y-%m-%d %H:%M")
+    except:
+        return iso_utc
+
+@app.route("/api/rapor")
+def rapor_endpoint():
+    """Sistem aktivite raporu - GitHub commits'ten cikarir.
+    Donus:
+      {
+        sistem_saati: 'YYYY-MM-DD HH:MM',
+        olaylar: [
+          {gun: 'YYYY-MM-DD', kayitlar: [{saat, ikon, etiket, aciklama, dosya, mesaj}, ...]}
+        ]
+      }
+    """
+    if "kullanici" not in session:
+        return jsonify({"hata":"yetkisiz"}), 401
+
+    simdi = datetime.datetime.now().timestamp()
+    if _RAPOR_CACHE["veri"] and simdi - _RAPOR_CACHE["ts"] < _RAPOR_TTL:
+        return jsonify(_RAPOR_CACHE["veri"])
+
+    # GitHub commits API
+    olaylar_gun = {}  # {gun: [kayit, ...]}
+    try:
+        repo = os.environ.get("GH_REPO", "ekinciomer-ai/epias-ptf")
+        url = f"https://api.github.com/repos/{repo}/commits?per_page=50"
+        req = urllib.request.Request(url, headers={
+            "Authorization": f"token {GH_TOKEN}",
+            "Accept": "application/vnd.github+json"
+        })
+        with urllib.request.urlopen(req, timeout=15) as r:
+            commits = json.loads(r.read())
+
+        for c in commits:
+            try:
+                commit_info = c.get("commit", {})
+                # author.date veya committer.date
+                author_date = commit_info.get("author", {}).get("date") or commit_info.get("committer", {}).get("date")
+                mesaj = commit_info.get("message", "").strip()
+                tr_zaman = _utc_to_tr(author_date)
+                if not tr_zaman:
+                    continue
+                gun = tr_zaman[:10]
+                saat = tr_zaman[11:16]
+
+                # Mesajdan dosya adi cikar
+                # Tipik mesaj: "arsiv arsiv_cihaz_2026-06.json 02-06 22:33" veya "Guncelleme: 2026-06-02 22:35"
+                dosya_adi = ""
+                if mesaj.startswith("arsiv ") and ".json" in mesaj:
+                    parcalar = mesaj.split()
+                    if len(parcalar) >= 2:
+                        dosya_adi = parcalar[1]
+                elif "aylik_ptf.json" in mesaj:
+                    dosya_adi = "aylik_ptf.json"
+                elif "son_gonderim" in mesaj:
+                    dosya_adi = "son_gonderim.json"
+                elif "sinyal" in mesaj.lower():
+                    dosya_adi = "sinyal.json"
+
+                # files API alani da var (bazi commitlerde)
+                # Mesajdan cikartamadiysak GitHub'in commit detayina degil, direkt commits listesindeki bilgiye bakacagiz
+                # Tahmin etmek yerine genel bir etiket koyalim
+                if dosya_adi:
+                    ikon, etiket, _ = _dosya_etiketi(dosya_adi)
+                else:
+                    ikon, etiket = "📝", "Guncelleme"
+
+                # Mesajin ilk satirini ozet olarak kullan
+                ozet = mesaj.split("\n")[0][:80]
+
+                kayit = {
+                    "saat": saat,
+                    "ikon": ikon,
+                    "etiket": etiket,
+                    "dosya": dosya_adi,
+                    "mesaj": ozet,
+                    "author": c.get("author", {}).get("login") if c.get("author") else "?",
+                }
+                olaylar_gun.setdefault(gun, []).append(kayit)
+            except Exception as e:
+                # Tek bir commit hatasi tum listeyi bozmasin
+                print(f"commit parse hata: {e}")
+                continue
+    except Exception as e:
+        print(f"rapor_endpoint hata: {e}")
+
+    # Sirala: gun azalan, gun icinde saat azalan
+    olaylar_liste = []
+    for gun in sorted(olaylar_gun.keys(), reverse=True):
+        kayitlar = sorted(olaylar_gun[gun], key=lambda x: x["saat"], reverse=True)
+        olaylar_liste.append({"gun": gun, "kayitlar": kayitlar})
+
+    # Sistem saati (TR)
+    tr_simdi = (datetime.datetime.utcnow() + datetime.timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S")
+
+    sonuc = {
+        "sistem_saati": tr_simdi,
+        "olaylar": olaylar_liste,
+        "kayit_sayisi": sum(len(o["kayitlar"]) for o in olaylar_liste),
+    }
+    _RAPOR_CACHE["ts"] = simdi
+    _RAPOR_CACHE["veri"] = sonuc
+    return jsonify(sonuc)
 
 @app.route("/api/gecmis")
 def gecmis_endpoint():
