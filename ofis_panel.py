@@ -1574,7 +1574,8 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
       <option value="2026-02">Şubat 2026</option>
       <option value="2026-03">Mart 2026</option>
       <option value="2026-04">Nisan 2026</option>
-      <option value="2026-05" selected>Mayıs 2026</option>
+      <option value="2026-05">Mayıs 2026</option>
+      <option value="2026-06" selected>Haziran 2026</option>
     </select>
   </div>
 
