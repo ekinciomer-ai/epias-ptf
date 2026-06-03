@@ -2809,12 +2809,17 @@ function f2KiyasZaman(tip, btn) {
 function f2KiyasRender() {
   const tarihEl = document.getElementById('f2-kiyas-tarih');
   if (!tarihEl) return;
-  // Varsayilan tarih: bugun
   if (!tarihEl.value) {
     const bugun = new Date();
     tarihEl.value = bugun.toISOString().slice(0,10);
   }
   const gun = tarihEl.value;
+  const mod = window.f2KiyasZamanTip || 'gun';
+
+  if (mod === 'ay') {
+    f2KiyasAylikRender(gun);
+    return;
+  }
 
   // Saatlik F2Pool verisi cek (hashrate -> tuketim) + PTF
   fetch('/api/f2pool_saatlik?gun=' + gun)
@@ -2825,6 +2830,121 @@ function f2KiyasRender() {
     .catch(e => {
       document.getElementById('f2-kiyas-liste').innerHTML = '<div class="empty-state">Veri alınamadı</div>';
     });
+}
+
+// Aylik mod: secilen tarihin ayini al, her gunu cek, toplam goster
+function f2KiyasAylikRender(tarih) {
+  const ay = tarih.slice(0, 7);  // "2026-06"
+  const yil = parseInt(ay.slice(0, 4));
+  const ayNo = parseInt(ay.slice(5, 7));
+  const ayGunSay = new Date(yil, ayNo, 0).getDate();  // ayin gun sayisi
+  const bugun = new Date().toISOString().slice(0, 10);
+
+  // Yuklenme mesaji
+  const liste = document.getElementById('f2-kiyas-liste');
+  const ozet = document.getElementById('f2-kiyas-ozet');
+  const harita = document.getElementById('f2-harita-grid');
+  if (harita) harita.innerHTML = '';
+  if (liste) liste.innerHTML = '<div class="empty-state">⏳ ' + ay + ' ayı yükleniyor (' + ayGunSay + ' gün)...</div>';
+  if (ozet) ozet.innerHTML = '';
+
+  // Her gun icin /api/f2pool_saatlik cek
+  const promises = [];
+  const gunler = [];
+  for (let g = 1; g <= ayGunSay; g++) {
+    const gunStr = ay + '-' + String(g).padStart(2, '0');
+    if (gunStr > bugun) break;  // gelecek gunler atla
+    gunler.push(gunStr);
+    promises.push(fetch('/api/f2pool_saatlik?gun=' + gunStr).then(r => r.json()).catch(() => null));
+  }
+
+  Promise.all(promises).then(sonuclar => {
+    const MHS_FIYAT = 2.909687;
+    let ortJth = 25.0;
+    if (window.antData && window.antData.devices) {
+      let tW=0, tH=0;
+      window.antData.devices.forEach(x => { const hr=x.hashrate_TH||0; if(hr>0){tW+=hr*antVerimlilik(x.model); tH+=hr;} });
+      if (tH>0) ortJth = tW/tH;
+    }
+    const ptfAy = (window.fatAylikPtf && window.fatAylikPtf[ay]) || {};
+    const btcKur = window.f2BtcKur || 0;
+
+    let topGelir = 0, topGiderPtf = 0, topGiderMhs = 0, topTuketim = 0, topBtc = 0;
+    let veriliGun = 0;
+    const gunDetay = [];
+
+    sonuclar.forEach((d, idx) => {
+      const gunStr = gunler[idx];
+      const gunNo = String(parseInt(gunStr.slice(8, 10)));
+      const ptfGun = ptfAy[gunNo] || ptfAy[gunStr] || [];
+
+      if (!d || !d.saatler) {
+        gunDetay.push({gun: gunStr, gelir:0, giderPtf:0, giderMhs:0, tuketim:0, btc:0, netPtf:0, netMhs:0, veri:false});
+        return;
+      }
+      let gunGelir = 0, gunGiderPtf = 0, gunGiderMhs = 0, gunTuketim = 0, gunBtcT = 0;
+      let dolu = false;
+      for (let h = 0; h < 24; h++) {
+        const sk = String(h).padStart(2, '0');
+        const s = d.saatler.find(x => x.saat === sk);
+        if (!s || s.hash <= 0) continue;
+        dolu = true;
+        const tuketim = (s.hash * ortJth) / 1000;
+        const gelir = (s.btc || 0) * btcKur;
+        const ptf = (ptfGun[h] !== undefined ? ptfGun[h] : 0) / 1000;
+        gunTuketim += tuketim;
+        gunGelir += gelir;
+        gunGiderPtf += tuketim * ptf;
+        gunGiderMhs += tuketim * MHS_FIYAT;
+        gunBtcT += (s.btc || 0);
+      }
+      if (dolu) veriliGun++;
+      topGelir += gunGelir; topGiderPtf += gunGiderPtf; topGiderMhs += gunGiderMhs;
+      topTuketim += gunTuketim; topBtc += gunBtcT;
+      gunDetay.push({
+        gun: gunStr,
+        gelir: gunGelir, giderPtf: gunGiderPtf, giderMhs: gunGiderMhs,
+        tuketim: gunTuketim, btc: gunBtcT,
+        netPtf: gunGelir - gunGiderPtf, netMhs: gunGelir - gunGiderMhs,
+        veri: dolu,
+      });
+    });
+
+    const netPtfTop = topGelir - topGiderPtf;
+    const netMhsTop = topGelir - topGiderMhs;
+
+    // Ozet kartlari
+    const aylar = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+    const ayAdi = aylar[ayNo - 1] + ' ' + yil;
+    let o = '';
+    o += '<div class="f2-kiyas-kart"><div class="f2-kiyas-kart-lbl">📅 ' + ayAdi + '</div><div class="f2-kiyas-kart-val" style="color:#0f172a;font-size:18px;">' + veriliGun + '/' + gunler.length + '</div><div class="f2-kiyas-kart-sub">veri olan gün</div></div>';
+    o += '<div class="f2-kiyas-kart"><div class="f2-kiyas-kart-lbl">💰 BTC Geliri</div><div class="f2-kiyas-kart-val" style="color:#d97706;">' + Math.round(topGelir).toLocaleString('tr-TR') + ' ₺</div><div class="f2-kiyas-kart-sub">' + topBtc.toFixed(5) + ' BTC</div></div>';
+    o += '<div class="f2-kiyas-kart"><div class="f2-kiyas-kart-lbl">⚡ Tüketim</div><div class="f2-kiyas-kart-val" style="color:#2563eb;">' + Math.round(topTuketim).toLocaleString('tr-TR') + '</div><div class="f2-kiyas-kart-sub">kWh (tahmini)</div></div>';
+    o += '<div class="f2-kiyas-kart"><div class="f2-kiyas-kart-lbl">📈 Net (PTF)</div><div class="f2-kiyas-kart-val" style="color:' + (netPtfTop>=0?'#16a34a':'#dc2626') + ';">' + Math.round(netPtfTop).toLocaleString('tr-TR') + ' ₺</div><div class="f2-kiyas-kart-sub">gelir − PTF gideri</div></div>';
+    o += '<div class="f2-kiyas-kart"><div class="f2-kiyas-kart-lbl">🔄 Net (Mahsup)</div><div class="f2-kiyas-kart-val" style="color:' + (netMhsTop>=0?'#16a34a':'#dc2626') + ';">' + Math.round(netMhsTop).toLocaleString('tr-TR') + ' ₺</div><div class="f2-kiyas-kart-sub">gelir − 2,90×tüketim</div></div>';
+    if (ozet) ozet.innerHTML = o;
+
+    // Gun bazli liste
+    let l = '';
+    gunDetay.forEach(g => {
+      if (!g.veri) {
+        l += '<div class="f2-kiyas-row" style="opacity:0.5;">';
+        l += '<span class="f2-kiyas-saat">' + g.gun.slice(8,10) + '.' + g.gun.slice(5,7) + '</span>';
+        l += '<span style="color:#94a3b8;font-size:11px;">veri yok</span>';
+        l += '<span></span><span></span>';
+        l += '</div>';
+        return;
+      }
+      const netRenk = g.netPtf >= 0 ? '#16a34a' : '#dc2626';
+      l += '<div class="f2-kiyas-row">';
+      l += '<span class="f2-kiyas-saat">' + g.gun.slice(8,10) + '.' + g.gun.slice(5,7) + '</span>';
+      l += '<span style="color:#d97706;">' + Math.round(g.gelir).toLocaleString('tr-TR') + '₺</span>';
+      l += '<span style="color:#2563eb;font-size:10px;">' + Math.round(g.tuketim).toLocaleString('tr-TR') + ' kWh</span>';
+      l += '<span class="f2-kiyas-net" style="color:' + netRenk + ';">' + Math.round(g.netPtf).toLocaleString('tr-TR') + '₺</span>';
+      l += '</div>';
+    });
+    if (liste) liste.innerHTML = l || '<div class="empty-state">Bu ayda veri yok</div>';
+  });
 }
 
 function f2KiyasHesapla(d, gun) {
