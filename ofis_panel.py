@@ -2026,6 +2026,16 @@ function f2AySeceneksDoldur() {
   const ham = window.f2GunlukHam || [];
   const aylar = {};
   ham.forEach(g => { aylar[g.iso.slice(0,7)] = true; });
+
+  // Veriden gelmeyen aylari da ekle (panel arsivinde olabilir)
+  // Son 12 ayi otomatik ekle
+  const bugun = new Date();
+  for (let i = 0; i < 12; i++) {
+    const d = new Date(bugun.getFullYear(), bugun.getMonth() - i, 1);
+    const ay = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    aylar[ay] = true;
+  }
+
   const sel = document.getElementById('f2-ay-secim');
   if (!sel) return;
   const mevcut = sel.value;
