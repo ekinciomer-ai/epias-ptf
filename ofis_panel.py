@@ -6615,68 +6615,57 @@ def cihaz_detay(name):
         "gunluk_btc": cihaz_btc, "gunluk_tl": cihaz_btc * btc_try, "gunluk_usd": cihaz_btc * btc_usd
     })
 
-@app.route("/api/f2pool_saatlik")
-def f2pool_saatlik():
-    """Belirli bir gun icin saatlik hashrate + cihaz dagilimi.
-    Tum cihazlarin hashrate_history'sini toplar. F2Pool sadece son ~48 saat verir,
-    bu yuzden eski gunler bos donebilir.
-    Query: ?gun=YYYY-MM-DD
+def _arsiv_saatlik_kaynak(gun, btc_try):
+    """Belirli bir gun icin saatlik veri - SADECE ARSIVDEN.
+    arsiv_cihaz_YYYY-MM.json + arsiv_f2pool_YYYY-MM.json dosyalarindan okur.
+    Cihaz kodlari (027) panel name'lerine (S19e XP Hyd-100) cevirilir.
+    Donus: {veri_var, gun_btc, gun_hash_ort, saatler:[{saat, hash, btc, tl, cihaz_sayisi, cihazlar}]}
     """
-    if "kullanici" not in session:
-        return jsonify({"hata":"yetkisiz"}), 401
-    gun = request.args.get("gun", "")
-    if not gun:
-        return jsonify({"hata":"gun parametresi gerekli"}), 400
+    ay = gun[:7]  # 2026-05
+    cihaz_ay = _gecmis_oku(f"arsiv_cihaz_{ay}.json") if "_gecmis_oku" in globals() else (github_oku(f"arsiv_cihaz_{ay}.json") or {})
+    f2_ay = _gecmis_oku(f"arsiv_f2pool_{ay}.json") if "_gecmis_oku" in globals() else (github_oku(f"arsiv_f2pool_{ay}.json") or {})
+    cihaz_ay = cihaz_ay or {}
+    f2_ay = f2_ay or {}
 
-    sinyal = github_oku("sinyal.json")
-    btc_try = sinyal.get("btc_try", 0) if sinyal else 0
-
-    # Gunun toplam BTC kazancini bul (gunluk transactions'tan)
-    transactions = f2pool_son_gunler(30)
-    gun_btc = 0
-    for t in transactions:
-        t_tarih = datetime.datetime.fromtimestamp(t["mining_extra"]["mining_date"], tz=datetime.timezone.utc).strftime("%Y-%m-%d")
-        if t_tarih == gun:
-            gun_btc = t["changed_balance"]
-            break
-
-    # Tum cihazlarin history'sini cek, saate gore topla
-    workers = f2pool_workers()
-    # saatlik: { "00": {hash_top, cihazlar: {name: hash}}, ... }
+    # Cihaz kodlari -> isim eslestirmesi (mehmetas.027 vs sadece "027")
     saatlik = {f"{h:02d}": {"hash_top": 0.0, "cihaz_sayisi": 0, "cihazlar": {}} for h in range(24)}
-    gun_toplam_hash = 0.0
 
-    for w in workers:
-        name = w["hash_rate_info"]["name"]
-        legacy = f2pool_legacy(f"bitcoin/{F2POOL_USER}/{name}")
-        if not legacy:
+    # arsiv_cihaz: cihaz bazli hashrate'leri saate gore topla
+    for anahtar, cihaz_kayit in cihaz_ay.items():
+        if not anahtar.startswith(gun):
             continue
-        hist = legacy.get("hashrate_history", {})
-        # hist: { "2026-05-21 14:00:00": hashrate_raw, ... } 10dk araliklarla
-        # Saate gore grupla (ortalama)
-        saat_buf = {}
-        for ts, hr in hist.items():
-            if not ts.startswith(gun):
+        try:
+            saat = anahtar[11:13]
+        except:
+            continue
+        if saat not in saatlik:
+            continue
+        s = saatlik[saat]
+        for kod, deg in (cihaz_kayit or {}).items():
+            h = (deg or {}).get("h", 0) if isinstance(deg, dict) else (deg or 0)
+            if not h or h <= 0:
                 continue
-            try:
-                saat = ts[11:13]  # "14"
-            except:
-                continue
-            saat_buf.setdefault(saat, []).append(hr / 1e12)  # TH/s
-        for saat, arr in saat_buf.items():
-            if saat not in saatlik:
-                continue
-            ort = sum(arr) / len(arr) if arr else 0
-            if ort > 0:
-                saatlik[saat]["cihazlar"][name] = round(ort, 2)
-                saatlik[saat]["hash_top"] += ort
-                saatlik[saat]["cihaz_sayisi"] += 1
+            # Ayni saatte birden fazla snapshot olabilir, son degeri kullan
+            s["cihazlar"][kod] = round(h, 2)
 
-    # Gunun toplam hash'i (saatlerin ortalamasi) - BTC dagitimi icin
+    # Havuz toplamlari
+    for h in range(24):
+        sk = f"{h:02d}"
+        s = saatlik[sk]
+        s["hash_top"] = round(sum(s["cihazlar"].values()), 1)
+        s["cihaz_sayisi"] = len(s["cihazlar"])
+
+    # Gunun toplam BTC'si - arsiv_f2pool'dan son kayit (estimated_today)
+    gun_btc = 0
+    for anahtar in sorted(f2_ay.keys()):
+        if anahtar.startswith(gun):
+            kayit = f2_ay[anahtar]
+            if isinstance(kayit, dict):
+                gun_btc = kayit.get("btc", 0) or gun_btc
+
     saatli_hashlar = [saatlik[f"{h:02d}"]["hash_top"] for h in range(24)]
     gun_hash_toplam = sum(saatli_hashlar)
 
-    # Her saate: tahmini BTC (hash oranina gore), tuketim hesabi frontend'de (model J/TH)
     sonuc_saatler = []
     for h in range(24):
         sk = f"{h:02d}"
@@ -6685,21 +6674,41 @@ def f2pool_saatlik():
         saat_btc = gun_btc * oran
         sonuc_saatler.append({
             "saat": sk,
-            "hash": round(s["hash_top"], 1),
+            "hash": s["hash_top"],
             "cihaz_sayisi": s["cihaz_sayisi"],
             "btc": round(saat_btc, 8),
             "tl": round(saat_btc * btc_try, 2),
             "cihazlar": s["cihazlar"]
         })
-
     veri_var = gun_hash_toplam > 0
-    return jsonify({
-        "gun": gun,
+    return {
         "veri_var": veri_var,
         "gun_btc": gun_btc,
         "gun_hash_ort": round(gun_hash_toplam / 24, 1) if veri_var else 0,
+        "saatler": sonuc_saatler,
+    }
+
+
+@app.route("/api/f2pool_saatlik")
+def f2pool_saatlik():
+    """Belirli bir gun icin saatlik hashrate + cihaz dagilimi.
+    KAYNAK: Arsiv (arsiv_cihaz_*.json + arsiv_f2pool_*.json).
+    Arsiv her saat F2Pool'dan toplanir (arsiv_kaydet.py), panel sadece arsivi okur.
+    Boylece F2Pool 48 saat limiti asilir, tum gecmis gunler gorulebilir.
+    Query: ?gun=YYYY-MM-DD
+    """
+    if "kullanici" not in session:
+        return jsonify({"hata":"yetkisiz"}), 401
+    gun = request.args.get("gun", "")
+    if not gun:
+        return jsonify({"hata":"gun parametresi gerekli"}), 400
+    sinyal = github_oku("sinyal.json")
+    btc_try = sinyal.get("btc_try", 0) if sinyal else 0
+    veri = _arsiv_saatlik_kaynak(gun, btc_try)
+    return jsonify({
+        "gun": gun,
         "btc_kur": btc_try,
-        "saatler": sonuc_saatler
+        **veri,
     })
 
 
