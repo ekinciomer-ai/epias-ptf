@@ -10,8 +10,20 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.02.01.0·b1"
-PANEL_VERSIYON_TARIH = "02.06.2026 23:30"
+PANEL_VERSIYON = "ver.02.01.1"
+# Tarih damgasi: dosyanin modification time'ından otomatik üretilir.
+# Her degisiklikte dosya save edildiginde bu otomatik degisir.
+# Boylece "yeni surum mu canli?" sorusu manuel sayac gerektirmez.
+def _panel_tarih():
+    try:
+        import os, datetime as _dt
+        ts = os.path.getmtime(__file__)
+        # UTC -> TR (+3)
+        tr = _dt.datetime.utcfromtimestamp(ts) + _dt.timedelta(hours=3)
+        return tr.strftime("%d.%m.%Y %H:%M")
+    except Exception:
+        return "?"
+PANEL_VERSIYON_TARIH = _panel_tarih()
 
 # Sistem bilesenleri - her biri kendi son guncellemesini tutar
 # Damgada gosterilir, boylece tum sistemin durumu tek bakista gorulur
@@ -795,6 +807,19 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 .rpr-kayit-mesaj{font-size:10px;color:#64748b;line-height:1.4;word-break:break-all;}
 .rpr-bilgi{font-size:11px;color:#64748b;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin-bottom:12px;line-height:1.5;}
 .rpr-yenile{font-size:11px;font-weight:700;background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff;border:none;border-radius:8px;padding:7px 14px;cursor:pointer;font-family:inherit;}
+.rpr-saglik-kart{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-radius:11px;margin-bottom:8px;border:1px solid transparent;}
+.rpr-saglik-ok{background:linear-gradient(135deg,rgba(34,197,94,0.10),rgba(16,185,129,0.05));border-color:rgba(34,197,94,0.30);}
+.rpr-saglik-yavas{background:linear-gradient(135deg,rgba(251,191,36,0.12),rgba(245,158,11,0.06));border-color:rgba(251,191,36,0.40);}
+.rpr-saglik-calismiyor{background:linear-gradient(135deg,rgba(239,68,68,0.14),rgba(220,38,38,0.06));border-color:rgba(239,68,68,0.45);}
+.rpr-saglik-bilinmiyor{background:#f8fafc;border-color:#e2e8f0;}
+.rpr-saglik-sol{flex:1;min-width:0;}
+.rpr-saglik-ad{font-size:12px;font-weight:800;color:#0f172a;margin-bottom:3px;}
+.rpr-saglik-detay{font-size:10px;color:#64748b;line-height:1.4;}
+.rpr-saglik-rozet{font-size:10px;font-weight:800;padding:5px 10px;border-radius:10px;white-space:nowrap;margin-left:8px;}
+.rpr-saglik-rozet.ok{background:#22c55e;color:#fff;}
+.rpr-saglik-rozet.yavas{background:#f59e0b;color:#fff;}
+.rpr-saglik-rozet.calismiyor{background:#ef4444;color:#fff;}
+.rpr-saglik-rozet.bilinmiyor{background:#94a3b8;color:#fff;}
 .f2-kiyas-zaman{background:transparent;border:none;color:#64748b;padding:6px 13px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
 .f2-kiyas-zaman.active{background:#d97706;color:#fff;}
 .f2-kiyas-ozet{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;}
@@ -1447,6 +1472,9 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
   <div class="rpr-saat-sub" id="rpr-saat-sub">Yükleniyor...</div>
 </div>
 
+<!-- OTOMASYON SAGLIK KARTLARI -->
+<div id="rpr-saglik"></div>
+
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
   <div style="font-size:13px; font-weight:800; color:#0f172a;">🔔 Güncelleme Geçmişi</div>
   <button class="rpr-yenile" onclick="raporYukle()">🔄 Yenile</button>
@@ -2006,6 +2034,41 @@ function raporYukle() {
         kon.innerHTML = '<div class="empty-state">❌ ' + d.hata + '</div>';
         return;
       }
+
+      // OTOMASYON SAGLIK KARTLARI
+      const sagKon = document.getElementById('rpr-saglik');
+      if (sagKon && d.saglik) {
+        let sagHtml = '';
+        const rozeAd = { ok: '✓ ÇALIŞIYOR', yavas: '⚠ GECİKMİŞ', calismiyor: '✗ ÇALIŞMIYOR', bilinmiyor: '? BİLİNMİYOR' };
+        Object.entries(d.saglik).forEach(([ad, info]) => {
+          const dur = info.durum;
+          let detay = '';
+          if (info.son_calisma) {
+            detay = 'Son: ' + info.son_calisma;
+            if (info.saat_once != null) {
+              if (info.saat_once < 1) detay += ' (' + Math.round(info.saat_once*60) + ' dk önce)';
+              else detay += ' (' + info.saat_once + ' saat önce)';
+            }
+          } else {
+            detay = 'Son 50 commit içinde otomatik yazım yok.';
+          }
+          let ipucu = '';
+          if (dur === 'calismiyor') {
+            ipucu = '<br><span style="color:#dc2626;font-weight:700;">⚠ Otomasyon kesilmiş olabilir — Actions sekmesinde workflow\'u kontrol edin.</span>';
+          } else if (dur === 'bilinmiyor') {
+            ipucu = '<br><span style="color:#94a3b8;">Workflow hiç çalışmamış veya commit\'leri eski.</span>';
+          }
+          sagHtml += '<div class="rpr-saglik-kart rpr-saglik-' + dur + '">';
+          sagHtml += '<div class="rpr-saglik-sol">';
+          sagHtml += '  <div class="rpr-saglik-ad">' + ad + '</div>';
+          sagHtml += '  <div class="rpr-saglik-detay">' + detay + ipucu + '</div>';
+          sagHtml += '</div>';
+          sagHtml += '<div class="rpr-saglik-rozet ' + dur + '">' + (rozeAd[dur] || dur) + '</div>';
+          sagHtml += '</div>';
+        });
+        sagKon.innerHTML = sagHtml;
+      }
+
       if (!d.olaylar || d.olaylar.length === 0) {
         kon.innerHTML = '<div class="empty-state">📭 Henüz aktivite kaydı yok.</div>';
         return;
@@ -6782,10 +6845,74 @@ def rapor_endpoint():
     # Sistem saati (TR)
     tr_simdi = (datetime.datetime.utcnow() + datetime.timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S")
 
+    # OTOMASYON SAGLIK KONTROLU
+    # Komponentlerin son otomatik yazmasini commits'ten cikar.
+    # 24+ saat geciktiyse "calismiyor" uyarisi ver.
+    saglik = {}
+    simdi_dt = datetime.datetime.utcnow() + datetime.timedelta(hours=3)
+
+    # Hangi dosya hangi otomasyona ait
+    OTOMASYON = {
+        "EPIAS PTF (main.py)": ["sinyal.json", "son_gonderim.json", "aylik_ptf.json", "gunluk_arsiv.json"],
+        "Arsiv (arsiv_kaydet.py)": ["arsiv_cihaz_", "arsiv_f2pool_", "arsiv_antminer_"],
+    }
+
+    # En son otomatik (bot) commitleri bul
+    for ad, dosyalar in OTOMASYON.items():
+        son_tarih = None
+        son_dosya = None
+        for grup in olaylar_liste:
+            for k in grup["kayitlar"]:
+                # Bot yazimi mi
+                if k.get("author") not in ("github-actions[bot]", "github-actions"):
+                    continue
+                # Hangi dosyaya yazildi
+                d = k.get("dosya", "")
+                m = k.get("mesaj", "")
+                ilgili = False
+                for hedef in dosyalar:
+                    if hedef in d or hedef in m:
+                        ilgili = True
+                        break
+                if not ilgili:
+                    continue
+                # Tarih+saat birlestir
+                tarih_str = f"{grup['gun']} {k['saat']}"
+                try:
+                    dt = datetime.datetime.strptime(tarih_str, "%Y-%m-%d %H:%M")
+                    if son_tarih is None or dt > son_tarih:
+                        son_tarih = dt
+                        son_dosya = d or m[:40]
+                except:
+                    continue
+
+        if son_tarih:
+            fark_saat = (simdi_dt - son_tarih).total_seconds() / 3600
+            if fark_saat < 2:
+                durum = "ok"  # son 2 saat icinde calismis
+            elif fark_saat < 26:
+                durum = "yavas"  # son gun icinde ama gecikmis
+            else:
+                durum = "calismiyor"  # 24+ saat
+            saglik[ad] = {
+                "durum": durum,
+                "son_calisma": son_tarih.strftime("%Y-%m-%d %H:%M"),
+                "saat_once": round(fark_saat, 1),
+                "son_dosya": son_dosya,
+            }
+        else:
+            saglik[ad] = {
+                "durum": "bilinmiyor",
+                "son_calisma": None,
+                "saat_once": None,
+                "son_dosya": None,
+            }
+
     sonuc = {
         "sistem_saati": tr_simdi,
         "olaylar": olaylar_liste,
         "kayit_sayisi": sum(len(o["kayitlar"]) for o in olaylar_liste),
+        "saglik": saglik,
     }
     _RAPOR_CACHE["ts"] = simdi
     _RAPOR_CACHE["veri"] = sonuc
