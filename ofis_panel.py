@@ -11,14 +11,10 @@ app.secret_key = "otocoin-ofis-2026"
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
 PANEL_VERSIYON = "ver.02.01.1"
-# Tarih damgasi: dosyanin modification time'ından otomatik üretilir.
-# Her degisiklikte dosya save edildiginde bu otomatik degisir.
-# Boylece "yeni surum mu canli?" sorusu manuel sayac gerektirmez.
 def _panel_tarih():
     try:
-        import os, datetime as _dt
-        ts = os.path.getmtime(__file__)
-        # UTC -> TR (+3)
+        import os as _os, datetime as _dt
+        ts = _os.path.getmtime(__file__)
         tr = _dt.datetime.utcfromtimestamp(ts) + _dt.timedelta(hours=3)
         return tr.strftime("%d.%m.%Y %H:%M")
     except Exception:
@@ -28,41 +24,33 @@ PANEL_VERSIYON_TARIH = _panel_tarih()
 # Sistem bilesenleri - her biri kendi son guncellemesini tutar
 # Damgada gosterilir, boylece tum sistemin durumu tek bakista gorulur
 SISTEM_DURUM_VARSAYILAN = {
-    "panel":  "v1.9.7",        # ofis_panel.py
-    "arsiv":  "?",             # arsiv_kaydet.py (F2Pool+Antminer saatlik) - dinamik
-    "ptf":    "?",             # aylik_ptf.json son gun - dinamik
-    "osos":   "?",             # 2026_osos_endeks.json son gun - dinamik
+    "panel":  "v1.9.7",
+    "arsiv":  "?",
+    "ptf":    "?",
+    "osos":   "?",
 }
-
 AY_KISA = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara']
 
 def _tarih_kisa(iso):
-    """'2026-06-02' -> '2Haz', '2026-05-31 14:00' -> '31May 14:00'"""
+    """'2026-06-02' -> '2Haz'"""
     try:
         if not iso or len(iso) < 10:
             return "?"
         y, m, g = iso[:4], iso[5:7], iso[8:10]
-        ay = AY_KISA[int(m)-1]
-        sonuc = f"{int(g)}{ay}"
-        # Saat varsa ekle
-        if len(iso) >= 16 and iso[10] in (' ', 'T'):
-            sonuc += f" {iso[11:16]}"
-        return sonuc
+        return f"{int(g)}{AY_KISA[int(m)-1]}"
     except:
         return "?"
 
 def sistem_durum_hesapla():
-    """Her panel acilisinda JSON dosyalarinin son tarihlerini cikarir.
-    Cache: 60 sn (dosya okuma maliyetli)."""
-    simdi = datetime.datetime.now().timestamp()
+    """Her panel acilisinda JSON dosyalarinin son tarihlerini cikarir. Cache: 60sn."""
+    import datetime as _dt
+    simdi = _dt.datetime.now().timestamp()
     if hasattr(sistem_durum_hesapla, '_cache'):
         ts, veri = sistem_durum_hesapla._cache
         if simdi - ts < 60:
             return veri
 
     durum = dict(SISTEM_DURUM_VARSAYILAN)
-
-    # OSOS son gun
     try:
         osos = github_oku("2026_osos_endeks.json")
         if osos:
@@ -74,7 +62,6 @@ def sistem_durum_hesapla():
     except:
         pass
 
-    # PTF son gun
     try:
         ptf = github_oku("aylik_ptf.json")
         if ptf:
@@ -87,24 +74,22 @@ def sistem_durum_hesapla():
     except:
         pass
 
-    # Arsiv son saat (arsiv_cihaz_YYYY-MM.json - en yeni ay)
     try:
-        # Bugunki ve oncekiyi dene
-        bugun = datetime.date.today()
+        bugun = _dt.date.today()
         for fark in range(2):
-            tarih = bugun - datetime.timedelta(days=fark*30)
+            tarih = bugun - _dt.timedelta(days=fark*30)
             ay_str = tarih.strftime("%Y-%m")
             arsiv = github_oku(f"arsiv_cihaz_{ay_str}.json")
             if arsiv:
-                if arsiv:
-                    son = max(arsiv.keys())
-                    durum["arsiv"] = "v2 · " + _tarih_kisa(son)
-                    break
+                son = max(arsiv.keys())
+                durum["arsiv"] = "v2 · " + _tarih_kisa(son[:10])
+                break
     except:
         pass
 
     sistem_durum_hesapla._cache = (simdi, durum)
     return durum
+
 
 KULLANICILAR = {
     "admin1":    {"sifre": hashlib.sha256("admin1".encode()).hexdigest(),    "rol": "yonetici"},
@@ -184,243 +169,6 @@ def github_yaz(dosya, payload):
     except Exception as e:
         print(f"github_yaz hatasi ({dosya}): {e}")
         return False
-
-
-# ============================================================
-# GECMIS VERI MODULU (Asama 1 - ver.02.01.00)
-# ------------------------------------------------------------
-# Tek giris noktasi: gecmis_getir(mod, bas, bit, suffix=None)
-#   mod     : 'saat' | 'gun' | 'hafta' | 'ay' | 'yil'
-#   bas/bit : 'YYYY-MM-DD' (gun/hafta/ay/yil) veya 'YYYY-MM-DD HH' (saat)
-#   suffix  : None (tum cihazlar) veya int (tek cihaz)
-#
-# Veri kaynaklari:
-#   Saatlik -> arsiv_cihaz_YYYY-MM.json + arsiv_f2pool_YYYY-MM.json
-#   Gunluk  -> antminer_panel.json[devices][].daily_history
-#   Aylik   -> antminer_panel.json[devices][].monthly_history
-#   Haftalik/Yillik -> gunluk/aylik'tan aggregate edilir
-#
-# Cache: 15 dk (GitHub rate limit korumasi)
-# ============================================================
-
-_GECMIS_CACHE = {}   # {dosya: (timestamp, veri)}
-_GECMIS_CACHE_TTL = 60  # 1 dk (kisa cache - panel her zaman guncel)
-
-def _gecmis_oku(dosya):
-    """github_oku'nun cache'li versiyonu."""
-    simdi = datetime.datetime.now().timestamp()
-    if dosya in _GECMIS_CACHE:
-        ts, veri = _GECMIS_CACHE[dosya]
-        if simdi - ts < _GECMIS_CACHE_TTL:
-            return veri
-    veri = github_oku(dosya)
-    _GECMIS_CACHE[dosya] = (simdi, veri)
-    return veri
-
-def kopru_uret():
-    """antminer_panel.json'dan suffix<->kod<->name kopru tablosu uretir.
-    Donus: {suffix: {kod, name, havuz_worker, model}}"""
-    panel = _gecmis_oku("antminer_panel.json") or {}
-    devices = panel.get("devices", []) or []
-    kopru = {}
-    for d in devices:
-        sfx = d.get("suffix")
-        if sfx is None:
-            continue
-        hw = d.get("havuz_worker") or d.get("actual_worker") or ""
-        kod = hw.split(".")[-1] if "." in hw else None
-        kopru[sfx] = {
-            "kod": kod,
-            "name": d.get("name") or f"Miner-{sfx}",
-            "havuz_worker": hw,
-            "model": d.get("model", ""),
-        }
-    return kopru
-
-def _ay_listesi(bas, bit):
-    """'2026-03-15' ile '2026-05-10' arasindaki 'YYYY-MM' ay anahtarlarini doner."""
-    try:
-        b = datetime.date.fromisoformat(bas[:10])
-        s = datetime.date.fromisoformat(bit[:10])
-    except:
-        return []
-    aylar = []
-    y, m = b.year, b.month
-    while (y, m) <= (s.year, s.month):
-        aylar.append(f"{y:04d}-{m:02d}")
-        m += 1
-        if m > 12:
-            m = 1; y += 1
-    return aylar
-
-def saatlik_yukle(bas, bit, suffix=None):
-    """Saatlik veri: arsiv_cihaz + arsiv_f2pool ay dosyalarindan.
-    Donus: [{zaman, cihazlar:{suffix:{hash,durum}}, havuz:{hash,calisan,...}}]
-    suffix verilirse sadece o cihaz icin filtrelenir."""
-    kopru = kopru_uret()
-    # kod -> suffix tersine harita
-    kod2sfx = {v["kod"]: s for s, v in kopru.items() if v["kod"]}
-
-    aylar = _ay_listesi(bas, bit)
-    seri = []
-    bas_norm = bas[:13] if len(bas) >= 13 else bas + " 00"
-    bit_norm = bit[:13] if len(bit) >= 13 else bit + " 23"
-
-    for ay in aylar:
-        cihaz_ay = _gecmis_oku(f"arsiv_cihaz_{ay}.json") or {}
-        f2_ay = _gecmis_oku(f"arsiv_f2pool_{ay}.json") or {}
-        # Saat anahtarlarinin birlesimi
-        tum_saatler = sorted(set(cihaz_ay.keys()) | set(f2_ay.keys()))
-        for saat in tum_saatler:
-            if saat[:13] < bas_norm or saat[:13] > bit_norm:
-                continue
-            cihazlar_raw = cihaz_ay.get(saat, {}) or {}
-            havuz = f2_ay.get(saat, {}) or {}
-            cihazlar = {}
-            for kod, deg in cihazlar_raw.items():
-                sfx = kod2sfx.get(kod)
-                if sfx is None:
-                    continue
-                if suffix is not None and sfx != suffix:
-                    continue
-                cihazlar[sfx] = {
-                    "hash": deg.get("h", 0),
-                    "durum": deg.get("d", "?"),  # c/y/u/k
-                }
-            seri.append({
-                "zaman": saat,
-                "cihazlar": cihazlar,
-                "havuz": {
-                    "hash": havuz.get("hash", 0),
-                    "calisan": havuz.get("calisan", 0),
-                    "toplam": havuz.get("toplam", 0),
-                    "btc": havuz.get("btc", 0),
-                } if havuz else None,
-            })
-    return seri
-
-def gunluk_yukle(bas, bit, suffix=None):
-    """Gunluk veri: antminer_panel.json[devices][].daily_history'den.
-    Donus: [{zaman, cihazlar:{suffix:{hash,uptime,btc}}}] (gun bazli)"""
-    panel = _gecmis_oku("antminer_panel.json") or {}
-    devices = panel.get("devices", []) or []
-    gun_map = {}  # {gun: {suffix: {hash,uptime,btc}}}
-    for d in devices:
-        sfx = d.get("suffix")
-        if sfx is None or (suffix is not None and sfx != suffix):
-            continue
-        for h in (d.get("daily_history") or []):
-            tarih = h.get("date")
-            if not tarih or tarih < bas[:10] or tarih > bit[:10]:
-                continue
-            gun_map.setdefault(tarih, {})[sfx] = {
-                "hash": h.get("avg_hash_TH", 0),
-                "uptime": h.get("uptime_pct", 0),
-                "btc": h.get("earn_btc", 0),
-            }
-    return [{"zaman": g, "cihazlar": gun_map[g]} for g in sorted(gun_map.keys())]
-
-def aylik_yukle(bas, bit, suffix=None):
-    """Aylik veri: antminer_panel.json[devices][].monthly_history'den.
-    Donus: [{zaman, cihazlar:{suffix:{hash,btc,gun}}}]"""
-    panel = _gecmis_oku("antminer_panel.json") or {}
-    devices = panel.get("devices", []) or []
-    ay_map = {}
-    for d in devices:
-        sfx = d.get("suffix")
-        if sfx is None or (suffix is not None and sfx != suffix):
-            continue
-        for h in (d.get("monthly_history") or []):
-            ay = h.get("month")
-            if not ay or ay < bas[:7] or ay > bit[:7]:
-                continue
-            ay_map.setdefault(ay, {})[sfx] = {
-                "hash": h.get("avg_hash_TH", 0),
-                "btc": h.get("earn_btc", 0),
-                "gun": h.get("days", 0),
-            }
-    return [{"zaman": a, "cihazlar": ay_map[a]} for a in sorted(ay_map.keys())]
-
-def aggregate(seri, mod):
-    """Bir seriyi ust seviyeye toplar.
-    Saatlik -> haftalik: ISO hafta bazli
-    Gunluk  -> haftalik: ISO hafta bazli
-    Gunluk  -> yillik:  yil bazli
-    Aylik   -> yillik:  yil bazli
-    Toplama kurali: hash=ortalama, btc=toplam, uptime=ortalama, durum=cogunluk"""
-    grup = {}  # {anahtar: [kayit,...]}
-
-    def hafta_anahtar(z):
-        try:
-            d = datetime.date.fromisoformat(z[:10])
-            iso = d.isocalendar()
-            return f"{iso[0]}-W{iso[1]:02d}"
-        except:
-            return None
-
-    def yil_anahtar(z):
-        return z[:4] if len(z) >= 4 else None
-
-    if mod == "hafta":
-        anahtar_fn = hafta_anahtar
-    elif mod == "yil":
-        anahtar_fn = yil_anahtar
-    else:
-        return seri  # zaten o seviyede
-
-    for k in seri:
-        a = anahtar_fn(k["zaman"])
-        if a:
-            grup.setdefault(a, []).append(k)
-
-    sonuc = []
-    for anahtar in sorted(grup.keys()):
-        kayitlar = grup[anahtar]
-        # Cihaz bazli birlestir
-        cihaz_top = {}  # {sfx: {hash_top, hash_n, btc_top, uptime_top, uptime_n}}
-        for k in kayitlar:
-            for sfx, deg in (k.get("cihazlar") or {}).items():
-                t = cihaz_top.setdefault(sfx, {"hash_top": 0, "hash_n": 0,
-                                                "btc_top": 0, "uptime_top": 0, "uptime_n": 0})
-                if "hash" in deg and deg["hash"] is not None:
-                    t["hash_top"] += deg["hash"]
-                    t["hash_n"] += 1
-                if "btc" in deg and deg["btc"] is not None:
-                    t["btc_top"] += deg["btc"]
-                if "uptime" in deg and deg["uptime"] is not None:
-                    t["uptime_top"] += deg["uptime"]
-                    t["uptime_n"] += 1
-
-        cihazlar_son = {}
-        for sfx, t in cihaz_top.items():
-            cihazlar_son[sfx] = {
-                "hash": round(t["hash_top"] / t["hash_n"], 1) if t["hash_n"] else 0,
-                "btc": round(t["btc_top"], 8),
-                "uptime": round(t["uptime_top"] / t["uptime_n"], 1) if t["uptime_n"] else 0,
-            }
-        sonuc.append({"zaman": anahtar, "cihazlar": cihazlar_son})
-    return sonuc
-
-def gecmis_getir(mod, bas, bit, suffix=None):
-    """Tek giris noktasi. Mod'a gore dogru kaynagi sec, gerekirse aggregate et."""
-    if mod == "saat":
-        return saatlik_yukle(bas, bit, suffix)
-    if mod == "gun":
-        return gunluk_yukle(bas, bit, suffix)
-    if mod == "ay":
-        return aylik_yukle(bas, bit, suffix)
-    if mod == "hafta":
-        # Gunlukten aggregate
-        gun_seri = gunluk_yukle(bas, bit, suffix)
-        return aggregate(gun_seri, "hafta")
-    if mod == "yil":
-        # Aylik dolu degilse gunlukten, dolu ise aylik'tan
-        ay_seri = aylik_yukle(bas, bit, suffix)
-        if ay_seri:
-            return aggregate(ay_seri, "yil")
-        return aggregate(gunluk_yukle(bas, bit, suffix), "yil")
-    return []
-
 
 def f2pool_post(endpoint, body):
     try:
@@ -789,37 +537,6 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 .f2-alt-content.active{display:block;}
 /* Kiyas */
 .f2-kiyas-aciklama{font-size:11px;color:#64748b;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin-bottom:12px;line-height:1.5;}
-/* Rapor sekmesi (ver.02.01.0+) */
-.rpr-saat{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;border-radius:14px;padding:18px 16px;margin-bottom:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);}
-.rpr-saat-lbl{font-size:10px;letter-spacing:1.2px;color:#94a3b8;text-transform:uppercase;font-weight:700;margin-bottom:4px;}
-.rpr-saat-deger{font-size:24px;font-weight:800;letter-spacing:0.5px;}
-.rpr-saat-sub{font-size:11px;color:#64748b;margin-top:6px;}
-.rpr-gun-grup{background:#fff;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:10px;overflow:hidden;}
-.rpr-gun-bas{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;background:linear-gradient(135deg,#f8fafc,#f1f5f9);border-bottom:1px solid #e2e8f0;cursor:pointer;}
-.rpr-gun-tarih{font-size:12px;font-weight:700;color:#0f172a;}
-.rpr-gun-sayi{font-size:10px;color:#64748b;font-weight:600;background:#e2e8f0;padding:3px 8px;border-radius:10px;}
-.rpr-kayit{display:flex;gap:10px;padding:9px 14px;border-bottom:1px solid #f1f5f9;align-items:flex-start;}
-.rpr-kayit:last-child{border-bottom:none;}
-.rpr-kayit-saat{font-size:11px;font-weight:700;color:#64748b;min-width:42px;font-family:monospace;}
-.rpr-kayit-ikon{font-size:14px;min-width:20px;}
-.rpr-kayit-icerik{flex:1;min-width:0;}
-.rpr-kayit-etiket{font-size:11px;font-weight:800;color:#0f172a;margin-bottom:2px;}
-.rpr-kayit-mesaj{font-size:10px;color:#64748b;line-height:1.4;word-break:break-all;}
-.rpr-bilgi{font-size:11px;color:#64748b;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin-bottom:12px;line-height:1.5;}
-.rpr-yenile{font-size:11px;font-weight:700;background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff;border:none;border-radius:8px;padding:7px 14px;cursor:pointer;font-family:inherit;}
-.rpr-saglik-kart{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-radius:11px;margin-bottom:8px;border:1px solid transparent;}
-.rpr-saglik-ok{background:linear-gradient(135deg,rgba(34,197,94,0.10),rgba(16,185,129,0.05));border-color:rgba(34,197,94,0.30);}
-.rpr-saglik-yavas{background:linear-gradient(135deg,rgba(251,191,36,0.12),rgba(245,158,11,0.06));border-color:rgba(251,191,36,0.40);}
-.rpr-saglik-calismiyor{background:linear-gradient(135deg,rgba(239,68,68,0.14),rgba(220,38,38,0.06));border-color:rgba(239,68,68,0.45);}
-.rpr-saglik-bilinmiyor{background:#f8fafc;border-color:#e2e8f0;}
-.rpr-saglik-sol{flex:1;min-width:0;}
-.rpr-saglik-ad{font-size:12px;font-weight:800;color:#0f172a;margin-bottom:3px;}
-.rpr-saglik-detay{font-size:10px;color:#64748b;line-height:1.4;}
-.rpr-saglik-rozet{font-size:10px;font-weight:800;padding:5px 10px;border-radius:10px;white-space:nowrap;margin-left:8px;}
-.rpr-saglik-rozet.ok{background:#22c55e;color:#fff;}
-.rpr-saglik-rozet.yavas{background:#f59e0b;color:#fff;}
-.rpr-saglik-rozet.calismiyor{background:#ef4444;color:#fff;}
-.rpr-saglik-rozet.bilinmiyor{background:#94a3b8;color:#fff;}
 .f2-kiyas-zaman{background:transparent;border:none;color:#64748b;padding:6px 13px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
 .f2-kiyas-zaman.active{background:#d97706;color:#fff;}
 .f2-kiyas-ozet{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;}
@@ -1461,31 +1178,6 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 <!-- ====================== ANTMINER SEKME SONU ====================== -->
 
 
-<!-- ====================== RAPOR SEKMESI ====================== -->
-<div class="tab-content" id="t-rapor">
-
-<div class="rpr-bilgi">📋 Sistem aktivite raporu — GitHub commits API'den son güncellemeler. Saat değerleri TR (UTC+3).</div>
-
-<div class="rpr-saat">
-  <div class="rpr-saat-lbl">🕐 Sistem Saati (TR)</div>
-  <div class="rpr-saat-deger" id="rpr-saat-deger">--:--</div>
-  <div class="rpr-saat-sub" id="rpr-saat-sub">Yükleniyor...</div>
-</div>
-
-<!-- OTOMASYON SAGLIK KARTLARI -->
-<div id="rpr-saglik"></div>
-
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-  <div style="font-size:13px; font-weight:800; color:#0f172a;">🔔 Güncelleme Geçmişi</div>
-  <button class="rpr-yenile" onclick="raporYukle()">🔄 Yenile</button>
-</div>
-
-<div id="rpr-icerik"><div class="empty-state">Yükleniyor...</div></div>
-
-</div>
-<!-- ====================== RAPOR SEKMESI SONU ====================== -->
-
-
 <!-- ====================== CIHAZLARIM SEKMESI ====================== -->
 <div class="tab-content" id="t-cihazlarim">
 
@@ -1882,8 +1574,7 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
       <option value="2026-02">Şubat 2026</option>
       <option value="2026-03">Mart 2026</option>
       <option value="2026-04">Nisan 2026</option>
-      <option value="2026-05">Mayıs 2026</option>
-      <option value="2026-06" selected>Haziran 2026</option>
+      <option value="2026-05" selected>Mayıs 2026</option>
     </select>
   </div>
 
@@ -1899,6 +1590,25 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 
 </div>
 <!-- ====================== FATURALANDIRMA SEKMESI SONU ====================== -->
+
+<!-- ====================== RAPOR SEKMESI ====================== -->
+<div class="tab-content" id="t-rapor">
+  <div style="font-size:11px;color:#64748b;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin-bottom:12px;line-height:1.5;">
+    Sistem aktivite raporu. GitHub commits API'den son güncellemeler. Saat değerleri TR (UTC+3).
+  </div>
+  <div style="background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;border-radius:14px;padding:18px 16px;margin-bottom:14px;">
+    <div style="font-size:10px;letter-spacing:1.2px;color:#94a3b8;text-transform:uppercase;font-weight:700;margin-bottom:4px;">Sistem Saati (TR)</div>
+    <div style="font-size:24px;font-weight:800;" id="rpr-saat">--:--</div>
+    <div style="font-size:11px;color:#64748b;margin-top:6px;" id="rpr-tarih">Yükleniyor...</div>
+  </div>
+  <div id="rpr-saglik"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <div style="font-size:13px;font-weight:800;color:#0f172a;">Güncelleme Geçmişi</div>
+    <button onclick="raporYukle()" style="font-size:11px;font-weight:700;background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff;border:none;border-radius:8px;padding:7px 14px;cursor:pointer;">Yenile</button>
+  </div>
+  <div id="rpr-icerik"><div class="empty-state">Yükleniyor...</div></div>
+</div>
+<!-- ====================== RAPOR SEKMESI SONU ====================== -->
 
 <!-- Antminer Cihaz Detay Modal -->
 <div class="modal-overlay" id="ant-modal" onclick="if(event.target.id==='ant-modal')kapatAntModal()">
@@ -2001,112 +1711,101 @@ function sekme(ad, btn) {
 }
 
 // === RAPOR SEKMESI ===
-let raporSaatTimer = null;
+var raporSaatTimer = null;
 
 function raporSaatGuncelle() {
-  // TR saati: tarayicinin saatini kullan (kullanici zaten TR'de)
-  // Backend'den gelen sistem_saati referans olsun, sonra her sn arttiralim
-  const el = document.getElementById('rpr-saat-deger');
-  const sub = document.getElementById('rpr-saat-sub');
+  var el = document.getElementById('rpr-saat');
+  var sub = document.getElementById('rpr-tarih');
   if (!el) return;
-  const now = new Date();
-  const gun = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'][now.getDay()];
-  const tarih = now.toLocaleDateString('tr-TR', {day:'2-digit', month:'long', year:'numeric'});
-  const saat = now.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
-  el.textContent = saat;
-  sub.textContent = gun + ' · ' + tarih;
+  var now = new Date();
+  var gunler = ['Pazar','Pazartesi','Sali','Carsamba','Persembe','Cuma','Cumartesi'];
+  var aylar = ['Ocak','Subat','Mart','Nisan','Mayis','Haziran','Temmuz','Agustos','Eylul','Ekim','Kasim','Aralik'];
+  var hh = String(now.getHours()).padStart(2, '0');
+  var mm = String(now.getMinutes()).padStart(2, '0');
+  var ss = String(now.getSeconds()).padStart(2, '0');
+  el.textContent = hh + ':' + mm + ':' + ss;
+  if (sub) sub.textContent = gunler[now.getDay()] + ' ' + now.getDate() + ' ' + aylar[now.getMonth()] + ' ' + now.getFullYear();
 }
 
 function raporYukle() {
-  // Saat timer'ini baslat
   if (raporSaatTimer) clearInterval(raporSaatTimer);
   raporSaatGuncelle();
   raporSaatTimer = setInterval(raporSaatGuncelle, 1000);
 
-  const kon = document.getElementById('rpr-icerik');
+  var kon = document.getElementById('rpr-icerik');
   if (!kon) return;
-  kon.innerHTML = '<div class="empty-state">⏳ GitHub commits çekiliyor...</div>';
+  kon.innerHTML = '<div class="empty-state">Yukleniyor...</div>';
 
-  fetch('/api/rapor')
-    .then(r => r.json())
-    .then(d => {
-      if (d.hata) {
-        kon.innerHTML = '<div class="empty-state">❌ ' + d.hata + '</div>';
-        return;
-      }
-
-      // OTOMASYON SAGLIK KARTLARI
-      const sagKon = document.getElementById('rpr-saglik');
-      if (sagKon && d.saglik) {
-        let sagHtml = '';
-        const rozeAd = { ok: '✓ ÇALIŞIYOR', yavas: '⚠ GECİKMİŞ', calismiyor: '✗ ÇALIŞMIYOR', bilinmiyor: '? BİLİNMİYOR' };
-        Object.entries(d.saglik).forEach(([ad, info]) => {
-          const dur = info.durum;
-          let detay = '';
-          if (info.son_calisma) {
-            detay = 'Son: ' + info.son_calisma;
-            if (info.saat_once != null) {
-              if (info.saat_once < 1) detay += ' (' + Math.round(info.saat_once*60) + ' dk önce)';
-              else detay += ' (' + info.saat_once + ' saat önce)';
-            }
-          } else {
-            detay = 'Son 50 commit içinde otomatik yazım yok.';
+  fetch('/api/rapor').then(function(r){return r.json();}).then(function(d){
+    if (d.hata) {
+      kon.innerHTML = '<div class="empty-state">Hata: ' + d.hata + '</div>';
+      return;
+    }
+    // Saglik kartlari
+    var sagKon = document.getElementById('rpr-saglik');
+    if (sagKon && d.saglik) {
+      var sagHtml = '';
+      var rozeAd = {ok: 'CALISIYOR', yavas: 'GECIKMIS', calismiyor: 'CALISMIYOR', bilinmiyor: 'BILINMIYOR'};
+      var renkler = {ok: '#22c55e', yavas: '#f59e0b', calismiyor: '#ef4444', bilinmiyor: '#94a3b8'};
+      var bgRenk = {ok: 'rgba(34,197,94,0.10)', yavas: 'rgba(251,191,36,0.12)', calismiyor: 'rgba(239,68,68,0.14)', bilinmiyor: '#f8fafc'};
+      var keys = Object.keys(d.saglik);
+      for (var i = 0; i < keys.length; i++) {
+        var ad = keys[i];
+        var info = d.saglik[ad];
+        var dur = info.durum;
+        var detay = '';
+        if (info.son_calisma) {
+          detay = 'Son: ' + info.son_calisma;
+          if (info.saat_once != null) {
+            if (info.saat_once < 1) detay += ' (' + Math.round(info.saat_once * 60) + ' dk once)';
+            else detay += ' (' + info.saat_once + ' saat once)';
           }
-          let ipucu = '';
-          if (dur === 'calismiyor') {
-            ipucu = '<br><span style="color:#dc2626;font-weight:700;">⚠ Otomasyon kesilmiş olabilir — Actions sekmesinde workflow\'u kontrol edin.</span>';
-          } else if (dur === 'bilinmiyor') {
-            ipucu = '<br><span style="color:#94a3b8;">Workflow hiç çalışmamış veya commit\'leri eski.</span>';
-          }
-          sagHtml += '<div class="rpr-saglik-kart rpr-saglik-' + dur + '">';
-          sagHtml += '<div class="rpr-saglik-sol">';
-          sagHtml += '  <div class="rpr-saglik-ad">' + ad + '</div>';
-          sagHtml += '  <div class="rpr-saglik-detay">' + detay + ipucu + '</div>';
-          sagHtml += '</div>';
-          sagHtml += '<div class="rpr-saglik-rozet ' + dur + '">' + (rozeAd[dur] || dur) + '</div>';
-          sagHtml += '</div>';
-        });
-        sagKon.innerHTML = sagHtml;
+        } else {
+          detay = 'Son 50 commit icinde otomatik yazim yok.';
+        }
+        sagHtml += '<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-radius:11px;margin-bottom:8px;background:' + bgRenk[dur] + ';border:1px solid ' + renkler[dur] + ';">';
+        sagHtml += '<div style="flex:1;min-width:0;">';
+        sagHtml += '<div style="font-size:12px;font-weight:800;color:#0f172a;margin-bottom:3px;">' + ad + '</div>';
+        sagHtml += '<div style="font-size:10px;color:#64748b;line-height:1.4;">' + detay + '</div>';
+        sagHtml += '</div>';
+        sagHtml += '<div style="font-size:10px;font-weight:800;padding:5px 10px;border-radius:10px;color:#fff;background:' + renkler[dur] + ';margin-left:8px;">' + rozeAd[dur] + '</div>';
+        sagHtml += '</div>';
       }
-
-      if (!d.olaylar || d.olaylar.length === 0) {
-        kon.innerHTML = '<div class="empty-state">📭 Henüz aktivite kaydı yok.</div>';
-        return;
+      sagKon.innerHTML = sagHtml;
+    }
+    // Olaylar listesi
+    if (!d.olaylar || d.olaylar.length === 0) {
+      kon.innerHTML = '<div class="empty-state">Henuz aktivite kaydi yok.</div>';
+      return;
+    }
+    var html = '';
+    var aylar2 = ['Oca','Sub','Mar','Nis','May','Haz','Tem','Agu','Eyl','Eki','Kas','Ara'];
+    for (var j = 0; j < d.olaylar.length; j++) {
+      var grup = d.olaylar[j];
+      var parcalar = grup.gun.split('-');
+      var tarihEt = parseInt(parcalar[2]) + ' ' + aylar2[parseInt(parcalar[1]) - 1] + ' ' + parcalar[0];
+      html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:10px;overflow:hidden;">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;background:#f8fafc;border-bottom:1px solid #e2e8f0;">';
+      html += '<span style="font-size:12px;font-weight:700;color:#0f172a;">' + tarihEt + '</span>';
+      html += '<span style="font-size:10px;color:#64748b;background:#e2e8f0;padding:3px 8px;border-radius:10px;">' + grup.kayitlar.length + ' kayit</span>';
+      html += '</div>';
+      for (var k = 0; k < grup.kayitlar.length; k++) {
+        var ky = grup.kayitlar[k];
+        html += '<div style="display:flex;gap:10px;padding:9px 14px;border-bottom:1px solid #f1f5f9;">';
+        html += '<div style="font-size:11px;font-weight:700;color:#64748b;min-width:42px;">' + ky.saat + '</div>';
+        html += '<div style="font-size:14px;min-width:20px;">' + (ky.ikon || '') + '</div>';
+        html += '<div style="flex:1;min-width:0;">';
+        html += '<div style="font-size:11px;font-weight:800;color:#0f172a;margin-bottom:2px;">' + (ky.etiket || '') + '</div>';
+        html += '<div style="font-size:10px;color:#64748b;line-height:1.4;word-break:break-all;">' + (ky.mesaj || '') + '</div>';
+        html += '</div>';
+        html += '</div>';
       }
-      let html = '';
-      d.olaylar.forEach((grup, idx) => {
-        const gunIso = grup.gun;
-        const [y, m, g] = gunIso.split('-');
-        const aylar = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
-        const tarihEt = parseInt(g) + ' ' + aylar[parseInt(m)-1] + ' ' + y;
-        // Hafta günü
-        const d2 = new Date(y, parseInt(m)-1, g);
-        const gunAdi = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'][d2.getDay()];
-
-        html += '<div class="rpr-gun-grup">';
-        html += '<div class="rpr-gun-bas">';
-        html += '  <span class="rpr-gun-tarih">📅 ' + tarihEt + ' · ' + gunAdi + '</span>';
-        html += '  <span class="rpr-gun-sayi">' + grup.kayitlar.length + ' kayıt</span>';
-        html += '</div>';
-        grup.kayitlar.forEach(k => {
-          html += '<div class="rpr-kayit">';
-          html += '  <div class="rpr-kayit-saat">' + k.saat + '</div>';
-          html += '  <div class="rpr-kayit-ikon">' + k.ikon + '</div>';
-          html += '  <div class="rpr-kayit-icerik">';
-          html += '    <div class="rpr-kayit-etiket">' + k.etiket;
-          if (k.dosya) html += ' <span style="color:#94a3b8;font-weight:600;">· ' + k.dosya + '</span>';
-          html += '</div>';
-          html += '    <div class="rpr-kayit-mesaj">' + (k.mesaj || '') + '</div>';
-          html += '  </div>';
-          html += '</div>';
-        });
-        html += '</div>';
-      });
-      kon.innerHTML = html;
-    })
-    .catch(e => {
-      kon.innerHTML = '<div class="empty-state">❌ Bağlantı hatası: ' + e.message + '</div>';
-    });
+      html += '</div>';
+    }
+    kon.innerHTML = html;
+  }).catch(function(e){
+    kon.innerHTML = '<div class="empty-state">Baglanti hatasi: ' + e.message + '</div>';
+  });
 }
 
 // EPIAS sekmesi - aylik PTF dropdown ile
@@ -2533,7 +2232,7 @@ function f2GunAc(iso, el) {
     .then(r => r.json())
     .then(d => {
       if (!d.veri_var) {
-        kon.innerHTML = '<div class="f2-saat-bos">📭 Bu gün için saatlik veri yok<br><span style="font-size:9px;">(arşivde bu güne ait kayıt bulunamadı)</span></div>';
+        kon.innerHTML = '<div class="f2-saat-bos">📭 Bu gün için saatlik veri yok<br><span style="font-size:9px;">(F2Pool sadece son ~48 saati saklar)</span></div>';
         return;
       }
       // Ortalama verimlilik (tuketim icin)
@@ -3148,7 +2847,7 @@ function f2KiyasHesapla(d, gun) {
   const dolukSaat = saatler.filter(s => s.hash > 0);
   if (saatler.length === 0 || dolukSaat.length === 0) {
     document.getElementById('f2-harita-grid').innerHTML = '';
-    document.getElementById('f2-kiyas-liste').innerHTML = '<div class="empty-state">📭 Bu gün için saatlik veri yok (arşivde bu güne ait kayıt bulunamadı)</div>';
+    document.getElementById('f2-kiyas-liste').innerHTML = '<div class="empty-state">📭 Bu gün için saatlik veri yok (F2Pool son ~48 saat)</div>';
     document.getElementById('f2-kiyas-ozet').innerHTML = '';
     return;
   }
@@ -6708,46 +6407,35 @@ def aylik_ptf_endpoint():
 
 
 # ============================================================
-# RAPOR SEKMESI - Sistem aktivite raporu
-# GitHub commits API'den son N commiti cekip Turkce ozetler.
+# RAPOR ENDPOINT - GitHub commits + saglik kontrolu
 # ============================================================
-
 _RAPOR_CACHE = {"ts": 0, "veri": None}
 _RAPOR_TTL = 120  # 2 dk
 
-# Dosya turune gore icon ve aciklama eslestir
 _DOSYA_TIPLERI = {
-    "ofis_panel.py":         ("⚙️", "Panel", "yeni panel surumu"),
-    "main.py":               ("⚙️", "Panel", "EPIAS cron kodu guncellendi"),
-    "arsiv_kaydet.py":       ("⚙️", "Panel", "Arsiv kodu guncellendi"),
-    "aylik_ptf.json":        ("⚡", "PTF",   "EPIAS Piyasa Takas Fiyati"),
-    "2026_osos_endeks.json": ("📊", "OSOS",  "Sayac okumalari"),
-    "antminer_panel.json":   ("⛏️", "Antminer", "Pi saha verisi"),
-    "sinyal.json":           ("🔔", "Sinyal", "Yarinki karlilik sinyali"),
-    "gunluk_arsiv.json":     ("📅", "Karlilik", "Gunluk karlilik arsivi"),
-    "son_gonderim.json":     ("✉️", "WhatsApp", "Mesaj gonderim takibi"),
-    "bekleyen_onaylar.json": ("⏳", "Onay", "Bekleyen onaylar"),
+    "ofis_panel.py":         ("PANEL",    "Panel surumu"),
+    "main.py":               ("PANEL",    "EPIAS cron kodu"),
+    "arsiv_kaydet.py":       ("PANEL",    "Arsiv kodu"),
+    "aylik_ptf.json":        ("PTF",      "EPIAS Piyasa Takas Fiyati"),
+    "2026_osos_endeks.json": ("OSOS",     "Sayac okumalari"),
+    "antminer_panel.json":   ("ANTMINER", "Pi saha verisi"),
+    "sinyal.json":           ("SINYAL",   "Yarinki sinyal"),
+    "gunluk_arsiv.json":     ("KARLILIK", "Gunluk karlilik arsivi"),
+    "son_gonderim.json":     ("WHATSAPP", "Mesaj takibi"),
+    "bekleyen_onaylar.json": ("ONAY",     "Bekleyen onaylar"),
 }
 
-def _dosya_etiketi(dosya):
-    """Dosya yolundan tur etiketleri uretir. Arsiv dosyalari ayri ele alinir."""
-    if dosya.startswith("arsiv_f2pool_"):
-        return ("📦", "Arsiv F2Pool", "havuz saatlik kayit")
-    if dosya.startswith("arsiv_cihaz_"):
-        return ("📦", "Arsiv Cihaz", "cihaz bazli saatlik kayit")
-    if dosya.startswith("arsiv_antminer_"):
-        return ("📦", "Arsiv Antminer", "Pi anlik snapshot")
-    if dosya.startswith("aylik_2026"):
-        return ("📅", "Aylik Ozet", "ay birikimleri")
-    return _DOSYA_TIPLERI.get(dosya, ("📄", "Dosya", dosya))
+def _dosya_etiketi(d):
+    if d.startswith("arsiv_f2pool_"):  return ("ARSIV", "havuz saatlik")
+    if d.startswith("arsiv_cihaz_"):   return ("ARSIV", "cihaz saatlik")
+    if d.startswith("arsiv_antminer_"):return ("ARSIV", "Pi snapshot")
+    if d.startswith("aylik_2026"):     return ("OZET",  "ay birikim")
+    return _DOSYA_TIPLERI.get(d, ("DOSYA", d))
 
 def _utc_to_tr(iso_utc):
-    """'2026-06-02T19:35:12Z' -> '2026-06-02 22:35' (TR saati, UTC+3)"""
     try:
-        # ISO format: 2026-06-02T19:35:12Z
         tarih = iso_utc.replace("Z", "+00:00")
         dt = datetime.datetime.fromisoformat(tarih)
-        # UTC+3
         tr = dt + datetime.timedelta(hours=3)
         return tr.strftime("%Y-%m-%d %H:%M")
     except:
@@ -6755,15 +6443,6 @@ def _utc_to_tr(iso_utc):
 
 @app.route("/api/rapor")
 def rapor_endpoint():
-    """Sistem aktivite raporu - GitHub commits'ten cikarir.
-    Donus:
-      {
-        sistem_saati: 'YYYY-MM-DD HH:MM',
-        olaylar: [
-          {gun: 'YYYY-MM-DD', kayitlar: [{saat, ikon, etiket, aciklama, dosya, mesaj}, ...]}
-        ]
-      }
-    """
     if "kullanici" not in session:
         return jsonify({"hata":"yetkisiz"}), 401
 
@@ -6771,11 +6450,9 @@ def rapor_endpoint():
     if _RAPOR_CACHE["veri"] and simdi - _RAPOR_CACHE["ts"] < _RAPOR_TTL:
         return jsonify(_RAPOR_CACHE["veri"])
 
-    # GitHub commits API
-    olaylar_gun = {}  # {gun: [kayit, ...]}
+    olaylar_gun = {}
     try:
-        repo = os.environ.get("GH_REPO", "ekinciomer-ai/epias-ptf")
-        url = f"https://api.github.com/repos/{repo}/commits?per_page=50"
+        url = f"https://api.github.com/repos/{GITHUB_REPO}/commits?per_page=50"
         req = urllib.request.Request(url, headers={
             "Authorization": f"token {GH_TOKEN}",
             "Accept": "application/vnd.github+json"
@@ -6785,23 +6462,20 @@ def rapor_endpoint():
 
         for c in commits:
             try:
-                commit_info = c.get("commit", {})
-                # author.date veya committer.date
-                author_date = commit_info.get("author", {}).get("date") or commit_info.get("committer", {}).get("date")
-                mesaj = commit_info.get("message", "").strip()
+                ci = c.get("commit", {})
+                author_date = ci.get("author", {}).get("date") or ci.get("committer", {}).get("date")
+                mesaj = ci.get("message", "").strip()
                 tr_zaman = _utc_to_tr(author_date)
                 if not tr_zaman:
                     continue
                 gun = tr_zaman[:10]
                 saat = tr_zaman[11:16]
 
-                # Mesajdan dosya adi cikar
-                # Tipik mesaj: "arsiv arsiv_cihaz_2026-06.json 02-06 22:33" veya "Guncelleme: 2026-06-02 22:35"
                 dosya_adi = ""
                 if mesaj.startswith("arsiv ") and ".json" in mesaj:
-                    parcalar = mesaj.split()
-                    if len(parcalar) >= 2:
-                        dosya_adi = parcalar[1]
+                    parts = mesaj.split()
+                    if len(parts) >= 2:
+                        dosya_adi = parts[1]
                 elif "aylik_ptf.json" in mesaj:
                     dosya_adi = "aylik_ptf.json"
                 elif "son_gonderim" in mesaj:
@@ -6809,77 +6483,64 @@ def rapor_endpoint():
                 elif "sinyal" in mesaj.lower():
                     dosya_adi = "sinyal.json"
 
-                # files API alani da var (bazi commitlerde)
-                # Mesajdan cikartamadiysak GitHub'in commit detayina degil, direkt commits listesindeki bilgiye bakacagiz
-                # Tahmin etmek yerine genel bir etiket koyalim
                 if dosya_adi:
-                    ikon, etiket, _ = _dosya_etiketi(dosya_adi)
+                    etiket, _ = _dosya_etiketi(dosya_adi)
                 else:
-                    ikon, etiket = "📝", "Guncelleme"
-
-                # Mesajin ilk satirini ozet olarak kullan
+                    etiket = "GUNCELLEME"
                 ozet = mesaj.split("\n")[0][:80]
+
+                author = "?"
+                if c.get("author"):
+                    author = c["author"].get("login", "?")
 
                 kayit = {
                     "saat": saat,
-                    "ikon": ikon,
+                    "ikon": "•",
                     "etiket": etiket,
                     "dosya": dosya_adi,
                     "mesaj": ozet,
-                    "author": c.get("author", {}).get("login") if c.get("author") else "?",
+                    "author": author,
                 }
                 olaylar_gun.setdefault(gun, []).append(kayit)
             except Exception as e:
-                # Tek bir commit hatasi tum listeyi bozmasin
                 print(f"commit parse hata: {e}")
                 continue
     except Exception as e:
         print(f"rapor_endpoint hata: {e}")
 
-    # Sirala: gun azalan, gun icinde saat azalan
     olaylar_liste = []
     for gun in sorted(olaylar_gun.keys(), reverse=True):
         kayitlar = sorted(olaylar_gun[gun], key=lambda x: x["saat"], reverse=True)
         olaylar_liste.append({"gun": gun, "kayitlar": kayitlar})
 
-    # Sistem saati (TR)
     tr_simdi = (datetime.datetime.utcnow() + datetime.timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S")
 
-    # OTOMASYON SAGLIK KONTROLU
-    # Komponentlerin son otomatik yazmasini commits'ten cikar.
-    # 24+ saat geciktiyse "calismiyor" uyarisi ver.
-    saglik = {}
-    simdi_dt = datetime.datetime.utcnow() + datetime.timedelta(hours=3)
-
-    # Hangi dosya hangi otomasyona ait
+    # Saglik
     OTOMASYON = {
         "EPIAS PTF (main.py)": ["sinyal.json", "son_gonderim.json", "aylik_ptf.json", "gunluk_arsiv.json"],
         "Arsiv (arsiv_kaydet.py)": ["arsiv_cihaz_", "arsiv_f2pool_", "arsiv_antminer_"],
     }
+    saglik = {}
+    simdi_dt = datetime.datetime.utcnow() + datetime.timedelta(hours=3)
 
-    # En son otomatik (bot) commitleri bul
     for ad, dosyalar in OTOMASYON.items():
         son_tarih = None
         son_dosya = None
         for grup in olaylar_liste:
             for k in grup["kayitlar"]:
-                # Bot yazimi mi
                 if k.get("author") not in ("github-actions[bot]", "github-actions"):
                     continue
-                # Hangi dosyaya yazildi
-                d = k.get("dosya", "")
-                m = k.get("mesaj", "")
+                d = k.get("dosya", "") or ""
+                m = k.get("mesaj", "") or ""
                 ilgili = False
-                for hedef in dosyalar:
-                    if hedef in d or hedef in m:
+                for h in dosyalar:
+                    if h in d or h in m:
                         ilgili = True
                         break
                 if not ilgili:
                     continue
-                # Tarih+saat birlestir
-                tarih_str = f"{grup['gun']} {k['saat']}"
                 try:
-                    dt = datetime.datetime.strptime(tarih_str, "%Y-%m-%d %H:%M")
+                    dt = datetime.datetime.strptime(grup["gun"] + " " + k["saat"], "%Y-%m-%d %H:%M")
                     if son_tarih is None or dt > son_tarih:
                         son_tarih = dt
                         son_dosya = d or m[:40]
@@ -6887,26 +6548,21 @@ def rapor_endpoint():
                     continue
 
         if son_tarih:
-            fark_saat = (simdi_dt - son_tarih).total_seconds() / 3600
-            if fark_saat < 2:
-                durum = "ok"  # son 2 saat icinde calismis
-            elif fark_saat < 26:
-                durum = "yavas"  # son gun icinde ama gecikmis
+            fark = (simdi_dt - son_tarih).total_seconds() / 3600
+            if fark < 2:
+                durum = "ok"
+            elif fark < 26:
+                durum = "yavas"
             else:
-                durum = "calismiyor"  # 24+ saat
+                durum = "calismiyor"
             saglik[ad] = {
                 "durum": durum,
                 "son_calisma": son_tarih.strftime("%Y-%m-%d %H:%M"),
-                "saat_once": round(fark_saat, 1),
+                "saat_once": round(fark, 1),
                 "son_dosya": son_dosya,
             }
         else:
-            saglik[ad] = {
-                "durum": "bilinmiyor",
-                "son_calisma": None,
-                "saat_once": None,
-                "son_dosya": None,
-            }
+            saglik[ad] = {"durum":"bilinmiyor","son_calisma":None,"saat_once":None,"son_dosya":None}
 
     sonuc = {
         "sistem_saati": tr_simdi,
@@ -6917,37 +6573,6 @@ def rapor_endpoint():
     _RAPOR_CACHE["ts"] = simdi
     _RAPOR_CACHE["veri"] = sonuc
     return jsonify(sonuc)
-
-@app.route("/api/gecmis")
-def gecmis_endpoint():
-    """Cihaz/havuz gecmis verisi. Asama 1 - ver.02.01.00
-    Parametreler:
-      mod    : saat | gun | hafta | ay | yil (varsayilan: gun)
-      bas    : YYYY-MM-DD (varsayilan: bugun - 30 gun)
-      bit    : YYYY-MM-DD (varsayilan: bugun)
-      suffix : int veya bos (tum cihazlar)
-    """
-    if "kullanici" not in session:
-        return jsonify({"hata":"yetkisiz"}), 401
-    mod = request.args.get("mod", "gun")
-    if mod not in ("saat","gun","hafta","ay","yil"):
-        return jsonify({"hata":"gecersiz mod","mod":mod}), 400
-    bugun = datetime.date.today()
-    bas = request.args.get("bas") or (bugun - datetime.timedelta(days=30)).isoformat()
-    bit = request.args.get("bit") or bugun.isoformat()
-    sfx_str = request.args.get("suffix", "").strip()
-    suffix = int(sfx_str) if sfx_str.isdigit() else None
-    try:
-        seri = gecmis_getir(mod, bas, bit, suffix)
-        kopru = kopru_uret()
-        return jsonify({
-            "mod": mod, "bas": bas, "bit": bit, "suffix": suffix,
-            "seri": seri,
-            "kopru": {str(k):v for k,v in kopru.items()},
-            "kayit": len(seri),
-        })
-    except Exception as e:
-        return jsonify({"hata":str(e),"mod":mod,"bas":bas,"bit":bit}), 500
 
 @app.route("/api/cihaz/<name>")
 def cihaz_detay(name):
@@ -6989,8 +6614,23 @@ def cihaz_detay(name):
         "gunluk_btc": cihaz_btc, "gunluk_tl": cihaz_btc * btc_try, "gunluk_usd": cihaz_btc * btc_usd
     })
 
-def _f2pool_saatlik_kaynak(gun, btc_try):
-    """F2Pool API'den saatlik veri. Sadece son ~48 saat dolu doner."""
+@app.route("/api/f2pool_saatlik")
+def f2pool_saatlik():
+    """Belirli bir gun icin saatlik hashrate + cihaz dagilimi.
+    Tum cihazlarin hashrate_history'sini toplar. F2Pool sadece son ~48 saat verir,
+    bu yuzden eski gunler bos donebilir.
+    Query: ?gun=YYYY-MM-DD
+    """
+    if "kullanici" not in session:
+        return jsonify({"hata":"yetkisiz"}), 401
+    gun = request.args.get("gun", "")
+    if not gun:
+        return jsonify({"hata":"gun parametresi gerekli"}), 400
+
+    sinyal = github_oku("sinyal.json")
+    btc_try = sinyal.get("btc_try", 0) if sinyal else 0
+
+    # Gunun toplam BTC kazancini bul (gunluk transactions'tan)
     transactions = f2pool_son_gunler(30)
     gun_btc = 0
     for t in transactions:
@@ -6999,8 +6639,11 @@ def _f2pool_saatlik_kaynak(gun, btc_try):
             gun_btc = t["changed_balance"]
             break
 
+    # Tum cihazlarin history'sini cek, saate gore topla
     workers = f2pool_workers()
+    # saatlik: { "00": {hash_top, cihazlar: {name: hash}}, ... }
     saatlik = {f"{h:02d}": {"hash_top": 0.0, "cihaz_sayisi": 0, "cihazlar": {}} for h in range(24)}
+    gun_toplam_hash = 0.0
 
     for w in workers:
         name = w["hash_rate_info"]["name"]
@@ -7008,15 +6651,17 @@ def _f2pool_saatlik_kaynak(gun, btc_try):
         if not legacy:
             continue
         hist = legacy.get("hashrate_history", {})
+        # hist: { "2026-05-21 14:00:00": hashrate_raw, ... } 10dk araliklarla
+        # Saate gore grupla (ortalama)
         saat_buf = {}
         for ts, hr in hist.items():
             if not ts.startswith(gun):
                 continue
             try:
-                saat = ts[11:13]
+                saat = ts[11:13]  # "14"
             except:
                 continue
-            saat_buf.setdefault(saat, []).append(hr / 1e12)
+            saat_buf.setdefault(saat, []).append(hr / 1e12)  # TH/s
         for saat, arr in saat_buf.items():
             if saat not in saatlik:
                 continue
@@ -7026,9 +6671,11 @@ def _f2pool_saatlik_kaynak(gun, btc_try):
                 saatlik[saat]["hash_top"] += ort
                 saatlik[saat]["cihaz_sayisi"] += 1
 
+    # Gunun toplam hash'i (saatlerin ortalamasi) - BTC dagitimi icin
     saatli_hashlar = [saatlik[f"{h:02d}"]["hash_top"] for h in range(24)]
     gun_hash_toplam = sum(saatli_hashlar)
 
+    # Her saate: tahmini BTC (hash oranina gore), tuketim hesabi frontend'de (model J/TH)
     sonuc_saatler = []
     for h in range(24):
         sk = f"{h:02d}"
@@ -7043,106 +6690,15 @@ def _f2pool_saatlik_kaynak(gun, btc_try):
             "tl": round(saat_btc * btc_try, 2),
             "cihazlar": s["cihazlar"]
         })
+
     veri_var = gun_hash_toplam > 0
-    return {
-        "veri_var": veri_var,
-        "gun_btc": gun_btc,
-        "gun_hash_ort": round(gun_hash_toplam / 24, 1) if veri_var else 0,
-        "saatler": sonuc_saatler,
-    }
-
-
-def _arsiv_saatlik_kaynak(gun, btc_try):
-    """Belirli bir gun icin saatlik veri - SADECE ARSIVDEN.
-    arsiv_cihaz_YYYY-MM.json + arsiv_f2pool_YYYY-MM.json dosyalarindan okur.
-    Cihaz kodlari (027) panel name'lerine (S19e XP Hyd-100) cevirilir.
-    Donus: {veri_var, gun_btc, gun_hash_ort, saatler:[{saat, hash, btc, tl, cihaz_sayisi, cihazlar}]}
-    """
-    ay = gun[:7]  # 2026-05
-    cihaz_ay = _gecmis_oku(f"arsiv_cihaz_{ay}.json") or {}
-    f2_ay = _gecmis_oku(f"arsiv_f2pool_{ay}.json") or {}
-    kopru = kopru_uret()
-    kod2name = {v["kod"]: v["name"] for s, v in kopru.items() if v["kod"]}
-
-    saatlik = {f"{h:02d}": {"hash_top": 0.0, "cihaz_sayisi": 0, "cihazlar": {}} for h in range(24)}
-
-    # arsiv_cihaz: cihaz bazli hashrate'leri saate gore topla
-    for anahtar, cihaz_kayit in cihaz_ay.items():
-        if not anahtar.startswith(gun):
-            continue
-        try:
-            saat = anahtar[11:13]
-        except:
-            continue
-        if saat not in saatlik:
-            continue
-        s = saatlik[saat]
-        for kod, deg in (cihaz_kayit or {}).items():
-            h = deg.get("h", 0) or 0
-            if h <= 0:
-                continue
-            name = kod2name.get(kod, kod)
-            # Ayni saatte birden fazla snapshot -> son degeri kullan
-            s["cihazlar"][name] = round(h, 2)
-
-    # Havuz toplamlari
-    for h in range(24):
-        sk = f"{h:02d}"
-        s = saatlik[sk]
-        s["hash_top"] = round(sum(s["cihazlar"].values()), 1)
-        s["cihaz_sayisi"] = len(s["cihazlar"])
-
-    # Gunun toplam BTC'si - arsiv_f2pool'dan son kayit (estimated_today)
-    gun_btc = 0
-    for anahtar in sorted(f2_ay.keys()):
-        if anahtar.startswith(gun):
-            gun_btc = f2_ay[anahtar].get("btc", 0) or gun_btc
-
-    saatli_hashlar = [saatlik[f"{h:02d}"]["hash_top"] for h in range(24)]
-    gun_hash_toplam = sum(saatli_hashlar)
-
-    sonuc_saatler = []
-    for h in range(24):
-        sk = f"{h:02d}"
-        s = saatlik[sk]
-        oran = (s["hash_top"] / gun_hash_toplam) if gun_hash_toplam > 0 else 0
-        saat_btc = gun_btc * oran
-        sonuc_saatler.append({
-            "saat": sk,
-            "hash": s["hash_top"],
-            "cihaz_sayisi": s["cihaz_sayisi"],
-            "btc": round(saat_btc, 8),
-            "tl": round(saat_btc * btc_try, 2),
-            "cihazlar": s["cihazlar"]
-        })
-    veri_var = gun_hash_toplam > 0
-    return {
-        "veri_var": veri_var,
-        "gun_btc": gun_btc,
-        "gun_hash_ort": round(gun_hash_toplam / 24, 1) if veri_var else 0,
-        "saatler": sonuc_saatler,
-    }
-
-
-@app.route("/api/f2pool_saatlik")
-def f2pool_saatlik():
-    """Belirli bir gun icin saatlik hashrate + cihaz dagilimi.
-    KAYNAK: Arsiv (arsiv_cihaz_*.json + arsiv_f2pool_*.json).
-    Arsiv her saat F2Pool ve Pi'den toplanir; panel sadece arsivi okur.
-    Query: ?gun=YYYY-MM-DD
-    """
-    if "kullanici" not in session:
-        return jsonify({"hata":"yetkisiz"}), 401
-    gun = request.args.get("gun", "")
-    if not gun:
-        return jsonify({"hata":"gun parametresi gerekli"}), 400
-    sinyal = github_oku("sinyal.json")
-    btc_try = sinyal.get("btc_try", 0) if sinyal else 0
-    veri = _arsiv_saatlik_kaynak(gun, btc_try)
     return jsonify({
         "gun": gun,
+        "veri_var": veri_var,
+        "gun_btc": gun_btc,
+        "gun_hash_ort": round(gun_hash_toplam / 24, 1) if veri_var else 0,
         "btc_kur": btc_try,
-        **veri,
+        "saatler": sonuc_saatler
     })
 
 
