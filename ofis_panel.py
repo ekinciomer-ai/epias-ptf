@@ -1965,95 +1965,6 @@ function renkSinif(v) {
 }
 
 // EPIAS mor (kapali) hücre tıklama → popup
-function epiasKapaliPopup(ptf, saat, ay, gun) {
-  // YEKDEM degerini al (ayin yekdem'i, yoksa varsayilan)
-  let yekdem = 1088.89; // varsayilan tahmini
-  let yekdemKaynak = 'varsayılan';
-  if (typeof EPIAS_YEKDEM !== 'undefined' && EPIAS_YEKDEM[ay]) {
-    const y = EPIAS_YEKDEM[ay];
-    if (y.gercek != null) { yekdem = y.gercek; yekdemKaynak = 'gerçek'; }
-    else if (y.ongoru != null) { yekdem = y.ongoru; yekdemKaynak = 'öngörü'; }
-    else if (y.tahmin != null) { yekdem = y.tahmin; yekdemKaynak = 'tahmin'; }
-  }
-
-  // Hesap sabitleri
-  const CIHAZ_SAYISI = 29;
-  const CIHAZ_GUC_W = 6000;
-  const TOPLAM_KW = CIHAZ_SAYISI * CIHAZ_GUC_W / 1000; // 174 kW
-  const VERGI = 1.035;
-  const GUNLUK_BTC_VARSAYILAN = 0.0037;
-  const SAATLIK_BTC = GUNLUK_BTC_VARSAYILAN / 24;
-
-  // BTC kur (sinyal.json'dan gelen varsa kullan)
-  const btcTry = (window.f2BtcKur && window.f2BtcKur > 0) ? window.f2BtcKur : 3500000;
-
-  // Hesaplar (TL/kWh düzeyinde)
-  const ptfKwh = ptf / 1000;
-  const yekdemKwh = yekdem / 1000;
-  const brutKwh = ptfKwh + yekdemKwh;
-  const netKwh = brutKwh * VERGI;
-  const saatlikTuketim = TOPLAM_KW; // 174 kWh / saat
-  const saatlikMaliyet = netKwh * saatlikTuketim;
-  const saatlikGelir = SAATLIK_BTC * btcTry;
-  const zarar = saatlikGelir - saatlikMaliyet;
-
-  // Popup HTML
-  const ayAd = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
-  const ayNo = parseInt(ay.slice(5,7),10) - 1;
-  const ayIsmi = (ayAd[ayNo] || ay) + ' ' + ay.slice(0,4);
-  const tarihStr = (gun ? gun + ' ' : '') + ayIsmi + ' · ' + String(saat).padStart(2,'0') + ':00';
-
-  const fmt = function(n, dec) { 
-    return n.toLocaleString('tr-TR', {minimumFractionDigits:dec||0, maximumFractionDigits:dec||0}); 
-  };
-
-  const html =
-    '<div class="modal-overlay" id="epias-popup" style="display:flex;" onclick="if(event.target.id===\'epias-popup\')document.getElementById(\'epias-popup\').remove()">' +
-    '<div class="modal" style="max-width:480px; background:linear-gradient(180deg, #1e1b3a, #0f0a1f); border:1px solid rgba(168,85,247,0.4);">' +
-    '<button onclick="document.getElementById(\'epias-popup\').remove()" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.05);border:none;color:#cbd5e1;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;">✕</button>' +
-    '<div style="padding:4px 6px 0;">' +
-    '<div style="font-size:11px; color:#a78bfa; font-weight:800; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px;">⏸ Kapalı Saat — Zarar Analizi</div>' +
-    '<div style="font-size:13px; font-weight:800; color:#fff; margin-bottom:14px;">' + tarihStr + '</div>' +
-
-    '<div style="background:rgba(124,58,237,0.10); border:1px solid rgba(168,85,247,0.3); border-radius:11px; padding:11px 13px; margin-bottom:12px;">' +
-      '<div style="font-size:10px; color:#a78bfa; font-weight:700; margin-bottom:6px;">📊 BİRİM BEDEL (TL/MWh)</div>' +
-      '<div style="display:flex; justify-content:space-between; font-size:12px; color:#cbd5e1; padding:3px 0;"><span>PTF</span><span style="font-weight:800;">' + fmt(ptf, 2) + '</span></div>' +
-      '<div style="display:flex; justify-content:space-between; font-size:12px; color:#cbd5e1; padding:3px 0;"><span>+ YEKDEM (' + yekdemKaynak + ')</span><span style="font-weight:800;">' + fmt(yekdem, 2) + '</span></div>' +
-      '<div style="display:flex; justify-content:space-between; font-size:12px; color:#cbd5e1; padding:3px 0; border-top:1px dashed rgba(255,255,255,0.1); margin-top:4px; padding-top:6px;"><span>= Brüt</span><span style="font-weight:800;">' + fmt(brutKwh*1000, 2) + '</span></div>' +
-      '<div style="display:flex; justify-content:space-between; font-size:12px; color:#cbd5e1; padding:3px 0;"><span>× 1,035 (vergi/SKB)</span><span style="font-weight:800; color:#fbbf24;">' + fmt(netKwh*1000, 2) + '</span></div>' +
-    '</div>' +
-
-    '<div style="background:rgba(220,38,38,0.10); border:1px solid rgba(239,68,68,0.3); border-radius:11px; padding:11px 13px; margin-bottom:12px;">' +
-      '<div style="font-size:10px; color:#fca5a5; font-weight:700; margin-bottom:6px;">⚡ SAATLİK MALİYET</div>' +
-      '<div style="display:flex; justify-content:space-between; font-size:12px; color:#cbd5e1; padding:3px 0;"><span>Birim (TL/kWh)</span><span style="font-weight:800;">' + fmt(netKwh, 3) + '</span></div>' +
-      '<div style="display:flex; justify-content:space-between; font-size:12px; color:#cbd5e1; padding:3px 0;"><span>× Tüketim</span><span style="font-weight:800;">' + fmt(saatlikTuketim, 0) + ' kWh</span></div>' +
-      '<div style="display:flex; justify-content:space-between; font-size:13px; color:#fff; padding:5px 0; border-top:1px dashed rgba(255,255,255,0.1); margin-top:4px;"><span style="font-weight:800;">= Saatlik Maliyet</span><span style="font-weight:900; color:#ef4444;">' + fmt(saatlikMaliyet, 0) + ' ₺</span></div>' +
-    '</div>' +
-
-    '<div style="background:rgba(34,197,94,0.10); border:1px solid rgba(34,197,94,0.3); border-radius:11px; padding:11px 13px; margin-bottom:12px;">' +
-      '<div style="font-size:10px; color:#86efac; font-weight:700; margin-bottom:6px;">₿ SAATLİK BTC GELİRİ (tahmini)</div>' +
-      '<div style="display:flex; justify-content:space-between; font-size:12px; color:#cbd5e1; padding:3px 0;"><span>Saatlik BTC</span><span style="font-weight:800;">' + (SAATLIK_BTC).toFixed(8) + '</span></div>' +
-      '<div style="display:flex; justify-content:space-between; font-size:12px; color:#cbd5e1; padding:3px 0;"><span>× BTC Kur</span><span style="font-weight:800;">' + fmt(btcTry, 0) + ' ₺</span></div>' +
-      '<div style="display:flex; justify-content:space-between; font-size:13px; color:#fff; padding:5px 0; border-top:1px dashed rgba(255,255,255,0.1); margin-top:4px;"><span style="font-weight:800;">= Saatlik Gelir</span><span style="font-weight:900; color:#22c55e;">' + fmt(saatlikGelir, 0) + ' ₺</span></div>' +
-    '</div>' +
-
-    '<div style="background:linear-gradient(135deg, rgba(239,68,68,0.15), rgba(220,38,38,0.08)); border:2px solid rgba(239,68,68,0.5); border-radius:14px; padding:14px; text-align:center;">' +
-      '<div style="font-size:11px; color:#fca5a5; font-weight:700; margin-bottom:4px;">NET SONUÇ</div>' +
-      '<div style="font-size:22px; font-weight:900; color:' + (zarar >= 0 ? '#22c55e' : '#ef4444') + ';">' + (zarar >= 0 ? '+' : '') + fmt(zarar, 0) + ' ₺</div>' +
-      '<div style="font-size:10px; color:#94a3b8; margin-top:4px;">' + (zarar < 0 ? 'Cihaz kapatılınca tasarruf' : 'Çalışıyor olsa kâr') + '</div>' +
-    '</div>' +
-
-    '<div style="font-size:9px; color:#64748b; margin-top:10px; text-align:center; line-height:1.5;">' +
-      'Formül: (PTF + YEKDEM) × 1,035 × ' + TOPLAM_KW + ' kW · BTC: ' + GUNLUK_BTC_VARSAYILAN + '/gün' +
-    '</div>' +
-
-    '</div></div></div>';
-
-  // Eski popup varsa kaldır, yenisini ekle
-  const eski = document.getElementById('epias-popup');
-  if (eski) eski.remove();
-  document.body.insertAdjacentHTML('beforeend', html);
-}
 
 function aylikRender(aylikData) {
   if (!aylikData) return;
@@ -2063,9 +1974,6 @@ function aylikRender(aylikData) {
   gunler.forEach(g => { thead += '<th>' + g + '</th>'; });
   thead += '<th class="saat-head">Ort</th></tr>';
   document.getElementById('aylik-thead').innerHTML = thead;
-  // Aktif ay (mor hücre tıklamasında kullanmak için)
-  const aktifAyEl = document.getElementById('epias-ay-secim');
-  const aktifAy = aktifAyEl ? aktifAyEl.value : '';
   let tbody = '';
   for (let saat = 0; saat < 24; saat++) {
     tbody += '<tr><td class="saat-cell">' + String(saat).padStart(2,'0') + '</td>';
@@ -2073,12 +1981,7 @@ function aylikRender(aylikData) {
     gunler.forEach(g => {
       const v = aylikData[g][saat] || 0;
       const cls = renkSinif(v);
-      // Mor (kapali) hücreler tıklanabilir → popup
-      if (cls.indexOf('kapali-cell') !== -1) {
-        tbody += '<td class="' + cls + '" style="cursor:pointer;" onclick="epiasKapaliPopup(' + v + ',' + saat + ',&quot;' + aktifAy + '&quot;,&quot;' + g + '&quot;)">' + Math.round(v) + '</td>';
-      } else {
-        tbody += '<td class="' + cls + '">' + Math.round(v) + '</td>';
-      }
+      tbody += '<td class="' + cls + '">' + Math.round(v) + '</td>';
       toplam += v; sayi++;
     });
     const ort = sayi ? toplam/sayi : 0;
