@@ -576,6 +576,25 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 .f2-kiyas-aciklama{font-size:11px;color:#64748b;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin-bottom:12px;line-height:1.5;}
 .f2-kiyas-zaman{background:transparent;border:none;color:#64748b;padding:6px 13px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
 .f2-kiyas-zaman.active{background:#d97706;color:#fff;}
+/* T2 Kiyas */
+.t2k-mod-btn{flex:1;background:transparent;border:none;color:#64748b;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+.t2k-mod-btn.active{background:#d97706;color:#fff;}
+.t2k-kart{background:#fff;border:1px solid #e2e8f0;border-radius:11px;padding:11px;}
+.t2k-kart-lbl{font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;}
+.t2k-kart-val{font-size:17px;font-weight:800;}
+.t2k-kart-sub{font-size:9px;color:#94a3b8;margin-top:2px;}
+.t2k-row{display:flex;align-items:center;padding:8px 11px;border-bottom:1px solid #f1f5f9;gap:6px;font-size:11px;}
+.t2k-row:last-child{border-bottom:none;}
+.t2k-row-h{background:#f8fafc;font-weight:800;color:#475569;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;}
+.t2k-row.a-best{background:linear-gradient(90deg,rgba(34,197,94,0.06),transparent);}
+.t2k-row.b-best{background:linear-gradient(90deg,rgba(37,99,235,0.06),transparent);}
+.t2k-tablo{background:#fff;border:1px solid #e2e8f0;border-radius:11px;overflow:hidden;}
+.t2k-cell{text-align:right;flex:1;min-width:0;}
+.t2k-cell-l{text-align:left;flex:0 0 60px;font-weight:800;color:#0f172a;}
+.t2k-rozet{font-size:9px;font-weight:800;padding:3px 7px;border-radius:8px;text-transform:uppercase;}
+.t2k-rozet.a{background:#22c55e;color:#fff;}
+.t2k-rozet.b{background:#2563eb;color:#fff;}
+.t2k-rozet.x{background:#cbd5e1;color:#475569;}
 .f2-kiyas-ozet{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;}
 .f2-kiyas-kart{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
 .f2-kiyas-kart-lbl{font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;}
@@ -767,6 +786,7 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 <div class="tab" onclick="sekme('osos', this)">🔋 OSOS</div>
 <div class="tab" onclick="sekme('inverter', this)">🌞 İnverter</div>
 <div class="tab" onclick="sekme('antminer', this)">⛏️ Antminer Saha</div>
+<div class="tab" onclick="sekme('t2kiyas', this)" style="background:linear-gradient(135deg,rgba(217,119,6,0.12),rgba(180,83,9,0.08));border-color:rgba(217,119,6,0.4);">💎 T2 Kıyas</div>
 <div class="tab" onclick="sekme('rapor', this)" style="background:linear-gradient(135deg,rgba(100,116,139,0.12),rgba(71,85,105,0.08));border-color:rgba(100,116,139,0.4);">📋 Rapor</div>
 </div>
 <div class="content">
@@ -1629,6 +1649,38 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 </div>
 <!-- ====================== FATURALANDIRMA SEKMESI SONU ====================== -->
 
+<!-- ====================== T2 KIYAS SEKMESI ====================== -->
+<div class="tab-content" id="t-t2kiyas">
+  <div style="background:linear-gradient(135deg,#fff7ed,#fef3c7);border:1px solid rgba(217,119,6,0.3);border-radius:12px;padding:12px 14px;margin-bottom:12px;">
+    <div style="font-size:13px;font-weight:800;color:#92400e;margin-bottom:4px;">💎 T2 Kıyas — Bedelli Satış vs Mining</div>
+    <div style="font-size:11px;color:#78350f;line-height:1.5;">
+      <b>A:</b> GES'i bedelliye sat (2,253679 TL/kWh)<br>
+      <b>B:</b> Mining yap — şebekeden çek (B11) veya GES'i kendin kullan (B12, şebeke pahalıysa)<br>
+      Hangisi karlı? Saat saat görelim.
+    </div>
+  </div>
+
+  <!-- Mod butonları -->
+  <div style="display:flex;gap:6px;background:#f1f5f9;border-radius:11px;padding:4px;margin-bottom:10px;">
+    <button class="t2k-mod-btn active" data-mod="saatlik" onclick="t2kModSec('saatlik', this)">Saatlik</button>
+    <button class="t2k-mod-btn" data-mod="gunluk" onclick="t2kModSec('gunluk', this)">Günlük</button>
+    <button class="t2k-mod-btn" data-mod="aylik" onclick="t2kModSec('aylik', this)">Aylık</button>
+  </div>
+
+  <!-- Tarih seçici -->
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
+    <input type="date" id="t2k-tarih" onchange="t2kRender()" style="background:#fff;border:1px solid #cbd5e1;color:#1e293b;padding:7px 11px;border-radius:9px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;flex:1;">
+    <button onclick="t2kRender()" style="font-size:11px;font-weight:700;background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff;border:none;border-radius:8px;padding:7px 13px;cursor:pointer;font-family:inherit;">Yenile</button>
+  </div>
+
+  <!-- Özet kartları -->
+  <div id="t2k-ozet" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;"></div>
+
+  <!-- Ana tablo -->
+  <div id="t2k-tablo"><div class="empty-state">Tarih seçin...</div></div>
+</div>
+<!-- ====================== T2 KIYAS SEKMESI SONU ====================== -->
+
 <!-- ====================== RAPOR SEKMESI ====================== -->
 <div class="tab-content" id="t-rapor">
   <div style="font-size:11px;color:#64748b;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin-bottom:12px;line-height:1.5;">
@@ -1746,6 +1798,7 @@ function sekme(ad, btn) {
   if (ad === 'epias') epiasYukle();
   if (ad === 'f2pool') { try { if (window.f2GunlukHam && window.f2GunlukHam.length) f2Render(); } catch(e) { console.error('f2 sekme render:', e); } }
   if (ad === 'rapor') raporYukle();
+  if (ad === 't2kiyas') t2kYukle();
 }
 
 // === RAPOR SEKMESI ===
@@ -1763,6 +1816,427 @@ function raporSaatGuncelle() {
   var ss = String(now.getSeconds()).padStart(2, '0');
   el.textContent = hh + ':' + mm + ':' + ss;
   if (sub) sub.textContent = gunler[now.getDay()] + ' ' + now.getDate() + ' ' + aylar[now.getMonth()] + ' ' + now.getFullYear();
+}
+
+// =============================================================
+// T2 KIYAS — Bedelli Satış vs Mining
+// =============================================================
+var t2kMod = 'saatlik';  // saatlik | gunluk | aylik
+
+// Sabitler (faturalandırma'dan)
+var T2K_BEDELLI = 2.253679;     // GES satış: 2.909687 - 0.656008 SKB
+var T2K_TUK_AKTIF = 2.909687;   // Sanayi tek terim aktif enerji
+var T2K_DB = 1.182457;          // Dağıtım bedeli
+var T2K_VERGI = 1.035;          // SKB+vergi
+// YEKDEM tablosu (aylık) - EPIAS_YEKDEM kullanılır
+
+function t2kYekdem(ay) {
+  // ay = "2026-06"
+  if (typeof EPIAS_YEKDEM !== 'undefined' && EPIAS_YEKDEM[ay]) {
+    var y = EPIAS_YEKDEM[ay];
+    var v = y.gercek != null ? y.gercek : (y.ongoru != null ? y.ongoru : (y.tahmin != null ? y.tahmin : 0));
+    return v / 1000;  // TL/MWh -> TL/kWh
+  }
+  return 1.088;  // varsayılan ~1.088 TL/kWh
+}
+
+function t2kModSec(mod, btn) {
+  t2kMod = mod;
+  document.querySelectorAll('.t2k-mod-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  t2kRender();
+}
+
+function t2kYukle() {
+  var t = document.getElementById('t2k-tarih');
+  if (t && !t.value) {
+    var bugun = new Date();
+    t.value = bugun.toISOString().slice(0,10);
+  }
+  t2kRender();
+}
+
+function t2kRender() {
+  if (t2kMod === 'saatlik') t2kSaatlikRender();
+  else if (t2kMod === 'gunluk') t2kGunlukRender();
+  else if (t2kMod === 'aylik') t2kAylikRender();
+}
+
+// ===== Yardımcı: Bir günün hesaplaması =====
+// Dönüş: { saatler: [{saat, ges_kwh, cekis_kwh, btc_tl, ptf, a_kar, b_kar, b_kaynak, kazanan}], toplam: {...} }
+function t2kGunHesapla(gun, ososT2, ptfAyDict, f2Saatler, btcKur) {
+  var ay = gun.slice(0, 7);
+  var gunNo = gun.slice(8, 10);
+  var yekdem = t2kYekdem(ay);
+  var ptfGun = ptfAyDict[gunNo] || [];
+  var ososGun = (ososT2 && ososT2.veri && ososT2.veri[gun]) ? ososT2.veri[gun] : {};
+
+  var saatler = [];
+  var topGes = 0, topCekis = 0, topBtcTl = 0;
+  var topA = 0, topB = 0;
+
+  for (var h = 0; h < 24; h++) {
+    var sk = String(h).padStart(2, '0');
+    var ososSaat = ososGun[sk] || {};
+    var gesKwh = ososSaat.veris || 0;
+    var cekisKwh = ososSaat.cekis || 0;
+
+    // PTF bu saat
+    var ptfRaw = ptfGun[h] !== undefined ? ptfGun[h] : 0;
+    var ptfTlKwh = ptfRaw / 1000;
+
+    // BTC bu saat (arsivden, F2Pool ile aynı)
+    var btcTl = 0;
+    if (f2Saatler && Array.isArray(f2Saatler)) {
+      var fs = f2Saatler.find(function(x){return x.saat === sk;});
+      if (fs) btcTl = fs.tl || 0;
+    }
+
+    // === A: Bedelli satış ===
+    // GES'i şebekeye sat
+    var aKar = gesKwh * T2K_BEDELLI;
+
+    // === B: Mining ===
+    // Önce şebekeden mining maliyeti hesabı (B11)
+    // Eğer cekis_kwh > 0 ise şebekeden çekiş var
+    var miningBirimMaliyet_B11 = (ptfTlKwh + yekdem) * T2K_VERGI + T2K_DB;  // TL/kWh
+    var miningBirimMaliyet_B12 = T2K_BEDELLI;  // GES kullan → fırsat maliyeti = satıştan vazgeçilen gelir
+
+    // B kaynağı: hangi senaryo o saatte aktif?
+    // Eğer şebeke maliyeti > bedelli → B12 (GES kullan, fırsat maliyeti)
+    // Değilse → B11 (şebekeden ucuz çek)
+    var bKaynak, bBirimMaliyet;
+    if (miningBirimMaliyet_B11 > T2K_BEDELLI) {
+      bKaynak = 'B12';
+      bBirimMaliyet = T2K_BEDELLI;
+    } else {
+      bKaynak = 'B11';
+      bBirimMaliyet = miningBirimMaliyet_B11;
+    }
+
+    // B karı:
+    // BTC geliri kazanılır, ama mining tüketimi maliyetlenir
+    // OSOS'taki çekiş (gerçek tüketim) bu hesabın temeli değil — burada "1 saat mining yapsam ne kâr?"
+    // Her saat için sistem hashrate'i ile o saatin tüketimi tahmini
+    // Basit yaklaşım: BTC saatlik geliri eldeyken, miningin tüketim maliyeti = OSOS çekiş × birim maliyet
+    // (yani gerçekte çekiş varsa onun maliyeti, yoksa 0)
+    var miningTukMaliyet = cekisKwh * miningBirimMaliyet_B11;  // sadece şebekeden çekiş varsa
+    var bKar = btcTl - miningTukMaliyet;
+
+    // Kazanan
+    var kazanan;
+    if (aKar === 0 && bKar === 0) kazanan = 'X';
+    else if (aKar >= bKar) kazanan = 'A';
+    else kazanan = 'B';
+
+    saatler.push({
+      saat: sk,
+      ges_kwh: gesKwh,
+      cekis_kwh: cekisKwh,
+      ptf: ptfRaw,
+      btc_tl: btcTl,
+      a_kar: aKar,
+      b_kar: bKar,
+      b_kaynak: bKaynak,
+      kazanan: kazanan,
+    });
+
+    topGes += gesKwh;
+    topCekis += cekisKwh;
+    topBtcTl += btcTl;
+    topA += aKar;
+    topB += bKar;
+  }
+
+  return {
+    saatler: saatler,
+    toplam: {
+      ges_kwh: topGes,
+      cekis_kwh: topCekis,
+      btc_tl: topBtcTl,
+      a_kar: topA,
+      b_kar: topB,
+      net: Math.max(topA, topB),
+      kazanan: topA >= topB ? 'A' : 'B',
+    }
+  };
+}
+
+// ===== Saatlik mod: 1 gün, 24 saat =====
+function t2kSaatlikRender() {
+  var tarih = document.getElementById('t2k-tarih').value;
+  if (!tarih) { document.getElementById('t2k-tablo').innerHTML = '<div class="empty-state">Tarih seçin</div>'; return; }
+
+  var tablo = document.getElementById('t2k-tablo');
+  var ozet = document.getElementById('t2k-ozet');
+  tablo.innerHTML = '<div class="empty-state">⏳ Veri çekiliyor...</div>';
+  ozet.innerHTML = '';
+
+  var ay = tarih.slice(0, 7);
+  Promise.all([
+    fetch('/api/osos_raw').then(function(r){return r.json();}).catch(function(){return {};}),
+    fetch('/api/aylik_ptf?_=' + Date.now()).then(function(r){return r.json();}).catch(function(){return {};}),
+    fetch('/api/f2pool_saatlik?gun=' + tarih).then(function(r){return r.json();}).catch(function(){return {};}),
+  ]).then(function(arr){
+    var osos = arr[0] || {};
+    var ptf = arr[1] || {};
+    var f2 = arr[2] || {};
+    var btcKur = f2.btc_kur || 0;
+    var ososT2 = osos.tekyildiz_2 || osos.t2 || {};
+    var ptfAyDict = ptf[ay] || {};
+    var f2Saatler = f2.saatler || [];
+
+    var sonuc = t2kGunHesapla(tarih, ososT2, ptfAyDict, f2Saatler, btcKur);
+
+    // Özet kartları
+    var fmt = function(n, d){return n.toLocaleString('tr-TR', {minimumFractionDigits:d||0, maximumFractionDigits:d||0});};
+    var o = '';
+    o += '<div class="t2k-kart"><div class="t2k-kart-lbl">☀️ GES Üretim</div><div class="t2k-kart-val" style="color:#16a34a;">' + fmt(sonuc.toplam.ges_kwh, 0) + '</div><div class="t2k-kart-sub">kWh (veriş)</div></div>';
+    o += '<div class="t2k-kart"><div class="t2k-kart-lbl">⚡ Şebeke Çekiş</div><div class="t2k-kart-val" style="color:#dc2626;">' + fmt(sonuc.toplam.cekis_kwh, 0) + '</div><div class="t2k-kart-sub">kWh</div></div>';
+    o += '<div class="t2k-kart"><div class="t2k-kart-lbl">A: Bedelli Satış</div><div class="t2k-kart-val" style="color:' + (sonuc.toplam.kazanan === 'A' ? '#22c55e' : '#0f172a') + ';">' + fmt(sonuc.toplam.a_kar, 0) + ' ₺</div><div class="t2k-kart-sub">veriş × 2,254 TL/kWh</div></div>';
+    o += '<div class="t2k-kart"><div class="t2k-kart-lbl">B: Mining</div><div class="t2k-kart-val" style="color:' + (sonuc.toplam.kazanan === 'B' ? '#2563eb' : '#0f172a') + ';">' + fmt(sonuc.toplam.b_kar, 0) + ' ₺</div><div class="t2k-kart-sub">BTC gelir − mining maliyet</div></div>';
+    ozet.innerHTML = o;
+
+    // Saatlik tablo
+    var h = '';
+    h += '<div class="t2k-tablo">';
+    h += '<div class="t2k-row t2k-row-h">';
+    h += '<div class="t2k-cell-l">Saat</div>';
+    h += '<div class="t2k-cell">PTF</div>';
+    h += '<div class="t2k-cell">GES</div>';
+    h += '<div class="t2k-cell">A: Satış</div>';
+    h += '<div class="t2k-cell">B: Mining</div>';
+    h += '<div class="t2k-cell" style="flex:0 0 32px;">★</div>';
+    h += '</div>';
+    sonuc.saatler.forEach(function(s){
+      var cls = s.kazanan === 'A' ? 'a-best' : (s.kazanan === 'B' ? 'b-best' : '');
+      h += '<div class="t2k-row ' + cls + '">';
+      h += '<div class="t2k-cell-l">' + s.saat + ':00</div>';
+      h += '<div class="t2k-cell" style="color:#64748b;">' + (s.ptf > 0 ? fmt(s.ptf, 0) : '−') + '</div>';
+      h += '<div class="t2k-cell" style="color:#16a34a;">' + (s.ges_kwh > 0 ? fmt(s.ges_kwh, 1) : '−') + '</div>';
+      h += '<div class="t2k-cell" style="color:' + (s.kazanan === 'A' ? '#22c55e' : '#475569') + ';font-weight:' + (s.kazanan === 'A' ? '800' : '600') + ';">' + (s.a_kar > 0 ? '+' + fmt(s.a_kar, 0) : '−') + '</div>';
+      h += '<div class="t2k-cell" style="color:' + (s.kazanan === 'B' ? '#2563eb' : (s.b_kar < 0 ? '#dc2626' : '#475569')) + ';font-weight:' + (s.kazanan === 'B' ? '800' : '600') + ';">' + (s.b_kar !== 0 ? (s.b_kar > 0 ? '+' : '') + fmt(s.b_kar, 0) : '−') + '</div>';
+      h += '<div class="t2k-cell" style="flex:0 0 32px;"><span class="t2k-rozet ' + s.kazanan.toLowerCase() + '">' + s.kazanan + '</span></div>';
+      h += '</div>';
+    });
+    h += '</div>';
+    tablo.innerHTML = h;
+  });
+}
+
+// ===== Günlük mod: Ay seçili, her gün için A/B toplamı =====
+function t2kGunlukRender() {
+  var tarih = document.getElementById('t2k-tarih').value;
+  if (!tarih) { document.getElementById('t2k-tablo').innerHTML = '<div class="empty-state">Tarih seçin</div>'; return; }
+
+  var ay = tarih.slice(0, 7);
+  var yil = parseInt(ay.slice(0, 4), 10);
+  var ayNo = parseInt(ay.slice(5, 7), 10);
+  var ayGunSay = new Date(yil, ayNo, 0).getDate();
+  var bugun = new Date().toISOString().slice(0, 10);
+
+  var tablo = document.getElementById('t2k-tablo');
+  var ozet = document.getElementById('t2k-ozet');
+  tablo.innerHTML = '<div class="empty-state">⏳ ' + ayNo + '/' + yil + ' günleri çekiliyor...</div>';
+  ozet.innerHTML = '';
+
+  // Tüm verileri tek seferde çek
+  Promise.all([
+    fetch('/api/osos_raw').then(function(r){return r.json();}).catch(function(){return {};}),
+    fetch('/api/aylik_ptf?_=' + Date.now()).then(function(r){return r.json();}).catch(function(){return {};}),
+  ]).then(function(arr){
+    var osos = arr[0] || {};
+    var ptf = arr[1] || {};
+    var ososT2 = osos.tekyildiz_2 || osos.t2 || {};
+    var ptfAyDict = ptf[ay] || {};
+
+    // Her gün için F2Pool ayrı çekilmeli (saatlik)
+    var gunler = [];
+    for (var g = 1; g <= ayGunSay; g++) {
+      var gunStr = ay + '-' + String(g).padStart(2, '0');
+      if (gunStr > bugun) break;
+      gunler.push(gunStr);
+    }
+
+    var f2Promises = gunler.map(function(g){
+      return fetch('/api/f2pool_saatlik?gun=' + g).then(function(r){return r.json();}).catch(function(){return {saatler:[]};});
+    });
+
+    Promise.all(f2Promises).then(function(f2list){
+      var gunSonuclar = [];
+      var topGes = 0, topCekis = 0, topBtc = 0, topA = 0, topB = 0;
+
+      gunler.forEach(function(gun, idx){
+        var f2 = f2list[idx] || {};
+        var sonuc = t2kGunHesapla(gun, ososT2, ptfAyDict, f2.saatler || [], f2.btc_kur || 0);
+        gunSonuclar.push({gun: gun, sonuc: sonuc.toplam});
+        topGes += sonuc.toplam.ges_kwh;
+        topCekis += sonuc.toplam.cekis_kwh;
+        topBtc += sonuc.toplam.btc_tl;
+        topA += sonuc.toplam.a_kar;
+        topB += sonuc.toplam.b_kar;
+      });
+
+      // Özet kartları
+      var fmt = function(n, d){return n.toLocaleString('tr-TR', {minimumFractionDigits:d||0, maximumFractionDigits:d||0});};
+      var ayAd = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+      var ayKazanan = topA >= topB ? 'A' : 'B';
+      var o = '';
+      o += '<div class="t2k-kart"><div class="t2k-kart-lbl">📅 ' + ayAd[ayNo-1] + ' ' + yil + '</div><div class="t2k-kart-val" style="color:#0f172a;font-size:16px;">' + gunler.length + ' gün</div><div class="t2k-kart-sub">GES: ' + fmt(topGes,0) + ' kWh</div></div>';
+      o += '<div class="t2k-kart"><div class="t2k-kart-lbl">₿ BTC Geliri</div><div class="t2k-kart-val" style="color:#d97706;">' + fmt(topBtc,0) + ' ₺</div><div class="t2k-kart-sub">Şebeke çekiş: ' + fmt(topCekis,0) + ' kWh</div></div>';
+      o += '<div class="t2k-kart"><div class="t2k-kart-lbl">A: Bedelli Toplam</div><div class="t2k-kart-val" style="color:' + (ayKazanan === 'A' ? '#22c55e' : '#0f172a') + ';">' + fmt(topA,0) + ' ₺</div></div>';
+      o += '<div class="t2k-kart"><div class="t2k-kart-lbl">B: Mining Toplam</div><div class="t2k-kart-val" style="color:' + (ayKazanan === 'B' ? '#2563eb' : '#0f172a') + ';">' + fmt(topB,0) + ' ₺</div></div>';
+      ozet.innerHTML = o;
+
+      // Günlük tablo
+      var h = '<div class="t2k-tablo">';
+      h += '<div class="t2k-row t2k-row-h">';
+      h += '<div class="t2k-cell-l">Gün</div>';
+      h += '<div class="t2k-cell">GES (kWh)</div>';
+      h += '<div class="t2k-cell">BTC (₺)</div>';
+      h += '<div class="t2k-cell">A: Satış</div>';
+      h += '<div class="t2k-cell">B: Mining</div>';
+      h += '<div class="t2k-cell" style="flex:0 0 32px;">★</div>';
+      h += '</div>';
+      gunSonuclar.forEach(function(gs){
+        var s = gs.sonuc;
+        var cls = s.kazanan === 'A' ? 'a-best' : (s.kazanan === 'B' ? 'b-best' : '');
+        var gNo = parseInt(gs.gun.slice(8, 10), 10);
+        h += '<div class="t2k-row ' + cls + '">';
+        h += '<div class="t2k-cell-l">' + gNo + '.' + ayAd[ayNo-1].slice(0,3) + '</div>';
+        h += '<div class="t2k-cell" style="color:#16a34a;">' + fmt(s.ges_kwh, 0) + '</div>';
+        h += '<div class="t2k-cell" style="color:#d97706;">' + fmt(s.btc_tl, 0) + '</div>';
+        h += '<div class="t2k-cell" style="color:' + (s.kazanan === 'A' ? '#22c55e' : '#475569') + ';font-weight:' + (s.kazanan === 'A' ? '800' : '600') + ';">' + fmt(s.a_kar, 0) + '</div>';
+        h += '<div class="t2k-cell" style="color:' + (s.kazanan === 'B' ? '#2563eb' : (s.b_kar < 0 ? '#dc2626' : '#475569')) + ';font-weight:' + (s.kazanan === 'B' ? '800' : '600') + ';">' + fmt(s.b_kar, 0) + '</div>';
+        h += '<div class="t2k-cell" style="flex:0 0 32px;"><span class="t2k-rozet ' + s.kazanan.toLowerCase() + '">' + s.kazanan + '</span></div>';
+        h += '</div>';
+      });
+      h += '</div>';
+      tablo.innerHTML = h;
+    });
+  });
+}
+
+// ===== Aylık mod: Yıl bazlı, ay ay özet =====
+function t2kAylikRender() {
+  var tarih = document.getElementById('t2k-tarih').value;
+  if (!tarih) tarih = new Date().toISOString().slice(0,10);
+  var yil = parseInt(tarih.slice(0, 4), 10);
+
+  var tablo = document.getElementById('t2k-tablo');
+  var ozet = document.getElementById('t2k-ozet');
+  tablo.innerHTML = '<div class="empty-state">⏳ ' + yil + ' yılı ayları çekiliyor (yavaş olabilir)...</div>';
+  ozet.innerHTML = '';
+
+  Promise.all([
+    fetch('/api/osos_raw').then(function(r){return r.json();}).catch(function(){return {};}),
+    fetch('/api/aylik_ptf?_=' + Date.now()).then(function(r){return r.json();}).catch(function(){return {};}),
+  ]).then(function(arr){
+    var osos = arr[0] || {};
+    var ptf = arr[1] || {};
+    var ososT2 = osos.tekyildiz_2 || osos.t2 || {};
+    var bugun = new Date().toISOString().slice(0,10);
+
+    // Her gün için F2Pool gerek; ama 12 ay = ~365 gün → çok yavaş
+    // Yaklaşım: BTC günlük gelirini OSOS'tan bağımsız, F2Pool aylık özetinden alınamaz
+    // Şimdilik basit: F2Pool olmadan A vs B-PTF tabanlı (BTC=0 sayılır)
+    var aylar = [];
+    for (var m = 1; m <= 12; m++) {
+      var ay = yil + '-' + String(m).padStart(2, '0');
+      var ayPtfDict = ptf[ay] || {};
+      if (Object.keys(ayPtfDict).length === 0) continue;
+      aylar.push(ay);
+    }
+
+    // F2Pool: her ayın her günü için çağrı (paralel ama bol)
+    var tumGunler = [];
+    aylar.forEach(function(ay){
+      var ayNo = parseInt(ay.slice(5,7), 10);
+      var ayYil = parseInt(ay.slice(0,4), 10);
+      var ayGunSay = new Date(ayYil, ayNo, 0).getDate();
+      for (var g = 1; g <= ayGunSay; g++) {
+        var gunStr = ay + '-' + String(g).padStart(2,'0');
+        if (gunStr > bugun) break;
+        tumGunler.push(gunStr);
+      }
+    });
+
+    Promise.all(tumGunler.map(function(g){
+      return fetch('/api/f2pool_saatlik?gun=' + g).then(function(r){return r.json();}).catch(function(){return {saatler:[]};});
+    })).then(function(f2list){
+      var f2map = {};
+      tumGunler.forEach(function(g, idx){f2map[g] = f2list[idx] || {saatler:[]};});
+
+      var aySonuclar = [];
+      var topGes = 0, topBtc = 0, topA = 0, topB = 0;
+
+      aylar.forEach(function(ay){
+        var ayNo = parseInt(ay.slice(5,7), 10);
+        var ayYil = parseInt(ay.slice(0,4), 10);
+        var ayGunSay = new Date(ayYil, ayNo, 0).getDate();
+        var ayPtfDict = ptf[ay] || {};
+        var ayTopGes = 0, ayTopCekis = 0, ayTopBtc = 0, ayTopA = 0, ayTopB = 0;
+        for (var g = 1; g <= ayGunSay; g++) {
+          var gunStr = ay + '-' + String(g).padStart(2,'0');
+          if (gunStr > bugun) break;
+          var f2 = f2map[gunStr] || {saatler:[]};
+          var sonuc = t2kGunHesapla(gunStr, ososT2, ayPtfDict, f2.saatler || [], f2.btc_kur || 0);
+          ayTopGes += sonuc.toplam.ges_kwh;
+          ayTopCekis += sonuc.toplam.cekis_kwh;
+          ayTopBtc += sonuc.toplam.btc_tl;
+          ayTopA += sonuc.toplam.a_kar;
+          ayTopB += sonuc.toplam.b_kar;
+        }
+        aySonuclar.push({
+          ay: ay,
+          ges_kwh: ayTopGes,
+          cekis_kwh: ayTopCekis,
+          btc_tl: ayTopBtc,
+          a_kar: ayTopA,
+          b_kar: ayTopB,
+          kazanan: ayTopA >= ayTopB ? 'A' : 'B',
+        });
+        topGes += ayTopGes;
+        topBtc += ayTopBtc;
+        topA += ayTopA;
+        topB += ayTopB;
+      });
+
+      var fmt = function(n, d){return n.toLocaleString('tr-TR', {minimumFractionDigits:d||0, maximumFractionDigits:d||0});};
+      var yilKazanan = topA >= topB ? 'A' : 'B';
+      var o = '';
+      o += '<div class="t2k-kart"><div class="t2k-kart-lbl">📅 ' + yil + ' Yılı</div><div class="t2k-kart-val" style="color:#0f172a;font-size:16px;">' + aylar.length + ' ay</div><div class="t2k-kart-sub">GES: ' + fmt(topGes,0) + ' kWh</div></div>';
+      o += '<div class="t2k-kart"><div class="t2k-kart-lbl">₿ BTC Geliri</div><div class="t2k-kart-val" style="color:#d97706;">' + fmt(topBtc,0) + ' ₺</div></div>';
+      o += '<div class="t2k-kart"><div class="t2k-kart-lbl">A: Bedelli Yıllık</div><div class="t2k-kart-val" style="color:' + (yilKazanan === 'A' ? '#22c55e' : '#0f172a') + ';">' + fmt(topA,0) + ' ₺</div></div>';
+      o += '<div class="t2k-kart"><div class="t2k-kart-lbl">B: Mining Yıllık</div><div class="t2k-kart-val" style="color:' + (yilKazanan === 'B' ? '#2563eb' : '#0f172a') + ';">' + fmt(topB,0) + ' ₺</div></div>';
+      ozet.innerHTML = o;
+
+      var ayAd = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+      var h = '<div class="t2k-tablo">';
+      h += '<div class="t2k-row t2k-row-h">';
+      h += '<div class="t2k-cell-l">Ay</div>';
+      h += '<div class="t2k-cell">GES (kWh)</div>';
+      h += '<div class="t2k-cell">BTC (₺)</div>';
+      h += '<div class="t2k-cell">A: Satış</div>';
+      h += '<div class="t2k-cell">B: Mining</div>';
+      h += '<div class="t2k-cell" style="flex:0 0 32px;">★</div>';
+      h += '</div>';
+      aySonuclar.forEach(function(s){
+        var cls = s.kazanan === 'A' ? 'a-best' : 'b-best';
+        var ayN = parseInt(s.ay.slice(5,7), 10);
+        h += '<div class="t2k-row ' + cls + '">';
+        h += '<div class="t2k-cell-l">' + ayAd[ayN-1].slice(0,3) + '</div>';
+        h += '<div class="t2k-cell" style="color:#16a34a;">' + fmt(s.ges_kwh, 0) + '</div>';
+        h += '<div class="t2k-cell" style="color:#d97706;">' + fmt(s.btc_tl, 0) + '</div>';
+        h += '<div class="t2k-cell" style="color:' + (s.kazanan === 'A' ? '#22c55e' : '#475569') + ';font-weight:' + (s.kazanan === 'A' ? '800' : '600') + ';">' + fmt(s.a_kar, 0) + '</div>';
+        h += '<div class="t2k-cell" style="color:' + (s.kazanan === 'B' ? '#2563eb' : (s.b_kar < 0 ? '#dc2626' : '#475569')) + ';font-weight:' + (s.kazanan === 'B' ? '800' : '600') + ';">' + fmt(s.b_kar, 0) + '</div>';
+        h += '<div class="t2k-cell" style="flex:0 0 32px;"><span class="t2k-rozet ' + s.kazanan.toLowerCase() + '">' + s.kazanan + '</span></div>';
+        h += '</div>';
+      });
+      h += '</div>';
+      tablo.innerHTML = h;
+    });
+  });
 }
 
 function raporYukle() {
