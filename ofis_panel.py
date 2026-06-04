@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 17
+PANEL_VERSIYON_BUILD = 18
 
 def _panel_tarih():
     try:
@@ -1823,6 +1823,7 @@ function raporYukle() {
         let dbg = '<div style="background:#1e293b;border:1px solid ' + renkDbg + ';color:#cbd5e1;padding:10px 12px;border-radius:10px;margin-bottom:10px;font-size:11px;line-height:1.5;font-family:monospace;">';
         dbg += '<div style="color:' + renkDbg + ';font-weight:800;margin-bottom:4px;">🔍 DEBUG (rapor endpoint)</div>';
         dbg += 'Token: ' + (dbug.token_var_mi ? '✓ tanımlı' : '✗ TANIMLI DEĞİL') + '<br>';
+        if (dbug.token_tip) dbg += 'Token tipi: ' + dbug.token_tip + ' (' + (dbug.token_onek || '') + ')<br>';
         dbg += 'Repo: ' + dbug.repo + '<br>';
         dbg += 'Çekilen commit sayısı: ' + dbug.commit_say + '<br>';
         if (dbug.hata) dbg += '<span style="color:#fca5a5;font-weight:700;">Hata: ' + dbug.hata + '</span>';
@@ -6650,21 +6651,29 @@ def rapor_endpoint():
             debug_hata = "GH_TOKEN tanımlı değil (Railway ortam değişkeni)"
             raise RuntimeError(debug_hata)
         url = f"https://api.github.com/repos/{GITHUB_REPO}/commits?per_page=50"
-        req = urllib.request.Request(url, headers={
-            "Authorization": f"Bearer {GH_TOKEN}",
-            "Accept": "application/vnd.github+json",
-            "User-Agent": "otocoin-panel"
-        })
-        try:
-            with urllib.request.urlopen(req, timeout=15) as r:
-                commits = json.loads(r.read())
-                debug_commit_say = len(commits) if isinstance(commits, list) else 0
-        except urllib.error.HTTPError as he:
-            debug_hata = f"GitHub API hatası: {he.code} {he.reason}"
-            raise
-        except Exception as ge:
-            debug_hata = f"GitHub bağlantı hatası: {str(ge)[:100]}"
-            raise
+        commits = None
+        # Hem Bearer hem token formatini dene (PAT tipine gore farkli kabul edilir)
+        for auth_prefix in ("Bearer", "token"):
+            try:
+                req = urllib.request.Request(url, headers={
+                    "Authorization": f"{auth_prefix} {GH_TOKEN}",
+                    "Accept": "application/vnd.github+json",
+                    "User-Agent": "otocoin-panel"
+                })
+                with urllib.request.urlopen(req, timeout=15) as r:
+                    commits = json.loads(r.read())
+                    debug_commit_say = len(commits) if isinstance(commits, list) else 0
+                debug_hata = None
+                break  # Basarili, dongu sonlandir
+            except urllib.error.HTTPError as he:
+                debug_hata = f"GitHub API hatası ({auth_prefix}): {he.code} {he.reason}"
+                continue  # Diger formati dene
+            except Exception as ge:
+                debug_hata = f"GitHub bağlantı hatası: {str(ge)[:100]}"
+                break
+
+        if commits is None:
+            raise RuntimeError(debug_hata or "Bilinmeyen hata")
 
         for c in commits:
             try:
@@ -6770,6 +6779,23 @@ def rapor_endpoint():
         else:
             saglik[ad] = {"durum":"bilinmiyor","son_calisma":None,"saat_once":None,"son_dosya":None}
 
+    # Token tip bilgisi (sadece ilk birkac karakter - guvenlik icin tamami degil)
+    token_tip = "?"
+    token_onek = ""
+    if GH_TOKEN:
+        if GH_TOKEN.startswith("ghp_"):
+            token_tip = "Classic PAT"
+            token_onek = "ghp_..."
+        elif GH_TOKEN.startswith("github_pat_"):
+            token_tip = "Fine-grained PAT"
+            token_onek = "github_pat_..."
+        elif GH_TOKEN.startswith("ghs_"):
+            token_tip = "GitHub App"
+            token_onek = "ghs_..."
+        else:
+            token_tip = "Bilinmiyor"
+            token_onek = GH_TOKEN[:6] + "..."
+
     sonuc = {
         "sistem_saati": tr_simdi,
         "olaylar": olaylar_liste,
@@ -6779,6 +6805,8 @@ def rapor_endpoint():
             "commit_say": debug_commit_say,
             "hata": debug_hata,
             "token_var_mi": bool(GH_TOKEN),
+            "token_tip": token_tip,
+            "token_onek": token_onek,
             "repo": GITHUB_REPO,
         }
     }
