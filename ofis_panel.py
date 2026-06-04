@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 20
+PANEL_VERSIYON_BUILD = 21
 
 def _panel_tarih():
     try:
@@ -126,31 +126,31 @@ ICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
 </svg>"""
 
 def github_oku(dosya):
-    """GitHub'dan dosya oku - GitHub API uzerinden (CDN cache problemi olmasin diye).
-    Cache YOK - her cagrida fresh fetch."""
-    if not GH_TOKEN:
-        # Token yoksa fallback CDN
-        try:
-            with urllib.request.urlopen(f"{GITHUB_RAW}/{dosya}", timeout=15) as r:
-                return json.loads(r.read())
-        except:
-            return None
+    """Public repo - ONCE CDN dene (token gerekmez), basarisizsa token ile API dene."""
+    # 1. Once CDN (public repo, token gerekmiyor)
     try:
-        import base64
-        api_url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{dosya}"
-        req = urllib.request.Request(api_url, headers={
-            "Authorization": f"Bearer {GH_TOKEN}",
-            "Accept": "application/vnd.github+json",
-        })
-        with urllib.request.urlopen(req, timeout=15) as r:
-            data = json.loads(r.read())
-            icerik_b64 = data.get("content", "")
-            if not icerik_b64:
-                return None
-            icerik = base64.b64decode(icerik_b64).decode("utf-8")
-            return json.loads(icerik)
+        with urllib.request.urlopen(f"{GITHUB_RAW}/{dosya}", timeout=15) as r:
+            return json.loads(r.read())
     except:
-        return None
+        pass
+    # 2. CDN basarisizsa ve token varsa, API ile dene
+    if GH_TOKEN:
+        try:
+            import base64
+            api_url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{dosya}"
+            req = urllib.request.Request(api_url, headers={
+                "Authorization": f"Bearer {GH_TOKEN}",
+                "Accept": "application/vnd.github+json",
+            })
+            with urllib.request.urlopen(req, timeout=15) as r:
+                data = json.loads(r.read())
+                icerik_b64 = data.get("content", "")
+                if icerik_b64:
+                    icerik = base64.b64decode(icerik_b64).decode("utf-8")
+                    return json.loads(icerik)
+        except:
+            pass
+    return None
 
 
 def github_yaz(dosya, payload):
