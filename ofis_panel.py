@@ -155,7 +155,7 @@ def github_oku(dosya):
                 "Authorization": f"Bearer {GH_TOKEN}",
                 "Accept": "application/vnd.github+json",
             })
-            with urllib.request.urlopen(req, timeout=10) as r:
+            with urllib.request.urlopen(req, timeout=3) as r:
                 data = json.loads(r.read())
                 icerik_b64 = data.get("content", "")
                 if icerik_b64:
@@ -185,7 +185,7 @@ def github_yaz(dosya, payload):
                 "Authorization": f"Bearer {GH_TOKEN}",
                 "Accept": "application/vnd.github+json",
             })
-            with urllib.request.urlopen(req, timeout=10) as r:
+            with urllib.request.urlopen(req, timeout=3) as r:
                 sha = json.loads(r.read()).get("sha")
         except:
             pass
@@ -218,7 +218,7 @@ def f2pool_post(endpoint, body):
         data = json.dumps(body).encode()
         req = urllib.request.Request(f"https://api.f2pool.com/v2/{endpoint}",
             data=data, headers={"Content-Type":"application/json", "F2P-API-SECRET":F2POOL_TOKEN}, method="POST")
-        with urllib.request.urlopen(req, timeout=10) as r:
+        with urllib.request.urlopen(req, timeout=3) as r:
             return json.loads(r.read())
     except:
         return None
@@ -227,7 +227,7 @@ def f2pool_legacy(path):
     try:
         req = urllib.request.Request(f"https://api.f2pool.com/{path}",
             headers={"F2P-API-SECRET":F2POOL_TOKEN})
-        with urllib.request.urlopen(req, timeout=10) as r:
+        with urllib.request.urlopen(req, timeout=3) as r:
             return json.loads(r.read())
     except:
         return None
