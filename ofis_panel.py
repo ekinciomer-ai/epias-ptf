@@ -137,30 +137,45 @@ ICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
 def github_oku(dosya):
     """GitHub'dan dosya oku. API kullanir (raw.githubusercontent CDN'den degil)
     cunku CDN ~5 dk cache yapar - cron yazdiktan sonra panel hala eski veriyi gorur.
-    API her zaman anlik veri verir."""
+    Bellek cache: 60sn (panel her acilista 10+ dosya okumasin diye)."""
+    import time as _time
+    # Cache kontrol
+    if not hasattr(github_oku, "_cache"):
+        github_oku._cache = {}
+    simdi = _time.time()
+    if dosya in github_oku._cache:
+        ts, veri = github_oku._cache[dosya]
+        if simdi - ts < 60:
+            return veri
+
+    sonuc = None
     if not GH_TOKEN:
         # Token yoksa fallback olarak raw CDN dene (gec olur ama hicbir sey olmamasindan iyidir)
         try:
-            with urllib.request.urlopen(f"{GITHUB_RAW}/{dosya}", timeout=15) as r:
-                return json.loads(r.read())
+            with urllib.request.urlopen(f"{GITHUB_RAW}/{dosya}", timeout=10) as r:
+                sonuc = json.loads(r.read())
         except:
-            return None
-    try:
-        import base64
-        api_url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{dosya}"
-        req = urllib.request.Request(api_url, headers={
-            "Authorization": f"Bearer {GH_TOKEN}",
-            "Accept": "application/vnd.github+json",
-        })
-        with urllib.request.urlopen(req, timeout=15) as r:
-            data = json.loads(r.read())
-            icerik_b64 = data.get("content", "")
-            if not icerik_b64:
-                return None
-            icerik = base64.b64decode(icerik_b64).decode("utf-8")
-            return json.loads(icerik)
-    except:
-        return None
+            sonuc = None
+    else:
+        try:
+            import base64
+            api_url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{dosya}"
+            req = urllib.request.Request(api_url, headers={
+                "Authorization": f"Bearer {GH_TOKEN}",
+                "Accept": "application/vnd.github+json",
+            })
+            with urllib.request.urlopen(req, timeout=10) as r:
+                data = json.loads(r.read())
+                icerik_b64 = data.get("content", "")
+                if icerik_b64:
+                    icerik = base64.b64decode(icerik_b64).decode("utf-8")
+                    sonuc = json.loads(icerik)
+        except:
+            sonuc = None
+
+    # Cache'e yaz (None bile olsa - tekrar tekrar denemesin)
+    github_oku._cache[dosya] = (simdi, sonuc)
+    return sonuc
 
 
 def github_yaz(dosya, payload):
