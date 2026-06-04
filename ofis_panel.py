@@ -10,7 +10,7 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-PANEL_VERSIYON = "ver.02.01.1"
+_PANEL_VERSIYON_ANA = "ver.02.01.1"
 def _panel_tarih():
     try:
         import os as _os, datetime as _dt
@@ -19,6 +19,22 @@ def _panel_tarih():
         return tr.strftime("%d.%m.%Y %H:%M")
     except Exception:
         return "?"
+def _panel_build():
+    """Dosya save zamanindan otomatik build numarasi.
+    Format: ·b{gun_no}{dakika}
+    Ornek: 5 Haziran 14:23 -> b156823 (gun no + dakika)
+    Her save'de mtime degisir → numara degisir. Manuel sayma yok."""
+    try:
+        import os as _os, datetime as _dt
+        ts = _os.path.getmtime(__file__)
+        tr = _dt.datetime.utcfromtimestamp(ts) + _dt.timedelta(hours=3)
+        # Yilin gun numarasi (1-366) + saat*60+dakika
+        gun_no = tr.timetuple().tm_yday
+        dakika = tr.hour * 60 + tr.minute
+        return f"b{gun_no}{dakika:04d}"
+    except Exception:
+        return "b0"
+PANEL_VERSIYON = f"{_PANEL_VERSIYON_ANA}·{_panel_build()}"
 PANEL_VERSIYON_TARIH = _panel_tarih()
 
 # Sistem bilesenleri - her biri kendi son guncellemesini tutar
@@ -119,9 +135,30 @@ ICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
 </svg>"""
 
 def github_oku(dosya):
+    """GitHub'dan dosya oku. API kullanir (raw.githubusercontent CDN'den degil)
+    cunku CDN ~5 dk cache yapar - cron yazdiktan sonra panel hala eski veriyi gorur.
+    API her zaman anlik veri verir."""
+    if not GH_TOKEN:
+        # Token yoksa fallback olarak raw CDN dene (gec olur ama hicbir sey olmamasindan iyidir)
+        try:
+            with urllib.request.urlopen(f"{GITHUB_RAW}/{dosya}", timeout=15) as r:
+                return json.loads(r.read())
+        except:
+            return None
     try:
-        with urllib.request.urlopen(f"{GITHUB_RAW}/{dosya}", timeout=15) as r:
-            return json.loads(r.read())
+        import base64
+        api_url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{dosya}"
+        req = urllib.request.Request(api_url, headers={
+            "Authorization": f"Bearer {GH_TOKEN}",
+            "Accept": "application/vnd.github+json",
+        })
+        with urllib.request.urlopen(req, timeout=15) as r:
+            data = json.loads(r.read())
+            icerik_b64 = data.get("content", "")
+            if not icerik_b64:
+                return None
+            icerik = base64.b64decode(icerik_b64).decode("utf-8")
+            return json.loads(icerik)
     except:
         return None
 
@@ -1773,6 +1810,19 @@ function raporYukle() {
         sagHtml += '</div>';
       }
       sagKon.innerHTML = sagHtml;
+      // Debug satırı kartların altına ekle
+      if (d.debug) {
+        const dbug = d.debug;
+        const renkDbg = (dbug.hata || dbug.commit_say === 0) ? '#ef4444' : '#22c55e';
+        let dbg = '<div style="background:#1e293b;border:1px solid ' + renkDbg + ';color:#cbd5e1;padding:10px 12px;border-radius:10px;margin-bottom:10px;font-size:11px;line-height:1.5;font-family:monospace;">';
+        dbg += '<div style="color:' + renkDbg + ';font-weight:800;margin-bottom:4px;">🔍 DEBUG (rapor endpoint)</div>';
+        dbg += 'Token: ' + (dbug.token_var_mi ? '✓ tanımlı' : '✗ TANIMLI DEĞİL') + '<br>';
+        dbg += 'Repo: ' + dbug.repo + '<br>';
+        dbg += 'Çekilen commit sayısı: ' + dbug.commit_say + '<br>';
+        if (dbug.hata) dbg += '<span style="color:#fca5a5;font-weight:700;">Hata: ' + dbug.hata + '</span>';
+        dbg += '</div>';
+        sagKon.insertAdjacentHTML('beforeend', dbg);
+      }
     }
     // Olaylar listesi
     if (!d.olaylar || d.olaylar.length === 0) {
@@ -1912,31 +1962,35 @@ function ay_fmt(v) {
 async function epiasYukle() {
   // 0. YEKDEM kartlarini render et
   yekdemKartlariRender();
-  
-  // 1. PTF Dropdown'u doldur (eger doluysa atla)
+
+  // 1. PTF Dropdown'u doldur - HER SEKME ACILISINDA YENIDEN CEK
+  // Cron yazdigi yeni gunleri gormek icin cache yapmiyoruz
   const sel = document.getElementById('epias-ay-secim');
-  if (!epiasPtfData) {
-    try {
-      const r = await fetch('/api/aylik_ptf?_=' + Date.now());
-      if (r.ok) epiasPtfData = await r.json();
-      else epiasPtfData = {};
-    } catch (e) {
-      console.error('EPIAS PTF cekilemedi:', e);
-      epiasPtfData = {};
-    }
-    // Dropdown'u doldur - en yeni ay ustte
-    const aylar = Object.keys(epiasPtfData).sort().reverse();
-    if (aylar.length === 0) {
-      sel.innerHTML = '<option value="">Veri yok</option>';
-      return;
-    }
-    const ayIsim = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
-    sel.innerHTML = aylar.map(function(ay) {
-      const yil = ay.substring(0, 4);
-      const a = parseInt(ay.substring(5, 7), 10) - 1;
-      return '<option value="' + ay + '">' + ayIsim[a] + ' ' + yil + '</option>';
-    }).join('');
-    // Otomatik guncel ay sec
+  try {
+    const r = await fetch('/api/aylik_ptf?_=' + Date.now());
+    if (r.ok) epiasPtfData = await r.json();
+    else epiasPtfData = epiasPtfData || {};
+  } catch (e) {
+    console.error('EPIAS PTF cekilemedi:', e);
+    epiasPtfData = epiasPtfData || {};
+  }
+  // Dropdown'u doldur - en yeni ay ustte
+  const aylar = Object.keys(epiasPtfData).sort().reverse();
+  if (aylar.length === 0) {
+    sel.innerHTML = '<option value="">Veri yok</option>';
+    return;
+  }
+  const mevcutSecim = sel.value;
+  const ayIsim = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  sel.innerHTML = aylar.map(function(ay) {
+    const yil = ay.substring(0, 4);
+    const a = parseInt(ay.substring(5, 7), 10) - 1;
+    return '<option value="' + ay + '">' + ayIsim[a] + ' ' + yil + '</option>';
+  }).join('');
+  // Onceki secim varsa onu koru, yoksa guncel ay
+  if (mevcutSecim && aylar.indexOf(mevcutSecim) !== -1) {
+    sel.value = mevcutSecim;
+  } else {
     const bugun = new Date();
     const gunAy = bugun.getFullYear() + '-' + String(bugun.getMonth() + 1).padStart(2, '0');
     if (aylar.indexOf(gunAy) !== -1) sel.value = gunAy;
@@ -1965,6 +2019,95 @@ function renkSinif(v) {
 }
 
 // EPIAS mor (kapali) hücre tıklama → popup
+function epiasKapaliPopup(ptf, saat, ay, gun) {
+  // YEKDEM degerini al (ayin yekdem'i, yoksa varsayilan)
+  let yekdem = 1088.89; // varsayilan tahmini
+  let yekdemKaynak = 'varsayılan';
+  if (typeof EPIAS_YEKDEM !== 'undefined' && EPIAS_YEKDEM[ay]) {
+    const y = EPIAS_YEKDEM[ay];
+    if (y.gercek != null) { yekdem = y.gercek; yekdemKaynak = 'gerçek'; }
+    else if (y.ongoru != null) { yekdem = y.ongoru; yekdemKaynak = 'öngörü'; }
+    else if (y.tahmin != null) { yekdem = y.tahmin; yekdemKaynak = 'tahmin'; }
+  }
+
+  // Hesap sabitleri
+  const CIHAZ_SAYISI = 29;
+  const CIHAZ_GUC_W = 6000;
+  const TOPLAM_KW = CIHAZ_SAYISI * CIHAZ_GUC_W / 1000; // 174 kW
+  const VERGI = 1.035;
+  const GUNLUK_BTC_VARSAYILAN = 0.0037;
+  const SAATLIK_BTC = GUNLUK_BTC_VARSAYILAN / 24;
+
+  // BTC kur (sinyal.json'dan gelen varsa kullan)
+  const btcTry = (window.f2BtcKur && window.f2BtcKur > 0) ? window.f2BtcKur : 3500000;
+
+  // Hesaplar (TL/kWh düzeyinde)
+  const ptfKwh = ptf / 1000;
+  const yekdemKwh = yekdem / 1000;
+  const brutKwh = ptfKwh + yekdemKwh;
+  const netKwh = brutKwh * VERGI;
+  const saatlikTuketim = TOPLAM_KW; // 174 kWh / saat
+  const saatlikMaliyet = netKwh * saatlikTuketim;
+  const saatlikGelir = SAATLIK_BTC * btcTry;
+  const zarar = saatlikGelir - saatlikMaliyet;
+
+  // Popup HTML
+  const ayAd = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  const ayNo = parseInt(ay.slice(5,7),10) - 1;
+  const ayIsmi = (ayAd[ayNo] || ay) + ' ' + ay.slice(0,4);
+  const tarihStr = (gun ? gun + ' ' : '') + ayIsmi + ' · ' + String(saat).padStart(2,'0') + ':00';
+
+  const fmt = function(n, dec) { 
+    return n.toLocaleString('tr-TR', {minimumFractionDigits:dec||0, maximumFractionDigits:dec||0}); 
+  };
+
+  const html =
+    '<div class="modal-overlay" id="epias-popup" style="display:flex;" onclick="if(event.target.id===\'epias-popup\')document.getElementById(\'epias-popup\').remove()">' +
+    '<div class="modal" style="max-width:480px; background:linear-gradient(180deg, #1e1b3a, #0f0a1f); border:1px solid rgba(168,85,247,0.4);">' +
+    '<button onclick="document.getElementById(\'epias-popup\').remove()" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.05);border:none;color:#cbd5e1;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;">✕</button>' +
+    '<div style="padding:4px 6px 0;">' +
+    '<div style="font-size:11px; color:#a78bfa; font-weight:800; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px;">⏸ Kapalı Saat — Zarar Analizi</div>' +
+    '<div style="font-size:13px; font-weight:800; color:#fff; margin-bottom:14px;">' + tarihStr + '</div>' +
+
+    '<div style="background:rgba(124,58,237,0.10); border:1px solid rgba(168,85,247,0.3); border-radius:11px; padding:11px 13px; margin-bottom:12px;">' +
+      '<div style="font-size:10px; color:#a78bfa; font-weight:700; margin-bottom:6px;">📊 BİRİM BEDEL (TL/MWh)</div>' +
+      '<div style="display:flex; justify-content:space-between; font-size:12px; color:#cbd5e1; padding:3px 0;"><span>PTF</span><span style="font-weight:800;">' + fmt(ptf, 2) + '</span></div>' +
+      '<div style="display:flex; justify-content:space-between; font-size:12px; color:#cbd5e1; padding:3px 0;"><span>+ YEKDEM (' + yekdemKaynak + ')</span><span style="font-weight:800;">' + fmt(yekdem, 2) + '</span></div>' +
+      '<div style="display:flex; justify-content:space-between; font-size:12px; color:#cbd5e1; padding:3px 0; border-top:1px dashed rgba(255,255,255,0.1); margin-top:4px; padding-top:6px;"><span>= Brüt</span><span style="font-weight:800;">' + fmt(brutKwh*1000, 2) + '</span></div>' +
+      '<div style="display:flex; justify-content:space-between; font-size:12px; color:#cbd5e1; padding:3px 0;"><span>× 1,035 (vergi/SKB)</span><span style="font-weight:800; color:#fbbf24;">' + fmt(netKwh*1000, 2) + '</span></div>' +
+    '</div>' +
+
+    '<div style="background:rgba(220,38,38,0.10); border:1px solid rgba(239,68,68,0.3); border-radius:11px; padding:11px 13px; margin-bottom:12px;">' +
+      '<div style="font-size:10px; color:#fca5a5; font-weight:700; margin-bottom:6px;">⚡ SAATLİK MALİYET</div>' +
+      '<div style="display:flex; justify-content:space-between; font-size:12px; color:#cbd5e1; padding:3px 0;"><span>Birim (TL/kWh)</span><span style="font-weight:800;">' + fmt(netKwh, 3) + '</span></div>' +
+      '<div style="display:flex; justify-content:space-between; font-size:12px; color:#cbd5e1; padding:3px 0;"><span>× Tüketim</span><span style="font-weight:800;">' + fmt(saatlikTuketim, 0) + ' kWh</span></div>' +
+      '<div style="display:flex; justify-content:space-between; font-size:13px; color:#fff; padding:5px 0; border-top:1px dashed rgba(255,255,255,0.1); margin-top:4px;"><span style="font-weight:800;">= Saatlik Maliyet</span><span style="font-weight:900; color:#ef4444;">' + fmt(saatlikMaliyet, 0) + ' ₺</span></div>' +
+    '</div>' +
+
+    '<div style="background:rgba(34,197,94,0.10); border:1px solid rgba(34,197,94,0.3); border-radius:11px; padding:11px 13px; margin-bottom:12px;">' +
+      '<div style="font-size:10px; color:#86efac; font-weight:700; margin-bottom:6px;">₿ SAATLİK BTC GELİRİ (tahmini)</div>' +
+      '<div style="display:flex; justify-content:space-between; font-size:12px; color:#cbd5e1; padding:3px 0;"><span>Saatlik BTC</span><span style="font-weight:800;">' + (SAATLIK_BTC).toFixed(8) + '</span></div>' +
+      '<div style="display:flex; justify-content:space-between; font-size:12px; color:#cbd5e1; padding:3px 0;"><span>× BTC Kur</span><span style="font-weight:800;">' + fmt(btcTry, 0) + ' ₺</span></div>' +
+      '<div style="display:flex; justify-content:space-between; font-size:13px; color:#fff; padding:5px 0; border-top:1px dashed rgba(255,255,255,0.1); margin-top:4px;"><span style="font-weight:800;">= Saatlik Gelir</span><span style="font-weight:900; color:#22c55e;">' + fmt(saatlikGelir, 0) + ' ₺</span></div>' +
+    '</div>' +
+
+    '<div style="background:linear-gradient(135deg, rgba(239,68,68,0.15), rgba(220,38,38,0.08)); border:2px solid rgba(239,68,68,0.5); border-radius:14px; padding:14px; text-align:center;">' +
+      '<div style="font-size:11px; color:#fca5a5; font-weight:700; margin-bottom:4px;">NET SONUÇ</div>' +
+      '<div style="font-size:22px; font-weight:900; color:' + (zarar >= 0 ? '#22c55e' : '#ef4444') + ';">' + (zarar >= 0 ? '+' : '') + fmt(zarar, 0) + ' ₺</div>' +
+      '<div style="font-size:10px; color:#94a3b8; margin-top:4px;">' + (zarar < 0 ? 'Cihaz kapatılınca tasarruf' : 'Çalışıyor olsa kâr') + '</div>' +
+    '</div>' +
+
+    '<div style="font-size:9px; color:#64748b; margin-top:10px; text-align:center; line-height:1.5;">' +
+      'Formül: (PTF + YEKDEM) × 1,035 × ' + TOPLAM_KW + ' kW · BTC: ' + GUNLUK_BTC_VARSAYILAN + '/gün' +
+    '</div>' +
+
+    '</div></div></div>';
+
+  // Eski popup varsa kaldır, yenisini ekle
+  const eski = document.getElementById('epias-popup');
+  if (eski) eski.remove();
+  document.body.insertAdjacentHTML('beforeend', html);
+}
 
 function aylikRender(aylikData) {
   if (!aylikData) return;
@@ -1974,6 +2117,9 @@ function aylikRender(aylikData) {
   gunler.forEach(g => { thead += '<th>' + g + '</th>'; });
   thead += '<th class="saat-head">Ort</th></tr>';
   document.getElementById('aylik-thead').innerHTML = thead;
+  // Aktif ay (mor hücre tıklamasında kullanmak için)
+  const aktifAyEl = document.getElementById('epias-ay-secim');
+  const aktifAy = aktifAyEl ? aktifAyEl.value : '';
   let tbody = '';
   for (let saat = 0; saat < 24; saat++) {
     tbody += '<tr><td class="saat-cell">' + String(saat).padStart(2,'0') + '</td>';
@@ -1981,7 +2127,12 @@ function aylikRender(aylikData) {
     gunler.forEach(g => {
       const v = aylikData[g][saat] || 0;
       const cls = renkSinif(v);
-      tbody += '<td class="' + cls + '">' + Math.round(v) + '</td>';
+      // Mor (kapali) hücreler tıklanabilir → popup
+      if (cls.indexOf('kapali-cell') !== -1) {
+        tbody += '<td class="' + cls + '" style="cursor:pointer;" onclick="epiasKapaliPopup(' + v + ',' + saat + ',&quot;' + aktifAy + '&quot;,&quot;' + g + '&quot;)">' + Math.round(v) + '</td>';
+      } else {
+        tbody += '<td class="' + cls + '">' + Math.round(v) + '</td>';
+      }
       toplam += v; sayi++;
     });
     const ort = sayi ? toplam/sayi : 0;
@@ -6585,14 +6736,28 @@ def rapor_endpoint():
         return jsonify(_RAPOR_CACHE["veri"])
 
     olaylar_gun = {}
+    debug_hata = None
+    debug_commit_say = 0
     try:
+        if not GH_TOKEN:
+            debug_hata = "GH_TOKEN tanımlı değil (Railway ortam değişkeni)"
+            raise RuntimeError(debug_hata)
         url = f"https://api.github.com/repos/{GITHUB_REPO}/commits?per_page=50"
         req = urllib.request.Request(url, headers={
-            "Authorization": f"token {GH_TOKEN}",
-            "Accept": "application/vnd.github+json"
+            "Authorization": f"Bearer {GH_TOKEN}",
+            "Accept": "application/vnd.github+json",
+            "User-Agent": "otocoin-panel"
         })
-        with urllib.request.urlopen(req, timeout=15) as r:
-            commits = json.loads(r.read())
+        try:
+            with urllib.request.urlopen(req, timeout=15) as r:
+                commits = json.loads(r.read())
+                debug_commit_say = len(commits) if isinstance(commits, list) else 0
+        except urllib.error.HTTPError as he:
+            debug_hata = f"GitHub API hatası: {he.code} {he.reason}"
+            raise
+        except Exception as ge:
+            debug_hata = f"GitHub bağlantı hatası: {str(ge)[:100]}"
+            raise
 
         for c in commits:
             try:
@@ -6703,6 +6868,12 @@ def rapor_endpoint():
         "olaylar": olaylar_liste,
         "kayit_sayisi": sum(len(o["kayitlar"]) for o in olaylar_liste),
         "saglik": saglik,
+        "debug": {
+            "commit_say": debug_commit_say,
+            "hata": debug_hata,
+            "token_var_mi": bool(GH_TOKEN),
+            "repo": GITHUB_REPO,
+        }
     }
     _RAPOR_CACHE["ts"] = simdi
     _RAPOR_CACHE["veri"] = sonuc
