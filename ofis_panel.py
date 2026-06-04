@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 18
+PANEL_VERSIYON_BUILD = 19
 
 def _panel_tarih():
     try:
@@ -136,12 +136,12 @@ def github_oku(dosya):
     simdi = _time.time()
     if dosya in github_oku._cache:
         ts, veri = github_oku._cache[dosya]
-        if simdi - ts < 60:
+        if simdi - ts < 60 and veri is not None:
             return veri
 
     sonuc = None
     if not GH_TOKEN:
-        # Token yoksa fallback olarak raw CDN dene (gec olur ama hicbir sey olmamasindan iyidir)
+        # Token yoksa fallback olarak raw CDN dene
         try:
             with urllib.request.urlopen(f"{GITHUB_RAW}/{dosya}", timeout=10) as r:
                 sonuc = json.loads(r.read())
@@ -155,7 +155,7 @@ def github_oku(dosya):
                 "Authorization": f"Bearer {GH_TOKEN}",
                 "Accept": "application/vnd.github+json",
             })
-            with urllib.request.urlopen(req, timeout=3) as r:
+            with urllib.request.urlopen(req, timeout=10) as r:
                 data = json.loads(r.read())
                 icerik_b64 = data.get("content", "")
                 if icerik_b64:
@@ -164,8 +164,9 @@ def github_oku(dosya):
         except:
             sonuc = None
 
-    # Cache'e yaz (None bile olsa - tekrar tekrar denemesin)
-    github_oku._cache[dosya] = (simdi, sonuc)
+    # Sadece basarili sonucu cache'le (None'u tekrar denemek icin)
+    if sonuc is not None:
+        github_oku._cache[dosya] = (simdi, sonuc)
     return sonuc
 
 
@@ -7045,8 +7046,10 @@ def ozet():
             "last_share": datetime.datetime.fromtimestamp(w["last_share_at"]).strftime("%d.%m %H:%M") if w.get("last_share_at") else "—"
         })
     sonuc["workers"] = worker_list
-    _OZET_CACHE["ts"] = simdi
-    _OZET_CACHE["veri"] = sonuc
+    # Sadece basarili sonucu cache'le (worker listesi bos ise tekrar dene)
+    if worker_list and len(worker_list) > 0:
+        _OZET_CACHE["ts"] = simdi
+        _OZET_CACHE["veri"] = sonuc
     return jsonify(sonuc)
 
 
