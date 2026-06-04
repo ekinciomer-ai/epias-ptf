@@ -11,6 +11,11 @@ app.secret_key = "otocoin-ofis-2026"
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
 _PANEL_VERSIYON_ANA = "ver.02.01.1"
+# Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
+# Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
+# Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
+PANEL_VERSIYON_BUILD = 16
+
 def _panel_tarih():
     try:
         import os as _os, datetime as _dt
@@ -19,22 +24,8 @@ def _panel_tarih():
         return tr.strftime("%d.%m.%Y %H:%M")
     except Exception:
         return "?"
-def _panel_build():
-    """Dosya save zamanindan otomatik build numarasi.
-    Format: ·b{gun_no}{dakika}
-    Ornek: 5 Haziran 14:23 -> b156823 (gun no + dakika)
-    Her save'de mtime degisir → numara degisir. Manuel sayma yok."""
-    try:
-        import os as _os, datetime as _dt
-        ts = _os.path.getmtime(__file__)
-        tr = _dt.datetime.utcfromtimestamp(ts) + _dt.timedelta(hours=3)
-        # Yilin gun numarasi (1-366) + saat*60+dakika
-        gun_no = tr.timetuple().tm_yday
-        dakika = tr.hour * 60 + tr.minute
-        return f"b{gun_no}{dakika:04d}"
-    except Exception:
-        return "b0"
-PANEL_VERSIYON = f"{_PANEL_VERSIYON_ANA}·{_panel_build()}"
+
+PANEL_VERSIYON = f"{_PANEL_VERSIYON_ANA}·b{PANEL_VERSIYON_BUILD}"
 PANEL_VERSIYON_TARIH = _panel_tarih()
 
 # Sistem bilesenleri - her biri kendi son guncellemesini tutar
@@ -7031,10 +7022,17 @@ def f2pool_saatlik():
     })
 
 
+_OZET_CACHE = {"ts": 0, "veri": None}
+_OZET_TTL = 60  # 1 dakika
+
 @app.route("/api/ozet")
 def ozet():
     if "kullanici" not in session:
         return jsonify({"hata":"yetkisiz"}), 401
+    import time as _time
+    simdi = _time.time()
+    if _OZET_CACHE["veri"] and simdi - _OZET_CACHE["ts"] < _OZET_TTL:
+        return jsonify(_OZET_CACHE["veri"])
     sonuc = {}
     sinyal = github_oku("sinyal.json")
     btc_try = sinyal.get("btc_try", 0) if sinyal else 0
@@ -7118,6 +7116,8 @@ def ozet():
             "last_share": datetime.datetime.fromtimestamp(w["last_share_at"]).strftime("%d.%m %H:%M") if w.get("last_share_at") else "—"
         })
     sonuc["workers"] = worker_list
+    _OZET_CACHE["ts"] = simdi
+    _OZET_CACHE["veri"] = sonuc
     return jsonify(sonuc)
 
 
