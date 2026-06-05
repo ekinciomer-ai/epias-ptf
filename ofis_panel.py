@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 22
+PANEL_VERSIYON_BUILD = 23
 
 def _panel_tarih():
     try:
@@ -754,6 +754,7 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 <div class="tab" onclick="sekme('veri', this)" style="background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(99,102,241,0.08));border-color:rgba(59,130,246,0.4);">📊 Veri</div>
 <div class="tab" onclick="sekme('mahsuplasma', this)" style="background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(217,70,239,0.08));border-color:rgba(139,92,246,0.4);">🔄 Mahsuplaşma</div>
 <div class="tab" onclick="sekme('faturalandirma', this)" style="background:linear-gradient(135deg,rgba(251,191,36,0.12),rgba(245,158,11,0.08));border-color:rgba(251,191,36,0.4);">🧾 Faturalandırma</div>
+<div class="tab" onclick="sekme('t2kiyas', this)" style="background:linear-gradient(135deg,rgba(139,92,246,0.15),rgba(168,85,247,0.10));border-color:rgba(139,92,246,0.4);">⚖️ T2 Kıyas</div>
 <div class="tab" onclick="sekme('osos', this)">🔋 OSOS</div>
 <div class="tab" onclick="sekme('inverter', this)">🌞 İnverter</div>
 <div class="tab" onclick="sekme('antminer', this)">⛏️ Antminer Saha</div>
@@ -1604,7 +1605,6 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
       <option value="2026-05">Mayıs 2026</option>
       <option value="2026-06" selected>Haziran 2026</option>
     </select>
-    <button onclick="t2KiyasAc()" style="background:linear-gradient(135deg,#8b5cf6,#a855f7); border:none; color:#fff; padding:9px 14px; border-radius:10px; font-size:12px; font-weight:800; font-family:inherit; cursor:pointer; box-shadow:0 2px 8px rgba(139,92,246,0.3);">📊 T2 Kıyas</button>
   </div>
 
   <div id="fat-formul-bar" style="background:rgba(22,163,74,0.06); border:1px solid rgba(22,163,74,0.2); border-radius:10px; padding:9px 13px; font-size:11px; color:#15803d; margin-bottom:14px; font-weight:600; position:relative;">
@@ -1620,23 +1620,37 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 </div>
 <!-- ====================== FATURALANDIRMA SEKMESI SONU ====================== -->
 
-<!-- ====================== T2 KIYAS POPUP ====================== -->
-<div id="t2kiyas-overlay" onclick="t2KiyasBackdrop(event)" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.85); z-index:99999; backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:14px;">
-  <div onclick="event.stopPropagation()" style="background:#fff; border-radius:16px; max-width:520px; width:100%; max-height:90vh; overflow-y:auto; padding:20px; box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+<!-- ====================== T2 KIYAS SEKMESI ====================== -->
+<div class="tab-content" id="t-t2kiyas" style="background:#f1f5f9; border-radius:16px; padding:16px; margin-top:8px;">
 
-    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding-bottom:12px; border-bottom:1px solid #e2e8f0; margin-bottom:14px;">
-      <div>
-        <div style="font-size:18px; font-weight:900; background:linear-gradient(135deg,#8b5cf6,#a855f7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">📊 T2 Abone Kıyas</div>
-        <div style="font-size:10px; color:#64748b; margin-top:2px; font-weight:600;" id="t2k-altbaslik">Mining ile bedelli satış kıyaslaması</div>
-      </div>
-      <button onclick="t2KiyasKapat()" style="background:#f1f5f9; border:none; width:32px; height:32px; border-radius:8px; font-size:16px; font-weight:900; color:#475569; cursor:pointer;">✕</button>
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 0 16px; border-bottom:1px solid #e2e8f0; margin-bottom:18px; flex-wrap:wrap;">
+    <div>
+      <div style="font-size:20px; font-weight:900; background:linear-gradient(135deg,#8b5cf6,#a855f7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">⚖️ T2 Kıyas</div>
+      <div style="font-size:11px; color:#64748b; margin-top:3px; font-weight:600;">Saat saat mining ile bedelli satıs karsilastirmasi</div>
     </div>
-
-    <div id="t2k-icerik" style="font-size:12px; color:#1e293b; line-height:1.6;">Yükleniyor...</div>
-
+    <select id="t2k-ay-secim" onchange="t2KiyasYukle()" style="background:#ffffff; border:1px solid #cbd5e1; color:#1e293b; padding:8px 12px; border-radius:10px; font-size:12px; font-weight:700; font-family:inherit; cursor:pointer;">
+      <option value="2026-01">Ocak 2026</option>
+      <option value="2026-02">Subat 2026</option>
+      <option value="2026-03">Mart 2026</option>
+      <option value="2026-04">Nisan 2026</option>
+      <option value="2026-05">Mayis 2026</option>
+      <option value="2026-06" selected>Haziran 2026</option>
+    </select>
   </div>
+
+  <div style="background:rgba(139,92,246,0.06); border:1px solid rgba(139,92,246,0.2); border-radius:10px; padding:10px 13px; font-size:11px; color:#6b21a8; margin-bottom:14px; line-height:1.6;">
+    <b style="color:#8b5cf6;">A) Bedelli Satis:</b> 2,2537 TL/kWh sabit gelir<br>
+    <b style="color:#8b5cf6;">B11) Sebekeden Cek + Mining:</b> Maliyet = (PTF+YEKDEM)/1000 × 1,035 + DB <br>
+    <b style="color:#8b5cf6;">B12) GES&#39;i Mining&#39;de Kullan:</b> Firsat maliyeti = Bedelli Satis<br>
+    <span style="color:#94a3b8;">Karar: B11 maliyeti < Bedelli ise T2 ABONE DEVAM, degilse ABONE DEGISTIR</span>
+  </div>
+
+  <div id="t2k-ozet" style="margin-bottom:14px;"></div>
+
+  <div id="t2k-tablo"><div style="padding:30px; text-align:center; color:#64748b; font-size:12px;">Yükleniyor...</div></div>
+
 </div>
-<!-- ====================== T2 KIYAS POPUP SONU ====================== -->
+<!-- ====================== T2 KIYAS SEKMESI SONU ====================== -->
 
 <!-- ====================== RAPOR SEKMESI ====================== -->
 <div class="tab-content" id="t-rapor">
@@ -1752,6 +1766,7 @@ function sekme(ad, btn) {
   if (ad === 'maliyetler') { mltDropdownDoldur().then(() => mltYukle()); utYukle(); }
   if (ad === 'mahsuplasma') mahsupYukle();
   if (ad === 'faturalandirma') faturaYukle();
+  if (ad === 't2kiyas') t2KiyasYukle();
   if (ad === 'epias') epiasYukle();
   if (ad === 'f2pool') { try { if (window.f2GunlukHam && window.f2GunlukHam.length) f2Render(); } catch(e) { console.error('f2 sekme render:', e); } }
   if (ad === 'rapor') raporYukle();
@@ -5827,186 +5842,171 @@ function faturaRender() {
 }
 
 // ============================================================
-// T2 KIYAS POPUP - Demo mod (formul gorulebilsin diye)
-// Mantik:
-//  A = Bedelli Satis = 2.253679 TL/kWh (sabit gelir alternatifi)
-//  B11 = Sebekeden cek + mining = (PTF+YEKDEM)/1000 * 1.035 + DB (maliyet)
-//  B12 = GES'i mining'de kullan, firsat maliyeti = bedelli satis (2.254)
-//  Mining geliri/kWh = (gunluk_btc * btc_fiyat) / gunluk_kwh
+// T2 KIYAS SEKMESI
+// Saat saat: A (Bedelli=2.2537) vs B11 (Sebeke maliyet) vs B12 (GES firsat)
+// Her saat icin: o ayin o saatindeki ortalama PTF kullanilir
 // ============================================================
 
-function t2KiyasAc() {
-  const ov = document.getElementById('t2kiyas-overlay');
-  if (!ov) return;
-  ov.style.display = 'flex';
-  t2KiyasHesapla();
-}
-
-function t2KiyasKapat() {
-  const ov = document.getElementById('t2kiyas-overlay');
-  if (ov) ov.style.display = 'none';
-}
-
-function t2KiyasBackdrop(e) {
-  // sadece backdrop'a basildiysa kapat, icerige bastiysan kapatma (icerikte stopPropagation var)
-  t2KiyasKapat();
-}
-
-function t2KiyasHesapla() {
-  const cont = document.getElementById('t2k-icerik');
-  if (!cont) return;
-  cont.innerHTML = '<div style="padding:20px; text-align:center; color:#64748b;">Hesaplanıyor...</div>';
+async function t2KiyasYukle() {
+  const tablo = document.getElementById('t2k-tablo');
+  const ozet = document.getElementById('t2k-ozet');
+  if (!tablo) return;
+  tablo.innerHTML = '<div style="padding:30px; text-align:center; color:#64748b; font-size:12px;">Hesaplaniyor...</div>';
+  if (ozet) ozet.innerHTML = '';
   
-  // Aktif ayi al
-  const selEl = document.getElementById('fat-ay-secim');
-  const ay = selEl ? selEl.value : '2026-06';
+  // Veriler hazir mi - fatAylikPtf yoksa cek
+  if (!window.fatAylikPtf) {
+    try {
+      const r = await fetch('/api/aylik_ptf');
+      window.fatAylikPtf = await r.json();
+    } catch(e) {
+      tablo.innerHTML = '<div style="padding:20px; color:#dc2626; font-size:11px;">PTF verisi alinamadi</div>';
+      return;
+    }
+  }
+  
+  // Mining geliri icin ozet
+  if (!window.lastOzet) {
+    try {
+      const r = await fetch('/api/ozet');
+      window.lastOzet = await r.json();
+    } catch(e) {}
+  }
+  
+  t2KiyasRender();
+}
+
+function t2KiyasRender() {
+  const tablo = document.getElementById('t2k-tablo');
+  const ozet = document.getElementById('t2k-ozet');
+  const selEl = document.getElementById('t2k-ay-secim');
+  if (!tablo || !selEl) return;
+  const ay = selEl.value;
   
   // Sabitler
-  const BEDELLI = 2.253679;  // TL/kWh
-  const DB = 1.182457;       // TL/kWh dagitim bedeli
-  const TRT = 1.035;         // TRT pay ve fonlar carpani
+  const BEDELLI = 2.253679;
+  const DB = 1.182457;
+  const TRT = 1.035;
   
-  // YEKDEM (ay icin)
-  let yekdem = 580.99;  // varsayilan Haziran
+  // YEKDEM
+  let yekdem = 580.99;
   if (typeof yekdemHesapla === 'function') {
     const h = yekdemHesapla(ay);
     if (h && h.deger) yekdem = h.deger;
   }
   
-  // Aylik ortalama PTF hesapla
-  let ortPtf = null;
-  const ptfAy = (fatAylikPtf || {})[ay] || {};
-  const ptfList = [];
-  Object.keys(ptfAy).forEach(function(gun) {
-    const saatler = ptfAy[gun];
-    if (Array.isArray(saatler)) {
-      saatler.forEach(function(p) {
-        if (typeof p === 'number' && p > 0) ptfList.push(p);
-      });
-    }
-  });
-  if (ptfList.length > 0) {
-    ortPtf = ptfList.reduce(function(s, v) { return s + v; }, 0) / ptfList.length;
+  // Saatlik PTF ortalamasi - ay icindeki tum gunlerin o saatlerini ortala
+  const ptfAy = (window.fatAylikPtf || {})[ay] || {};
+  const saatlikPtf = {};  // {0: ort_ptf, 1: ort_ptf, ...}
+  for (let s = 0; s < 24; s++) {
+    const list = [];
+    Object.keys(ptfAy).forEach(function(gun) {
+      const dizi = ptfAy[gun];
+      if (Array.isArray(dizi) && dizi.length > s && typeof dizi[s] === 'number' && dizi[s] > 0) {
+        list.push(dizi[s]);
+      }
+    });
+    saatlikPtf[s] = list.length > 0 ? (list.reduce(function(a,b){return a+b;}, 0) / list.length) : null;
   }
   
-  // Mining geliri / kWh - basit yaklasim
-  // Ozet API'den dunku_kazanc (BTC) ve toplam hashrate biliyoruz
-  // 1 cihaz ~3500W, 29 cihaz = 101.5 kW, gunluk = ~2436 kWh
-  // Daha hassas: ozet endpoint'inden btc/gun ve hashrate al, fiyat * btc / kwh hesap
-  // Simdilik basit: son ozet sonucundan turetilecek
+  // Mining geliri/kWh
   let miningGeliriKwh = null;
   if (window.lastOzet) {
     const o = window.lastOzet;
     const dunkuBtc = o.dunku_kazanc || 0;
-    const btcTl = (o.btc_fiyati || 0) * (o.usd_try || 35);
-    // Gunluk kWh tahmini: 29 cihaz * ortalama 3.5kW = 101.5 kW * 24 h = 2436 kWh
-    // Daha hassas: hashrate'e gore
+    const btcTl = o.btc_tl || ((o.btc_fiyati || 0) * (o.usd_try || 35));
     const hashrate = o.toplam_hashrate || 8000;
-    const gunlukKwh = (hashrate * 25 / 1000) * 24; // 25 J/TH * hashrate TH/s = W, /1000 = kW, *24 = kWh/gun
+    const gunlukKwh = (hashrate * 25 / 1000) * 24;  // 25 J/TH varsayim
     if (dunkuBtc > 0 && btcTl > 0 && gunlukKwh > 0) {
       miningGeliriKwh = (dunkuBtc * btcTl) / gunlukKwh;
     }
   }
   
-  // Hesaplar
-  let html = '';
-  
-  if (ortPtf === null) {
-    html = '<div style="background:#fef3c7; border:1px solid #f59e0b; padding:14px; border-radius:10px; color:#92400e; font-size:11px;">⚠ ' + ay + ' icin PTF verisi yok. Mahsuplasma sekmesine bir defa girip geri donun.</div>';
-    cont.innerHTML = html;
+  // Veri kontrolu
+  const ptfDoluSaat = Object.values(saatlikPtf).filter(function(v) { return v !== null; }).length;
+  if (ptfDoluSaat === 0) {
+    tablo.innerHTML = '<div style="background:#fef3c7; border:1px solid #f59e0b; padding:14px; border-radius:10px; color:#92400e; font-size:11px;">⚠ ' + ay + ' icin PTF verisi yok</div>';
     return;
   }
   
-  // B11 = (PTF + YEKDEM) / 1000 * 1.035 + DB
-  const b11_maliyet = (ortPtf + yekdem) / 1000 * TRT + DB;
-  // B12 firsat maliyeti = BEDELLI
-  const b12_firsat = BEDELLI;
-  
-  // Net (mining geliri varsa)
-  let b11_net = null, b12_net = null;
+  // Tablo HTML
+  let html = '<div style="background:#fff; border-radius:10px; overflow:hidden;">';
+  html += '<table style="width:100%; border-collapse:collapse; font-size:11px;">';
+  html += '<thead><tr style="background:#f1f5f9; color:#475569; font-weight:800;">';
+  html += '<th style="padding:8px 6px; text-align:center; border-bottom:1px solid #e2e8f0;">Saat</th>';
+  html += '<th style="padding:8px 6px; text-align:right; border-bottom:1px solid #e2e8f0;">PTF<br><span style="font-weight:400; color:#94a3b8; font-size:9px;">TL/MWh</span></th>';
+  html += '<th style="padding:8px 6px; text-align:right; border-bottom:1px solid #e2e8f0;">B11<br><span style="font-weight:400; color:#94a3b8; font-size:9px;">TL/kWh</span></th>';
+  html += '<th style="padding:8px 6px; text-align:center; border-bottom:1px solid #e2e8f0;">A vs B11</th>';
   if (miningGeliriKwh !== null) {
-    b11_net = miningGeliriKwh - b11_maliyet;
-    b12_net = miningGeliriKwh - b12_firsat;
+    html += '<th style="padding:8px 6px; text-align:right; border-bottom:1px solid #e2e8f0;">B11 Net<br><span style="font-weight:400; color:#94a3b8; font-size:9px;">TL/kWh</span></th>';
   }
+  html += '<th style="padding:8px 6px; text-align:center; border-bottom:1px solid #e2e8f0;">Karar</th>';
+  html += '</tr></thead><tbody>';
   
-  // Karar
-  let karar_a = 'A (Bedelli Satis) = ' + BEDELLI.toFixed(2) + ' TL/kWh net kazanc';
-  let karar_b11 = (b11_net !== null) 
-    ? (b11_net > 0 ? '✓ KARLI (' + b11_net.toFixed(2) + ' TL/kWh)' : '✗ ZARARLI (' + b11_net.toFixed(2) + ' TL/kWh)')
-    : '? (mining geliri hesaplanamadi)';
-  let karar_b12 = (b12_net !== null)
-    ? (b12_net > 0 ? '✓ KARLI (' + b12_net.toFixed(2) + ' TL/kWh)' : '✗ ZARARLI (' + b12_net.toFixed(2) + ' TL/kWh)')
-    : '? (mining geliri hesaplanamadi)';
+  let karli_saat = 0, zararli_saat = 0;
+  let toplam_kazanc = 0;
   
-  // Sonuc: B11 KARLI ise T2 abone devam, ZARARLI ise abone degistir
-  let sonuc_yazi = '', sonuc_renk = '#64748b';
-  if (b11_net !== null) {
-    if (b11_net > 0) {
-      sonuc_yazi = '✓ T2 ABONE DEVAM - Mining bedelli satistan karli';
-      sonuc_renk = '#16a34a';
-    } else if (b12_net !== null && b12_net > 0) {
-      sonuc_yazi = '⚡ Sebekeden cekme, sadece GES uretimini mining&#39;de kullan';
-      sonuc_renk = '#d97706';
-    } else {
-      sonuc_yazi = '⚠ ABONE DEGISTIR - Bedelli satis daha karli';
-      sonuc_renk = '#dc2626';
+  for (let s = 0; s < 24; s++) {
+    const ptf = saatlikPtf[s];
+    if (ptf === null) {
+      html += '<tr><td colspan="6" style="padding:6px; text-align:center; color:#94a3b8; font-size:10px;">' + (s<10?'0'+s:s) + ':00 - veri yok</td></tr>';
+      continue;
     }
+    
+    // B11 maliyeti
+    const b11 = (ptf + yekdem) / 1000 * TRT + DB;
+    // B11 net (mining geliri varsa)
+    let b11_net = null;
+    if (miningGeliriKwh !== null) b11_net = miningGeliriKwh - b11;
+    
+    // Karar - A (Bedelli) ile B11 (maliyet) karsilastir
+    // B11 maliyet < BEDELLI ise: sebekeden cek + mining yapsam karli
+    // B11 maliyet > BEDELLI ise: sebekeden cekme - bedelli sat
+    const b11_karli = b11 < BEDELLI;
+    
+    let renk_bg = b11_karli ? '#dcfce7' : '#fee2e2';
+    let karar_yazi = b11_karli ? '✓ DEVAM' : '⚠ DEGIS';
+    let karar_renk = b11_karli ? '#16a34a' : '#dc2626';
+    
+    if (b11_karli) karli_saat++; else zararli_saat++;
+    if (b11_net !== null && b11_net > 0) toplam_kazanc += b11_net;
+    
+    html += '<tr style="background:' + renk_bg + ';">';
+    html += '<td style="padding:7px 6px; text-align:center; font-weight:700; color:#1e293b;">' + (s<10?'0'+s:s) + ':00</td>';
+    html += '<td style="padding:7px 6px; text-align:right; color:#475569;">' + ptf.toFixed(1) + '</td>';
+    html += '<td style="padding:7px 6px; text-align:right; font-weight:700; color:#1e293b;">' + b11.toFixed(3) + '</td>';
+    html += '<td style="padding:7px 6px; text-align:center; font-size:10px;">' + (b11_karli ? '<span style="color:#16a34a;">B11 ucuz</span>' : '<span style="color:#dc2626;">A ucuz</span>') + '</td>';
+    if (miningGeliriKwh !== null) {
+      html += '<td style="padding:7px 6px; text-align:right; color:' + (b11_net>0?'#16a34a':'#dc2626') + '; font-weight:700;">' + (b11_net>0?'+':'') + b11_net.toFixed(3) + '</td>';
+    }
+    html += '<td style="padding:7px 6px; text-align:center; font-weight:800; color:' + karar_renk + ';">' + karar_yazi + '</td>';
+    html += '</tr>';
   }
   
-  // HTML
-  html = '<div style="background:#f1f5f9; border-radius:10px; padding:12px; margin-bottom:14px;">';
-  html += '<div style="font-weight:800; font-size:13px; color:#1e293b; margin-bottom:8px;">📅 ' + ay + ' Ortalama Hesabi</div>';
-  html += '<div style="display:grid; grid-template-columns:1fr auto; gap:4px 12px; font-size:11px;">';
-  html += '<span style="color:#64748b;">Ortalama PTF</span><span style="font-weight:700; color:#1e293b;">' + ortPtf.toFixed(2) + ' TL/MWh</span>';
-  html += '<span style="color:#64748b;">YEKDEM</span><span style="font-weight:700; color:#1e293b;">' + yekdem.toFixed(2) + ' TL/MWh</span>';
-  html += '<span style="color:#64748b;">Dagitim Bedeli</span><span style="font-weight:700; color:#1e293b;">' + DB.toFixed(4) + ' TL/kWh</span>';
-  html += '<span style="color:#64748b;">Bedelli Satis</span><span style="font-weight:700; color:#16a34a;">' + BEDELLI.toFixed(4) + ' TL/kWh</span>';
-  if (miningGeliriKwh !== null) {
-    html += '<span style="color:#64748b;">Mining Geliri</span><span style="font-weight:700; color:#a855f7;">' + miningGeliriKwh.toFixed(4) + ' TL/kWh</span>';
-  } else {
-    html += '<span style="color:#64748b;">Mining Geliri</span><span style="color:#dc2626;">hesaplanamadi</span>';
+  html += '</tbody></table></div>';
+  
+  tablo.innerHTML = html;
+  
+  // Ozet
+  if (ozet) {
+    let ozetHtml = '<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">';
+    ozetHtml += '<div style="background:#dcfce7; border:1px solid #16a34a; padding:10px; border-radius:10px;">';
+    ozetHtml += '<div style="font-size:10px; color:#15803d; font-weight:700;">T2 DEVAM (B11 < Bedelli)</div>';
+    ozetHtml += '<div style="font-size:20px; font-weight:900; color:#15803d; margin-top:2px;">' + karli_saat + '/24 saat</div>';
+    ozetHtml += '</div>';
+    ozetHtml += '<div style="background:#fee2e2; border:1px solid #dc2626; padding:10px; border-radius:10px;">';
+    ozetHtml += '<div style="font-size:10px; color:#991b1b; font-weight:700;">ABONE DEGISTIR (A > B11)</div>';
+    ozetHtml += '<div style="font-size:20px; font-weight:900; color:#991b1b; margin-top:2px;">' + zararli_saat + '/24 saat</div>';
+    ozetHtml += '</div></div>';
+    
+    if (miningGeliriKwh !== null) {
+      ozetHtml += '<div style="background:#f1f5f9; padding:8px 12px; border-radius:8px; margin-top:8px; font-size:10px; color:#64748b;">Mining geliri: <b style="color:#a855f7;">' + miningGeliriKwh.toFixed(3) + ' TL/kWh</b> · Toplam B11 net kazanc/saat: <b style="color:#16a34a;">' + toplam_kazanc.toFixed(2) + ' TL</b></div>';
+    }
+    
+    ozet.innerHTML = ozetHtml;
   }
-  html += '</div></div>';
-  
-  // 3 senaryo
-  html += '<div style="margin-bottom:12px;">';
-  html += '<div style="font-weight:800; font-size:13px; color:#1e293b; margin-bottom:8px;">⚖️ Kıyas (TL/kWh net)</div>';
-  
-  // A
-  html += '<div style="background:#dcfce7; border-left:4px solid #16a34a; padding:9px 11px; border-radius:6px; margin-bottom:6px;">';
-  html += '<div style="font-weight:800; color:#15803d; font-size:12px;">A) Bedelli Satıs</div>';
-  html += '<div style="font-size:10px; color:#166534; margin-top:2px;">' + karar_a + '</div>';
-  html += '</div>';
-  
-  // B11
-  const b11_renk = (b11_net !== null && b11_net > 0) ? '#dbeafe' : '#fee2e2';
-  const b11_border = (b11_net !== null && b11_net > 0) ? '#3b82f6' : '#dc2626';
-  html += '<div style="background:' + b11_renk + '; border-left:4px solid ' + b11_border + '; padding:9px 11px; border-radius:6px; margin-bottom:6px;">';
-  html += '<div style="font-weight:800; color:#1e293b; font-size:12px;">B11) Sebekeden Çek + Mining</div>';
-  html += '<div style="font-size:10px; color:#475569; margin-top:2px;">';
-  html += 'Maliyet = (' + ortPtf.toFixed(2) + ' + ' + yekdem.toFixed(2) + ') / 1000 × ' + TRT + ' + ' + DB.toFixed(3) + ' = ' + b11_maliyet.toFixed(4) + ' TL/kWh<br>';
-  html += '<b>' + karar_b11 + '</b>';
-  html += '</div></div>';
-  
-  // B12
-  const b12_renk = (b12_net !== null && b12_net > 0) ? '#dbeafe' : '#fee2e2';
-  const b12_border = (b12_net !== null && b12_net > 0) ? '#3b82f6' : '#dc2626';
-  html += '<div style="background:' + b12_renk + '; border-left:4px solid ' + b12_border + '; padding:9px 11px; border-radius:6px; margin-bottom:6px;">';
-  html += '<div style="font-weight:800; color:#1e293b; font-size:12px;">B12) GES&#39;i Mining&#39;de Kullan</div>';
-  html += '<div style="font-size:10px; color:#475569; margin-top:2px;">';
-  html += 'Fırsat maliyeti = ' + b12_firsat.toFixed(4) + ' TL/kWh (satilsa bedelli&#39;den gelir)<br>';
-  html += '<b>' + karar_b12 + '</b>';
-  html += '</div></div>';
-  
-  html += '</div>';
-  
-  // Sonuc
-  if (sonuc_yazi) {
-    html += '<div style="background:' + sonuc_renk + '; color:#fff; padding:11px; border-radius:10px; text-align:center; font-weight:800; font-size:13px;">' + sonuc_yazi + '</div>';
-  }
-  
-  cont.innerHTML = html;
 }
+
 
 function fatKartUret(ay, A, ab) {
   // FATURALANDIRMA
