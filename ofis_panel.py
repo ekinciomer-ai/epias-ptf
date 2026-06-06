@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 39
+PANEL_VERSIYON_BUILD = 40
 
 def _panel_tarih():
     try:
@@ -5893,6 +5893,7 @@ async function t2KiyasYukle() {
     try {
       const r = await fetch('/api/osos_raw');
       const osos = await r.json();
+      // T2 OSOS (mahsup sonrasi net)
       const t2 = (osos && osos.tekyildiz_2 && osos.tekyildiz_2.veri) || {};
       const t2Ay = {};
       Object.keys(t2).forEach(function(tarih) {
@@ -5902,9 +5903,22 @@ async function t2KiyasYukle() {
         }
       });
       window.t2OsosData = t2Ay;
+      
+      // T1 OSOS (saf uretim - mahsup yok)
+      const t1 = (osos && osos.tekyildiz_1 && osos.tekyildiz_1.veri) || {};
+      const t1Ay = {};
+      Object.keys(t1).forEach(function(tarih) {
+        if (tarih.startsWith(ay)) {
+          const gun = tarih.split('-')[2];
+          t1Ay[gun] = t1[tarih];
+        }
+      });
+      window.t1OsosData = t1Ay;
+      
       window.t2OsosAy = ay;
     } catch(e) {
       window.t2OsosData = {};
+      window.t1OsosData = {};
     }
   }
   
@@ -5961,7 +5975,8 @@ function t2KiyasRender() {
   
   // Veriler
   const ptfAy = (window.fatAylikPtf || {})[ay] || {};
-  const ososT2 = window.t2OsosData || {};  // T2 OSOS verisi (gun -> saat -> {cekis, veris})
+  const ososT2 = window.t2OsosData || {};  // T2 OSOS (mahsup sonrasi net)
+  const ososT1 = window.t1OsosData || {};  // T1 OSOS (saf uretim - kıyas tablosu uretim kararinda kullanilir)
   const gunler = Object.keys(ptfAy).sort();
   
   if (gunler.length === 0) {
@@ -5988,7 +6003,8 @@ function t2KiyasRender() {
   gunler.forEach(function(gun) {
     const dizi = ptfAy[gun];
     if (!Array.isArray(dizi)) return;
-    const t2gun = (ososT2[gun] || {});  // gun anahtarı string '01' format
+    const t2gun = (ososT2[gun] || {});  // T2 mahsup sonrasi
+    const t1gun = (ososT1[gun] || {});  // T1 saf uretim
     
     // Gun toplamlari ve saat sayaclari
     let g_s1 = 0, g_s2 = 0, g_s3 = 0;
@@ -5999,25 +6015,24 @@ function t2KiyasRender() {
       const ptf = (typeof dizi[s] === 'number') ? dizi[s] : null;
       if (ptf === null) continue;
       
-      // OSOS T2 verisi - Uretim VAR mi YOK mu kontrol
-      // Eger gun/saat verisi YOKSA "belirsiz" durumu (S1 hesaplanamaz)
+      // OSOS verileri
       const t2saat = t2gun[String(s)];
-      const veriEksik = !t2saat;
+      const t1saat = t1gun[String(s)];
       const veris = t2saat ? (t2saat.veris || 0) : 0;
       const cekis = t2saat ? (t2saat.cekis || 0) : 0;
+      const t1veris = t1saat ? (t1saat.veris || 0) : 0;  // T1 saf uretim
       
-      // Uretim hesabi (KESIN MANTIK):
-      // - Veri yoksa: belirsiz, S1 hesaplanmaz
-      // - veris > 0: KESIN uretim VAR (mahsup sonrasi fazla satildi)
-      // - veris = 0: uretim YOK (satilacak fazla yok, S1=0)
-      //   (cekis<174 olsa bile veris=0 ise S1=0 - satilacak bir sey yok)
+      // URETIM KARARI (T1 saf uretim verisinden):
+      // - T1 verisi YOKSA: belirsiz, S1 hesaplanmaz
+      // - T1 veris > 174 (TUKETIM): uretim VAR → S1 = 392
+      // - T1 veris ≤ 174: uretim YOK → S1 = 0
       let uretim;
-      if (veriEksik) {
-        uretim = null;
-      } else if (veris > 0) {
-        uretim = TUKETIM_SAAT;  // baz 174
+      if (!t1saat) {
+        uretim = null;  // T1 verisi yok, belirsiz
+      } else if (t1veris > TUKETIM_SAAT) {
+        uretim = TUKETIM_SAAT;
       } else {
-        uretim = 0;  // veris=0 → satilacak yok
+        uretim = 0;
       }
       
       const sebeke = (ptf + yekdem) / 1000 * TRT + DB;
@@ -6186,9 +6201,14 @@ function t2HucreAc(el) {
   html += '<div style="background:#f8fafc; border-radius:10px; padding:10px; margin-bottom:12px;">';
   html += '<div style="font-size:10px; font-weight:800; color:#64748b; margin-bottom:6px;">VERILER</div>';
   html += '<div style="display:grid; grid-template-columns:1fr auto; gap:3px 12px; font-size:11px;">';
+  // T1 saf üretim verisi de gösterilsin (üretim kararı için kullanılıyor)
+  const t1OsosGun = (window.t1OsosData || {})[gun] || {};
+  const t1OsosSaat = t1OsosGun[String(saat)];
+  const t1Veris = t1OsosSaat ? (t1OsosSaat.veris || 0) : null;
+  html += '<span style="color:#64748b;">T1 uretim (saf)</span><span style="font-weight:700; color:#a855f7;">' + (t1Veris===null?'—':t1Veris.toFixed(0) + ' kWh') + '</span>';
   html += '<span style="color:#64748b;">T2 OSOS veris</span><span style="font-weight:700; color:#1e293b;">' + veris.toFixed(0) + ' kWh</span>';
   html += '<span style="color:#64748b;">T2 OSOS cekis</span><span style="font-weight:700; color:#1e293b;">' + cekis.toFixed(0) + ' kWh</span>';
-  html += '<span style="color:#64748b;">Uretim durumu</span><span style="font-weight:700; color:#a855f7;">' + (uretim>0?'VAR (' + TUKETIM + ' kWh baz)':'YOK') + '</span>';
+  html += '<span style="color:#64748b;">Uretim karari</span><span style="font-weight:700; color:#a855f7;">' + (uretim>0?'VAR (' + TUKETIM + ' kWh, T1>174)':uretim===0?'YOK (T1≤174)':'—') + '</span>';
   html += '<span style="color:#64748b;">Tuketim (sabit)</span><span style="font-weight:700; color:#1e293b;">' + TUKETIM + ' kWh</span>';
   html += '<span style="color:#64748b;">PTF</span><span style="font-weight:700; color:#1e293b;">' + ptf.toFixed(2) + ' TL/MWh</span>';
   html += '<span style="color:#64748b;">YEKDEM</span><span style="font-weight:700; color:#1e293b;">' + yekdem.toFixed(2) + ' TL/MWh</span>';
