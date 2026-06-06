@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 24
+PANEL_VERSIYON_BUILD = 25
 
 def _panel_tarih():
     try:
@@ -5897,7 +5897,8 @@ function t2KiyasRender() {
   
   // Ay verisini al
   const ptfAy = (window.fatAylikPtf || {})[ay] || {};
-  const gunler = Object.keys(ptfAy).map(Number).sort(function(a,b){return a-b;});
+  // Anahtarlar "01", "02" gibi - string olarak tut, sort string
+  const gunler = Object.keys(ptfAy).sort();
   
   if (gunler.length === 0) {
     tablo.innerHTML = '<div style="background:#fef3c7; border:1px solid #f59e0b; padding:14px; border-radius:10px; color:#92400e; font-size:11px;">⚠ ' + ay + ' icin PTF verisi yok</div>';
@@ -5939,7 +5940,7 @@ function t2KiyasRender() {
     if (!Array.isArray(dizi)) return;
     
     html += '<tr>';
-    html += '<td style="padding:5px 4px; text-align:center; font-weight:800; color:#1e293b; background:#f8fafc; border-right:1px solid #e2e8f0; position:sticky; left:0; z-index:1;">' + gun + '</td>';
+    html += '<td style="padding:5px 4px; text-align:center; font-weight:800; color:#1e293b; background:#f8fafc; border-right:1px solid #e2e8f0; position:sticky; left:0; z-index:1;">' + Number(gun) + '</td>';
     
     for (let s = 0; s < 24; s++) {
       const ptf = (typeof dizi[s] === 'number' && dizi[s] > 0) ? dizi[s] : null;
