@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 38
+PANEL_VERSIYON_BUILD = 39
 
 def _panel_tarih():
     try:
@@ -5972,6 +5972,15 @@ function t2KiyasRender() {
   // F2Pool cache'den her saatin TL gelirini al (cache: window.t2F2PoolCache)
   // S2 her saat icin gercek deger - asagida saat icindeyken cache'den okunur
   
+  // 80bin USD bandi carpani (mevcut BTC USD fiyatina gore)
+  let BTC_80BIN_CARPAN = 1.3163;  // varsayilan ~80000/60778
+  if (window.lastOzet && window.lastOzet.btc && window.lastOzet.btc.usd) {
+    const btcUsdSimdi = parseFloat((window.lastOzet.btc.usd + '').replace(/,/g, ''));
+    if (btcUsdSimdi > 0) {
+      BTC_80BIN_CARPAN = 80000 / btcUsdSimdi;
+    }
+  }
+  
   // Her gün için topla, kart aç-kapat
   let ozet_s1 = 0, ozet_s2 = 0, ozet_s3 = 0;
   let html = '';
@@ -5983,7 +5992,7 @@ function t2KiyasRender() {
     
     // Gun toplamlari ve saat sayaclari
     let g_s1 = 0, g_s2 = 0, g_s3 = 0;
-    let g_sat_saat = 0, g_btc_saat = 0, g_deg_saat = 0;
+    let g_sat_saat = 0, g_btc_saat = 0, g_deg_saat = 0, g_kapat_saat = 0;
     let saatTablo = '';
     
     for (let s = 0; s < 24; s++) {
@@ -6032,24 +6041,33 @@ function t2KiyasRender() {
       if (s1 !== null) g_s1 += s1;
       g_s2 += s2; g_s3 += s3;
       
-      // KARAR MANTIGI (SAT veya DEG):
-      // - Uretim VAR + S1 > S2  → SAT (satis madencilikten karli)
-      // - Uretim VAR + S1 ≤ S2  → DEG (madencilik karli ama T2 pahali, baska aboneye gec)
-      // - Uretim YOK            → DEG (T2 tarifesi madencilik icin hicbir zaman karli degil)
+      // 80bin USD bandinda hipotetik S2 (BTC fiyat yukseldiyse ne olurdu)
+      const s2_80bin = s2 * BTC_80BIN_CARPAN;
+      const s3_mutlak = Math.abs(s3);
+      
+      // KARAR MANTIGI (SAT / DEG / KAPAT):
+      // - Uretim VAR + S1 > S2  → SAT
+      // - S2 > |S3|              → DEG (madencilik mevcut fiyatla karli, T2 pahali, baska aboneye gec)
+      // - S2_80bin > |S3|        → DEG (80bin USD'de karli olabilir, umut var)
+      // - Aksi takdirde          → KAPAT (80bin USD bandinda bile zarar, cihazlari kapat)
       let s_etiket, s_renk;
       if (s1 !== null && s1 > 0 && s1 > s2) {
         s_etiket = 'SAT'; s_renk = '#16a34a'; g_sat_saat++;
-      } else {
+      } else if (s2 > s3_mutlak) {
         s_etiket = 'DEG'; s_renk = '#dc2626'; g_deg_saat++;
+      } else if (s2_80bin > s3_mutlak) {
+        s_etiket = 'DEG'; s_renk = '#dc2626'; g_deg_saat++;
+      } else {
+        s_etiket = 'KAPAT'; s_renk = '#0f172a'; g_kapat_saat++;
       }
       
-      // S1 ve S3 vurgu renkleri (kazanan kolon yesil/kirmizi arka plan)
+      // S1 ve S3 vurgu renkleri (kazanan kolon arka plan + kalin)
       const s1Bg = (s_etiket === 'SAT') ? '#dcfce7' : '#fff';
       const s1Color = (s_etiket === 'SAT') ? '#15803d' : '#1e293b';
       const s1Weight = (s_etiket === 'SAT') ? '800' : '400';
-      const s3Bg = (s_etiket === 'DEG') ? '#fee2e2' : '#fff';
-      const s3Color = (s_etiket === 'DEG') ? '#991b1b' : '#1e293b';
-      const s3Weight = (s_etiket === 'DEG') ? '800' : '400';
+      let s3Bg = '#fff', s3Color = '#1e293b', s3Weight = '400';
+      if (s_etiket === 'DEG') { s3Bg = '#fee2e2'; s3Color = '#991b1b'; s3Weight = '800'; }
+      else if (s_etiket === 'KAPAT') { s3Bg = '#0f172a'; s3Color = '#fff'; s3Weight = '900'; }
       
       saatTablo += '<tr onclick="t2HucreAc(this)" data-gun="' + gun + '" data-saat="' + s + '" data-ay="' + ay + '" data-ptf="' + ptf + '" data-veris="' + veris + '" data-cekis="' + cekis + '" data-uretim="' + uretim + '" data-sebeke="' + sebeke + '" data-s1="' + s1 + '" data-s2="' + s2 + '" data-s3="' + s3 + '" style="cursor:pointer;">';
       saatTablo += '<td style="padding:5px 6px; text-align:center; font-weight:700; color:#1e293b; background:#f8fafc; border-right:1px solid #e2e8f0;">' + (s<10?'0'+s:s) + '</td>';
@@ -6082,6 +6100,7 @@ function t2KiyasRender() {
     html += '<div style="display:flex; align-items:center; gap:6px; font-size:10px;" id="t2k-gun-dagilim-' + gun + '">';
     html += '<span style="background:#dcfce7; color:#15803d; padding:2px 7px; border-radius:8px; font-weight:800;">SAT ' + g_sat_saat + 'h</span>';
     html += '<span style="background:#fee2e2; color:#991b1b; padding:2px 7px; border-radius:8px; font-weight:800;">DEG ' + g_deg_saat + 'h</span>';
+    if (g_kapat_saat > 0) html += '<span style="background:#0f172a; color:#fff; padding:2px 7px; border-radius:8px; font-weight:800;">KAPAT ' + g_kapat_saat + 'h</span>';
     html += '</div></div>';
     
     html += '<div id="' + accordionId + '" style="display:none; padding:0; overflow-x:auto; -webkit-overflow-scrolling:touch;">';
@@ -6198,24 +6217,33 @@ function t2HucreAc(el) {
   html += '−(' + TUKETIM + ' × ' + sebeke.toFixed(4) + ') = <b>' + s3.toFixed(0) + ' TL</b>';
   html += '</div></div>';
   
-  // KARAR MANTIGI:
-  // - Uretim VAR + S1 > S2  → SAT
-  // - Diger tum durumlar    → DEG (madencilik T2 icin karli degil, baska aboneye gec)
+  // KARAR MANTIGI (SAT / DEG / KAPAT)
+  let btcUsdSimdi = 60778;
+  if (window.lastOzet && window.lastOzet.btc && window.lastOzet.btc.usd) {
+    btcUsdSimdi = parseFloat((window.lastOzet.btc.usd + '').replace(/,/g, '')) || 60778;
+  }
+  const carpan80bin = 80000 / btcUsdSimdi;
+  const s2_80bin = s2 * carpan80bin;
+  const s3_mutlak = Math.abs(s3);
+  
   let etiket, renk, gerekce;
   if (s1 !== null && s1 > 0 && s1 > s2) {
     etiket = 'SAT (Bedelli)'; renk = '#16a34a';
     gerekce = 'S1 (' + s1.toFixed(0) + ') > S2 (' + s2.toFixed(0) + ') - satis daha karli';
-  } else if (s1 !== null && s1 > 0) {
+  } else if (s2 > s3_mutlak) {
     etiket = 'ABONE DEGISTIR'; renk = '#dc2626';
-    gerekce = 'S2 (' + s2.toFixed(0) + ') >= S1 (' + s1.toFixed(0) + ') - madencilik karli ama T2 pahali, baska aboneye gec';
+    gerekce = 'S2 (' + s2.toFixed(0) + ') > |S3| (' + s3_mutlak.toFixed(0) + ') - madencilik mevcut fiyatla karli, T2 pahali, baska aboneye gec';
+  } else if (s2_80bin > s3_mutlak) {
+    etiket = 'ABONE DEGISTIR'; renk = '#dc2626';
+    gerekce = 'BTC 80bin USD bandinda S2 ≈ ' + s2_80bin.toFixed(0) + ' > |S3| (' + s3_mutlak.toFixed(0) + ') - fiyat yukselince karli olur, beklemeyi sec';
   } else {
-    etiket = 'ABONE DEGISTIR'; renk = '#dc2626';
-    gerekce = 'Uretim yok - T2 tarifesi madencilik icin karli degil';
+    etiket = 'SISTEMI KAPAT'; renk = '#0f172a';
+    gerekce = 'BTC 80bin USD bandinda bile S2 ≈ ' + s2_80bin.toFixed(0) + ' < |S3| (' + s3_mutlak.toFixed(0) + ') - fiyat artsa da karli degil, cihazlari kapat';
   }
   
   html += '<div style="background:' + renk + '; color:#fff; padding:12px; border-radius:10px; text-align:center;">';
   html += '<div style="font-weight:900; font-size:14px;">EN AVANTAJLI: ' + etiket + '</div>';
-  html += '<div style="font-size:10px; margin-top:6px; opacity:0.95; padding:0 8px;">' + gerekce + '</div>';
+  html += '<div style="font-size:10px; margin-top:6px; opacity:0.95; padding:0 8px; line-height:1.4;">' + gerekce + '</div>';
   html += '</div>';
   
   const icerikEl = document.getElementById('t2k-popup-icerik');
