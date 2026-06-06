@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 23
+PANEL_VERSIYON_BUILD = 24
 
 def _panel_tarih():
     try:
@@ -5895,18 +5895,13 @@ function t2KiyasRender() {
     if (h && h.deger) yekdem = h.deger;
   }
   
-  // Saatlik PTF ortalamasi - ay icindeki tum gunlerin o saatlerini ortala
+  // Ay verisini al
   const ptfAy = (window.fatAylikPtf || {})[ay] || {};
-  const saatlikPtf = {};  // {0: ort_ptf, 1: ort_ptf, ...}
-  for (let s = 0; s < 24; s++) {
-    const list = [];
-    Object.keys(ptfAy).forEach(function(gun) {
-      const dizi = ptfAy[gun];
-      if (Array.isArray(dizi) && dizi.length > s && typeof dizi[s] === 'number' && dizi[s] > 0) {
-        list.push(dizi[s]);
-      }
-    });
-    saatlikPtf[s] = list.length > 0 ? (list.reduce(function(a,b){return a+b;}, 0) / list.length) : null;
+  const gunler = Object.keys(ptfAy).map(Number).sort(function(a,b){return a-b;});
+  
+  if (gunler.length === 0) {
+    tablo.innerHTML = '<div style="background:#fef3c7; border:1px solid #f59e0b; padding:14px; border-radius:10px; color:#92400e; font-size:11px;">⚠ ' + ay + ' icin PTF verisi yok</div>';
+    return;
   }
   
   // Mining geliri/kWh
@@ -5916,92 +5911,112 @@ function t2KiyasRender() {
     const dunkuBtc = o.dunku_kazanc || 0;
     const btcTl = o.btc_tl || ((o.btc_fiyati || 0) * (o.usd_try || 35));
     const hashrate = o.toplam_hashrate || 8000;
-    const gunlukKwh = (hashrate * 25 / 1000) * 24;  // 25 J/TH varsayim
+    const gunlukKwh = (hashrate * 25 / 1000) * 24;
     if (dunkuBtc > 0 && btcTl > 0 && gunlukKwh > 0) {
       miningGeliriKwh = (dunkuBtc * btcTl) / gunlukKwh;
     }
   }
   
-  // Veri kontrolu
-  const ptfDoluSaat = Object.values(saatlikPtf).filter(function(v) { return v !== null; }).length;
-  if (ptfDoluSaat === 0) {
-    tablo.innerHTML = '<div style="background:#fef3c7; border:1px solid #f59e0b; padding:14px; border-radius:10px; color:#92400e; font-size:11px;">⚠ ' + ay + ' icin PTF verisi yok</div>';
-    return;
-  }
+  // SAYAÇLAR
+  let karli_hucre = 0, zararli_hucre = 0, bos_hucre = 0;
+  let toplam_b11_net = 0;
   
-  // Tablo HTML
-  let html = '<div style="background:#fff; border-radius:10px; overflow:hidden;">';
-  html += '<table style="width:100%; border-collapse:collapse; font-size:11px;">';
-  html += '<thead><tr style="background:#f1f5f9; color:#475569; font-weight:800;">';
-  html += '<th style="padding:8px 6px; text-align:center; border-bottom:1px solid #e2e8f0;">Saat</th>';
-  html += '<th style="padding:8px 6px; text-align:right; border-bottom:1px solid #e2e8f0;">PTF<br><span style="font-weight:400; color:#94a3b8; font-size:9px;">TL/MWh</span></th>';
-  html += '<th style="padding:8px 6px; text-align:right; border-bottom:1px solid #e2e8f0;">B11<br><span style="font-weight:400; color:#94a3b8; font-size:9px;">TL/kWh</span></th>';
-  html += '<th style="padding:8px 6px; text-align:center; border-bottom:1px solid #e2e8f0;">A vs B11</th>';
-  if (miningGeliriKwh !== null) {
-    html += '<th style="padding:8px 6px; text-align:right; border-bottom:1px solid #e2e8f0;">B11 Net<br><span style="font-weight:400; color:#94a3b8; font-size:9px;">TL/kWh</span></th>';
+  // GUN x SAAT HEATMAP TABLO
+  let html = '<div style="overflow-x:auto; -webkit-overflow-scrolling:touch; background:#fff; border-radius:10px;">';
+  html += '<table style="border-collapse:collapse; font-size:9px; min-width:100%;">';
+  
+  // Header
+  html += '<thead><tr style="background:#f1f5f9; position:sticky; top:0;">';
+  html += '<th style="padding:6px 4px; text-align:center; font-weight:800; color:#475569; border-bottom:1px solid #e2e8f0; position:sticky; left:0; background:#f1f5f9; z-index:2; min-width:36px;">Gun</th>';
+  for (let s = 0; s < 24; s++) {
+    html += '<th style="padding:6px 3px; text-align:center; font-weight:700; color:#64748b; border-bottom:1px solid #e2e8f0; min-width:32px;">' + (s<10?'0'+s:s) + '</th>';
   }
-  html += '<th style="padding:8px 6px; text-align:center; border-bottom:1px solid #e2e8f0;">Karar</th>';
   html += '</tr></thead><tbody>';
   
-  let karli_saat = 0, zararli_saat = 0;
-  let toplam_kazanc = 0;
-  
-  for (let s = 0; s < 24; s++) {
-    const ptf = saatlikPtf[s];
-    if (ptf === null) {
-      html += '<tr><td colspan="6" style="padding:6px; text-align:center; color:#94a3b8; font-size:10px;">' + (s<10?'0'+s:s) + ':00 - veri yok</td></tr>';
-      continue;
+  // Her gun
+  gunler.forEach(function(gun) {
+    const dizi = ptfAy[gun];
+    if (!Array.isArray(dizi)) return;
+    
+    html += '<tr>';
+    html += '<td style="padding:5px 4px; text-align:center; font-weight:800; color:#1e293b; background:#f8fafc; border-right:1px solid #e2e8f0; position:sticky; left:0; z-index:1;">' + gun + '</td>';
+    
+    for (let s = 0; s < 24; s++) {
+      const ptf = (typeof dizi[s] === 'number' && dizi[s] > 0) ? dizi[s] : null;
+      
+      if (ptf === null) {
+        html += '<td style="padding:5px 3px; text-align:center; color:#cbd5e1; background:#fafafa; border:1px solid #f1f5f9;">—</td>';
+        bos_hucre++;
+        continue;
+      }
+      
+      const b11 = (ptf + yekdem) / 1000 * TRT + DB;
+      const b11_karli = b11 < BEDELLI;
+      
+      let bg, color;
+      if (b11_karli) {
+        karli_hucre++;
+        // Yesil tonlama - daha karli daha koyu
+        const fark = (BEDELLI - b11) / BEDELLI;  // 0-1 arasi
+        if (fark > 0.3) { bg = '#16a34a'; color = '#fff'; }
+        else if (fark > 0.15) { bg = '#86efac'; color = '#14532d'; }
+        else { bg = '#dcfce7'; color = '#14532d'; }
+      } else {
+        zararli_hucre++;
+        // Kirmizi tonlama
+        const fark = (b11 - BEDELLI) / BEDELLI;
+        if (fark > 0.3) { bg = '#dc2626'; color = '#fff'; }
+        else if (fark > 0.15) { bg = '#fca5a5'; color = '#7f1d1d'; }
+        else { bg = '#fee2e2'; color = '#7f1d1d'; }
+      }
+      
+      // Mining net
+      if (miningGeliriKwh !== null) {
+        const net = miningGeliriKwh - b11;
+        if (net > 0) toplam_b11_net += net;
+      }
+      
+      html += '<td style="padding:5px 3px; text-align:center; font-weight:700; color:' + color + '; background:' + bg + '; border:1px solid #fff; font-size:9px;">' + b11.toFixed(2) + '</td>';
     }
-    
-    // B11 maliyeti
-    const b11 = (ptf + yekdem) / 1000 * TRT + DB;
-    // B11 net (mining geliri varsa)
-    let b11_net = null;
-    if (miningGeliriKwh !== null) b11_net = miningGeliriKwh - b11;
-    
-    // Karar - A (Bedelli) ile B11 (maliyet) karsilastir
-    // B11 maliyet < BEDELLI ise: sebekeden cek + mining yapsam karli
-    // B11 maliyet > BEDELLI ise: sebekeden cekme - bedelli sat
-    const b11_karli = b11 < BEDELLI;
-    
-    let renk_bg = b11_karli ? '#dcfce7' : '#fee2e2';
-    let karar_yazi = b11_karli ? '✓ DEVAM' : '⚠ DEGIS';
-    let karar_renk = b11_karli ? '#16a34a' : '#dc2626';
-    
-    if (b11_karli) karli_saat++; else zararli_saat++;
-    if (b11_net !== null && b11_net > 0) toplam_kazanc += b11_net;
-    
-    html += '<tr style="background:' + renk_bg + ';">';
-    html += '<td style="padding:7px 6px; text-align:center; font-weight:700; color:#1e293b;">' + (s<10?'0'+s:s) + ':00</td>';
-    html += '<td style="padding:7px 6px; text-align:right; color:#475569;">' + ptf.toFixed(1) + '</td>';
-    html += '<td style="padding:7px 6px; text-align:right; font-weight:700; color:#1e293b;">' + b11.toFixed(3) + '</td>';
-    html += '<td style="padding:7px 6px; text-align:center; font-size:10px;">' + (b11_karli ? '<span style="color:#16a34a;">B11 ucuz</span>' : '<span style="color:#dc2626;">A ucuz</span>') + '</td>';
-    if (miningGeliriKwh !== null) {
-      html += '<td style="padding:7px 6px; text-align:right; color:' + (b11_net>0?'#16a34a':'#dc2626') + '; font-weight:700;">' + (b11_net>0?'+':'') + b11_net.toFixed(3) + '</td>';
-    }
-    html += '<td style="padding:7px 6px; text-align:center; font-weight:800; color:' + karar_renk + ';">' + karar_yazi + '</td>';
     html += '</tr>';
-  }
+  });
   
   html += '</tbody></table></div>';
+  
+  // Legend
+  html += '<div style="display:flex; gap:10px; align-items:center; padding:10px 0; font-size:10px; color:#64748b; flex-wrap:wrap;">';
+  html += '<span><span style="display:inline-block; width:12px; height:12px; background:#16a34a; border-radius:3px; vertical-align:middle;"></span> Cok karli (B11 << Bedelli)</span>';
+  html += '<span><span style="display:inline-block; width:12px; height:12px; background:#dcfce7; border-radius:3px; vertical-align:middle;"></span> Karli</span>';
+  html += '<span><span style="display:inline-block; width:12px; height:12px; background:#fee2e2; border-radius:3px; vertical-align:middle;"></span> Zararli</span>';
+  html += '<span><span style="display:inline-block; width:12px; height:12px; background:#dc2626; border-radius:3px; vertical-align:middle;"></span> Cok zararli</span>';
+  html += '</div>';
   
   tablo.innerHTML = html;
   
   // Ozet
+  const dolu = karli_hucre + zararli_hucre;
   if (ozet) {
     let ozetHtml = '<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">';
     ozetHtml += '<div style="background:#dcfce7; border:1px solid #16a34a; padding:10px; border-radius:10px;">';
     ozetHtml += '<div style="font-size:10px; color:#15803d; font-weight:700;">T2 DEVAM (B11 < Bedelli)</div>';
-    ozetHtml += '<div style="font-size:20px; font-weight:900; color:#15803d; margin-top:2px;">' + karli_saat + '/24 saat</div>';
+    ozetHtml += '<div style="font-size:20px; font-weight:900; color:#15803d; margin-top:2px;">' + karli_hucre + '<span style="font-size:11px; color:#64748b; font-weight:600;">/' + dolu + ' saat</span></div>';
+    const yuzde_k = dolu > 0 ? (karli_hucre/dolu*100).toFixed(0) : 0;
+    ozetHtml += '<div style="font-size:10px; color:#15803d;">%' + yuzde_k + '</div>';
     ozetHtml += '</div>';
     ozetHtml += '<div style="background:#fee2e2; border:1px solid #dc2626; padding:10px; border-radius:10px;">';
     ozetHtml += '<div style="font-size:10px; color:#991b1b; font-weight:700;">ABONE DEGISTIR (A > B11)</div>';
-    ozetHtml += '<div style="font-size:20px; font-weight:900; color:#991b1b; margin-top:2px;">' + zararli_saat + '/24 saat</div>';
+    ozetHtml += '<div style="font-size:20px; font-weight:900; color:#991b1b; margin-top:2px;">' + zararli_hucre + '<span style="font-size:11px; color:#64748b; font-weight:600;">/' + dolu + ' saat</span></div>';
+    const yuzde_z = dolu > 0 ? (zararli_hucre/dolu*100).toFixed(0) : 0;
+    ozetHtml += '<div style="font-size:10px; color:#991b1b;">%' + yuzde_z + '</div>';
     ozetHtml += '</div></div>';
     
+    ozetHtml += '<div style="background:#f1f5f9; padding:8px 12px; border-radius:8px; margin-top:8px; font-size:10px; color:#64748b;">';
+    ozetHtml += '⚡ Aylik YEKDEM: <b style="color:#1e293b;">' + yekdem.toFixed(1) + ' TL/MWh</b> · ';
+    ozetHtml += 'Gun sayisi: <b style="color:#1e293b;">' + gunler.length + '</b>';
     if (miningGeliriKwh !== null) {
-      ozetHtml += '<div style="background:#f1f5f9; padding:8px 12px; border-radius:8px; margin-top:8px; font-size:10px; color:#64748b;">Mining geliri: <b style="color:#a855f7;">' + miningGeliriKwh.toFixed(3) + ' TL/kWh</b> · Toplam B11 net kazanc/saat: <b style="color:#16a34a;">' + toplam_kazanc.toFixed(2) + ' TL</b></div>';
+      ozetHtml += ' · Mining geliri: <b style="color:#a855f7;">' + miningGeliriKwh.toFixed(3) + ' TL/kWh</b>';
     }
+    ozetHtml += '</div>';
     
     ozet.innerHTML = ozetHtml;
   }
