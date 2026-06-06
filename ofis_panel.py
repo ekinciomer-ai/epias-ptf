@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 35
+PANEL_VERSIYON_BUILD = 38
 
 def _panel_tarih():
     try:
@@ -5990,24 +5990,25 @@ function t2KiyasRender() {
       const ptf = (typeof dizi[s] === 'number') ? dizi[s] : null;
       if (ptf === null) continue;
       
-      // OSOS T2 verisi - VAR mi yok mu kontrol et
-      // Eger gun veya saat verisi YOKSA "veri yok" durumu (S1 hesaplanamaz)
+      // OSOS T2 verisi - Uretim VAR mi YOK mu kontrol
+      // Eger gun/saat verisi YOKSA "belirsiz" durumu (S1 hesaplanamaz)
       const t2saat = t2gun[String(s)];
       const veriEksik = !t2saat;
       const veris = t2saat ? (t2saat.veris || 0) : 0;
       const cekis = t2saat ? (t2saat.cekis || 0) : 0;
       
-      // Uretim hesabi:
-      // - Veri yoksa: belirsiz (-1 marker), S1 hesaplanmaz
-      // - veris > 0 VEYA cekis < 174: uretim VAR, baz 174
-      // - cekis >= 174: uretim YOK, baz 0
+      // Uretim hesabi (KESIN MANTIK):
+      // - Veri yoksa: belirsiz, S1 hesaplanmaz
+      // - veris > 0: KESIN uretim VAR (mahsup sonrasi fazla satildi)
+      // - veris = 0: uretim YOK (satilacak fazla yok, S1=0)
+      //   (cekis<174 olsa bile veris=0 ise S1=0 - satilacak bir sey yok)
       let uretim;
       if (veriEksik) {
-        uretim = null;  // belirsiz
-      } else if (veris > 0 || cekis < TUKETIM_SAAT) {
-        uretim = TUKETIM_SAAT;
+        uretim = null;
+      } else if (veris > 0) {
+        uretim = TUKETIM_SAAT;  // baz 174
       } else {
-        uretim = 0;
+        uretim = 0;  // veris=0 → satilacak yok
       }
       
       const sebeke = (ptf + yekdem) / 1000 * TRT + DB;
@@ -6027,36 +6028,28 @@ function t2KiyasRender() {
       const s1 = (uretim !== null) ? (uretim * BEDELLI) : null;
       const s3 = -(TUKETIM_SAAT * sebeke);
       
-      // Tercih: avantajli olan pozitif (s1 null ise SAT yok say)
-      const s1_safe = (s1 === null) ? -Infinity : s1;
-      const max_s2_s3 = Math.max(s2, s3);
-      const max_s1_s3 = Math.max(s1_safe, s3);
-      const max_s1_s2 = Math.max(s1_safe, s2);
-      
-      const sat_avantaj = (s1 === null) ? null : (s1 - max_s2_s3);
-      const btc_avantaj = s2 - max_s1_s3;
-      const deg_avantaj = s3 - max_s1_s2;
-      
+      // Gun toplamlari (referans)
       if (s1 !== null) g_s1 += s1;
       g_s2 += s2; g_s3 += s3;
       
-      // Satir
-      const renkArti = '#16a34a', renkEksi = '#dc2626';
-      function fmt(v) { return (v>=0?'+':'') + v.toFixed(0); }
-      function renk(v) { return v >= 0 ? renkArti : renkEksi; }
-      
-      // Saatlik tercih (s1 null ise S1 hariç tutulur)
-      let s_max, s_etiket = 'SAT', s_renk = '#16a34a';
-      if (s1 === null) {
-        s_max = Math.max(s2, s3);
-        if (s_max === s2) { s_etiket = 'BTC'; s_renk = '#a855f7'; g_btc_saat++; }
-        else { s_etiket = 'DEG'; s_renk = '#dc2626'; g_deg_saat++; }
+      // KARAR MANTIGI (SAT veya DEG):
+      // - Uretim VAR + S1 > S2  → SAT (satis madencilikten karli)
+      // - Uretim VAR + S1 ≤ S2  → DEG (madencilik karli ama T2 pahali, baska aboneye gec)
+      // - Uretim YOK            → DEG (T2 tarifesi madencilik icin hicbir zaman karli degil)
+      let s_etiket, s_renk;
+      if (s1 !== null && s1 > 0 && s1 > s2) {
+        s_etiket = 'SAT'; s_renk = '#16a34a'; g_sat_saat++;
       } else {
-        s_max = Math.max(s1, s2, s3);
-        if (s_max === s2) { s_etiket = 'BTC'; s_renk = '#a855f7'; g_btc_saat++; }
-        else if (s_max === s3) { s_etiket = 'DEG'; s_renk = '#dc2626'; g_deg_saat++; }
-        else { g_sat_saat++; }
+        s_etiket = 'DEG'; s_renk = '#dc2626'; g_deg_saat++;
       }
+      
+      // S1 ve S3 vurgu renkleri (kazanan kolon yesil/kirmizi arka plan)
+      const s1Bg = (s_etiket === 'SAT') ? '#dcfce7' : '#fff';
+      const s1Color = (s_etiket === 'SAT') ? '#15803d' : '#1e293b';
+      const s1Weight = (s_etiket === 'SAT') ? '800' : '400';
+      const s3Bg = (s_etiket === 'DEG') ? '#fee2e2' : '#fff';
+      const s3Color = (s_etiket === 'DEG') ? '#991b1b' : '#1e293b';
+      const s3Weight = (s_etiket === 'DEG') ? '800' : '400';
       
       saatTablo += '<tr onclick="t2HucreAc(this)" data-gun="' + gun + '" data-saat="' + s + '" data-ay="' + ay + '" data-ptf="' + ptf + '" data-veris="' + veris + '" data-cekis="' + cekis + '" data-uretim="' + uretim + '" data-sebeke="' + sebeke + '" data-s1="' + s1 + '" data-s2="' + s2 + '" data-s3="' + s3 + '" style="cursor:pointer;">';
       saatTablo += '<td style="padding:5px 6px; text-align:center; font-weight:700; color:#1e293b; background:#f8fafc; border-right:1px solid #e2e8f0;">' + (s<10?'0'+s:s) + '</td>';
@@ -6064,13 +6057,10 @@ function t2KiyasRender() {
       saatTablo += '<td style="padding:5px 6px; text-align:right; color:#475569;">' + TUKETIM_SAAT + '</td>';
       saatTablo += '<td style="padding:5px 6px; text-align:right; color:#94a3b8;">' + ptf.toFixed(0) + '</td>';
       saatTablo += '<td style="padding:5px 6px; text-align:right; color:#94a3b8;">' + sebeke.toFixed(2) + '</td>';
-      saatTablo += '<td style="padding:5px 6px; text-align:right; color:#1e293b;">' + (s1===null?'<span style="color:#cbd5e1;">—</span>':s1.toFixed(0)) + '</td>';
-      saatTablo += '<td style="padding:5px 6px; text-align:right; color:#1e293b;">' + s2.toFixed(0) + '</td>';
-      saatTablo += '<td style="padding:5px 6px; text-align:right; color:#1e293b;">' + s3.toFixed(0) + '</td>';
-      saatTablo += '<td style="padding:5px 6px; text-align:right; font-weight:800; color:' + (sat_avantaj===null?'#cbd5e1':renk(sat_avantaj)) + ';">' + (sat_avantaj===null?'—':fmt(sat_avantaj)) + '</td>';
-      saatTablo += '<td style="padding:5px 6px; text-align:right; font-weight:800; color:' + renk(btc_avantaj) + ';">' + fmt(btc_avantaj) + '</td>';
-      saatTablo += '<td style="padding:5px 6px; text-align:right; font-weight:800; color:' + renk(deg_avantaj) + ';">' + fmt(deg_avantaj) + '</td>';
-      saatTablo += '<td style="padding:5px 6px; text-align:center;"><span style="background:' + s_renk + '; color:#fff; padding:2px 7px; border-radius:8px; font-weight:800; font-size:9px;">' + s_etiket + '</span></td>';
+      saatTablo += '<td style="padding:5px 6px; text-align:right; color:' + s1Color + '; background:' + s1Bg + '; font-weight:' + s1Weight + ';">' + (s1===null?'<span style="color:#cbd5e1;">—</span>':s1.toFixed(0)) + '</td>';
+      saatTablo += '<td style="padding:5px 6px; text-align:right; color:#94a3b8;">' + s2.toFixed(0) + '</td>';
+      saatTablo += '<td style="padding:5px 6px; text-align:right; color:' + s3Color + '; background:' + s3Bg + '; font-weight:' + s3Weight + ';">' + s3.toFixed(0) + '</td>';
+      saatTablo += '<td style="padding:5px 6px; text-align:center;"><span style="background:' + s_renk + '; color:#fff; padding:3px 9px; border-radius:8px; font-weight:800; font-size:10px;">' + s_etiket + '</span></td>';
       saatTablo += '</tr>';
     }
     
@@ -6091,7 +6081,6 @@ function t2KiyasRender() {
     html += '</div>';
     html += '<div style="display:flex; align-items:center; gap:6px; font-size:10px;" id="t2k-gun-dagilim-' + gun + '">';
     html += '<span style="background:#dcfce7; color:#15803d; padding:2px 7px; border-radius:8px; font-weight:800;">SAT ' + g_sat_saat + 'h</span>';
-    html += '<span style="background:#f3e8ff; color:#7c3aed; padding:2px 7px; border-radius:8px; font-weight:800;">BTC ' + g_btc_saat + 'h</span>';
     html += '<span style="background:#fee2e2; color:#991b1b; padding:2px 7px; border-radius:8px; font-weight:800;">DEG ' + g_deg_saat + 'h</span>';
     html += '</div></div>';
     
@@ -6106,9 +6095,6 @@ function t2KiyasRender() {
     html += '<th style="padding:6px 6px; text-align:right;">S1</th>';
     html += '<th style="padding:6px 6px; text-align:right;">S2</th>';
     html += '<th style="padding:6px 6px; text-align:right;">S3</th>';
-    html += '<th style="padding:6px 6px; text-align:right;">SAT</th>';
-    html += '<th style="padding:6px 6px; text-align:right;">BTC</th>';
-    html += '<th style="padding:6px 6px; text-align:right;">DEG</th>';
     html += '<th style="padding:6px 6px; text-align:center;">TERCIH</th>';
     html += '</tr></thead><tbody>' + saatTablo + '</tbody></table></div>';
     html += '</div>';
@@ -6212,15 +6198,24 @@ function t2HucreAc(el) {
   html += '−(' + TUKETIM + ' × ' + sebeke.toFixed(4) + ') = <b>' + s3.toFixed(0) + ' TL</b>';
   html += '</div></div>';
   
-  // Tercih
-  const max3 = Math.max(s1, s2, s3);
-  let etiket = 'SAT', renk = '#16a34a';
-  if (max3 === s2) { etiket = 'BTC MADENCILIK'; renk = '#a855f7'; }
-  else if (max3 === s3) { etiket = 'ABONE DEGISTIR'; renk = '#dc2626'; }
+  // KARAR MANTIGI:
+  // - Uretim VAR + S1 > S2  → SAT
+  // - Diger tum durumlar    → DEG (madencilik T2 icin karli degil, baska aboneye gec)
+  let etiket, renk, gerekce;
+  if (s1 !== null && s1 > 0 && s1 > s2) {
+    etiket = 'SAT (Bedelli)'; renk = '#16a34a';
+    gerekce = 'S1 (' + s1.toFixed(0) + ') > S2 (' + s2.toFixed(0) + ') - satis daha karli';
+  } else if (s1 !== null && s1 > 0) {
+    etiket = 'ABONE DEGISTIR'; renk = '#dc2626';
+    gerekce = 'S2 (' + s2.toFixed(0) + ') >= S1 (' + s1.toFixed(0) + ') - madencilik karli ama T2 pahali, baska aboneye gec';
+  } else {
+    etiket = 'ABONE DEGISTIR'; renk = '#dc2626';
+    gerekce = 'Uretim yok - T2 tarifesi madencilik icin karli degil';
+  }
   
   html += '<div style="background:' + renk + '; color:#fff; padding:12px; border-radius:10px; text-align:center;">';
   html += '<div style="font-weight:900; font-size:14px;">EN AVANTAJLI: ' + etiket + '</div>';
-  html += '<div style="font-size:11px; margin-top:3px; opacity:0.9;">' + max3.toFixed(0) + ' TL</div>';
+  html += '<div style="font-size:10px; margin-top:6px; opacity:0.95; padding:0 8px;">' + gerekce + '</div>';
   html += '</div>';
   
   const icerikEl = document.getElementById('t2k-popup-icerik');
