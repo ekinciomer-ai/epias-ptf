@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 25
+PANEL_VERSIYON_BUILD = 28
 
 def _panel_tarih():
     try:
@@ -1648,6 +1648,18 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
   <div id="t2k-ozet" style="margin-bottom:14px;"></div>
 
   <div id="t2k-tablo"><div style="padding:30px; text-align:center; color:#64748b; font-size:12px;">Yükleniyor...</div></div>
+
+  <!-- Hucre Detay Popup -->
+  <div id="t2k-hucre-popup" onclick="t2HucreKapat(event)" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.85); z-index:99999; backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:14px;">
+    <div onclick="event.stopPropagation()" style="background:#fff; border-radius:16px; max-width:420px; width:100%; max-height:90vh; overflow-y:auto; padding:18px; box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding-bottom:10px; border-bottom:1px solid #e2e8f0; margin-bottom:12px;">
+        <div id="t2k-popup-baslik" style="font-size:16px; font-weight:900; background:linear-gradient(135deg,#8b5cf6,#a855f7); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Yukleniyor</div>
+        <button onclick="t2HucreKapat()" style="background:#f1f5f9; border:none; width:32px; height:32px; border-radius:8px; font-size:16px; font-weight:900; color:#475569; cursor:pointer;">✕</button>
+      </div>
+      <div id="t2k-popup-icerik" style="font-size:12px; color:#1e293b; line-height:1.6;"></div>
+    </div>
+  </div>
+
 
 </div>
 <!-- ====================== T2 KIYAS SEKMESI SONU ====================== -->
@@ -5854,7 +5866,7 @@ async function t2KiyasYukle() {
   tablo.innerHTML = '<div style="padding:30px; text-align:center; color:#64748b; font-size:12px;">Hesaplaniyor...</div>';
   if (ozet) ozet.innerHTML = '';
   
-  // Veriler hazir mi - fatAylikPtf yoksa cek
+  // PTF verisi
   if (!window.fatAylikPtf) {
     try {
       const r = await fetch('/api/aylik_ptf');
@@ -5865,12 +5877,37 @@ async function t2KiyasYukle() {
     }
   }
   
-  // Mining geliri icin ozet
+  // Ozet (BTC fiyat, dunku BTC)
   if (!window.lastOzet) {
     try {
       const r = await fetch('/api/ozet');
       window.lastOzet = await r.json();
     } catch(e) {}
+  }
+  
+  // T2 OSOS verisi
+  if (!window.t2OsosData) {
+    try {
+      const r = await fetch('/api/osos_raw');
+      const osos = await r.json();
+      // Bizim icin sadece tekyildiz_2'nin saatlik gun verisini al, gun anahtari "01" formatinda
+      const t2 = (osos && osos.tekyildiz_2 && osos.tekyildiz_2.veri) || {};
+      // {"2026-06-01": {"0":{cekis,veris}, "1":...}, ...} formatinda
+      // Kullaniciya {"01": {0:{}, 1:{}}, "02": ...} formatinda gerek
+      const selEl2 = document.getElementById('t2k-ay-secim');
+      const ay = selEl2 ? selEl2.value : '2026-06';
+      const t2Ay = {};
+      Object.keys(t2).forEach(function(tarih) {
+        if (tarih.startsWith(ay)) {
+          const gun = tarih.split('-')[2];  // "01"
+          t2Ay[gun] = t2[tarih];
+        }
+      });
+      window.t2OsosData = t2Ay;
+      window.t2OsosAy = ay;
+    } catch(e) {
+      window.t2OsosData = {};
+    }
   }
   
   t2KiyasRender();
@@ -5887,6 +5924,7 @@ function t2KiyasRender() {
   const BEDELLI = 2.253679;
   const DB = 1.182457;
   const TRT = 1.035;
+  const TUKETIM_SAAT = 174;  // kWh - 29 cihaz saatlik
   
   // YEKDEM
   let yekdem = 580.99;
@@ -5895,9 +5933,9 @@ function t2KiyasRender() {
     if (h && h.deger) yekdem = h.deger;
   }
   
-  // Ay verisini al
+  // Veriler
   const ptfAy = (window.fatAylikPtf || {})[ay] || {};
-  // Anahtarlar "01", "02" gibi - string olarak tut, sort string
+  const ososT2 = window.t2OsosData || {};  // T2 OSOS verisi (gun -> saat -> {cekis, veris})
   const gunler = Object.keys(ptfAy).sort();
   
   if (gunler.length === 0) {
@@ -5905,125 +5943,240 @@ function t2KiyasRender() {
     return;
   }
   
-  // Mining geliri/kWh
-  let miningGeliriKwh = null;
+  // Mining geliri saatlik (BTC fiyat ve saatlik BTC)
+  let btcSaatlikGelir = 0;
   if (window.lastOzet) {
     const o = window.lastOzet;
     const dunkuBtc = o.dunku_kazanc || 0;
     const btcTl = o.btc_tl || ((o.btc_fiyati || 0) * (o.usd_try || 35));
-    const hashrate = o.toplam_hashrate || 8000;
-    const gunlukKwh = (hashrate * 25 / 1000) * 24;
-    if (dunkuBtc > 0 && btcTl > 0 && gunlukKwh > 0) {
-      miningGeliriKwh = (dunkuBtc * btcTl) / gunlukKwh;
+    if (dunkuBtc > 0 && btcTl > 0) {
+      btcSaatlikGelir = (dunkuBtc * btcTl) / 24;  // TL/saat
     }
   }
   
-  // SAYAÇLAR
-  let karli_hucre = 0, zararli_hucre = 0, bos_hucre = 0;
-  let toplam_b11_net = 0;
+  // Her gün için topla, kart aç-kapat
+  let ozet_s1 = 0, ozet_s2 = 0, ozet_s3 = 0;
+  let html = '';
   
-  // GUN x SAAT HEATMAP TABLO
-  let html = '<div style="overflow-x:auto; -webkit-overflow-scrolling:touch; background:#fff; border-radius:10px;">';
-  html += '<table style="border-collapse:collapse; font-size:9px; min-width:100%;">';
-  
-  // Header
-  html += '<thead><tr style="background:#f1f5f9; position:sticky; top:0;">';
-  html += '<th style="padding:6px 4px; text-align:center; font-weight:800; color:#475569; border-bottom:1px solid #e2e8f0; position:sticky; left:0; background:#f1f5f9; z-index:2; min-width:36px;">Gun</th>';
-  for (let s = 0; s < 24; s++) {
-    html += '<th style="padding:6px 3px; text-align:center; font-weight:700; color:#64748b; border-bottom:1px solid #e2e8f0; min-width:32px;">' + (s<10?'0'+s:s) + '</th>';
-  }
-  html += '</tr></thead><tbody>';
-  
-  // Her gun
   gunler.forEach(function(gun) {
     const dizi = ptfAy[gun];
     if (!Array.isArray(dizi)) return;
+    const t2gun = (ososT2[gun] || {});  // gun anahtarı string '01' format
     
-    html += '<tr>';
-    html += '<td style="padding:5px 4px; text-align:center; font-weight:800; color:#1e293b; background:#f8fafc; border-right:1px solid #e2e8f0; position:sticky; left:0; z-index:1;">' + Number(gun) + '</td>';
+    // Gun toplamlari
+    let g_s1 = 0, g_s2 = 0, g_s3 = 0;
+    let saatTablo = '';
     
     for (let s = 0; s < 24; s++) {
-      const ptf = (typeof dizi[s] === 'number' && dizi[s] > 0) ? dizi[s] : null;
+      const ptf = (typeof dizi[s] === 'number') ? dizi[s] : null;
+      if (ptf === null) continue;
       
-      if (ptf === null) {
-        html += '<td style="padding:5px 3px; text-align:center; color:#cbd5e1; background:#fafafa; border:1px solid #f1f5f9;">—</td>';
-        bos_hucre++;
-        continue;
-      }
+      const t2saat = (t2gun[String(s)] || {cekis: 0, veris: 0});
+      const veris = t2saat.veris || 0;
+      const cekis = t2saat.cekis || 0;
       
-      const b11 = (ptf + yekdem) / 1000 * TRT + DB;
-      const b11_karli = b11 < BEDELLI;
+      // Sanal brut uretim
+      const uretim = (veris > 0) ? (veris + TUKETIM_SAAT) : 0;
       
-      let bg, color;
-      if (b11_karli) {
-        karli_hucre++;
-        // Yesil tonlama - daha karli daha koyu
-        const fark = (BEDELLI - b11) / BEDELLI;  // 0-1 arasi
-        if (fark > 0.3) { bg = '#16a34a'; color = '#fff'; }
-        else if (fark > 0.15) { bg = '#86efac'; color = '#14532d'; }
-        else { bg = '#dcfce7'; color = '#14532d'; }
-      } else {
-        zararli_hucre++;
-        // Kirmizi tonlama
-        const fark = (b11 - BEDELLI) / BEDELLI;
-        if (fark > 0.3) { bg = '#dc2626'; color = '#fff'; }
-        else if (fark > 0.15) { bg = '#fca5a5'; color = '#7f1d1d'; }
-        else { bg = '#fee2e2'; color = '#7f1d1d'; }
-      }
+      const sebeke = (ptf + yekdem) / 1000 * TRT + DB;
       
-      // Mining net
-      if (miningGeliriKwh !== null) {
-        const net = miningGeliriKwh - b11;
-        if (net > 0) toplam_b11_net += net;
-      }
+      // Senaryolar
+      const s1 = uretim * BEDELLI;
+      const s2 = btcSaatlikGelir;
+      const s3 = -(TUKETIM_SAAT * sebeke);
       
-      html += '<td style="padding:5px 3px; text-align:center; font-weight:700; color:' + color + '; background:' + bg + '; border:1px solid #fff; font-size:9px;">' + b11.toFixed(2) + '</td>';
+      // Tercih: avantajli olan pozitif, digerleri negatif
+      const max_s2_s3 = Math.max(s2, s3);
+      const max_s1_s3 = Math.max(s1, s3);
+      const max_s1_s2 = Math.max(s1, s2);
+      
+      const sat_avantaj = s1 - max_s2_s3;
+      const btc_avantaj = s2 - max_s1_s3;
+      const deg_avantaj = s3 - max_s1_s2;
+      
+      g_s1 += s1; g_s2 += s2; g_s3 += s3;
+      
+      // Satir
+      const renkArti = '#16a34a', renkEksi = '#dc2626';
+      function fmt(v) { return (v>=0?'+':'') + v.toFixed(0); }
+      function renk(v) { return v >= 0 ? renkArti : renkEksi; }
+      
+      saatTablo += '<tr onclick="t2HucreAc(this)" data-gun="' + gun + '" data-saat="' + s + '" data-ay="' + ay + '" data-ptf="' + ptf + '" data-veris="' + veris + '" data-cekis="' + cekis + '" data-uretim="' + uretim + '" data-sebeke="' + sebeke + '" data-s1="' + s1 + '" data-s2="' + s2 + '" data-s3="' + s3 + '" style="cursor:pointer;">';
+      saatTablo += '<td style="padding:5px 6px; text-align:center; font-weight:700; color:#1e293b; background:#f8fafc; border-right:1px solid #e2e8f0;">' + (s<10?'0'+s:s) + '</td>';
+      saatTablo += '<td style="padding:5px 6px; text-align:right; color:#475569;">' + uretim.toFixed(0) + '</td>';
+      saatTablo += '<td style="padding:5px 6px; text-align:right; color:#475569;">' + TUKETIM_SAAT + '</td>';
+      saatTablo += '<td style="padding:5px 6px; text-align:right; color:#94a3b8;">' + ptf.toFixed(0) + '</td>';
+      saatTablo += '<td style="padding:5px 6px; text-align:right; color:#94a3b8;">' + sebeke.toFixed(2) + '</td>';
+      saatTablo += '<td style="padding:5px 6px; text-align:right; color:#1e293b;">' + s1.toFixed(0) + '</td>';
+      saatTablo += '<td style="padding:5px 6px; text-align:right; color:#1e293b;">' + s2.toFixed(0) + '</td>';
+      saatTablo += '<td style="padding:5px 6px; text-align:right; color:#1e293b;">' + s3.toFixed(0) + '</td>';
+      saatTablo += '<td style="padding:5px 6px; text-align:right; font-weight:800; color:' + renk(sat_avantaj) + ';">' + fmt(sat_avantaj) + '</td>';
+      saatTablo += '<td style="padding:5px 6px; text-align:right; font-weight:800; color:' + renk(btc_avantaj) + ';">' + fmt(btc_avantaj) + '</td>';
+      saatTablo += '<td style="padding:5px 6px; text-align:right; font-weight:800; color:' + renk(deg_avantaj) + ';">' + fmt(deg_avantaj) + '</td>';
+      saatTablo += '</tr>';
     }
-    html += '</tr>';
+    
+    ozet_s1 += g_s1; ozet_s2 += g_s2; ozet_s3 += g_s3;
+    
+    // Gun toplam karari
+    const g_max = Math.max(g_s1, g_s2, g_s3);
+    let g_etiket = 'SAT', g_renk = '#16a34a';
+    if (g_max === g_s2) { g_etiket = 'BTC'; g_renk = '#a855f7'; }
+    else if (g_max === g_s3) { g_etiket = 'DEGISTIR'; g_renk = '#dc2626'; }
+    
+    const accordionId = 't2k-gun-' + gun;
+    
+    html += '<div style="background:#fff; border-radius:10px; margin-bottom:8px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.05);">';
+    html += '<div onclick="t2GunAc(' + Number(gun) + ')" style="padding:12px 14px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; gap:8px; background:linear-gradient(135deg,#f8fafc,#f1f5f9);">';
+    html += '<div style="display:flex; align-items:center; gap:10px;">';
+    html += '<span style="font-size:11px; color:#64748b;">▶</span>';
+    html += '<span style="font-weight:800; color:#1e293b; font-size:13px;">' + Number(gun) + ' ' + ayAdi(ay) + '</span>';
+    html += '</div>';
+    html += '<div style="display:flex; align-items:center; gap:8px; font-size:10px;">';
+    html += '<span style="color:#16a34a; font-weight:700;">SAT ' + g_s1.toFixed(0) + '</span>';
+    html += '<span style="color:#a855f7; font-weight:700;">BTC ' + g_s2.toFixed(0) + '</span>';
+    html += '<span style="color:#dc2626; font-weight:700;">DEG ' + g_s3.toFixed(0) + '</span>';
+    html += '<span style="background:' + g_renk + '; color:#fff; padding:2px 8px; border-radius:10px; font-weight:800; font-size:9px;">' + g_etiket + '</span>';
+    html += '</div></div>';
+    
+    html += '<div id="' + accordionId + '" style="display:none; padding:0; overflow-x:auto; -webkit-overflow-scrolling:touch;">';
+    html += '<table style="width:100%; border-collapse:collapse; font-size:10px; min-width:600px;">';
+    html += '<thead><tr style="background:#f1f5f9; color:#64748b; font-weight:800;">';
+    html += '<th style="padding:6px 6px;">Saat</th>';
+    html += '<th style="padding:6px 6px; text-align:right;">Uretim</th>';
+    html += '<th style="padding:6px 6px; text-align:right;">Tuketim</th>';
+    html += '<th style="padding:6px 6px; text-align:right;">PTF</th>';
+    html += '<th style="padding:6px 6px; text-align:right;">Sebeke</th>';
+    html += '<th style="padding:6px 6px; text-align:right;">S1</th>';
+    html += '<th style="padding:6px 6px; text-align:right;">S2</th>';
+    html += '<th style="padding:6px 6px; text-align:right;">S3</th>';
+    html += '<th style="padding:6px 6px; text-align:right;">SAT</th>';
+    html += '<th style="padding:6px 6px; text-align:right;">BTC</th>';
+    html += '<th style="padding:6px 6px; text-align:right;">DEG</th>';
+    html += '</tr></thead><tbody>' + saatTablo + '</tbody></table></div>';
+    html += '</div>';
   });
-  
-  html += '</tbody></table></div>';
-  
-  // Legend
-  html += '<div style="display:flex; gap:10px; align-items:center; padding:10px 0; font-size:10px; color:#64748b; flex-wrap:wrap;">';
-  html += '<span><span style="display:inline-block; width:12px; height:12px; background:#16a34a; border-radius:3px; vertical-align:middle;"></span> Cok karli (B11 << Bedelli)</span>';
-  html += '<span><span style="display:inline-block; width:12px; height:12px; background:#dcfce7; border-radius:3px; vertical-align:middle;"></span> Karli</span>';
-  html += '<span><span style="display:inline-block; width:12px; height:12px; background:#fee2e2; border-radius:3px; vertical-align:middle;"></span> Zararli</span>';
-  html += '<span><span style="display:inline-block; width:12px; height:12px; background:#dc2626; border-radius:3px; vertical-align:middle;"></span> Cok zararli</span>';
-  html += '</div>';
   
   tablo.innerHTML = html;
   
-  // Ozet
-  const dolu = karli_hucre + zararli_hucre;
+  // Ay ozet karti
   if (ozet) {
-    let ozetHtml = '<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">';
-    ozetHtml += '<div style="background:#dcfce7; border:1px solid #16a34a; padding:10px; border-radius:10px;">';
-    ozetHtml += '<div style="font-size:10px; color:#15803d; font-weight:700;">T2 DEVAM (B11 < Bedelli)</div>';
-    ozetHtml += '<div style="font-size:20px; font-weight:900; color:#15803d; margin-top:2px;">' + karli_hucre + '<span style="font-size:11px; color:#64748b; font-weight:600;">/' + dolu + ' saat</span></div>';
-    const yuzde_k = dolu > 0 ? (karli_hucre/dolu*100).toFixed(0) : 0;
-    ozetHtml += '<div style="font-size:10px; color:#15803d;">%' + yuzde_k + '</div>';
-    ozetHtml += '</div>';
-    ozetHtml += '<div style="background:#fee2e2; border:1px solid #dc2626; padding:10px; border-radius:10px;">';
-    ozetHtml += '<div style="font-size:10px; color:#991b1b; font-weight:700;">ABONE DEGISTIR (A > B11)</div>';
-    ozetHtml += '<div style="font-size:20px; font-weight:900; color:#991b1b; margin-top:2px;">' + zararli_hucre + '<span style="font-size:11px; color:#64748b; font-weight:600;">/' + dolu + ' saat</span></div>';
-    const yuzde_z = dolu > 0 ? (zararli_hucre/dolu*100).toFixed(0) : 0;
-    ozetHtml += '<div style="font-size:10px; color:#991b1b;">%' + yuzde_z + '</div>';
-    ozetHtml += '</div></div>';
+    const a_max = Math.max(ozet_s1, ozet_s2, ozet_s3);
+    let a_etiket = 'SAT', a_renk = '#16a34a';
+    if (a_max === ozet_s2) { a_etiket = 'BTC'; a_renk = '#a855f7'; }
+    else if (a_max === ozet_s3) { a_etiket = 'DEGISTIR'; a_renk = '#dc2626'; }
     
-    ozetHtml += '<div style="background:#f1f5f9; padding:8px 12px; border-radius:8px; margin-top:8px; font-size:10px; color:#64748b;">';
-    ozetHtml += '⚡ Aylik YEKDEM: <b style="color:#1e293b;">' + yekdem.toFixed(1) + ' TL/MWh</b> · ';
-    ozetHtml += 'Gun sayisi: <b style="color:#1e293b;">' + gunler.length + '</b>';
-    if (miningGeliriKwh !== null) {
-      ozetHtml += ' · Mining geliri: <b style="color:#a855f7;">' + miningGeliriKwh.toFixed(3) + ' TL/kWh</b>';
-    }
+    let ozetHtml = '<div style="background:#fff; border-radius:12px; padding:14px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">';
+    ozetHtml += '<div style="font-size:11px; color:#64748b; font-weight:700; margin-bottom:8px;">' + ayAdi(ay) + ' TOPLAM</div>';
+    ozetHtml += '<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">';
+    ozetHtml += '<div style="text-align:center;"><div style="font-size:10px; color:#16a34a; font-weight:700;">S1 SAT</div><div style="font-size:18px; font-weight:900; color:#15803d;">' + ozet_s1.toFixed(0) + '</div><div style="font-size:9px; color:#94a3b8;">TL</div></div>';
+    ozetHtml += '<div style="text-align:center;"><div style="font-size:10px; color:#a855f7; font-weight:700;">S2 BTC</div><div style="font-size:18px; font-weight:900; color:#7c3aed;">' + ozet_s2.toFixed(0) + '</div><div style="font-size:9px; color:#94a3b8;">TL</div></div>';
+    ozetHtml += '<div style="text-align:center;"><div style="font-size:10px; color:#dc2626; font-weight:700;">S3 DEG</div><div style="font-size:18px; font-weight:900; color:#991b1b;">' + ozet_s3.toFixed(0) + '</div><div style="font-size:9px; color:#94a3b8;">TL</div></div>';
+    ozetHtml += '</div>';
+    ozetHtml += '<div style="margin-top:10px; padding:8px 12px; background:' + a_renk + '; color:#fff; border-radius:8px; text-align:center; font-weight:800; font-size:13px;">EN AVANTAJLI: ' + a_etiket + '</div>';
     ozetHtml += '</div>';
     
     ozet.innerHTML = ozetHtml;
   }
 }
 
+// Yardimci: ay adi
+function ayAdi(ay) {
+  const aylar = ['Ocak','Subat','Mart','Nisan','Mayis','Haziran','Temmuz','Agustos','Eylul','Ekim','Kasim','Aralik'];
+  const ay_no = parseInt((ay || '2026-06').split('-')[1]);
+  return aylar[ay_no-1] + ' ' + (ay || '').split('-')[0];
+}
 
+// Gun aç/kapat - n: sayı (1-31)
+function t2GunAc(n) {
+  const gunStr = n < 10 ? '0' + n : '' + n;
+  const el = document.getElementById('t2k-gun-' + gunStr);
+  if (!el) return;
+  el.style.display = (el.style.display === 'none') ? 'block' : 'none';
+}
+
+function t2HucreAc(el) {
+  const gun = el.getAttribute('data-gun');
+  const saat = parseInt(el.getAttribute('data-saat'));
+  const ay = el.getAttribute('data-ay');
+  const ptf = parseFloat(el.getAttribute('data-ptf'));
+  const veris = parseFloat(el.getAttribute('data-veris'));
+  const cekis = parseFloat(el.getAttribute('data-cekis'));
+  const uretim = parseFloat(el.getAttribute('data-uretim'));
+  const sebeke = parseFloat(el.getAttribute('data-sebeke'));
+  const s1 = parseFloat(el.getAttribute('data-s1'));
+  const s2 = parseFloat(el.getAttribute('data-s2'));
+  const s3 = parseFloat(el.getAttribute('data-s3'));
+  
+  const BEDELLI = 2.253679, DB = 1.182457, TRT = 1.035, TUKETIM = 174;
+  let yekdem = 580.99;
+  if (typeof yekdemHesapla === 'function') {
+    const h = yekdemHesapla(ay);
+    if (h && h.deger) yekdem = h.deger;
+  }
+  
+  const baslikEl = document.getElementById('t2k-popup-baslik');
+  if (baslikEl) baslikEl.textContent = Number(gun) + ' ' + ayAdi(ay) + ', ' + (saat<10?'0'+saat:saat) + ':00';
+  
+  let html = '';
+  
+  // VERILER
+  html += '<div style="background:#f8fafc; border-radius:10px; padding:10px; margin-bottom:12px;">';
+  html += '<div style="font-size:10px; font-weight:800; color:#64748b; margin-bottom:6px;">VERILER</div>';
+  html += '<div style="display:grid; grid-template-columns:1fr auto; gap:3px 12px; font-size:11px;">';
+  html += '<span style="color:#64748b;">T2 OSOS verisi</span><span style="font-weight:700; color:#1e293b;">' + veris.toFixed(0) + ' kWh</span>';
+  html += '<span style="color:#64748b;">T2 OSOS cekis</span><span style="font-weight:700; color:#1e293b;">' + cekis.toFixed(0) + ' kWh</span>';
+  html += '<span style="color:#64748b;">Madencilik tuketim</span><span style="font-weight:700; color:#1e293b;">' + TUKETIM + ' kWh</span>';
+  html += '<span style="color:#64748b;">Sanal brut uretim</span><span style="font-weight:700; color:#a855f7;">' + uretim.toFixed(0) + ' kWh</span>';
+  html += '<span style="color:#64748b;">PTF</span><span style="font-weight:700; color:#1e293b;">' + ptf.toFixed(2) + ' TL/MWh</span>';
+  html += '<span style="color:#64748b;">YEKDEM</span><span style="font-weight:700; color:#1e293b;">' + yekdem.toFixed(2) + ' TL/MWh</span>';
+  html += '<span style="color:#64748b;">Sebeke maliyeti</span><span style="font-weight:700; color:#dc2626;">' + sebeke.toFixed(4) + ' TL/kWh</span>';
+  html += '<span style="color:#64748b;">Bedelli satis</span><span style="font-weight:700; color:#16a34a;">' + BEDELLI.toFixed(4) + ' TL/kWh</span>';
+  html += '</div></div>';
+  
+  // S1
+  html += '<div style="background:#dcfce7; border-left:4px solid #16a34a; padding:10px; border-radius:6px; margin-bottom:8px;">';
+  html += '<div style="font-weight:800; color:#15803d; font-size:13px; margin-bottom:4px;">S1) Sadece Satis</div>';
+  html += '<div style="font-family:monospace; font-size:10px; color:#166534;">';
+  html += uretim.toFixed(0) + ' kWh × ' + BEDELLI.toFixed(4) + ' = <b>' + s1.toFixed(0) + ' TL</b>';
+  html += '</div></div>';
+  
+  // S2
+  html += '<div style="background:#f3e8ff; border-left:4px solid #a855f7; padding:10px; border-radius:6px; margin-bottom:8px;">';
+  html += '<div style="font-weight:800; color:#7c3aed; font-size:13px; margin-bottom:4px;">S2) BTC Madencilik</div>';
+  html += '<div style="font-family:monospace; font-size:10px; color:#6b21a8;">';
+  html += 'Saatlik BTC × BTC fiyat = <b>' + s2.toFixed(0) + ' TL</b>';
+  html += '</div></div>';
+  
+  // S3
+  html += '<div style="background:#fee2e2; border-left:4px solid #dc2626; padding:10px; border-radius:6px; margin-bottom:12px;">';
+  html += '<div style="font-weight:800; color:#991b1b; font-size:13px; margin-bottom:4px;">S3) Sadece Tuketim</div>';
+  html += '<div style="font-family:monospace; font-size:10px; color:#7f1d1d;">';
+  html += '−(' + TUKETIM + ' × ' + sebeke.toFixed(4) + ') = <b>' + s3.toFixed(0) + ' TL</b>';
+  html += '</div></div>';
+  
+  // Tercih
+  const max3 = Math.max(s1, s2, s3);
+  let etiket = 'SAT', renk = '#16a34a';
+  if (max3 === s2) { etiket = 'BTC MADENCILIK'; renk = '#a855f7'; }
+  else if (max3 === s3) { etiket = 'ABONE DEGISTIR'; renk = '#dc2626'; }
+  
+  html += '<div style="background:' + renk + '; color:#fff; padding:12px; border-radius:10px; text-align:center;">';
+  html += '<div style="font-weight:900; font-size:14px;">EN AVANTAJLI: ' + etiket + '</div>';
+  html += '<div style="font-size:11px; margin-top:3px; opacity:0.9;">' + max3.toFixed(0) + ' TL</div>';
+  html += '</div>';
+  
+  const icerikEl = document.getElementById('t2k-popup-icerik');
+  if (icerikEl) icerikEl.innerHTML = html;
+  
+  const ov = document.getElementById('t2k-hucre-popup');
+  if (ov) ov.style.display = 'flex';
+}
+
+function t2HucreKapat(e) {
+  const ov = document.getElementById('t2k-hucre-popup');
+  if (ov) ov.style.display = 'none';
+}
 function fatKartUret(ay, A, ab) {
   // FATURALANDIRMA
   // Saatlik detay tablosu + Ust kisimda ay toplam fatura karti
