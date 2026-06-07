@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 41
+PANEL_VERSIYON_BUILD = 42
 
 def _panel_tarih():
     try:
@@ -719,7 +719,20 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 .guncelleme{font-size:11px;color:#334155;text-align:center;margin-top:14px;}
 .empty-state{text-align:center;padding:40px 20px;color:#475569;font-size:13px;}
 .tab-content{display:none;}
-.tab-content.active{display:block;}
+.tab-content.active{display:block;animation:otoTabGiris .28s cubic-bezier(.22,.8,.36,1);}
+/* ════ MIKRO ANIMASYONLAR (b42) ════ */
+@keyframes otoTabGiris{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+@keyframes otoKartGiris{from{opacity:0;transform:translateY(10px) scale(.985);}to{opacity:1;transform:translateY(0) scale(1);}}
+.cihaz-card,.chart-wrap,.f2-chart-card{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;}
+.cihaz-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.35);border-color:rgba(245,185,33,.45);}
+.chart-wrap:hover{border-color:rgba(52,210,235,.25);}
+.f2-chart-card:hover{box-shadow:0 4px 14px rgba(0,0,0,.08);}
+.t2k-gun-kart{animation:otoKartGiris .3s ease both;}
+.t2k-gun-kart:nth-child(2){animation-delay:.03s;}
+.t2k-gun-kart:nth-child(3){animation-delay:.06s;}
+.t2k-gun-kart:nth-child(4){animation-delay:.09s;}
+.t2k-gun-kart:nth-child(5){animation-delay:.12s;}
+@media (prefers-reduced-motion: reduce){.tab-content.active,.t2k-gun-kart{animation:none;}}
 .osos-sec-content{display:none;}
 .osos-sec-content.active{display:block;}
 </style>
@@ -6155,7 +6168,7 @@ function t2KiyasRender() {
     
     const accordionId = 't2k-gun-' + gun;
     
-    html += '<div style="background:#fff; border-radius:10px; margin-bottom:8px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.05);">';
+    html += '<div class="t2k-gun-kart" style="background:#fff; border-radius:10px; margin-bottom:8px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.05);">';
     html += '<div onclick="t2GunAc(' + Number(gun) + ')" style="padding:12px 14px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; gap:8px; background:linear-gradient(135deg,#f8fafc,#f1f5f9);" id="t2k-gun-basligi-' + gun + '">';
     html += '<div style="display:flex; align-items:center; gap:10px;">';
     html += '<span style="font-size:11px; color:#64748b;">▶</span>';
