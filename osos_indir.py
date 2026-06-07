@@ -37,9 +37,9 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
 
 # ════════════════ AYARLAR ════════════════
-PORTAL_URL = "!!!_OSOS_PORTAL_GIRIS_ADRESI_!!!"      # ornek: https://osos.xxxedas.com.tr/login
-KULLANICI  = os.environ.get("OSOS_KULLANICI", "")     # export OSOS_KULLANICI=... (.bashrc veya cron env)
-SIFRE      = os.environ.get("OSOS_SIFRE", "")
+PORTAL_URL = "https://osos.meramedas.com.tr"      # ornek: https://osos.xxxedas.com.tr/login
+KULLANICI  = os.environ.get("ekinci.omer@gmail.com", "")     # export OSOS_KULLANICI=... (.bashrc veya cron env)
+SIFRE      = os.environ.get("Ae1903aks", "")
 
 INDIRME_KLASORU = Path("/home/pi/otocoin/osos_gelen")
 
