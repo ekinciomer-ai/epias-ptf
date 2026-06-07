@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 40
+PANEL_VERSIYON_BUILD = 41
 
 def _panel_tarih():
     try:
@@ -724,6 +724,50 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 .osos-sec-content.active{display:block;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&display=swap");</style>
+<script>
+// ════════ OTOCOIN GRAFIK TEMASI (b41) — tum grafiklerde ortak ════════
+const OTO_G = {
+  gunes:  "#f5b921",   // uretim / solar
+  cekis:  "#e84855",   // tuketim / sebeke cekis
+  ptf:    "#34d2eb",   // spot fiyat / hashrate
+  yesil:  "#3ddc84",   // TL gelir / pozitif
+  mavi:   "#3b82f6",   // ikincil seri
+  mono:   "'IBM Plex Mono', monospace",
+  // acik kart (beyaz zemin) varyantlari
+  gunesK: "#d99000", cekisK: "#d63040", ptfK: "#0e9ab5", yesilK: "#14a85e",
+  gridA:  "rgba(148,163,184,0.28)",   // acik zemin izgara
+  gridK:  "rgba(255,255,255,0.07)"    // koyu zemin izgara
+};
+// Koyu tooltip + mono eksen — Chart.js global varsayilanlari
+if (window.Chart) {
+  Chart.defaults.font.family = OTO_G.mono;
+  Chart.defaults.font.size = 10;
+  const tt = Chart.defaults.plugins.tooltip;
+  tt.backgroundColor = "#161d25";
+  tt.borderColor = "#2a3644";
+  tt.borderWidth = 1;
+  tt.cornerRadius = 4;
+  tt.padding = 10;
+  tt.titleColor = "#5d6c7b";
+  tt.titleFont = { family: OTO_G.mono, size: 10, weight: "700" };
+  tt.bodyColor = "#e8edf2";
+  tt.bodyFont = { family: OTO_G.mono, size: 11, weight: "600" };
+  tt.boxPadding = 4;
+  tt.displayColors = true;
+}
+// Acik zeminli Chart.js grafikler icin ortak eksen ayari
+function otoEksen(birim) {
+  return {
+    x: { grid: { display: false }, ticks: { color: "#64748b", font: { family: OTO_G.mono, size: 9 } } },
+    y: { beginAtZero: true,
+         grid: { color: OTO_G.gridA, borderDash: [3, 5], drawTicks: false },
+         border: { display: false, dash: [3, 5] },
+         ticks: { color: "#64748b", font: { family: OTO_G.mono, size: 9 },
+                  callback: v => v.toLocaleString("tr-TR") + (birim ? " " + birim : "") } }
+  };
+}
+</script>
 </head><body>
 <div id="versiyon-damgasi" onclick="versiyonPopupAc(event)" style="position:fixed; bottom:10px; right:10px; z-index:99999; background:rgba(15,23,42,0.92); border:1px solid rgba(34,197,94,0.4); border-radius:8px; padding:5px 10px; font-size:10px; font-weight:700; color:#4ade80; font-family:'Inter',monospace; box-shadow:0 2px 12px rgba(0,0,0,0.4); cursor:pointer; letter-spacing:0.3px; text-align:right; user-select:none;">
   {{ panel_versiyon }} <span style="color:#64748b; font-size:9px;">ⓘ</span>
@@ -857,9 +901,9 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
   </div>
   <canvas id="f2-chart" style="width:100%; height:200px;"></canvas>
   <div class="f2-lejant">
-    <span class="f2-lej"><span class="f2-lej-renk" style="background:rgba(37,99,235,0.7);"></span>Hashrate</span>
-    <span class="f2-lej"><span class="f2-lej-renk" style="background:#d97706;"></span>BTC Üretim</span>
-    <span class="f2-lej"><span class="f2-lej-renk" style="background:#dc2626;"></span>Elektrik</span>
+    <span class="f2-lej"><span class="f2-lej-renk" style="background:rgba(14,154,181,0.8);"></span>Hashrate</span>
+    <span class="f2-lej"><span class="f2-lej-renk" style="background:#d99000;"></span>BTC Üretim</span>
+    <span class="f2-lej"><span class="f2-lej-renk" style="background:#d63040;"></span>Elektrik</span>
     <span class="f2-lej"><span class="f2-lej-renk" style="background:#7c3aed;"></span>BTC Fiyatı</span>
   </div>
 </div>
@@ -1430,8 +1474,8 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
     <div style="font-size:13px; font-weight:600; color:#475569;">📈 Günlük Üretim/Tüketim</div>
     <div style="font-size:11px; color:#64748b;">
-      <span style="display:inline-flex; align-items:center; gap:4px; margin-right:12px;"><span style="width:10px; height:10px; border-radius:2px; background:#185fa5;"></span>Üretim</span>
-      <span style="display:inline-flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; border-radius:2px; background:#d85a30;"></span>Tüketim</span>
+      <span style="display:inline-flex; align-items:center; gap:4px; margin-right:12px;"><span style="width:10px; height:10px; border-radius:2px; background:#d99000;"></span>Üretim</span>
+      <span style="display:inline-flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; border-radius:2px; background:#d63040;"></span>Tüketim</span>
     </div>
   </div>
   <div style="position:relative; width:100%; height:240px;">
@@ -1504,8 +1548,8 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
     <div style="font-size:13px; font-weight:600; color:#475569;">📈 Günlük Üretim/Tüketim</div>
     <div style="font-size:11px; color:#64748b;">
-      <span style="display:inline-flex; align-items:center; gap:4px; margin-right:12px;"><span style="width:10px; height:10px; border-radius:2px; background:#185fa5;"></span>Üretim</span>
-      <span style="display:inline-flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; border-radius:2px; background:#d85a30;"></span>Tüketim</span>
+      <span style="display:inline-flex; align-items:center; gap:4px; margin-right:12px;"><span style="width:10px; height:10px; border-radius:2px; background:#d99000;"></span>Üretim</span>
+      <span style="display:inline-flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; border-radius:2px; background:#d63040;"></span>Tüketim</span>
     </div>
   </div>
   <div style="position:relative; width:100%; height:240px;">
@@ -2436,7 +2480,7 @@ function f2ChartCiz(etiketler, degerler, metric) {
   const padL = 8, padR = 8, padT = 16, padB = 24;
   const cw = W - padL - padR, ch = H - padT - padB;
   const maxV = Math.max(...degerler) * 1.1 || 1;
-  const renk = metric === 'btc' ? '#d97706' : (metric === 'tl' ? '#16a34a' : '#2563eb');
+  const renk = metric === 'btc' ? OTO_G.gunesK : (metric === 'tl' ? OTO_G.yesilK : OTO_G.ptfK);
   const n = degerler.length;
   const barW = Math.min(cw / n * 0.7, 40);
   const gap = cw / n;
@@ -2455,7 +2499,7 @@ function f2ChartCiz(etiketler, degerler, metric) {
     ctx.fill();
     if (n <= 16 || i % Math.ceil(n/16) === 0) {
       ctx.fillStyle = '#64748b';
-      ctx.font = '8px Inter, sans-serif';
+      ctx.font = '8px "IBM Plex Mono", monospace';
       ctx.textAlign = 'center';
       ctx.fillText(etiketler[i], x + barW/2, H - 8);
     }
@@ -2495,8 +2539,8 @@ function f2ChartCokKatman(k) {
     const h = (v / maxHash) * ch;
     const y = padT + ch - h;
     const grad = ctx.createLinearGradient(0, y, 0, padT+ch);
-    grad.addColorStop(0, 'rgba(37,99,235,0.55)');
-    grad.addColorStop(1, 'rgba(37,99,235,0.12)');
+    grad.addColorStop(0, 'rgba(14,154,181,0.55)');
+    grad.addColorStop(1, 'rgba(14,154,181,0.10)');
     ctx.fillStyle = grad;
     ctx.beginPath();
     if (ctx.roundRect) ctx.roundRect(x, y, barW, h, [3,3,0,0]);
@@ -2529,15 +2573,15 @@ function f2ChartCokKatman(k) {
   }
 
   // 2) ELEKTRIK TUKETIMI - kirmizi cizgi
-  cizgi(k.tuketim, maxTuk, '#dc2626', 2);
+  cizgi(k.tuketim, maxTuk, OTO_G.cekisK, 2);
   // 3) BTC URETIMI - turuncu cizgi
-  cizgi(k.uretim, maxUret, '#d97706', 2.5);
+  cizgi(k.uretim, maxUret, OTO_G.gunesK, 2.5);
   // 4) BTC FIYATI - mor cizgi (dar aralikta, min-max ile gorunur)
   cizgi(k.fiyat, maxFiyat, '#7c3aed', 1.5, minFiyat * 0.98);
 
   // Etiketler (alt - tarih)
   ctx.fillStyle = '#94a3b8';
-  ctx.font = '8px Inter, sans-serif';
+  ctx.font = '8px "IBM Plex Mono", monospace';
   ctx.textAlign = 'center';
   k.etiketler.forEach((et, i) => {
     if (n <= 14 || i % Math.ceil(n/14) === 0) {
@@ -2606,7 +2650,7 @@ function cihazDetay(name) {
       document.getElementById('m-24h-saat').textContent = (d.h24_saat || 0).toFixed(1);
       if (d.history) {
         chartData = d.history;
-        cizGrafikLine('chart', d.history);
+        cizGrafikLine('chart', d.history, OTO_G.ptf);
       }
     }
   });
@@ -2614,7 +2658,7 @@ function cihazDetay(name) {
 
 function kapatModal() { document.getElementById('modal').classList.remove('active'); }
 
-function cizGrafikLine(canvasId, data) {
+function cizGrafikLine(canvasId, data, renk) {
   const canvas = document.getElementById(canvasId);
   const ctx = canvas.getContext('2d');
   const W = canvas.width = canvas.offsetWidth * 2;
@@ -2629,43 +2673,56 @@ function cizGrafikLine(canvasId, data) {
   if (entries.length === 0) return;
   const values = isArray ? data.map(e => e.value) : entries.map(e => e[1]/1e12);
   const max = Math.max(...values, 1);
+  const ana = renk || OTO_G.gunes;          // varsayilan: solar amber
   
-  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  // Kesikli yatay izgara (kontrol odasi stili)
+  ctx.strokeStyle = OTO_G.gridK;
   ctx.lineWidth = 1;
+  ctx.setLineDash([3, 6]);
   for (let i = 0; i <= 4; i++) {
     const y = h * i / 4;
     ctx.beginPath(); ctx.moveTo(45, y); ctx.lineTo(w, y); ctx.stroke();
   }
-  ctx.fillStyle = '#64748b';
-  ctx.font = '9px Inter';
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#5d6c7b';
+  ctx.font = '9px "IBM Plex Mono", monospace';
   ctx.textAlign = 'right';
   for (let i = 0; i <= 4; i++) {
     const v = max - (max * i / 4);
     ctx.fillText(Math.round(v).toLocaleString('tr-TR'), 41, h * i / 4 + 4);
   }
   
+  // Alan dolgusu
   const gradient = ctx.createLinearGradient(0, 0, 0, h);
-  gradient.addColorStop(0, 'rgba(34,197,94,0.4)');
-  gradient.addColorStop(1, 'rgba(34,197,94,0)');
+  gradient.addColorStop(0, ana + '55');
+  gradient.addColorStop(1, ana + '00');
   
-  ctx.beginPath();
-  values.forEach((v, i) => {
-    const x = 45 + (w - 45) * i / (values.length - 1);
-    const y = h - (v / max) * h;
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  });
+  function yol() {
+    ctx.beginPath();
+    values.forEach((v, i) => {
+      const x = 45 + (w - 45) * i / (values.length - 1);
+      const y = h - (v / max) * h;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+  }
+  yol();
   ctx.lineTo(w, h); ctx.lineTo(45, h); ctx.closePath();
   ctx.fillStyle = gradient; ctx.fill();
   
-  ctx.beginPath();
-  values.forEach((v, i) => {
-    const x = 45 + (w - 45) * i / (values.length - 1);
-    const y = h - (v / max) * h;
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  });
-  ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 2; ctx.stroke();
+  // Parilti + ana cizgi
+  yol();
+  ctx.shadowColor = ana; ctx.shadowBlur = 8;
+  ctx.strokeStyle = ana; ctx.lineWidth = 2; ctx.stroke();
+  ctx.shadowBlur = 0;
+  
+  // Son nokta vurgusu
+  const sx = w, sv = values[values.length - 1];
+  const sy = h - (sv / max) * h;
+  ctx.beginPath(); ctx.arc(sx - 1, sy, 3.5, 0, Math.PI * 2);
+  ctx.fillStyle = ana; ctx.fill();
+  ctx.beginPath(); ctx.arc(sx - 1, sy, 6, 0, Math.PI * 2);
+  ctx.strokeStyle = ana + '66'; ctx.lineWidth = 1.5; ctx.stroke();
 }
 
 document.getElementById('chart').addEventListener('mousemove', (e) => tooltipDevice(e));
@@ -2752,7 +2809,7 @@ function ososRender() {
     return { label: tarih.getDate() + '.' + (tarih.getMonth()+1).toString().padStart(2,'0'), value: value, tarih: g };
   });
   ososChartData = grafikData;
-  cizGrafikLine('osos-chart', grafikData);
+  cizGrafikLine('osos-chart', grafikData, OTO_G.yesil);
   
   // Gün listesi (son 14 gün)
   const son14 = gunler.slice(-14).reverse();
@@ -4516,12 +4573,13 @@ function mltChartRender() {
       datasets: [{
         label: 'Tüketim',
         data: data,
-        borderColor: '#185fa5',
-        backgroundColor: 'rgba(24,95,165,0.1)',
+        borderColor: OTO_G.cekisK,
+        backgroundColor: 'rgba(232,72,85,0.10)',
         borderWidth: 2,
-        pointRadius: 3,
-        pointBackgroundColor: '#185fa5',
-        tension: 0.25,
+        pointRadius: 2.5,
+        pointBackgroundColor: OTO_G.cekisK,
+        pointHoverRadius: 5,
+        tension: 0.3,
         fill: true
       }]
     },
@@ -4531,15 +4589,12 @@ function mltChartRender() {
         legend: { display: false },
         tooltip: {
           callbacks: {
-            title: (items) => 'Gün ' + items[0].label,
+            title: (items) => 'GÜN ' + items[0].label,
             label: (item) => item.parsed.y.toLocaleString('tr-TR') + ' kWh'
           }
         }
       },
-      scales: {
-        x: { title: { display: true, text: 'Gün', color: '#64748b' }, grid: { display: false }, ticks: { color: '#64748b' } },
-        y: { title: { display: true, text: 'kWh', color: '#64748b' }, beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { color: '#64748b', callback: v => v.toLocaleString('tr-TR') } }
-      },
+      scales: otoEksen(''),
       interaction: { intersect: false, mode: 'index' }
     }
   });
@@ -4715,8 +4770,8 @@ function utChartRender() {
     data: {
       labels: labels,
       datasets: [
-        { label: 'Üretim', data: uretimData, borderColor: '#185fa5', backgroundColor: 'rgba(24,95,165,0.05)', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#185fa5', tension: 0.25, fill: false },
-        { label: 'Tüketim', data: tuketimData, borderColor: '#d85a30', backgroundColor: 'rgba(216,90,48,0.05)', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#d85a30', tension: 0.25, fill: false }
+        { label: 'Üretim', data: uretimData, borderColor: OTO_G.gunesK, backgroundColor: 'rgba(245,185,33,0.08)', borderWidth: 2, pointRadius: 2.5, pointBackgroundColor: OTO_G.gunesK, pointHoverRadius: 5, tension: 0.3, fill: true },
+        { label: 'Tüketim', data: tuketimData, borderColor: OTO_G.cekisK, backgroundColor: 'rgba(232,72,85,0.05)', borderWidth: 2, pointRadius: 2.5, pointBackgroundColor: OTO_G.cekisK, pointHoverRadius: 5, tension: 0.3, fill: false }
       ]
     },
     options: {
@@ -4725,15 +4780,12 @@ function utChartRender() {
         legend: { display: false },
         tooltip: {
           callbacks: {
-            title: (items) => 'Gün ' + items[0].label,
+            title: (items) => 'GÜN ' + items[0].label,
             label: (item) => item.dataset.label + ': ' + item.parsed.y.toLocaleString('tr-TR') + ' kWh'
           }
         }
       },
-      scales: {
-        x: { title: { display: true, text: 'Gün', color: '#64748b' }, grid: { display: false }, ticks: { color: '#64748b' } },
-        y: { title: { display: true, text: 'kWh', color: '#64748b' }, beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { color: '#64748b', callback: v => v.toLocaleString('tr-TR') } }
-      },
+      scales: otoEksen(''),
       interaction: { intersect: false, mode: 'index' }
     }
   });
@@ -4969,8 +5021,8 @@ function veriChartRender() {
     data: {
       labels: labels,
       datasets: [
-        { label: 'Üretim', data: uretim, borderColor: '#185fa5', backgroundColor: 'rgba(24,95,165,0.05)', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#185fa5', tension: 0.25, fill: false },
-        { label: 'Tüketim', data: tuketim, borderColor: '#d85a30', backgroundColor: 'rgba(216,90,48,0.05)', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#d85a30', tension: 0.25, fill: false }
+        { label: 'Üretim', data: uretim, borderColor: OTO_G.gunesK, backgroundColor: 'rgba(245,185,33,0.08)', borderWidth: 2, pointRadius: 2.5, pointBackgroundColor: OTO_G.gunesK, pointHoverRadius: 5, tension: 0.3, fill: true },
+        { label: 'Tüketim', data: tuketim, borderColor: OTO_G.cekisK, backgroundColor: 'rgba(232,72,85,0.05)', borderWidth: 2, pointRadius: 2.5, pointBackgroundColor: OTO_G.cekisK, pointHoverRadius: 5, tension: 0.3, fill: false }
       ]
     },
     options: {
@@ -4979,15 +5031,12 @@ function veriChartRender() {
         legend: { display: false },
         tooltip: {
           callbacks: {
-            title: (items) => 'Gün ' + items[0].label,
+            title: (items) => 'GÜN ' + items[0].label,
             label: (item) => item.dataset.label + ': ' + item.parsed.y.toLocaleString('tr-TR') + ' kWh'
           }
         }
       },
-      scales: {
-        x: { title: { display: true, text: 'Gün', color: '#64748b' }, grid: { display: false }, ticks: { color: '#64748b' } },
-        y: { title: { display: true, text: 'kWh', color: '#64748b' }, beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { color: '#64748b', callback: v => v.toLocaleString('tr-TR') } }
-      },
+      scales: otoEksen(''),
       interaction: { intersect: false, mode: 'index' }
     }
   });
