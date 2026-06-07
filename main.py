@@ -33,6 +33,26 @@ def whatsapp_gonder(mesaj):
     print("WhatsApp gonderildi!")
 
 def dosya_oku(dosya):
+    """CDN-oncelikli okuma (public repo, token gerekmez).
+    Yazma icin sha lazimsa API'dan ayrica cekilir."""
+    # 1. CDN dene - token YOK, 401 olmaz
+    cdn_url = f"https://raw.githubusercontent.com/{REPO}/main/{dosya}?t={int(datetime.datetime.utcnow().timestamp())}"
+    try:
+        with urllib.request.urlopen(cdn_url, timeout=15) as resp:
+            icerik = json.loads(resp.read())
+            print(f"[CDN OK] {dosya}")
+            # SHA'yi ayrica cek (yazma icin gerek)
+            sha = _sha_cek(dosya)
+            return icerik, sha
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            print(f"[CDN 404] {dosya} - yeni dosya")
+            return None, None
+        print(f"[CDN {e.code}] API'ya geciliyor")
+    except Exception as e:
+        print(f"[CDN hata] {e}, API'ya geciliyor")
+    
+    # 2. API fallback (token ile, eski mantik)
     try:
         url = f"https://api.github.com/repos/{REPO}/contents/{dosya}"
         req = urllib.request.Request(url, headers={
@@ -42,11 +62,29 @@ def dosya_oku(dosya):
         with urllib.request.urlopen(req) as resp:
             data = json.loads(resp.read())
             icerik = json.loads(base64.b64decode(data["content"]).decode())
+            print(f"[API OK] {dosya}")
             return icerik, data["sha"]
     except urllib.error.HTTPError as e:
         if e.code == 404:
             return None, None
-        raise
+        print(f"[API HATA {e.code}] {dosya}")
+        # Son care: bos dict don, sha=None
+        # Yazma denenince yeni dosya gibi davranir
+        return None, None
+
+def _sha_cek(dosya):
+    """Yazma icin sha'yi API'dan getir (kucuk istek). Token bozuksa None doner."""
+    try:
+        url = f"https://api.github.com/repos/{REPO}/contents/{dosya}"
+        req = urllib.request.Request(url, headers={
+            "Authorization": f"token {GH_TOKEN}",
+            "Accept": "application/vnd.github.v3+json"
+        })
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read())
+            return data.get("sha")
+    except:
+        return None
 
 def dosya_yaz(dosya, icerik, sha=None):
     yeni = base64.b64encode(json.dumps(icerik, ensure_ascii=False, indent=2).encode()).decode()
