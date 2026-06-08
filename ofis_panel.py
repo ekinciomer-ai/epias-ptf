@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, session, redirect, render_template_string, request, Response
-import hashlib, json, os, urllib.request
+import hashlib, json, os, urllib.request, urllib.parse, urllib.error
 import datetime
 
 app = Flask(__name__)
@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 42
+PANEL_VERSIYON_BUILD = 44
 
 def _panel_tarih():
     try:
@@ -7972,6 +7972,126 @@ def api_uretim_tuketim():
             "gunler": aylik_gunler,
         },
     })
+
+
+# ════════════════════════════════════════════════════════════════
+# EPIAS PTF — PANEL ICI OTOMATIK CEKIM (cron yerine, Railway 7/24)
+# ════════════════════════════════════════════════════════════════
+import threading as _threading
+
+EPIAS_KULLANICI = os.environ.get("EPIAS_KULLANICI", "")
+EPIAS_SIFRE     = os.environ.get("EPIAS_SIFRE", "")
+_ptf_son_log    = {"zaman": "-", "durum": "henuz calismadi"}
+
+
+def _tr_simdi():
+    """Railway UTC olabilir; TR saati icin +3 saat."""
+    return datetime.datetime.utcnow() + datetime.timedelta(hours=3)
+
+
+EPIAS_TGT_URL = "https://giris.epias.com.tr/cas/v1/tickets"
+EPIAS_MCP_URL = "https://seffaflik.epias.com.tr/electricity-service/v1/markets/dam/data/mcp"
+
+
+def _epias_tgt():
+    """EPIAS Seffaflik CAS'tan TGT (giris bileti) alir. Ek kutuphane gerekmez."""
+    veri = urllib.parse.urlencode({
+        "username": EPIAS_KULLANICI, "password": EPIAS_SIFRE,
+    }).encode("utf-8")
+    req = urllib.request.Request(EPIAS_TGT_URL, data=veri, method="POST", headers={
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Accept": "text/plain",
+    })
+    with urllib.request.urlopen(req, timeout=20) as r:
+        return r.read().decode("utf-8").strip()
+
+
+def epias_ptf_cek(tarih_iso):
+    """EPIAS'tan tek gunun saatlik PTF'sini ceker (TL/MWh listesi). Yoksa (None, sebep).
+    eptr2'ye gerek yok — sadece urllib (TGT + MCP endpoint)."""
+    if not EPIAS_KULLANICI or not EPIAS_SIFRE:
+        return None, "EPIAS_KULLANICI/SIFRE tanimli degil"
+    try:
+        tgt = _epias_tgt()
+        govde = json.dumps({
+            "startDate": f"{tarih_iso}T00:00:00+03:00",
+            "endDate":   f"{tarih_iso}T00:00:00+03:00",
+        }).encode("utf-8")
+        req = urllib.request.Request(EPIAS_MCP_URL, data=govde, method="POST", headers={
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "TGT": tgt,
+        })
+        with urllib.request.urlopen(req, timeout=25) as r:
+            sonuc = json.loads(r.read())
+        items = sonuc.get("items", [])
+        if not items:
+            return None, "veri henuz yayinlanmadi"
+        return [round(it["price"], 2) for it in items], "ok"
+    except urllib.error.HTTPError as e:
+        return None, f"http {e.code}"
+    except Exception as e:
+        return None, f"hata: {str(e)[:80]}"
+
+
+def ptf_otomatik_guncelle():
+    """Yarin (ve eksikse bugun) PTF'sini cekip aylik_ptf.json'a yazar."""
+    tr = _tr_simdi()
+    hedefler = [
+        (tr + datetime.timedelta(days=1)).date().isoformat(),  # yarin (oncelik)
+        tr.date().isoformat(),                                  # bugun (eksikse)
+    ]
+    ayptf = github_oku("aylik_ptf.json") or {}
+    degisti = False
+    notlar = []
+    for tarih in hedefler:
+        ay, gun = tarih[:7], tarih[8:10]
+        if ay in ayptf and gun in ayptf[ay] and len(ayptf[ay][gun]) >= 24:
+            continue  # zaten var
+        fiyatlar, durum = epias_ptf_cek(tarih)
+        if fiyatlar:
+            ayptf.setdefault(ay, {})[gun] = fiyatlar
+            degisti = True
+            notlar.append(f"{tarih} eklendi ({len(fiyatlar)} saat)")
+        else:
+            notlar.append(f"{tarih}: {durum}")
+    if degisti:
+        github_yaz("aylik_ptf.json", ayptf)
+        notlar.append("GitHub'a yazildi")
+    _ptf_son_log["zaman"] = tr.strftime("%Y-%m-%d %H:%M TR")
+    _ptf_son_log["durum"] = " | ".join(notlar) if notlar else "guncel"
+    print(f"[PTF] {_ptf_son_log['zaman']} -> {_ptf_son_log['durum']}", flush=True)
+    return _ptf_son_log["durum"]
+
+
+def _ptf_zamanlayici():
+    """Arka planda her 2 saatte bir PTF kontrol eder."""
+    import time as _time
+    _time.sleep(20)  # panel acilisini bekle
+    while True:
+        try:
+            ptf_otomatik_guncelle()
+        except Exception as e:
+            print(f"[PTF] zamanlayici hata: {e}", flush=True)
+        _time.sleep(2 * 3600)  # 2 saat
+
+
+@app.route("/api/ptf_cek")
+def ptf_cek_endpoint():
+    """Tarayicidan elle tetikleme: panel.../api/ptf_cek"""
+    durum = ptf_otomatik_guncelle()
+    return jsonify({"zaman": _ptf_son_log["zaman"], "durum": durum})
+
+
+@app.route("/api/ptf_durum")
+def ptf_durum_endpoint():
+    return jsonify(_ptf_son_log)
+
+
+# Zamanlayiciyi bir kez baslat (gunicorn/python farketmez, daemon)
+if os.environ.get("PTF_OTOMATIK", "1") == "1" and not globals().get("_ptf_basladi"):
+    _ptf_basladi = True
+    _threading.Thread(target=_ptf_zamanlayici, daemon=True).start()
 
 
 if __name__ == "__main__":
