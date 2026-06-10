@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 44
+PANEL_VERSIYON_BUILD = 46
 
 def _panel_tarih():
     try:
@@ -4973,7 +4973,7 @@ function veriTabloRender() {
       tbl += '<th style="padding:7px 10px; text-align:right; color:#64748b;">Mahsup</th>';
       tbl += '</tr></thead><tbody>';
       
-      const saatler = Object.keys(g.saatler).sort();
+      const saatler = Object.keys(g.saatler).sort((a,b)=>parseInt(a)-parseInt(b));
       saatler.forEach(s => {
         const v = g.saatler[s];
         const m = (v.ty1u + v.ty2u) - v.ty2t;
@@ -5713,7 +5713,7 @@ function mhsTabloRender() {
         // GÜN AÇIKSA saatleri göster
         if (gunAcik && g.saatler) {
           const saatlikMod = (ay >= '2026-05');
-          const saatler = Object.keys(g.saatler).sort();
+          const saatler = Object.keys(g.saatler).sort((a,b)=>parseInt(a)-parseInt(b));
           saatler.forEach(s => {
             const sv = g.saatler[s];
             const sMahsup = saatlikMod ? sv.mahsup : 0;
@@ -7811,7 +7811,7 @@ def api_maliyet_aksaray3():
         
         for saat_int in range(24):
             saat_key = f"{saat_int:02d}"
-            saat_veri = saatler_data.get(saat_key, {})
+            saat_veri = saatler_data.get(saat_key) or saatler_data.get(str(saat_int)) or {}
             tuketim_kwh = float(saat_veri.get("cekis", 0))
             ptf_tl_mwh = float(gun_ptf[saat_int])
             
@@ -7894,9 +7894,12 @@ def api_uretim_tuketim():
     
     # Saatlik veri olusturma yardimcisi
     def get_saatlik(abone_veri, gun_str, alan):
-        """abone_veri[gun_str][saat][cekis|veris] -> saatlik liste"""
+        """abone_veri[gun_str][saat][cekis|veris] -> saatlik liste. Hem '05' hem '5' anahtarini destekler."""
         saatler_data = abone_veri.get(gun_str, {})
-        return [float(saatler_data.get(f"{h:02d}", {}).get(alan, 0)) for h in range(24)]
+        def oku(h):
+            d = saatler_data.get(f"{h:02d}") or saatler_data.get(str(h)) or {}
+            return float(d.get(alan, 0))
+        return [oku(h) for h in range(24)]
     
     # ===== GUNLUK DETAY (saatlik tablo icin) =====
     ty1_uretim = get_saatlik(ty1, gun, "veris")
