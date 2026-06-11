@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 46
+PANEL_VERSIYON_BUILD = 47
 
 def _panel_tarih():
     try:
@@ -5253,12 +5253,12 @@ async function mahsupYukleAsync() {
 
       ureticiler.forEach(function(u) {
         if (u.kalan <= 0) return;
-        // Tuketimleri buyukten kucuge sirala (guncel kalanlarla)
+        // SABIT ONCELIK: once T2 tuketimi, kalan A3, en son T1 (uretim once T2'yi karsilar)
         const sira = [
-          { ab: 'T1', tuk: tuk.T1 },
           { ab: 'T2', tuk: tuk.T2 },
           { ab: 'A3', tuk: tuk.A3 },
-        ].sort((a, b) => b.tuk - a.tuk);
+          { ab: 'T1', tuk: tuk.T1 },
+        ];
 
         sira.forEach(function(t) {
           if (u.kalan <= 0 || tuk[t.ab] <= 0) return;
@@ -5347,7 +5347,7 @@ async function mahsupYukleAsync() {
           
           if (saatlikMod) {
             // SAATLİK kaynak takipli havuz mahsubu (bu ay modeli)
-            // Once buyuk uretici, her ureticiden buyuk tuketim, artan bedelli
+            // Uretim once T2 tuketimini karsilar, kalan A3'e, en son T1; artan bedelli
             const r = havuzMahsupKaynakli(S.uretim, S.tuketim);
             S.mahsup_dagilim = r.mahsup;  // {T1,T2,A3,TPL}
             S.sonra = r.sonra;            // {T1,T2,A3,TPL}
