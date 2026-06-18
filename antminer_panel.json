@@ -1,16 +1,16 @@
 {
-  "timestamp": "2026-06-18T16:52:48.922685",
+  "timestamp": "2026-06-18T16:54:03.882254",
   "source": "Tek Yildiz 2 GES - Saha PC",
   "summary": {
     "total": 29,
-    "online": 28,
-    "sleeping": 0,
+    "online": 13,
+    "sleeping": 15,
     "offline": 1,
     "total_hashrate_TH": 4062.97,
-    "total_target_TH": 8277.0,
-    "efficiency_pct": 49.1,
-    "avg_temp_C": 49.9,
-    "avg_water_temp_C": 46.5,
+    "total_target_TH": 3937.0,
+    "efficiency_pct": 103.2,
+    "avg_temp_C": 66.3,
+    "avg_water_temp_C": 58.9,
     "models": {
       "S21e Hyd": 24,
       "S19e XP Hyd": 1,
@@ -56,17 +56,17 @@
       "hashrate_TH": 320.4,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.4,
-      "temp_max": 69,
-      "temp_water": 60,
-      "elapsed_hours": 17.9,
+      "temp_max": 67,
+      "temp_water": 59,
+      "elapsed_hours": 18.0,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2520,
+      "accepted": 2522,
       "rejected": 0,
-      "hw_errors_total": 521,
+      "hw_errors_total": 522,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -92,7 +92,7 @@
           "severity": "high",
           "code": "WATER_HOT",
           "icon": "💧",
-          "title": "Su Sicakligi Yuksek (60°C)",
+          "title": "Su Sicakligi Yuksek (59°C)",
           "reason": "Soguma sistemi yetersiz",
           "solutions": [
             "Radyatoru kontrol et (toz, tikanma)",
@@ -310,20 +310,20 @@
       "saha_worker": "saha.1725",
       "havuz_worker": "mehmetas.027",
       "actual_worker": "mehmetas.027",
-      "hashrate_TH": 254.27,
+      "hashrate_TH": 254.28,
       "target_hashrate_TH": 251.0,
       "efficiency_pct": 101.3,
-      "temp_max": 79,
-      "temp_water": 79,
-      "elapsed_hours": 17.9,
+      "temp_max": 78,
+      "temp_water": 78,
+      "elapsed_hours": 18.0,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2576,
+      "accepted": 2579,
       "rejected": 1,
-      "hw_errors_total": 2362,
+      "hw_errors_total": 2363,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -349,7 +349,7 @@
           "severity": "medium",
           "code": "PCB_HOT",
           "icon": "🌡",
-          "title": "PCB Sicak (79°C)",
+          "title": "PCB Sicak (78°C)",
           "reason": "Soguma yetersiz",
           "solutions": [
             "Su pompasini kontrol et",
@@ -360,7 +360,7 @@
           "severity": "high",
           "code": "WATER_HOT",
           "icon": "💧",
-          "title": "Su Sicakligi Yuksek (79°C)",
+          "title": "Su Sicakligi Yuksek (78°C)",
           "reason": "Soguma sistemi yetersiz",
           "solutions": [
             "Radyatoru kontrol et (toz, tikanma)",
@@ -372,7 +372,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (2362)",
+          "title": "Yuksek Donanim Hatasi (2363)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -597,7 +597,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -627,15 +627,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -657,15 +657,15 @@
       "hashrate_TH": 321.18,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.6,
-      "temp_max": 64,
-      "temp_water": 57,
-      "elapsed_hours": 17.9,
+      "temp_max": 63,
+      "temp_water": 56,
+      "elapsed_hours": 18.0,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2512,
+      "accepted": 2514,
       "rejected": 0,
       "hw_errors_total": 539,
       "f2pool_name": null,
@@ -693,7 +693,7 @@
           "severity": "high",
           "code": "WATER_HOT",
           "icon": "💧",
-          "title": "Su Sicakligi Yuksek (57°C)",
+          "title": "Su Sicakligi Yuksek (56°C)",
           "reason": "Soguma sistemi yetersiz",
           "solutions": [
             "Radyatoru kontrol et (toz, tikanma)",
@@ -914,17 +914,17 @@
       "hashrate_TH": 322.38,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 104.0,
-      "temp_max": 65,
-      "temp_water": 57,
-      "elapsed_hours": 17.9,
+      "temp_max": 64,
+      "temp_water": 56,
+      "elapsed_hours": 18.0,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2502,
+      "accepted": 2505,
       "rejected": 0,
-      "hw_errors_total": 55100,
+      "hw_errors_total": 55250,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -950,7 +950,7 @@
           "severity": "high",
           "code": "WATER_HOT",
           "icon": "💧",
-          "title": "Su Sicakligi Yuksek (57°C)",
+          "title": "Su Sicakligi Yuksek (56°C)",
           "reason": "Soguma sistemi yetersiz",
           "solutions": [
             "Radyatoru kontrol et (toz, tikanma)",
@@ -962,7 +962,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (55100)",
+          "title": "Yuksek Donanim Hatasi (55250)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -1180,20 +1180,20 @@
       "saha_worker": "saha.2F90",
       "havuz_worker": "mehmetas.020",
       "actual_worker": "mehmetas.020",
-      "hashrate_TH": 321.95,
+      "hashrate_TH": 321.96,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.9,
-      "temp_max": 65,
-      "temp_water": 56,
-      "elapsed_hours": 17.9,
+      "temp_max": 64,
+      "temp_water": 55,
+      "elapsed_hours": 18.0,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2525,
+      "accepted": 2530,
       "rejected": 0,
-      "hw_errors_total": 646,
+      "hw_errors_total": 647,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -1214,20 +1214,7 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [
-        {
-          "severity": "high",
-          "code": "WATER_HOT",
-          "icon": "💧",
-          "title": "Su Sicakligi Yuksek (56°C)",
-          "reason": "Soguma sistemi yetersiz",
-          "solutions": [
-            "Radyatoru kontrol et (toz, tikanma)",
-            "Dis fan calisiyor mu?",
-            "Dis ortam sicakligi cok yuksek olabilir"
-          ]
-        }
-      ],
+      "health_issues": [],
       "daily_history": [
         {
           "date": "2026-05-20",
@@ -1441,14 +1428,14 @@
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 104.0,
       "temp_max": 66,
-      "temp_water": 58,
+      "temp_water": 57,
       "elapsed_hours": 6.6,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1043,
+      "accepted": 1046,
       "rejected": 0,
       "hw_errors_total": 190,
       "f2pool_name": null,
@@ -1476,7 +1463,7 @@
           "severity": "high",
           "code": "WATER_HOT",
           "icon": "💧",
-          "title": "Su Sicakligi Yuksek (58°C)",
+          "title": "Su Sicakligi Yuksek (57°C)",
           "reason": "Soguma sistemi yetersiz",
           "solutions": [
             "Radyatoru kontrol et (toz, tikanma)",
@@ -1697,7 +1684,7 @@
       "hashrate_TH": 301.86,
       "target_hashrate_TH": 293.0,
       "efficiency_pct": 103.0,
-      "temp_max": 66,
+      "temp_max": 65,
       "temp_water": 60,
       "elapsed_hours": 6.6,
       "fan_avg_rpm": 0,
@@ -1705,7 +1692,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": false,
-      "accepted": 964,
+      "accepted": 966,
       "rejected": 0,
       "hw_errors_total": 1114,
       "f2pool_name": null,
@@ -1963,20 +1950,20 @@
       "saha_worker": "saha.A4F9",
       "havuz_worker": "mehmetas.024",
       "actual_worker": "mehmetas.024",
-      "hashrate_TH": 300.76,
+      "hashrate_TH": 300.77,
       "target_hashrate_TH": 293.0,
-      "efficiency_pct": 102.6,
+      "efficiency_pct": 102.7,
       "temp_max": 65,
-      "temp_water": 60,
+      "temp_water": 59,
       "elapsed_hours": 6.6,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": false,
-      "accepted": 960,
+      "accepted": 964,
       "rejected": 0,
-      "hw_errors_total": 7537,
+      "hw_errors_total": 7571,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -2002,7 +1989,7 @@
           "severity": "high",
           "code": "WATER_HOT",
           "icon": "💧",
-          "title": "Su Sicakligi Yuksek (60°C)",
+          "title": "Su Sicakligi Yuksek (59°C)",
           "reason": "Soguma sistemi yetersiz",
           "solutions": [
             "Radyatoru kontrol et (toz, tikanma)",
@@ -2014,7 +2001,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (7537)",
+          "title": "Yuksek Donanim Hatasi (7571)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -2232,9 +2219,9 @@
       "saha_worker": "saha.6B1E",
       "havuz_worker": "mehmetas.025",
       "actual_worker": "mehmetas.025",
-      "hashrate_TH": 319.77,
+      "hashrate_TH": 319.76,
       "target_hashrate_TH": 310.0,
-      "efficiency_pct": 103.2,
+      "efficiency_pct": 103.1,
       "temp_max": 66,
       "temp_water": 58,
       "elapsed_hours": 6.6,
@@ -2243,9 +2230,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1037,
+      "accepted": 1040,
       "rejected": 0,
-      "hw_errors_total": 1433,
+      "hw_errors_total": 1447,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -2283,7 +2270,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (1433)",
+          "title": "Yuksek Donanim Hatasi (1447)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -2504,13 +2491,13 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 35,
-      "temp_water": 35,
+      "temp_max": 38,
+      "temp_water": 38,
       "elapsed_hours": 0.0,
       "fan_avg_rpm": 0,
-      "status": "ONLINE",
+      "status": "SLEEP",
       "online": true,
-      "sleeping": false,
+      "sleeping": true,
       "is_hydro": true,
       "accepted": 0,
       "rejected": 0,
@@ -2535,21 +2522,7 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [
-        {
-          "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
-          "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
-          ]
-        }
-      ],
+      "health_issues": [],
       "daily_history": [
         {
           "date": "2026-05-20",
@@ -2727,8 +2700,8 @@
         },
         {
           "date": "2026-06-18",
-          "avg_hash_TH": 314.4,
-          "uptime_pct": 99.4,
+          "avg_hash_TH": 314.0,
+          "uptime_pct": 99.3,
           "earn_btc": 0
         }
       ],
@@ -2762,13 +2735,13 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 35,
-      "temp_water": 35,
+      "temp_max": 39,
+      "temp_water": 39,
       "elapsed_hours": 0.0,
       "fan_avg_rpm": 0,
-      "status": "ONLINE",
+      "status": "SLEEP",
       "online": true,
-      "sleeping": false,
+      "sleeping": true,
       "is_hydro": true,
       "accepted": 0,
       "rejected": 0,
@@ -2793,21 +2766,7 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [
-        {
-          "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
-          "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
-          ]
-        }
-      ],
+      "health_issues": [],
       "daily_history": [
         {
           "date": "2026-05-20",
@@ -2985,8 +2944,8 @@
         },
         {
           "date": "2026-06-18",
-          "avg_hash_TH": 316.4,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 316.0,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
@@ -3020,13 +2979,13 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 35,
-      "temp_water": 35,
+      "temp_max": 39,
+      "temp_water": 39,
       "elapsed_hours": 0.0,
       "fan_avg_rpm": 0,
-      "status": "ONLINE",
+      "status": "SLEEP",
       "online": true,
-      "sleeping": false,
+      "sleeping": true,
       "is_hydro": true,
       "accepted": 0,
       "rejected": 0,
@@ -3051,21 +3010,7 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [
-        {
-          "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
-          "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
-          ]
-        }
-      ],
+      "health_issues": [],
       "daily_history": [
         {
           "date": "2026-05-20",
@@ -3243,8 +3188,8 @@
         },
         {
           "date": "2026-06-18",
-          "avg_hash_TH": 315.6,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 315.2,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
@@ -3278,13 +3223,13 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 35,
-      "temp_water": 35,
+      "temp_max": 40,
+      "temp_water": 40,
       "elapsed_hours": 0.0,
       "fan_avg_rpm": 0,
-      "status": "ONLINE",
+      "status": "SLEEP",
       "online": true,
-      "sleeping": false,
+      "sleeping": true,
       "is_hydro": true,
       "accepted": 0,
       "rejected": 0,
@@ -3309,21 +3254,7 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [
-        {
-          "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
-          "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
-          ]
-        }
-      ],
+      "health_issues": [],
       "daily_history": [
         {
           "date": "2026-05-20",
@@ -3501,8 +3432,8 @@
         },
         {
           "date": "2026-06-18",
-          "avg_hash_TH": 315.2,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 314.8,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
@@ -3536,13 +3467,13 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 35,
-      "temp_water": 35,
+      "temp_max": 38,
+      "temp_water": 38,
       "elapsed_hours": 0.0,
       "fan_avg_rpm": 0,
-      "status": "ONLINE",
+      "status": "SLEEP",
       "online": true,
-      "sleeping": false,
+      "sleeping": true,
       "is_hydro": true,
       "accepted": 0,
       "rejected": 0,
@@ -3567,21 +3498,7 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [
-        {
-          "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
-          "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
-          ]
-        }
-      ],
+      "health_issues": [],
       "daily_history": [
         {
           "date": "2026-05-20",
@@ -3759,8 +3676,8 @@
         },
         {
           "date": "2026-06-18",
-          "avg_hash_TH": 322.2,
-          "uptime_pct": 100.0,
+          "avg_hash_TH": 321.8,
+          "uptime_pct": 99.9,
           "earn_btc": 0
         }
       ],
@@ -3794,13 +3711,13 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 35,
-      "temp_water": 35,
+      "temp_max": 37,
+      "temp_water": 37,
       "elapsed_hours": 0.0,
       "fan_avg_rpm": 0,
-      "status": "ONLINE",
+      "status": "SLEEP",
       "online": true,
-      "sleeping": false,
+      "sleeping": true,
       "is_hydro": true,
       "accepted": 0,
       "rejected": 0,
@@ -3825,21 +3742,7 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [
-        {
-          "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
-          "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
-          ]
-        }
-      ],
+      "health_issues": [],
       "daily_history": [
         {
           "date": "2026-05-20",
@@ -4017,15 +3920,15 @@
         },
         {
           "date": "2026-06-18",
-          "avg_hash_TH": 323.4,
-          "uptime_pct": 100.0,
+          "avg_hash_TH": 323.0,
+          "uptime_pct": 99.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-06",
-          "avg_hash_TH": 319.6,
+          "avg_hash_TH": 319.5,
           "earn_btc": 0,
           "days": 18
         },
@@ -4052,13 +3955,13 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 35,
-      "temp_water": 35,
+      "temp_max": 39,
+      "temp_water": 38,
       "elapsed_hours": 0.0,
       "fan_avg_rpm": 0,
-      "status": "ONLINE",
+      "status": "SLEEP",
       "online": true,
-      "sleeping": false,
+      "sleeping": true,
       "is_hydro": true,
       "accepted": 0,
       "rejected": 0,
@@ -4083,21 +3986,7 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [
-        {
-          "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
-          "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
-          ]
-        }
-      ],
+      "health_issues": [],
       "daily_history": [
         {
           "date": "2026-05-20",
@@ -4275,8 +4164,8 @@
         },
         {
           "date": "2026-06-18",
-          "avg_hash_TH": 320.3,
-          "uptime_pct": 100.0,
+          "avg_hash_TH": 320.0,
+          "uptime_pct": 99.9,
           "earn_btc": 0
         }
       ],
@@ -4310,13 +4199,13 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 35,
-      "temp_water": 35,
+      "temp_max": 40,
+      "temp_water": 39,
       "elapsed_hours": 0.0,
       "fan_avg_rpm": 0,
-      "status": "ONLINE",
+      "status": "SLEEP",
       "online": true,
-      "sleeping": false,
+      "sleeping": true,
       "is_hydro": true,
       "accepted": 0,
       "rejected": 0,
@@ -4341,21 +4230,7 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [
-        {
-          "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
-          "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
-          ]
-        }
-      ],
+      "health_issues": [],
       "daily_history": [
         {
           "date": "2026-05-20",
@@ -4533,8 +4408,8 @@
         },
         {
           "date": "2026-06-18",
-          "avg_hash_TH": 321.3,
-          "uptime_pct": 100.0,
+          "avg_hash_TH": 320.9,
+          "uptime_pct": 99.9,
           "earn_btc": 0
         }
       ],
@@ -4568,13 +4443,13 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 34,
-      "temp_water": 34,
+      "temp_max": 38,
+      "temp_water": 38,
       "elapsed_hours": 0.0,
       "fan_avg_rpm": 0,
-      "status": "ONLINE",
+      "status": "SLEEP",
       "online": true,
-      "sleeping": false,
+      "sleeping": true,
       "is_hydro": true,
       "accepted": 0,
       "rejected": 0,
@@ -4599,21 +4474,7 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [
-        {
-          "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
-          "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
-          ]
-        }
-      ],
+      "health_issues": [],
       "daily_history": [
         {
           "date": "2026-05-20",
@@ -4791,15 +4652,15 @@
         },
         {
           "date": "2026-06-18",
-          "avg_hash_TH": 323.5,
-          "uptime_pct": 100.0,
+          "avg_hash_TH": 323.1,
+          "uptime_pct": 99.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-06",
-          "avg_hash_TH": 319.8,
+          "avg_hash_TH": 319.7,
           "earn_btc": 0,
           "days": 18
         },
@@ -4826,13 +4687,13 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 35,
-      "temp_water": 35,
+      "temp_max": 39,
+      "temp_water": 39,
       "elapsed_hours": 0.0,
       "fan_avg_rpm": 0,
-      "status": "ONLINE",
+      "status": "SLEEP",
       "online": true,
-      "sleeping": false,
+      "sleeping": true,
       "is_hydro": true,
       "accepted": 0,
       "rejected": 0,
@@ -4857,21 +4718,7 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [
-        {
-          "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
-          "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
-          ]
-        }
-      ],
+      "health_issues": [],
       "daily_history": [
         {
           "date": "2026-05-20",
@@ -5049,8 +4896,8 @@
         },
         {
           "date": "2026-06-18",
-          "avg_hash_TH": 322.6,
-          "uptime_pct": 100.0,
+          "avg_hash_TH": 322.2,
+          "uptime_pct": 99.9,
           "earn_btc": 0
         }
       ],
@@ -5084,13 +4931,13 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 34,
-      "temp_water": 34,
+      "temp_max": 39,
+      "temp_water": 38,
       "elapsed_hours": 0.0,
       "fan_avg_rpm": 0,
-      "status": "ONLINE",
+      "status": "SLEEP",
       "online": true,
-      "sleeping": false,
+      "sleeping": true,
       "is_hydro": true,
       "accepted": 0,
       "rejected": 0,
@@ -5115,21 +4962,7 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [
-        {
-          "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
-          "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
-          ]
-        }
-      ],
+      "health_issues": [],
       "daily_history": [
         {
           "date": "2026-05-20",
@@ -5307,8 +5140,8 @@
         },
         {
           "date": "2026-06-18",
-          "avg_hash_TH": 321.1,
-          "uptime_pct": 100.0,
+          "avg_hash_TH": 320.7,
+          "uptime_pct": 99.9,
           "earn_btc": 0
         }
       ],
@@ -5342,13 +5175,13 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 34,
-      "temp_water": 34,
+      "temp_max": 38,
+      "temp_water": 38,
       "elapsed_hours": 0.0,
       "fan_avg_rpm": 0,
-      "status": "ONLINE",
+      "status": "SLEEP",
       "online": true,
-      "sleeping": false,
+      "sleeping": true,
       "is_hydro": true,
       "accepted": 0,
       "rejected": 0,
@@ -5373,21 +5206,7 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [
-        {
-          "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
-          "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
-          ]
-        }
-      ],
+      "health_issues": [],
       "daily_history": [
         {
           "date": "2026-05-20",
@@ -5565,15 +5384,15 @@
         },
         {
           "date": "2026-06-18",
-          "avg_hash_TH": 320.2,
-          "uptime_pct": 100.0,
+          "avg_hash_TH": 319.8,
+          "uptime_pct": 99.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-06",
-          "avg_hash_TH": 316.8,
+          "avg_hash_TH": 316.7,
           "earn_btc": 0,
           "days": 18
         },
@@ -5608,9 +5427,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2616,
+      "accepted": 2621,
       "rejected": 1,
-      "hw_errors_total": 170632,
+      "hw_errors_total": 171152,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -5648,7 +5467,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (170632)",
+          "title": "Yuksek Donanim Hatasi (171152)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -5866,7 +5685,7 @@
       "saha_worker": "saha.EBFD",
       "havuz_worker": "mehmetas.005",
       "actual_worker": "mehmetas.005",
-      "hashrate_TH": 318.37,
+      "hashrate_TH": 318.36,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 102.7,
       "temp_max": 66,
@@ -5877,9 +5696,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2582,
+      "accepted": 2583,
       "rejected": 0,
-      "hw_errors_total": 1692,
+      "hw_errors_total": 1694,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -5917,7 +5736,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (1692)",
+          "title": "Yuksek Donanim Hatasi (1694)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -6146,7 +5965,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2548,
+      "accepted": 2553,
       "rejected": 0,
       "hw_errors_total": 574,
       "f2pool_name": null,
@@ -6392,7 +6211,7 @@
       "saha_worker": "saha.3AFE",
       "havuz_worker": "mehmetas.007",
       "actual_worker": "mehmetas.007",
-      "hashrate_TH": 319.87,
+      "hashrate_TH": 319.86,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.2,
       "temp_max": 65,
@@ -6403,9 +6222,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 2496,
+      "accepted": 2500,
       "rejected": 2,
-      "hw_errors_total": 561,
+      "hw_errors_total": 563,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -6652,13 +6471,13 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 0.0,
       "efficiency_pct": null,
-      "temp_max": 43,
-      "temp_water": 43,
+      "temp_max": 46,
+      "temp_water": 46,
       "elapsed_hours": 0.0,
       "fan_avg_rpm": 0,
-      "status": "ONLINE",
+      "status": "SLEEP",
       "online": true,
-      "sleeping": false,
+      "sleeping": true,
       "is_hydro": false,
       "accepted": 0,
       "rejected": 0,
@@ -6683,21 +6502,7 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [
-        {
-          "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
-          "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
-          ]
-        }
-      ],
+      "health_issues": [],
       "daily_history": [
         {
           "date": "2026-05-20",
@@ -6875,15 +6680,15 @@
         },
         {
           "date": "2026-06-18",
-          "avg_hash_TH": 301.9,
-          "uptime_pct": 100.0,
+          "avg_hash_TH": 301.5,
+          "uptime_pct": 99.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-06",
-          "avg_hash_TH": 287.4,
+          "avg_hash_TH": 287.3,
           "earn_btc": 0,
           "days": 18
         },
@@ -6910,13 +6715,13 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 35,
-      "temp_water": 35,
+      "temp_max": 38,
+      "temp_water": 38,
       "elapsed_hours": 0.0,
       "fan_avg_rpm": 0,
-      "status": "ONLINE",
+      "status": "SLEEP",
       "online": true,
-      "sleeping": false,
+      "sleeping": true,
       "is_hydro": true,
       "accepted": 0,
       "rejected": 0,
@@ -6941,21 +6746,7 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [
-        {
-          "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
-          "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
-          ]
-        }
-      ],
+      "health_issues": [],
       "daily_history": [
         {
           "date": "2026-05-20",
@@ -7133,8 +6924,8 @@
         },
         {
           "date": "2026-06-18",
-          "avg_hash_TH": 318.6,
-          "uptime_pct": 100.0,
+          "avg_hash_TH": 318.2,
+          "uptime_pct": 99.9,
           "earn_btc": 0
         }
       ],
@@ -7168,13 +6959,13 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 34,
-      "temp_water": 34,
+      "temp_max": 39,
+      "temp_water": 39,
       "elapsed_hours": 0.0,
       "fan_avg_rpm": 0,
-      "status": "ONLINE",
+      "status": "SLEEP",
       "online": true,
-      "sleeping": false,
+      "sleeping": true,
       "is_hydro": true,
       "accepted": 0,
       "rejected": 0,
@@ -7199,21 +6990,7 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [
-        {
-          "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
-          "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
-          ]
-        }
-      ],
+      "health_issues": [],
       "daily_history": [
         {
           "date": "2026-05-20",
@@ -7391,8 +7168,8 @@
         },
         {
           "date": "2026-06-18",
-          "avg_hash_TH": 322.7,
-          "uptime_pct": 100.0,
+          "avg_hash_TH": 322.3,
+          "uptime_pct": 99.9,
           "earn_btc": 0
         }
       ],
@@ -7591,7 +7368,7 @@
     },
     {
       "date": "2026-06-18",
-      "total_hash_TH": 8842.3,
+      "total_hash_TH": 8836.5,
       "total_earn_btc": 0,
       "online_avg": 27.9
     }
@@ -7599,7 +7376,7 @@
   "monthly_history": [
     {
       "month": "2026-06",
-      "avg_hash_TH": 8929.9,
+      "avg_hash_TH": 8929.6,
       "earn_btc": 0,
       "days": 18
     },
