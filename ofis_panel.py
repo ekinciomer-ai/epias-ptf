@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 48
+PANEL_VERSIYON_BUILD = 50
 
 def _panel_tarih():
     try:
@@ -352,6 +352,12 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 .l4{color:#f87171;}
 .l5{color:#dc2626;font-weight:900;}
 .aylik-table td.kapali-cell{color:#c4b5fd!important;background:linear-gradient(135deg,rgba(124,58,237,0.3),rgba(124,58,237,0.15))!important;border:1px solid rgba(168,85,247,0.6);font-weight:900;}
+.fat-subtabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.fat-subtab{flex:1;min-width:95px;padding:12px 14px;border-radius:12px;border:1.5px solid #e2e8f0;background:#fff;cursor:pointer;font-weight:800;font-size:13px;color:#64748b;text-align:center;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:7px;}
+.fat-subtab:hover{border-color:#cbd5e1;}
+.fat-subtab.aktif.t1{border-color:#d97706;background:linear-gradient(135deg,rgba(217,119,6,0.1),rgba(245,158,11,0.05));color:#b45309;}
+.fat-subtab.aktif.t2{border-color:#2563eb;background:linear-gradient(135deg,rgba(37,99,235,0.1),rgba(96,165,250,0.05));color:#1d4ed8;}
+.fat-subtab.aktif.a3{border-color:#dc2626;background:linear-gradient(135deg,rgba(220,38,38,0.1),rgba(248,113,113,0.05));color:#b91c1c;}
 .fat-abone-kart{background:#ffffff;border:1px solid #e2e8f0;border-radius:18px;padding:16px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
 .fat-abone-kart.ty1{border-left:4px solid #d97706;}
 .fat-abone-kart.ty2{border-left:4px solid #2563eb;}
@@ -1670,6 +1676,12 @@ function otoEksen(birim) {
       <b style="color:#16a34a;">YEKDEM:</b> <span id="fat-yekdem-bilgi">1.088,89 TL/MWh ⚡ tahmini</span>
       <div id="fat-yekdem-popup" class="fat-popup" style="white-space:normal; min-width:280px; left:0; transform:none;"></div>
     </span>
+  </div>
+
+  <div class="fat-subtabs" id="fat-subtabs">
+    <div class="fat-subtab t1" id="fst-T1" onclick="fatAboneSec('T1')">☀️ TEKYILDIZ 1</div>
+    <div class="fat-subtab t2" id="fst-T2" onclick="fatAboneSec('T2')">⚡ TEKYILDIZ 2</div>
+    <div class="fat-subtab a3 aktif" id="fst-A3" onclick="fatAboneSec('A3')">🏭 AKSARAY 3</div>
   </div>
 
   <div id="fat-kartlar"><div style="padding:30px; text-align:center; color:#64748b; font-size:12px;">Yükleniyor...</div></div>
@@ -5755,6 +5767,8 @@ function mhsTabloRender() {
 // ====================== MAHSUPLAŞMA SEKMESI SONU ======================
 
 // ====================== FATURALANDIRMA SEKMESI ======================
+// Aktif abone alt sekmesi (T1/T2/A3) - varsayilan A3
+let fatAktifAbone = 'A3';
 // YEKDEM aylik bedelleri EPIAS_YEKDEM sozlugunden okunur (EPİAŞ sekmesi).
 // Karar mantigi (yekdemHesapla fonksiyonunda):
 //  - Gerceklesme varsa -> kesin (yesil)
@@ -5910,9 +5924,17 @@ function faturaRender() {
     { key: 'A3', kls: 'aks3', icon: '🏭', ad: 'AKSARAY 3', sub: 'Sadece Tüketim · Tek Yönlü Sayaç', guc: '2.250 kW' },
   ];
 
-  let html = '';
-  aboneler.forEach(function(ab) { html += fatKartUret(ay, A, ab); });
-  cont.innerHTML = html;
+  const aktifAb = aboneler.find(function(a){ return a.key === fatAktifAbone; }) || aboneler[2];
+  cont.innerHTML = fatKartUret(ay, A, aktifAb);
+  ['T1','T2','A3'].forEach(function(k){
+    var el = document.getElementById('fst-' + k);
+    if (el) el.classList.toggle('aktif', k === fatAktifAbone);
+  });
+}
+
+function fatAboneSec(key){
+  fatAktifAbone = key;
+  faturaRender();
 }
 
 // ============================================================
@@ -6356,6 +6378,7 @@ function fatKartUret(ay, A, ab) {
   let ayHam = 0, ayMhs = 0, ayTukBed = 0, ayMhsBed = 0, ayHesapVar = false;
   let ayUretim = 0;  // GES uretimi (T1/T2 icin veris kWh)
   let ayUretMhs = 0, ayUretBedelli = 0;  // uretimden mahsup edilen / bedelli (satilan)
+  let ayUretMhsBed = 0;  // uretim mahsup faydasi PTF-bazli deger (TL)
 
   // Her gun icin: gun satiri + (kapali) saatlik detay satiri
   let satirlar = '';
@@ -6381,8 +6404,8 @@ function fatKartUret(ay, A, ab) {
 
       // Tuketim Bedeli = Ham × Enerji Maliyeti
       const sTukBed = (sMal !== null) ? (sHam * sMal) : null;
-      // Mahsup Bedeli = Mahsup × Mahsup Maliyeti (AKS3 icin 2,909687, digerleri 0)
-      const sMhsBed = sMhs * mhsMal;
+      // Mahsup Bedeli = Mahsup × o saatin PTF enerji maliyeti (kacinilan tuketim bedeli)
+      const sMhsBed = (sMal !== null) ? (sMhs * sMal) : 0;
       // Toplam Bedel = Tuketim Bedeli - Mahsup Bedeli
       const sToplam = (sTukBed !== null) ? (sTukBed - sMhsBed) : null;
 
@@ -6397,6 +6420,7 @@ function fatKartUret(ay, A, ab) {
       ayUretim += sUret;
       gUret += sUret;
       ayUretMhs += sUretMhs; gUretMhs += sUretMhs;
+      ayUretMhsBed += (sMal !== null) ? (sUretMhs * sMal) : 0;  // PTF-bazli mahsup faydasi
       ayUretBedelli += sUretBedelli; gUretBedelli += sUretBedelli;
       if (sTukBed !== null) { gTukBed += sTukBed; gHesapVar = true; }
       gMhsBed += sMhsBed;
@@ -6467,12 +6491,12 @@ function fatKartUret(ay, A, ab) {
       } else {
         saatRows += '<td class="fat-col-mal">—</td>';
       }
-      // M.Maliyeti - hover popup
-      saatRows += '<td class="fat-col-mhsmal fat-hover-cell">' + fatFmt(mhsMal, 3);
+      // M.Maliyeti - hover popup (PTF bazli saatlik)
+      saatRows += '<td class="fat-col-mhsmal fat-hover-cell">' + (sMal !== null ? fatFmt(sMal, 3) : '—');
       saatRows += '<div class="fat-popup mor">';
       saatRows += '<div class="fat-popup-title mor">🟣 Mahsup Maliyeti</div>';
-      saatRows += '<div class="fat-popup-row"><span>Birim Fiyat (sabit)</span><span>2,909687</span></div>';
-      saatRows += '<div class="fat-popup-sonuc mor"><span>Kaynak</span><span style="font-size:10px;">Sanayi Tek Terim<br>Aktif Enerji Bedeli</span></div>';
+      saatRows += '<div class="fat-popup-row"><span>Birim Fiyat (PTF saatlik)</span><span>' + (sMal !== null ? fatFmt(sMal, 3) : '—') + '</span></div>';
+      saatRows += '<div class="fat-popup-sonuc mor"><span>Kaynak</span><span style="font-size:10px;">PTF bazlı<br>Enerji Maliyeti</span></div>';
       saatRows += '</div>';
       saatRows += '</td>';
       // Tük.Bedeli - hover popup
@@ -6538,12 +6562,12 @@ function fatKartUret(ay, A, ab) {
     } else {
       saatRows += '<td>—</td>';
     }
-    // M.Maliyeti popup (gun)
-    saatRows += '<td class="fat-hover-cell">' + fatFmt(mhsMal, 3);
+    // M.Maliyeti popup (gun) - PTF bazli etkin ortalama
+    saatRows += '<td class="fat-hover-cell">' + (gMhs > 0 ? fatFmt(gMhsBed/gMhs, 3) : '—');
     saatRows += '<div class="fat-popup mor">';
     saatRows += '<div class="fat-popup-title mor">🟣 Mahsup Maliyeti</div>';
-    saatRows += '<div class="fat-popup-row"><span>Birim Fiyat (sabit)</span><span>2,909687</span></div>';
-    saatRows += '<div class="fat-popup-sonuc mor"><span>Kaynak</span><span style="font-size:10px;">Sanayi Tek Terim<br>Aktif Enerji Bedeli</span></div>';
+    saatRows += '<div class="fat-popup-row"><span>Birim Fiyat (PTF saatlik ort.)</span><span>' + (gMhs > 0 ? fatFmt(gMhsBed/gMhs, 3) : '—') + '</span></div>';
+    saatRows += '<div class="fat-popup-sonuc mor"><span>Kaynak</span><span style="font-size:10px;">PTF bazlı<br>Enerji Maliyeti</span></div>';
     saatRows += '</div>';
     saatRows += '</td>';
     // Tük.Bedeli popup (gun)
@@ -6628,12 +6652,12 @@ function fatKartUret(ay, A, ab) {
     } else {
       satirlar += '<td class="fat-col-mal">—</td>';
     }
-    // M.Maliyeti popup (ana gun)
-    satirlar += '<td class="fat-col-mhsmal fat-hover-cell">' + fatFmt(mhsMal, 3);
+    // M.Maliyeti popup (ana gun) - PTF bazli etkin ortalama
+    satirlar += '<td class="fat-col-mhsmal fat-hover-cell">' + (gMhs > 0 ? fatFmt(gMhsBed/gMhs, 3) : '—');
     satirlar += '<div class="fat-popup mor">';
     satirlar += '<div class="fat-popup-title mor">🟣 Mahsup Maliyeti</div>';
-    satirlar += '<div class="fat-popup-row"><span>Birim Fiyat (sabit)</span><span>2,909687</span></div>';
-    satirlar += '<div class="fat-popup-sonuc mor"><span>Kaynak</span><span style="font-size:10px;">Sanayi Tek Terim<br>Aktif Enerji Bedeli</span></div>';
+    satirlar += '<div class="fat-popup-row"><span>Birim Fiyat (PTF saatlik ort.)</span><span>' + (gMhs > 0 ? fatFmt(gMhsBed/gMhs, 3) : '—') + '</span></div>';
+    satirlar += '<div class="fat-popup-sonuc mor"><span>Kaynak</span><span style="font-size:10px;">PTF bazlı<br>Enerji Maliyeti</span></div>';
     satirlar += '</div>';
     satirlar += '</td>';
     // Tük.Bedeli popup (ana gun)
@@ -6721,12 +6745,12 @@ function fatKartUret(ay, A, ab) {
   } else {
     satirlar += '<td>—</td>';
   }
-  // M.Maliyeti popup (TOPLAM)
-  satirlar += '<td class="fat-hover-cell">' + fatFmt(mhsMal, 3);
+  // M.Maliyeti popup (TOPLAM) - PTF bazli etkin ortalama
+  satirlar += '<td class="fat-hover-cell">' + (ayMhs > 0 ? fatFmt(ayMhsBed/ayMhs, 3) : '—');
   satirlar += '<div class="fat-popup mor">';
   satirlar += '<div class="fat-popup-title mor">🟣 Mahsup Maliyeti</div>';
-  satirlar += '<div class="fat-popup-row"><span>Birim Fiyat (sabit)</span><span>2,909687</span></div>';
-  satirlar += '<div class="fat-popup-sonuc mor"><span>Kaynak</span><span style="font-size:10px;">Sanayi Tek Terim<br>Aktif Enerji Bedeli</span></div>';
+  satirlar += '<div class="fat-popup-row"><span>Birim Fiyat (PTF saatlik ort.)</span><span>' + (ayMhs > 0 ? fatFmt(ayMhsBed/ayMhs, 3) : '—') + '</span></div>';
+  satirlar += '<div class="fat-popup-sonuc mor"><span>Kaynak</span><span style="font-size:10px;">PTF bazlı<br>Enerji Maliyeti</span></div>';
   satirlar += '</div>';
   satirlar += '</td>';
   // Tük.Bedeli popup (TOPLAM)
@@ -6776,7 +6800,7 @@ function fatKartUret(ay, A, ab) {
   const ayMhsGercek = ayHamGercek - aySnrGercek;  // 68.775 (AKS3 icin)
 
   const enerjiBedeli = ayHesapVar ? ayTukBed : 0;        // Aktif Enerji Tuketimi (Tuketim Bedeli)
-  const mahsuplasma = ayMhsGercek * mhsMal;               // AY TOPLAM mahsup × 2,909687
+  const mahsuplasma = ayMhsBed;                          // PTF-bazli saatlik mahsup degeri toplami (kacinilan tuketim bedeli)
   const dagitimBedeli = ayHamGercek * FAT_DB_BIRIM;       // Ham (ay toplam) × 1,182457
   const toplam = enerjiBedeli - mahsuplasma + dagitimBedeli;
   const kdv = toplam * FAT_KDV;                           // Toplam × %20
@@ -6831,8 +6855,8 @@ function fatKartUret(ay, A, ab) {
   h += '<div class="fat-fo-val negatif">−' + fatFmt(mahsuplasma, 2) + ' <span class="fat-fo-tl">TL</span></div>';
   h += '</div>';
   h += '<div class="fat-fo-altrow">';
-  h += '<span class="fat-fo-altlbl">' + fatFmt(ayMhsGercek, 2) + ' kWh × 2,910 TL/kWh</span>';
-  h += '<span class="fat-fo-altaciklama">Sanayi Tek Terim Aktif Enerji Bedeli</span>';
+  h += '<span class="fat-fo-altlbl">' + fatFmt(ayMhsGercek, 2) + ' kWh × ' + (ayMhsGercek > 0 ? fatFmt(mahsuplasma/ayMhsGercek, 3) : '—') + ' TL/kWh</span>';
+  h += '<span class="fat-fo-altaciklama">PTF bazlı (saatlik ort.) — kaçınılan enerji bedeli</span>';
   h += '</div>';
 
   // 3) Dagitim Bedeli
@@ -6866,6 +6890,39 @@ function fatKartUret(ay, A, ab) {
   h += '</div>';
   // ===== /FATURA OZET KARTI =====
 
+  // ===== A3: MAHSUP OLMASAYDI (gercek fatura kiyasi) =====
+  if (ab.key === 'A3') {
+    const mahsupsuzToplam = enerjiBedeli + dagitimBedeli;   // mahsup yok
+    const mahsupsuzKdv = mahsupsuzToplam * FAT_KDV;
+    const mahsupsuzOdenecek = mahsupsuzToplam + mahsupsuzKdv;
+    const mahsupFaydasi = mahsupsuzOdenecek - odenecek;     // tasarruf (KDV dahil)
+    h += '<div class="fat-fatura-ozet" style="border-color:rgba(220,38,38,0.25);background:linear-gradient(135deg,rgba(220,38,38,0.03),rgba(248,113,113,0.02));">';
+    h += '<div class="fat-fo-title" style="color:#b91c1c;">⚠️ Mahsup Olmasaydı (Gerçek Fatura Kıyası)</div>';
+    h += '<div class="fat-fo-row" style="border-bottom:none;padding-bottom:2px;">';
+    h += '<div class="fat-fo-lbl">Aktif Enerji <span class="fat-fo-aciklama">(mahsupsuz, tüm tüketim)</span></div>';
+    h += '<div class="fat-fo-val">' + fatFmt(enerjiBedeli, 2) + ' <span class="fat-fo-tl">TL</span></div>';
+    h += '</div>';
+    h += '<div class="fat-fo-row" style="border-bottom:none;padding-bottom:2px;">';
+    h += '<div class="fat-fo-lbl">Dağıtım Bedeli</div>';
+    h += '<div class="fat-fo-val">' + fatFmt(dagitimBedeli, 2) + ' <span class="fat-fo-tl">TL</span></div>';
+    h += '</div>';
+    h += '<div class="fat-fo-row" style="border-bottom:none;padding-bottom:2px;">';
+    h += '<div class="fat-fo-lbl">KDV (%20)</div>';
+    h += '<div class="fat-fo-val">' + fatFmt(mahsupsuzKdv, 2) + ' <span class="fat-fo-tl">TL</span></div>';
+    h += '</div>';
+    h += '<div class="fat-fo-row toplam" style="border-color:rgba(220,38,38,0.3);">';
+    h += '<div class="fat-fo-lbl"><b>MAHSUPSUZ ÖDENECEK</b></div>';
+    h += '<div class="fat-fo-val"><b style="color:#dc2626;">' + fatFmt(mahsupsuzOdenecek, 2) + '</b> <span class="fat-fo-tl">TL</span></div>';
+    h += '</div>';
+    h += '<div class="fat-fo-odenecek" style="background:linear-gradient(135deg,#16a34a,#22c55e);">';
+    h += '<div class="fat-fo-od-lbl">💚 MAHSUP FAYDASI (Tasarruf)</div>';
+    h += '<div class="fat-fo-od-val">' + fatFmt(mahsupFaydasi, 2) + ' <span style="font-size:14px;color:#dcfce7;font-weight:700;">TL</span></div>';
+    h += '</div>';
+    h += '<div style="font-size:10px;color:#94a3b8;margin-top:8px;text-align:center;font-weight:600;">Mahsuplu fatura: ' + fatFmt(odenecek, 2) + ' TL &nbsp;·&nbsp; Mahsupsuz: ' + fatFmt(mahsupsuzOdenecek, 2) + ' TL</div>';
+    h += '</div>';
+  }
+  // ===== /A3 MAHSUPSUZ =====
+
   // ===== URETIM FATURASI (sadece GES: T1, T2) =====
   if (gesMi) {
     const uretimGeliri = ayUretBedelli * FAT_SANAYI_AKTIF;        // bedelli × 2,909687
@@ -6896,8 +6953,8 @@ function fatKartUret(ay, A, ab) {
 
   // ===== FAYDA ANALIZI (sadece GES: T1, T2) =====
   if (gesMi) {
-    const mahsupFayda = ayUretMhs * FAT_SANAYI_AKTIF;      // mahsup × 2,909687
-    const bedelliGelir = ayUretBedelli * FAT_SANAYI_AKTIF; // bedelli × 2,909687
+    const mahsupFayda = ayUretMhsBed;                     // PTF-bazli (kacinilan tuketim bedeli)
+    const bedelliGelir = ayUretBedelli * FAT_SANAYI_AKTIF; // bedelli × 2,909687 (satis - degismedi)
     const skbTop = ayUretim * FAT_URETIM_SKB;              // (mahsup+bedelli) × 0,656008
     const toplamFayda = mahsupFayda + bedelliGelir - skbTop;
     h += '<div class="fat-fayda">';
@@ -6909,7 +6966,7 @@ function fatKartUret(ay, A, ab) {
     h += '<div class="fat-popup mor">';
     h += '<div class="fat-popup-title mor">🔄 Mahsup Faydası</div>';
     h += '<div class="fat-popup-row"><span>Mahsup Edilen Üretim</span><span>' + fatFmt(ayUretMhs, 2) + ' kWh</span></div>';
-    h += '<div class="fat-popup-row"><span>Birim Fiyat (OG aktif)</span><span>2,909687</span></div>';
+    h += '<div class="fat-popup-row"><span>Birim Fiyat (PTF saatlik ort.)</span><span>' + (ayUretMhs > 0 ? fatFmt(mahsupFayda/ayUretMhs, 3) : '—') + '</span></div>';
     h += '<div class="fat-popup-sonuc mor"><span>= Mahsup Faydası</span><span>' + fatFmt(mahsupFayda, 2) + ' TL</span></div>';
     h += '<div class="fat-popup-aciklama">Mahsup sayesinde ödenmeyen tüketim bedeli</div>';
     h += '</div></div>';
