@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 57
+PANEL_VERSIYON_BUILD = 58
 
 def _panel_tarih():
     try:
@@ -157,6 +157,30 @@ def _btc_kur_uygula(sinyal):
     btc_try = sinyal.get("btc_try", 0) if sinyal else 0
     btc_usd = sinyal.get("btc_usd", 0) if sinyal else 0
     return btc_try, btc_usd
+
+# BTC gunluk fiyat gecmisi (TL) — grafikte gercek fiyat cizgisi icin
+_btc_gecmis_cache = {"ts": 0.0, "veri": {}}
+
+def _btc_gecmis_cek(gun_sayisi=120):
+    """CoinGecko market_chart'tan gunluk BTC fiyat gecmisi (TL). {YYYY-MM-DD: fiyat}. 1 saat cache."""
+    global _btc_gecmis_cache
+    if (_btc_time.time() - _btc_gecmis_cache["ts"]) < 3600 and _btc_gecmis_cache["veri"]:
+        return _btc_gecmis_cache["veri"]
+    try:
+        url = ("https://api.coingecko.com/api/v3/coins/bitcoin/market_chart"
+               "?vs_currency=try&days=" + str(gun_sayisi))  # >90 gun otomatik gunluk doner
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        d = json.loads(urllib.request.urlopen(req, timeout=10).read())
+        veri = {}
+        for ts_ms, fiyat in d.get("prices", []):
+            gun = datetime.datetime.utcfromtimestamp(ts_ms / 1000.0).strftime("%Y-%m-%d")
+            veri[gun] = fiyat  # ayni gunde birden fazlaysa son deger
+        if veri:
+            _btc_gecmis_cache = {"ts": _btc_time.time(), "veri": veri}
+            return veri
+    except Exception as e:
+        print("BTC gecmis cekme hatasi:", e)
+    return _btc_gecmis_cache["veri"]  # eski cache (varsa)
 ZARARLI_ESIK = 2200
 DOGRULAMA_TOLERANS = 50  # kWh tolerans
 
@@ -2278,21 +2302,23 @@ function f2HaftaKey(iso) {
 }
 
 function f2Grupla(ham, zaman) {
-  // Donus: [{etiket, btc, tl, hash_ort, gun_sayisi, iso_bas}]
+  // Donus: [{etiket, btc, tl, hash_ort, gun_sayisi, iso_bas, fiyat}]
   if (zaman === 'gunluk') {
     return ham.map(g => ({
       etiket: g.iso.slice(8,10) + '.' + g.iso.slice(5,7),
-      btc: g.btc, tl: g.tl, hash_ort: g.hash, gun_sayisi: 1, iso_bas: g.iso
+      btc: g.btc, tl: g.tl, hash_ort: g.hash, gun_sayisi: 1, iso_bas: g.iso,
+      fiyat: (g.fiyat || 0)
     }));
   }
   const gruplar = {};
   ham.forEach(g => {
     const key = (zaman === 'haftalik') ? f2HaftaKey(g.iso) : g.iso.slice(0,7);
-    if (!gruplar[key]) gruplar[key] = { btc:0, tl:0, hash_top:0, gun:0, iso_bas:g.iso };
+    if (!gruplar[key]) gruplar[key] = { btc:0, tl:0, hash_top:0, gun:0, iso_bas:g.iso, fiyat_top:0, fiyat_cnt:0 };
     gruplar[key].btc += g.btc;
     gruplar[key].tl += g.tl;
     gruplar[key].hash_top += g.hash;
     gruplar[key].gun++;
+    if (g.fiyat) { gruplar[key].fiyat_top += g.fiyat; gruplar[key].fiyat_cnt++; }
     if (g.iso < gruplar[key].iso_bas) gruplar[key].iso_bas = g.iso;
   });
   const ayAd = ['','Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
@@ -2306,7 +2332,8 @@ function f2Grupla(ham, zaman) {
       const [yil, m] = key.split('-');
       etiket = ayAd[parseInt(m)] + ' ' + yil.slice(2);
     }
-    return { etiket: etiket, btc: gr.btc, tl: gr.tl, hash_ort: gr.hash_top/gr.gun, gun_sayisi: gr.gun, iso_bas: gr.iso_bas, key: key };
+    return { etiket: etiket, btc: gr.btc, tl: gr.tl, hash_ort: gr.hash_top/gr.gun, gun_sayisi: gr.gun, iso_bas: gr.iso_bas, key: key,
+             fiyat: (gr.fiyat_cnt > 0 ? gr.fiyat_top/gr.fiyat_cnt : 0) };
   });
 }
 
@@ -2343,7 +2370,7 @@ function f2Render() {
     // Elektrik tuketimi (kWh): hashrate(TH/s) x J/TH x saat / 1000
     //   gunluk: 24 saat, haftalik: gun_sayisi*24, aylik: gun_sayisi*24
     tuketim:  gruplar.map(g => (g.hash_ort * ortJth * (g.gun_sayisi * 24)) / 1000),
-    fiyat:    gruplar.map(() => btcKur),                                     // BTC fiyati (anlik, sabit cizgi)
+    fiyat:    gruplar.map(g => (g.fiyat > 0 ? g.fiyat : btcKur)),            // BTC fiyati (o gunun/donemin gercek TL fiyati)
   };
   f2ChartCokKatman(katmanlar);
 
@@ -7800,16 +7827,21 @@ def ozet():
     sonuc["gunluk_liste"] = gunluk
     # Ham gunluk veri dizisi (grafik + haftalik/aylik gruplama icin)
     # ISO tarih + ham sayisal degerler (formatlanmamis)
+    btc_gecmis = _btc_gecmis_cek()
     gunluk_ham = []
     for t in sorted(transactions, key=lambda t: t["mining_extra"]["mining_date"]):
         dt = datetime.datetime.fromtimestamp(t["mining_extra"]["mining_date"], tz=datetime.timezone.utc)
+        iso = dt.strftime("%Y-%m-%d")
+        gun_fiyat = btc_gecmis.get(iso, btc_try)  # o gunun gercek fiyati, yoksa anlik
         gunluk_ham.append({
-            "iso": dt.strftime("%Y-%m-%d"),
+            "iso": iso,
             "btc": t["changed_balance"],
             "hash": t["mining_extra"]["hash_rate"] / 1e12,
-            "tl": t["changed_balance"] * btc_try
+            "tl": t["changed_balance"] * gun_fiyat,
+            "fiyat": gun_fiyat
         })
     sonuc["gunluk_ham"] = gunluk_ham
+    sonuc["btc_gecmis"] = btc_gecmis
     sonuc["btc_kur"] = btc_try
     workers = f2pool_workers()
     worker_list = []
