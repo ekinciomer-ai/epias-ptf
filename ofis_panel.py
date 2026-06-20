@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 52
+PANEL_VERSIYON_BUILD = 53
 
 def _panel_tarih():
     try:
@@ -5977,6 +5977,60 @@ function faturaRender() {
     var el = document.getElementById('fst-' + k);
     if (el) el.classList.toggle('aktif', k === fatAktifAbone);
   });
+  try { fatGrafikCiz(); } catch(e) { console.error('fatGrafikCiz:', e); }
+}
+
+// Gunluk agirlikli birim fiyat grafigi (net vs brut cizgi + net tuketim bar)
+window._fatChart = null;
+function fatGrafikCiz(){
+  const v = window.fatGrafikVeri;
+  const cv = document.getElementById('fat-grafik-fiyat');
+  if (!v || !cv || !window.Chart || !v.seri || !v.seri.length) return;
+  if (window._fatChart) { try { window._fatChart.destroy(); } catch(e){} window._fatChart = null; }
+
+  const etiketler = v.seri.map(d => d.gun);
+  const netFiyat  = v.seri.map(d => d.agirlik);
+  const brutFiyat = v.seri.map(d => d.brut);
+  const netTuk    = v.seri.map(d => d.netTuk);
+
+  window._fatChart = new Chart(cv.getContext('2d'), {
+    data: {
+      labels: etiketler,
+      datasets: [
+        { type:'bar', label:'Net Tüketim (kWh)', data: netTuk, yAxisID:'y1',
+          backgroundColor:'rgba(148,163,184,0.18)', borderColor:'rgba(148,163,184,0.35)',
+          borderWidth:1, borderRadius:3, order:3, barPercentage:0.7 },
+        { type:'line', label:'Net Ağırlıklı (TL/kWh)', data: netFiyat, yAxisID:'y',
+          borderColor: OTO_G.ptf, backgroundColor:'rgba(52,210,235,0.08)',
+          borderWidth:2.5, pointRadius:2.5, pointBackgroundColor:OTO_G.ptf,
+          tension:0.3, fill:true, order:1 },
+        { type:'line', label:'Brüt (mahsup öncesi)', data: brutFiyat, yAxisID:'y',
+          borderColor:'#cbd5e1', borderWidth:1.5, borderDash:[5,4],
+          pointRadius:0, tension:0.3, fill:false, order:2 }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      interaction:{ mode:'index', intersect:false },
+      plugins:{
+        legend:{ display:true, position:'top', labels:{ boxWidth:12, font:{size:10}, color:'#64748b' } },
+        tooltip:{ callbacks:{
+          title: items => 'Gün ' + items[0].label,
+          label: it => {
+            if (it.dataset.yAxisID === 'y1') return ' ' + it.dataset.label + ': ' + Math.round(it.parsed.y).toLocaleString('tr-TR');
+            return ' ' + it.dataset.label + ': ' + (it.parsed.y != null ? it.parsed.y.toFixed(4) : '—');
+          }
+        }}
+      },
+      scales:{
+        y:{ position:'left', title:{ display:true, text:'TL/kWh', font:{size:9}, color:'#94a3b8' },
+            ticks:{ color:'#94a3b8', font:{size:9}, callback:v=>v.toFixed(2) }, grid:{ color:'rgba(148,163,184,0.1)' } },
+        y1:{ position:'right', title:{ display:true, text:'kWh', font:{size:9}, color:'#cbd5e1' },
+             ticks:{ color:'#cbd5e1', font:{size:9} }, grid:{ display:false } },
+        x:{ ticks:{ color:'#94a3b8', font:{size:9} }, grid:{ display:false } }
+      }
+    }
+  });
 }
 
 function fatAboneSec(key){
@@ -6417,6 +6471,7 @@ function fatKartUret(ay, A, ab) {
   const ayPtf = (fatAylikPtf || {})[ay] || {};
   const gunler = Object.keys(A.gunler || {}).sort();
   const aylar = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+  const fatSeri = [];  // gunluk seri: agirlikli birim fiyat grafigi + karsilastirma icin
 
   const mhsMal = FAT_SANAYI_AKTIF;  // 2,909687 - tum aboneler icin
   const gesMi = (ab.key === 'T1' || ab.key === 'T2');  // GES aboneleri (uretim kolonu icin)
@@ -6587,6 +6642,14 @@ function fatKartUret(ay, A, ab) {
     // E.Mal = gun etkin ortalama (Σ Tük.Bed / Σ Ham) - saatlik toplamla tutarli
     const gOrtMal = (gHesapVar && gHam > 0) ? (gTukBed / gHam) : null;
     const gToplam = gHesapVar ? (gTukBed - gMhsBed) : null;
+    // Gunluk agirlikli birim fiyat (net): gun toplam bedeli / net tuketim
+    const gNetTuk = gHam - gMhs;
+    const gAgirlik = (gToplam !== null && gNetTuk > 0) ? (gToplam / gNetTuk) : null;
+    if (gToplam !== null) {
+      fatSeri.push({ gun: g.slice(-2), toplam: gToplam, ham: gHam, mhs: gMhs,
+                     netTuk: gNetTuk, agirlik: gAgirlik,
+                     brut: (gHam > 0 ? gTukBed / gHam : 0) });
+    }
     saatRows += '<tr class="gun-tpl">';
     saatRows += '<td>GÜN</td>';
     if (gesMi) {
@@ -6736,7 +6799,9 @@ function fatKartUret(ay, A, ab) {
       satirlar += '<div class="fat-popup-title sari">💵 Gün Toplam Bedel</div>';
       satirlar += '<div class="fat-popup-row"><span>Tük.Bedeli</span><span>+' + fatFmt(gTukBed, 2) + '</span></div>';
       satirlar += '<div class="fat-popup-row"><span>Mhs.Bedeli</span><span>−' + fatFmt(gMhsBed, 2) + '</span></div>';
+      satirlar += '<div class="fat-popup-row"><span>Net Tüketim</span><span>' + fatFmt(gNetTuk, 2) + ' kWh</span></div>';
       satirlar += '<div class="fat-popup-sonuc sari"><span>Gün Toplam</span><span>' + fatFmt(gToplam, 2) + ' TL</span></div>';
+      if (gAgirlik !== null) satirlar += '<div class="fat-popup-row" style="border-top:1px dashed rgba(148,163,184,0.3);margin-top:3px;padding-top:4px;"><span>⚖️ Günlük Ağırlıklı</span><span><b>' + fatFmt(gAgirlik, 3) + ' TL/kWh</b></span></div>';
       satirlar += '</div>';
       satirlar += '</td>';
     } else {
@@ -6853,6 +6918,11 @@ function fatKartUret(ay, A, ab) {
   const kdv = toplam * FAT_KDV;                           // Toplam × %20
   const odenecek = toplam + kdv;
 
+  // AYLIK AGIRLIKLI BIRIM FIYAT
+  const netEnerji = enerjiBedeli - mahsuplasma;           // mahsup sonrasi net enerji bedeli
+  const ayAgirlikNet = (aySnrGercek > 0) ? (netEnerji / aySnrGercek) : null;   // net tuketime bolunmus
+  const ayAgirlikBrut = (ayHamGercek > 0) ? (enerjiBedeli / ayHamGercek) : null; // brut tuketime bolunmus
+
   // Kart HTML
   let h = '<div class="fat-abone-kart ' + ab.kls + '">';
   h += '<div class="fat-abone-head"><div class="fat-abone-icon">' + ab.icon + '</div>';
@@ -6934,6 +7004,20 @@ function fatKartUret(ay, A, ab) {
   h += '<div class="fat-fo-od-val">' + fatFmt(odenecek, 2) + ' <span style="font-size:14px;color:#94a3b8;font-weight:700;">TL</span></div>';
   h += '</div>';
 
+  // AYLIK AGIRLIKLI BIRIM FIYAT karti
+  h += '<div style="display:flex;gap:8px;margin-top:10px;">';
+  h += '<div style="flex:1;background:linear-gradient(135deg,rgba(52,210,235,0.08),rgba(52,210,235,0.02));border:1px solid rgba(52,210,235,0.25);border-radius:10px;padding:10px 12px;text-align:center;">';
+  h += '<div style="font-size:9px;color:#0891b2;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;">⚖️ Aylık Ağırlıklı (Net)</div>';
+  h += '<div style="font-size:18px;font-weight:900;color:#0e7490;margin-top:3px;">' + (ayAgirlikNet !== null ? fatFmt(ayAgirlikNet, 4) : '—') + '<span style="font-size:10px;color:#94a3b8;"> TL/kWh</span></div>';
+  h += '<div style="font-size:9px;color:#94a3b8;margin-top:2px;">' + fatFmt(netEnerji, 0) + ' TL ÷ ' + fatFmt(aySnrGercek, 0) + ' kWh</div>';
+  h += '</div>';
+  h += '<div style="flex:1;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;text-align:center;">';
+  h += '<div style="font-size:9px;color:#64748b;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;">Aylık Brüt</div>';
+  h += '<div style="font-size:18px;font-weight:900;color:#475569;margin-top:3px;">' + (ayAgirlikBrut !== null ? fatFmt(ayAgirlikBrut, 4) : '—') + '<span style="font-size:10px;color:#94a3b8;"> TL/kWh</span></div>';
+  h += '<div style="font-size:9px;color:#94a3b8;margin-top:2px;">mahsup öncesi</div>';
+  h += '</div>';
+  h += '</div>';
+
   h += '</div>';
   // ===== /FATURA OZET KARTI =====
 
@@ -6969,6 +7053,24 @@ function fatKartUret(ay, A, ab) {
     h += '</div>';
   }
   // ===== /A3 MAHSUPSUZ =====
+
+  // ===== GORSEL: GUNLUK AGIRLIKLI BIRIM FIYAT GRAFIGI =====
+  window.fatGrafikVeri = {
+    seri: fatSeri,
+    abone: ab.key,
+    ad: ab.ad,
+    ayAgirlikNet: ayAgirlikNet,
+    odenecek: odenecek,
+    mahsupsuz: (ab.key === 'A3') ? (enerjiBedeli + dagitimBedeli) * (1 + FAT_KDV) : null
+  };
+  if (fatSeri.length > 0) {
+    h += '<div class="fat-chart-card" style="margin-top:14px;">';
+    h += '<div class="fat-chart-head"><div class="fat-chart-baslik">⚖️ Günlük Ağırlıklı Birim Fiyat (TL/kWh)</div>';
+    h += '<div style="font-size:10px;color:#94a3b8;font-weight:700;">Net vs Brüt · gün bazlı</div></div>';
+    h += '<canvas id="fat-grafik-fiyat" style="width:100%;height:200px;"></canvas>';
+    h += '</div>';
+  }
+  // ===== /GORSEL =====
 
   // ===== URETIM FATURASI (sadece GES: T1, T2) =====
   if (gesMi) {
