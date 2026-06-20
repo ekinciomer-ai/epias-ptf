@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 58
+PANEL_VERSIYON_BUILD = 59
 
 def _panel_tarih():
     try:
@@ -6041,12 +6041,11 @@ function _fatChartYap(){
     const saatler = (gun && gun.saatler) ? gun.saatler : [];
     labels = saatler.map(x => x.s);
     datasets = [
-      { label:'🔴 Mahsup Sonrası Net', data:saatler.map(x=>tl?x.netTl:x.netKwh), backgroundColor:OTO_G.cekis, stack:'s', borderRadius:2, barPercentage:0.92, categoryPercentage:0.9 },
-      { label:'🟣 Mahsup', data:saatler.map(x=>tl?x.mhsTl:x.mhsKwh), backgroundColor:'#7c3aed', stack:'s', borderRadius:2, barPercentage:0.92, categoryPercentage:0.9 },
-      { label:'🟡 Fazla Üretim', data:saatler.map(x=>tl?x.fazlaTl:x.fazlaKwh), backgroundColor:OTO_G.gunes, stack:'s', borderRadius:2, barPercentage:0.92, categoryPercentage:0.9 }
+      { label:'🌞 Ham Üretim', data:saatler.map(x=>tl?x.hamUretTl:x.hamUretKwh), backgroundColor:OTO_G.gunes, borderRadius:3, categoryPercentage:0.78, barPercentage:0.92 },
+      { label:'🟣 Mahsup', data:saatler.map(x=>tl?x.uretMhsTl:x.uretMhsKwh), backgroundColor:'#7c3aed', borderRadius:3, categoryPercentage:0.78, barPercentage:0.92 }
     ];
-    const bl = document.getElementById('fat-grafik-baslik'); if (bl) bl.textContent = '🕐 ' + window._fatGun + ' — Saatlik Denge';
-    const lg = document.getElementById('fat-grafik-legend'); if (lg) lg.textContent = 'Saat bazlı · 🔴 net tüketim alttan, 🟣 mahsup, 🟡 fazla üretim üstte';
+    const bl = document.getElementById('fat-grafik-baslik'); if (bl) bl.textContent = '🕐 ' + window._fatGun + ' — Saatlik: Ham Üretim vs Mahsup';
+    const lg = document.getElementById('fat-grafik-legend'); if (lg) lg.textContent = 'Saat bazlı · 🌞 ham üretim (toplam) vs 🟣 mahsuba giden — aradaki fark = satılan (bedelli)';
   }
 
   window._fatChart = new Chart(cv.getContext('2d'), {
@@ -6060,12 +6059,12 @@ function _fatChartYap(){
         tooltip:{ callbacks:{
           title: items => (window._fatGun === 'ay') ? items[0].label : ('Saat ' + items[0].label + ':00'),
           label: it => (it.parsed.y > 0 ? ' ' + it.dataset.label + ': ' + fmtVal(it.parsed.y) : null),
-          footer: items => { const top = items.reduce((a,it)=>a+(it.parsed.y||0),0); return top>0 ? 'Toplam: ' + fmtVal(top) : ''; }
+          footer: items => { if (window._fatGun !== 'ay') return ''; const top = items.reduce((a,it)=>a+(it.parsed.y||0),0); return top>0 ? 'Toplam: ' + fmtVal(top) : ''; }
         }}
       },
       scales:{
-        x:{ stacked:true, ticks:{ color:'#475569', font:{ size:(window._fatGun==='ay'?11:9), weight:'700' } }, grid:{ display:false } },
-        y:{ stacked:true, beginAtZero:true,
+        x:{ stacked:(window._fatGun==='ay'), ticks:{ color:'#475569', font:{ size:(window._fatGun==='ay'?11:9), weight:'700' } }, grid:{ display:false } },
+        y:{ stacked:(window._fatGun==='ay'), beginAtZero:true,
             title:{ display:true, text:birimEt, font:{size:9}, color:'#94a3b8' },
             ticks:{ color:'#94a3b8', font:{size:9}, callback:val=>Math.round(val).toLocaleString('tr-TR') },
             grid:{ color:'rgba(148,163,184,0.1)' } }
@@ -6590,9 +6589,14 @@ function fatKartUret(ay, A, ab) {
       ayUretBedelli += sUretBedelli; gUretBedelli += sUretBedelli;
       if (sTukBed !== null) { gTukBed += sTukBed; gHesapVar = true; }
       gMhsBed += sMhsBed;
-      // Saatlik kirilim: net tuketim + mahsup + fazla uretim (kWh ve TL)
+      // Saatlik kirilim: ham uretim + uretimden mahsup (kWh ve TL) — kiyas icin
       gSaatler.push({
         s: sk,
+        hamUretKwh: sUret,
+        hamUretTl: ((sMal !== null) ? (sUretMhs * sMal) : 0) + (sUretBedelli * FAT_SANAYI_AKTIF),
+        uretMhsKwh: sUretMhs,
+        uretMhsTl: (sMal !== null) ? (sUretMhs * sMal) : 0,
+        // (eski net/fazla alanlari da dursun — baska yerde lazim olursa)
         netKwh: sHam - sMhs,
         netTl: (sToplam !== null ? sToplam : 0),
         mhsKwh: sMhs,
