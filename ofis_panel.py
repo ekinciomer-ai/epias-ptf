@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 55
+PANEL_VERSIYON_BUILD = 57
 
 def _panel_tarih():
     try:
@@ -648,9 +648,11 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 .f2-chart-card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
 .f2-chart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
 .f2-chart-baslik{font-size:13px;font-weight:800;color:#1e293b;}
-.fat-gtog{font-family:inherit;font-size:10px;font-weight:700;padding:5px 10px;border-radius:20px;border:1.5px solid #e2e8f0;background:#fff;color:#94a3b8;cursor:pointer;transition:all .15s ease;opacity:0.55;}
-.fat-gtog:hover{border-color:var(--c);color:#475569;opacity:0.85;}
-.fat-gtog.aktif{background:var(--c);border-color:var(--c);color:#fff;opacity:1;box-shadow:0 1px 4px rgba(0,0,0,0.12);}
+.fat-birim{font-family:inherit;font-size:11px;font-weight:800;padding:5px 16px;border:none;background:#fff;color:#94a3b8;cursor:pointer;transition:all .15s ease;}
+.fat-birim.aktif{background:#0e7490;color:#fff;}
+.fat-birim:not(.aktif):hover{background:#f1f5f9;color:#475569;}
+.fat-gun-sec{font-family:inherit;font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;border:1.5px solid #e2e8f0;background:#fff;color:#475569;cursor:pointer;outline:none;}
+.fat-gun-sec:hover{border-color:#0891b2;}
 .f2-metric-grup{display:flex;gap:4px;}
 .f2-lejant{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:10px;padding-top:10px;border-top:1px solid #f1f5f9;}
 .f2-lej{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:#64748b;}
@@ -5983,86 +5985,85 @@ function faturaRender() {
   try { fatGrafikCiz(); } catch(e) { console.error('fatGrafikCiz:', e); }
 }
 
-// Mahsuplasma & agirlikli fiyat grafigi — 5 seri, butonlarla ac/kapat
+// Uretim & Tuketim dengesi — aylik 2 cubuk / gun secilince 24 saat, kWh-TL gecisli
 window._fatChart = null;
-function fatGrafikCiz(){
+window._fatBirim = 'tl';
+window._fatGun = 'ay';
+function _fatChartYap(){
   const v = window.fatGrafikVeri;
   const cv = document.getElementById('fat-grafik-fiyat');
-  if (!v || !cv || !window.Chart || !v.seri || !v.seri.length) return;
+  if (!v || !cv || !window.Chart) return;
   if (window._fatChart) { try { window._fatChart.destroy(); } catch(e){} window._fatChart = null; }
+  const tl = (window._fatBirim === 'tl');
+  const birimEt = tl ? 'TL' : 'kWh';
+  const fmtVal = val => Math.round(val).toLocaleString('tr-TR') + ' ' + birimEt;
+  let labels, datasets;
 
-  const etiketler = v.seri.map(d => d.gun);
-  const mhsKwh = v.seri.map(d => d.mhs);
-  const mhsTl  = v.seri.map(d => d.mhsBed);
-  const netF   = v.seri.map(d => d.agirlik);
-  const brutF  = v.seri.map(d => d.brut);
-  const netTuk = v.seri.map(d => d.netTuk);
-
-  // Dataset sirasi data-ds ile birebir: 0..4
-  const datasets = [
-    { label:'Mahsup (kWh)', data:mhsKwh, yAxisID:'axKwh', type:'bar', hidden:false,
-      backgroundColor:'rgba(124,58,237,0.35)', borderColor:'#7c3aed', borderWidth:1, borderRadius:3, barPercentage:0.7, order:4 },
-    { label:'Mahsup (TL)', data:mhsTl, yAxisID:'axTl', type:'line', hidden:false,
-      borderColor:'#16a34a', backgroundColor:'rgba(22,163,74,0.08)', borderWidth:2.5, pointRadius:2, pointBackgroundColor:'#16a34a', tension:0.3, fill:true, order:1 },
-    { label:'Net Ağırlıklı (TL/kWh)', data:netF, yAxisID:'axFiyat', type:'line', hidden:true,
-      borderColor:OTO_G.ptf, backgroundColor:'rgba(52,210,235,0.06)', borderWidth:2.5, pointRadius:2, pointBackgroundColor:OTO_G.ptf, tension:0.3, fill:false, order:2 },
-    { label:'Brüt (TL/kWh)', data:brutF, yAxisID:'axFiyat', type:'line', hidden:true,
-      borderColor:'#cbd5e1', borderWidth:1.5, borderDash:[5,4], pointRadius:0, tension:0.3, fill:false, order:3 },
-    { label:'Net Tüketim (kWh)', data:netTuk, yAxisID:'axKwh', type:'bar', hidden:true,
-      backgroundColor:'rgba(148,163,184,0.18)', borderColor:'rgba(148,163,184,0.4)', borderWidth:1, borderRadius:3, barPercentage:0.7, order:5 }
-  ];
-
-  // Eksen hangi dataset'lere ait
-  const eksenDs = { axKwh:[0,4], axTl:[1], axFiyat:[2,3] };
-  function eksenGorunur(ax){ return eksenDs[ax].some(i => !datasets[i].hidden); }
+  if (window._fatGun === 'ay') {
+    const U = v.uretim, T = v.tuketim;
+    labels = ['🌞 Üretim','⚡ Tüketim'];
+    datasets = [
+      { label:'🟣 Mahsup', data:[ tl?U.mahsupTl:U.mahsupKwh, tl?T.mahsupTl:T.mahsupKwh ], backgroundColor:'#7c3aed', stack:'s', borderRadius:4, barPercentage:0.6 },
+      { label:'🟡 Fazla Üretim', data:[ tl?U.fazlaTl:U.fazlaKwh, 0 ], backgroundColor:OTO_G.gunes, stack:'s', borderRadius:4, barPercentage:0.6 },
+      { label:'🔴 Mahsup Sonrası Net', data:[ 0, tl?T.netTl:T.netKwh ], backgroundColor:OTO_G.cekis, stack:'s', borderRadius:4, barPercentage:0.6 }
+    ];
+    const bl = document.getElementById('fat-grafik-baslik'); if (bl) bl.textContent = '⚖️ Üretim & Tüketim Dengesi (Aylık)';
+    const lg = document.getElementById('fat-grafik-legend'); if (lg) lg.textContent = '🟣 Mahsup · 🟡 Fazla Üretim (bedelli) · 🔴 Mahsup Sonrası Net';
+  } else {
+    const gun = v.seri.find(d => d.gun === window._fatGun);
+    const saatler = (gun && gun.saatler) ? gun.saatler : [];
+    labels = saatler.map(x => x.s);
+    datasets = [
+      { label:'🔴 Mahsup Sonrası Net', data:saatler.map(x=>tl?x.netTl:x.netKwh), backgroundColor:OTO_G.cekis, stack:'s', borderRadius:2, barPercentage:0.92, categoryPercentage:0.9 },
+      { label:'🟣 Mahsup', data:saatler.map(x=>tl?x.mhsTl:x.mhsKwh), backgroundColor:'#7c3aed', stack:'s', borderRadius:2, barPercentage:0.92, categoryPercentage:0.9 },
+      { label:'🟡 Fazla Üretim', data:saatler.map(x=>tl?x.fazlaTl:x.fazlaKwh), backgroundColor:OTO_G.gunes, stack:'s', borderRadius:2, barPercentage:0.92, categoryPercentage:0.9 }
+    ];
+    const bl = document.getElementById('fat-grafik-baslik'); if (bl) bl.textContent = '🕐 ' + window._fatGun + ' — Saatlik Denge';
+    const lg = document.getElementById('fat-grafik-legend'); if (lg) lg.textContent = 'Saat bazlı · 🔴 net tüketim alttan, 🟣 mahsup, 🟡 fazla üretim üstte';
+  }
 
   window._fatChart = new Chart(cv.getContext('2d'), {
-    data: { labels: etiketler, datasets: datasets },
-    options: {
+    type:'bar',
+    data:{ labels:labels, datasets:datasets },
+    options:{
       responsive:true, maintainAspectRatio:false,
       interaction:{ mode:'index', intersect:false },
       plugins:{
-        legend:{ display:false },
+        legend:{ display:true, position:'top', labels:{ boxWidth:12, font:{size:10}, color:'#64748b' } },
         tooltip:{ callbacks:{
-          title: items => 'Gün ' + items[0].label,
-          label: it => {
-            const ax = it.dataset.yAxisID;
-            if (ax === 'axFiyat') return ' ' + it.dataset.label + ': ' + (it.parsed.y!=null ? it.parsed.y.toFixed(4) : '—');
-            return ' ' + it.dataset.label + ': ' + Math.round(it.parsed.y).toLocaleString('tr-TR');
-          }
+          title: items => (window._fatGun === 'ay') ? items[0].label : ('Saat ' + items[0].label + ':00'),
+          label: it => (it.parsed.y > 0 ? ' ' + it.dataset.label + ': ' + fmtVal(it.parsed.y) : null),
+          footer: items => { const top = items.reduce((a,it)=>a+(it.parsed.y||0),0); return top>0 ? 'Toplam: ' + fmtVal(top) : ''; }
         }}
       },
       scales:{
-        axKwh:{ position:'left', display:eksenGorunur('axKwh'),
-          title:{ display:true, text:'kWh', font:{size:9}, color:'#7c3aed' },
-          ticks:{ color:'#94a3b8', font:{size:9}, callback:val=>Math.round(val).toLocaleString('tr-TR') },
-          grid:{ color:'rgba(148,163,184,0.1)' } },
-        axTl:{ position:'right', display:eksenGorunur('axTl'),
-          title:{ display:true, text:'TL', font:{size:9}, color:'#16a34a' },
-          ticks:{ color:'#94a3b8', font:{size:9}, callback:val=>Math.round(val).toLocaleString('tr-TR') },
-          grid:{ display:false } },
-        axFiyat:{ position:'right', display:eksenGorunur('axFiyat'),
-          title:{ display:true, text:'TL/kWh', font:{size:9}, color:OTO_G.ptf },
-          ticks:{ color:'#94a3b8', font:{size:9}, callback:val=>val.toFixed(2) },
-          grid:{ display:false } },
-        x:{ ticks:{ color:'#94a3b8', font:{size:9} }, grid:{ display:false } }
+        x:{ stacked:true, ticks:{ color:'#475569', font:{ size:(window._fatGun==='ay'?11:9), weight:'700' } }, grid:{ display:false } },
+        y:{ stacked:true, beginAtZero:true,
+            title:{ display:true, text:birimEt, font:{size:9}, color:'#94a3b8' },
+            ticks:{ color:'#94a3b8', font:{size:9}, callback:val=>Math.round(val).toLocaleString('tr-TR') },
+            grid:{ color:'rgba(148,163,184,0.1)' } }
       }
     }
   });
+}
 
-  // Toggle butonlari
-  const tog = document.getElementById('fat-grafik-toggle');
-  if (tog) {
-    tog.querySelectorAll('.fat-gtog').forEach(function(btn){
+function fatGrafikCiz(){
+  if (!window.fatGrafikVeri || !window.fatGrafikVeri.uretim) return;
+  window._fatGun = 'ay'; window._fatBirim = 'tl';
+  _fatChartYap();
+  // Gun secici
+  const gsel = document.getElementById('fat-grafik-gun');
+  if (gsel) { gsel.value = 'ay'; gsel.onchange = function(){ window._fatGun = gsel.value; _fatChartYap(); }; }
+  // Birim secici (kWh / TL)
+  const bcont = document.getElementById('fat-grafik-birim');
+  if (bcont) {
+    bcont.querySelectorAll('.fat-birim').forEach(b => b.classList.toggle('aktif', b.dataset.birim === 'tl'));
+    bcont.querySelectorAll('.fat-birim').forEach(function(btn){
       btn.onclick = function(){
-        const i = parseInt(btn.dataset.ds, 10);
-        const ch = window._fatChart;
-        ch.data.datasets[i].hidden = !ch.data.datasets[i].hidden;
-        btn.classList.toggle('aktif', !ch.data.datasets[i].hidden);
-        ch.options.scales.axKwh.display   = eksenGorunur('axKwh');
-        ch.options.scales.axTl.display    = eksenGorunur('axTl');
-        ch.options.scales.axFiyat.display = eksenGorunur('axFiyat');
-        ch.update();
+        if (btn.dataset.birim === window._fatBirim) return;
+        window._fatBirim = btn.dataset.birim;
+        bcont.querySelectorAll('.fat-birim').forEach(b=>b.classList.toggle('aktif', b===btn));
+        _fatChartYap();
       };
     });
   }
@@ -6527,6 +6528,7 @@ function fatKartUret(ay, A, ab) {
     let gHam = 0, gMhs = 0, gTukBed = 0, gMhsBed = 0, gPtfTpl = 0, gPtfCnt = 0, gHesapVar = false;
     let gUret = 0;  // gunluk GES uretimi
     let gUretMhs = 0, gUretBedelli = 0;  // gunluk uretimden mahsup / bedelli
+    let gSaatler = [];  // saatlik kirilim (gun secilince grafik)
     let saatRows = '';
 
     for (let s = 0; s < 24; s++) {
@@ -6561,6 +6563,16 @@ function fatKartUret(ay, A, ab) {
       ayUretBedelli += sUretBedelli; gUretBedelli += sUretBedelli;
       if (sTukBed !== null) { gTukBed += sTukBed; gHesapVar = true; }
       gMhsBed += sMhsBed;
+      // Saatlik kirilim: net tuketim + mahsup + fazla uretim (kWh ve TL)
+      gSaatler.push({
+        s: sk,
+        netKwh: sHam - sMhs,
+        netTl: (sToplam !== null ? sToplam : 0),
+        mhsKwh: sMhs,
+        mhsTl: sMhsBed,
+        fazlaKwh: gesMi ? sUretBedelli : 0,
+        fazlaTl: gesMi ? (sUretBedelli * FAT_SANAYI_AKTIF) : 0
+      });
 
       saatRows += '<tr>';
       saatRows += '<td>' + sk + '</td>';
@@ -6683,7 +6695,7 @@ function fatKartUret(ay, A, ab) {
     if (gToplam !== null) {
       fatSeri.push({ gun: g.slice(-2), toplam: gToplam, ham: gHam, mhs: gMhs,
                      mhsBed: gMhsBed, netTuk: gNetTuk, agirlik: gAgirlik,
-                     brut: (gHam > 0 ? gTukBed / gHam : 0) });
+                     brut: (gHam > 0 ? gTukBed / gHam : 0), saatler: gSaatler });
     }
     saatRows += '<tr class="gun-tpl">';
     saatRows += '<td>GÜN</td>';
@@ -7090,27 +7102,38 @@ function fatKartUret(ay, A, ab) {
   // ===== /A3 MAHSUPSUZ =====
 
   // ===== GORSEL: GUNLUK AGIRLIKLI BIRIM FIYAT GRAFIGI =====
+  // Uretim kirilimi: GES'te kendi uretimi, A3'te havuzdan aldigi mahsup
+  const uMahsupKwh = gesMi ? ayUretMhs    : ayMhsGercek;
+  const uMahsupTl  = gesMi ? ayUretMhsBed : mahsuplasma;
+  const uFazlaKwh  = gesMi ? ayUretBedelli : 0;
+  const uFazlaTl   = gesMi ? (ayUretBedelli * FAT_SANAYI_AKTIF) : 0;
   window.fatGrafikVeri = {
     seri: fatSeri,
     abone: ab.key,
     ad: ab.ad,
     ayAgirlikNet: ayAgirlikNet,
     odenecek: odenecek,
-    mahsupsuz: (ab.key === 'A3') ? (enerjiBedeli + dagitimBedeli) * (1 + FAT_KDV) : null
+    mahsupsuz: (ab.key === 'A3') ? (enerjiBedeli + dagitimBedeli) * (1 + FAT_KDV) : null,
+    // Uretim cubugu: mahsup + fazla uretim (bedelli)
+    uretim: { mahsupKwh:uMahsupKwh, mahsupTl:uMahsupTl, fazlaKwh:uFazlaKwh, fazlaTl:uFazlaTl, gesMi:gesMi },
+    // Tuketim cubugu: mahsup sonrasi net + mahsup
+    tuketim: { netKwh:aySnrGercek, netTl:netEnerji, mahsupKwh:ayMhsGercek, mahsupTl:mahsuplasma, hamKwh:ayHamGercek }
   };
   if (fatSeri.length > 0) {
     h += '<div class="fat-chart-card" style="margin-top:14px;">';
-    h += '<div class="fat-chart-head"><div class="fat-chart-baslik">⚖️ Mahsuplaşma & Ağırlıklı Fiyat</div>';
-    h += '<div style="font-size:10px;color:#94a3b8;font-weight:700;">gün bazlı · butonlarla aç/kapat</div></div>';
-    // Toggle butonlari
-    h += '<div id="fat-grafik-toggle" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">';
-    h += '<button class="fat-gtog aktif" data-ds="0" style="--c:#7c3aed;">🟣 Mahsup (kWh)</button>';
-    h += '<button class="fat-gtog aktif" data-ds="1" style="--c:#16a34a;">💰 Mahsup (TL)</button>';
-    h += '<button class="fat-gtog" data-ds="2" style="--c:#34d2eb;">⚖️ Net Ağırlıklı (TL/kWh)</button>';
-    h += '<button class="fat-gtog" data-ds="3" style="--c:#cbd5e1;">Brüt (TL/kWh)</button>';
-    h += '<button class="fat-gtog" data-ds="4" style="--c:#94a3b8;">Net Tüketim (kWh)</button>';
-    h += '</div>';
-    h += '<div style="position:relative;height:220px;width:100%;"><canvas id="fat-grafik-fiyat"></canvas></div>';
+    h += '<div class="fat-chart-head" style="gap:8px;"><div class="fat-chart-baslik" id="fat-grafik-baslik">⚖️ Üretim & Tüketim Dengesi</div>';
+    h += '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">';
+    // Gun secici
+    let gunOpt = '<option value="ay">📅 Aylık Özet</option>';
+    fatSeri.forEach(function(d){ gunOpt += '<option value="' + d.gun + '">' + d.gun + ' ' + (FAT_AY_ISIM_MAP[ay] || ay) + '</option>'; });
+    h += '<select id="fat-grafik-gun" class="fat-gun-sec">' + gunOpt + '</select>';
+    // Birim secici
+    h += '<div id="fat-grafik-birim" style="display:flex;gap:0;border:1.5px solid #e2e8f0;border-radius:20px;overflow:hidden;">';
+    h += '<button class="fat-birim" data-birim="kwh">kWh</button>';
+    h += '<button class="fat-birim aktif" data-birim="tl">TL</button>';
+    h += '</div></div></div>';
+    h += '<div style="position:relative;height:240px;width:100%;"><canvas id="fat-grafik-fiyat"></canvas></div>';
+    h += '<div id="fat-grafik-legend" style="font-size:9px;color:#94a3b8;text-align:center;margin-top:6px;">🟣 Mahsup · 🟡 Fazla Üretim (bedelli) · 🔴 Mahsup Sonrası Net</div>';
     h += '</div>';
   }
   // ===== /GORSEL =====
