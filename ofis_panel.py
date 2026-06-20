@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 50
+PANEL_VERSIYON_BUILD = 52
 
 def _panel_tarih():
     try:
@@ -110,6 +110,53 @@ GITHUB_REPO  = "ekinciomer-ai/epias-ptf"
 GH_TOKEN     = os.environ.get("GH_TOKEN", "")
 F2POOL_TOKEN = os.environ.get("F2POOL_TOKEN", "")
 F2POOL_USER  = "mehmetas"
+
+# BTC fiyati: canli cekilir (CoinGecko), basarisizsa sinyal.json'daki son deger kullanilir.
+import time as _btc_time
+_btc_cache = {"ts": 0.0, "usd": 0.0, "try": 0.0}
+
+def _btc_canli_cek():
+    """Canli BTC fiyati (TL, USD). 2 dk cache. CoinGecko -> Binance -> (0,0)."""
+    global _btc_cache
+    if (_btc_time.time() - _btc_cache["ts"]) < 120 and _btc_cache["usd"]:
+        return _btc_cache["try"], _btc_cache["usd"]
+    # 1) CoinGecko (hem USD hem TRY tek cagri)
+    try:
+        req = urllib.request.Request(
+            "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd,try",
+            headers={"User-Agent": "Mozilla/5.0"})
+        d = json.loads(urllib.request.urlopen(req, timeout=8).read())
+        usd = float(d["bitcoin"]["usd"]); tl = float(d["bitcoin"]["try"])
+        if usd > 0 and tl > 0:
+            _btc_cache = {"ts": _btc_time.time(), "usd": usd, "try": tl}
+            return tl, usd
+    except Exception as e:
+        print("BTC CoinGecko hatasi:", e)
+    # 2) Binance yedek (BTCUSDT × USDTTRY)
+    try:
+        h = {"User-Agent": "Mozilla/5.0"}
+        u = json.loads(urllib.request.urlopen(urllib.request.Request(
+            "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT", headers=h), timeout=8).read())
+        usd = float(u["price"])
+        k = json.loads(urllib.request.urlopen(urllib.request.Request(
+            "https://api.binance.com/api/v3/ticker/price?symbol=USDTTRY", headers=h), timeout=8).read())
+        usdtry = float(k["price"])
+        if usd > 0 and usdtry > 0:
+            tl = usd * usdtry
+            _btc_cache = {"ts": _btc_time.time(), "usd": usd, "try": tl}
+            return tl, usd
+    except Exception as e:
+        print("BTC Binance hatasi:", e)
+    return 0.0, 0.0
+
+def _btc_kur_uygula(sinyal):
+    """Once canli BTC fiyatini dener; basarisizsa sinyal.json'daki son degeri kullanir."""
+    bt, bu = _btc_canli_cek()
+    if bu and bt:
+        return bt, bu
+    btc_try = sinyal.get("btc_try", 0) if sinyal else 0
+    btc_usd = sinyal.get("btc_usd", 0) if sinyal else 0
+    return btc_try, btc_usd
 ZARARLI_ESIK = 2200
 DOGRULAMA_TOLERANS = 50  # kWh tolerans
 
@@ -7418,8 +7465,7 @@ def cihaz_detay(name):
     cihaz_oran = h24 / toplam_h24 if toplam_h24 > 0 else 0
     cihaz_btc  = bugun_tahmini * cihaz_oran
     sinyal = github_oku("sinyal.json")
-    btc_try = sinyal.get("btc_try", 0) if sinyal else 0
-    btc_usd = sinyal.get("btc_usd", 0) if sinyal else 0
+    btc_try, btc_usd = _btc_kur_uygula(sinyal)
     return jsonify({
         "name": name, "anlik": anlik, "h1": h1, "h24": h24, "durum": durum,
         "last_share": datetime.datetime.fromtimestamp(worker["last_share_at"]).strftime("%d.%m %H:%M") if worker.get("last_share_at") else "—",
@@ -7515,7 +7561,7 @@ def f2pool_saatlik():
     if not gun:
         return jsonify({"hata":"gun parametresi gerekli"}), 400
     sinyal = github_oku("sinyal.json")
-    btc_try = sinyal.get("btc_try", 0) if sinyal else 0
+    btc_try, _ = _btc_kur_uygula(sinyal)
     veri = _arsiv_saatlik_kaynak(gun, btc_try)
     return jsonify({
         "gun": gun,
@@ -7530,8 +7576,7 @@ def ozet():
         return jsonify({"hata":"yetkisiz"}), 401
     sonuc = {}
     sinyal = github_oku("sinyal.json")
-    btc_try = sinyal.get("btc_try", 0) if sinyal else 0
-    btc_usd = sinyal.get("btc_usd", 0) if sinyal else 0
+    btc_try, btc_usd = _btc_kur_uygula(sinyal)
     if sinyal:
         su_an = (datetime.datetime.utcnow() + datetime.timedelta(hours=3)).strftime("%H")
         karli = su_an in sinyal.get("karli_saatler", [])
