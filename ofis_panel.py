@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 53
+PANEL_VERSIYON_BUILD = 54
 
 def _panel_tarih():
     try:
@@ -7067,7 +7067,7 @@ function fatKartUret(ay, A, ab) {
     h += '<div class="fat-chart-card" style="margin-top:14px;">';
     h += '<div class="fat-chart-head"><div class="fat-chart-baslik">⚖️ Günlük Ağırlıklı Birim Fiyat (TL/kWh)</div>';
     h += '<div style="font-size:10px;color:#94a3b8;font-weight:700;">Net vs Brüt · gün bazlı</div></div>';
-    h += '<canvas id="fat-grafik-fiyat" style="width:100%;height:200px;"></canvas>';
+    h += '<div style="position:relative;height:220px;width:100%;"><canvas id="fat-grafik-fiyat"></canvas></div>';
     h += '</div>';
   }
   // ===== /GORSEL =====
