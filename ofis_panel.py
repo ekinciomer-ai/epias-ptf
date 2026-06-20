@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 59
+PANEL_VERSIYON_BUILD = 60
 
 def _panel_tarih():
     try:
@@ -181,6 +181,73 @@ def _btc_gecmis_cek(gun_sayisi=120):
     except Exception as e:
         print("BTC gecmis cekme hatasi:", e)
     return _btc_gecmis_cache["veri"]  # eski cache (varsa)
+
+def _usdtry_oran():
+    """Guncel USD/TRY orani (canli BTC fiyatindan turetilir)."""
+    tl, usd = _btc_canli_cek()
+    return (tl / usd) if (usd and tl) else 0
+
+def _btc_grafik_cek(aralik):
+    """Zaman araligina gore BTC fiyat serisi (TL). {labels, fiyatlar, aralik, kaynak}."""
+    # Uzun araliklar: CoinGecko (gercek TRY gecmis)
+    if aralik in ("1ay", "3ay"):
+        gun = 30 if aralik == "1ay" else 90
+        try:
+            url = ("https://api.coingecko.com/api/v3/coins/bitcoin/market_chart"
+                   "?vs_currency=try&days=" + str(gun))
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            d = json.loads(urllib.request.urlopen(req, timeout=10).read())
+            prices = d.get("prices", [])
+            # gunluk teke indir (tarih bazli son deger)
+            gunluk = {}
+            for ts_ms, fiyat in prices:
+                dt = datetime.datetime.utcfromtimestamp(ts_ms / 1000.0) + datetime.timedelta(hours=3)
+                gunluk[dt.strftime("%Y-%m-%d")] = fiyat
+            anahtar = sorted(gunluk.keys())
+            labels = [k[8:10] + "." + k[5:7] for k in anahtar]
+            fiyatlar = [round(gunluk[k], 2) for k in anahtar]
+            if fiyatlar:
+                return {"labels": labels, "fiyatlar": fiyatlar, "aralik": aralik, "kaynak": "coingecko"}
+        except Exception as e:
+            print("BTC grafik CoinGecko hatasi:", e)
+
+    # Kisa araliklar: Binance klines (dakikalik) × guncel USD/TRY
+    cfg = {"anlik": ("1m", 5), "10dk": ("1m", 10), "1saat": ("1m", 60), "1gun": ("15m", 96)}
+    interval, limit = cfg.get(aralik, ("15m", 96))
+    usdtry = _usdtry_oran()
+    try:
+        url = ("https://api.binance.com/api/v3/klines?symbol=BTCUSDT"
+               "&interval=" + interval + "&limit=" + str(limit))
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        arr = json.loads(urllib.request.urlopen(req, timeout=10).read())
+        if usdtry <= 0:
+            usdtry = 1
+        labels, fiyatlar = [], []
+        for k in arr:
+            dt = datetime.datetime.utcfromtimestamp(k[0] / 1000.0) + datetime.timedelta(hours=3)
+            lbl = dt.strftime("%d.%m") if aralik == "1gun" and False else dt.strftime("%H:%M")
+            labels.append(lbl)
+            fiyatlar.append(round(float(k[4]) * usdtry, 2))
+        if fiyatlar:
+            return {"labels": labels, "fiyatlar": fiyatlar, "aralik": aralik, "kaynak": "binance"}
+    except Exception as e:
+        print("BTC grafik Binance hatasi:", e)
+
+    # Son care: CoinGecko gunluk (days=1, 5dk veri) son N nokta
+    try:
+        url = "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=try&days=1"
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        d = json.loads(urllib.request.urlopen(req, timeout=10).read())
+        prices = d.get("prices", [])
+        n = {"anlik": 3, "10dk": 3, "1saat": 12, "1gun": 288}.get(aralik, 288)
+        prices = prices[-n:]
+        labels = [(datetime.datetime.utcfromtimestamp(p[0]/1000.0) + datetime.timedelta(hours=3)).strftime("%H:%M") for p in prices]
+        fiyatlar = [round(p[1], 2) for p in prices]
+        if fiyatlar:
+            return {"labels": labels, "fiyatlar": fiyatlar, "aralik": aralik, "kaynak": "coingecko-1d"}
+    except Exception as e:
+        print("BTC grafik son care hatasi:", e)
+    return {"labels": [], "fiyatlar": [], "aralik": aralik, "kaynak": "yok"}
 ZARARLI_ESIK = 2200
 DOGRULAMA_TOLERANS = 50  # kWh tolerans
 
@@ -752,6 +819,10 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 .chart-wrap{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;position:relative;}
 .chart-title{font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;}
 .chart-canvas{width:100%;height:200px;display:block;}
+.btc-aralik-grup{display:flex;gap:4px;}
+.btc-aralik{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;padding:4px 9px;border-radius:7px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.03);color:#94a3b8;cursor:pointer;transition:all .15s ease;}
+.btc-aralik:hover{border-color:rgba(247,147,26,0.5);color:#e8edf2;}
+.btc-aralik.aktif{background:#f7931a;border-color:#f7931a;color:#fff;}
 .tooltip{position:absolute;background:rgba(0,0,0,0.9);border:1px solid rgba(34,197,94,0.5);border-radius:8px;padding:6px 10px;font-size:11px;pointer-events:none;display:none;z-index:10;}
 .tooltip-time{color:#94a3b8;font-size:9px;}
 .tooltip-val{color:#4ade80;font-weight:800;font-size:13px;}
@@ -915,6 +986,27 @@ function otoEksen(birim) {
 <div class="kpi-card"><div class="kpi-label">📈 Aylık Net Kar</div><div class="kpi-value" id="ay-kar" style="color:#4ade80">—</div><div class="kpi-sub" id="ay-gun">—</div></div>
 </div>
 <div class="kpi-card"><div class="kpi-label">⚡ Toplam Hashrate</div><div class="kpi-value" id="toplam-hash" style="color:#60a5fa">—</div><div class="kpi-sub">24 saatlik ortalama</div></div>
+
+<!-- BTC FIYAT GRAFIGI -->
+<div class="chart-wrap" style="margin-top:12px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+    <div style="display:flex;align-items:baseline;gap:8px;">
+      <span style="font-size:12px;font-weight:800;color:#f7931a;">₿ BTC Fiyatı</span>
+      <span id="btc-grafik-fiyat" style="font-size:16px;font-weight:900;color:#e8edf2;">—</span>
+      <span id="btc-grafik-degisim" style="font-size:11px;font-weight:700;">—</span>
+    </div>
+    <div id="btc-grafik-aralik" class="btc-aralik-grup">
+      <button class="btc-aralik" data-a="anlik">Anlık</button>
+      <button class="btc-aralik" data-a="10dk">10dk</button>
+      <button class="btc-aralik" data-a="1saat">1s</button>
+      <button class="btc-aralik aktif" data-a="1gun">1g</button>
+      <button class="btc-aralik" data-a="1ay">1a</button>
+      <button class="btc-aralik" data-a="3ay">3a</button>
+    </div>
+  </div>
+  <div style="position:relative;height:200px;width:100%;"><canvas id="btc-grafik-canvas"></canvas></div>
+</div>
+<!-- /BTC FIYAT GRAFIGI -->
 </div>
 
 <div class="tab-content" id="t-epias">
@@ -3376,6 +3468,60 @@ function yukle() {
 }
 yukle();
 setInterval(yukle, 60000);
+
+// ====================== BTC FIYAT GRAFIGI ======================
+window._btcGrafik = null;
+window._btcAralik = '1gun';
+async function btcGrafikCiz(aralik){
+  if (aralik) window._btcAralik = aralik;
+  const cv = document.getElementById('btc-grafik-canvas');
+  if (!cv || !window.Chart) return;
+  document.querySelectorAll('#btc-grafik-aralik .btc-aralik').forEach(b => b.classList.toggle('aktif', b.dataset.a === window._btcAralik));
+  try {
+    const r = await fetch('/api/btc_grafik?aralik=' + window._btcAralik);
+    const d = await r.json();
+    if (!d.fiyatlar || !d.fiyatlar.length) return;
+    const son = d.fiyatlar[d.fiyatlar.length - 1];
+    const ilk = d.fiyatlar[0];
+    const yuzde = ilk > 0 ? ((son - ilk) / ilk * 100) : 0;
+    const artis = son >= ilk;
+    const renk = artis ? '#3ddc84' : '#e84855';
+    const fel = document.getElementById('btc-grafik-fiyat');
+    if (fel) fel.textContent = '₺' + Math.round(son).toLocaleString('tr-TR');
+    const del = document.getElementById('btc-grafik-degisim');
+    if (del) { del.textContent = (artis ? '▲ +' : '▼ ') + yuzde.toFixed(2) + '%'; del.style.color = renk; }
+    if (window._btcGrafik) { try { window._btcGrafik.destroy(); } catch(e){} }
+    window._btcGrafik = new Chart(cv.getContext('2d'), {
+      type:'line',
+      data:{ labels:d.labels, datasets:[{ data:d.fiyatlar, borderColor:renk, backgroundColor:renk+'1f', borderWidth:2, pointRadius:0, tension:0.25, fill:true }] },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        interaction:{ mode:'index', intersect:false },
+        plugins:{ legend:{ display:false },
+          tooltip:{ callbacks:{ title:i=>i[0].label, label:it=>' ₺' + Math.round(it.parsed.y).toLocaleString('tr-TR') } } },
+        scales:{
+          x:{ ticks:{ color:'#94a3b8', font:{size:8}, maxTicksLimit:8, autoSkip:true }, grid:{ display:false } },
+          y:{ position:'right', ticks:{ color:'#94a3b8', font:{size:9},
+              callback:v => '₺' + (v/1000000).toFixed(2) + 'M' }, grid:{ color:'rgba(255,255,255,0.05)' } }
+        }
+      }
+    });
+  } catch(e) { console.error('btcGrafikCiz:', e); }
+}
+// Buton baglama
+(function(){
+  const grp = document.getElementById('btc-grafik-aralik');
+  if (grp) grp.querySelectorAll('.btc-aralik').forEach(function(btn){
+    btn.onclick = function(){ btcGrafikCiz(btn.dataset.a); };
+  });
+})();
+btcGrafikCiz('1gun');
+// Anlik/kisa araliklarda daha sik yenile
+setInterval(function(){
+  if (['anlik','10dk','1saat'].includes(window._btcAralik)) btcGrafikCiz();
+  else if (window._btcAralik === '1gun') btcGrafikCiz();
+}, 120000);
+// ====================== /BTC FIYAT GRAFIGI ======================
 
 // ====================== İNVERTER (Huawei FusionSolar) ======================
 let invData = null;
@@ -7768,6 +7914,13 @@ def f2pool_saatlik():
         **veri,
     })
 
+
+@app.route("/api/btc_grafik")
+def api_btc_grafik():
+    if "kullanici" not in session:
+        return jsonify({"hata": "yetkisiz"}), 401
+    aralik = request.args.get("aralik", "1gun")
+    return jsonify(_btc_grafik_cek(aralik))
 
 @app.route("/api/ozet")
 def ozet():
