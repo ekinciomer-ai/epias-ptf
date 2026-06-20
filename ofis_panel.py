@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 54
+PANEL_VERSIYON_BUILD = 55
 
 def _panel_tarih():
     try:
@@ -648,6 +648,9 @@ tr.acik .fat-expand-ico{transform:rotate(90deg);color:#16a34a;}
 .f2-chart-card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
 .f2-chart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
 .f2-chart-baslik{font-size:13px;font-weight:800;color:#1e293b;}
+.fat-gtog{font-family:inherit;font-size:10px;font-weight:700;padding:5px 10px;border-radius:20px;border:1.5px solid #e2e8f0;background:#fff;color:#94a3b8;cursor:pointer;transition:all .15s ease;opacity:0.55;}
+.fat-gtog:hover{border-color:var(--c);color:#475569;opacity:0.85;}
+.fat-gtog.aktif{background:var(--c);border-color:var(--c);color:#fff;opacity:1;box-shadow:0 1px 4px rgba(0,0,0,0.12);}
 .f2-metric-grup{display:flex;gap:4px;}
 .f2-lejant{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:10px;padding-top:10px;border-top:1px solid #f1f5f9;}
 .f2-lej{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:#64748b;}
@@ -5980,7 +5983,7 @@ function faturaRender() {
   try { fatGrafikCiz(); } catch(e) { console.error('fatGrafikCiz:', e); }
 }
 
-// Gunluk agirlikli birim fiyat grafigi (net vs brut cizgi + net tuketim bar)
+// Mahsuplasma & agirlikli fiyat grafigi — 5 seri, butonlarla ac/kapat
 window._fatChart = null;
 function fatGrafikCiz(){
   const v = window.fatGrafikVeri;
@@ -5989,48 +5992,80 @@ function fatGrafikCiz(){
   if (window._fatChart) { try { window._fatChart.destroy(); } catch(e){} window._fatChart = null; }
 
   const etiketler = v.seri.map(d => d.gun);
-  const netFiyat  = v.seri.map(d => d.agirlik);
-  const brutFiyat = v.seri.map(d => d.brut);
-  const netTuk    = v.seri.map(d => d.netTuk);
+  const mhsKwh = v.seri.map(d => d.mhs);
+  const mhsTl  = v.seri.map(d => d.mhsBed);
+  const netF   = v.seri.map(d => d.agirlik);
+  const brutF  = v.seri.map(d => d.brut);
+  const netTuk = v.seri.map(d => d.netTuk);
+
+  // Dataset sirasi data-ds ile birebir: 0..4
+  const datasets = [
+    { label:'Mahsup (kWh)', data:mhsKwh, yAxisID:'axKwh', type:'bar', hidden:false,
+      backgroundColor:'rgba(124,58,237,0.35)', borderColor:'#7c3aed', borderWidth:1, borderRadius:3, barPercentage:0.7, order:4 },
+    { label:'Mahsup (TL)', data:mhsTl, yAxisID:'axTl', type:'line', hidden:false,
+      borderColor:'#16a34a', backgroundColor:'rgba(22,163,74,0.08)', borderWidth:2.5, pointRadius:2, pointBackgroundColor:'#16a34a', tension:0.3, fill:true, order:1 },
+    { label:'Net Ağırlıklı (TL/kWh)', data:netF, yAxisID:'axFiyat', type:'line', hidden:true,
+      borderColor:OTO_G.ptf, backgroundColor:'rgba(52,210,235,0.06)', borderWidth:2.5, pointRadius:2, pointBackgroundColor:OTO_G.ptf, tension:0.3, fill:false, order:2 },
+    { label:'Brüt (TL/kWh)', data:brutF, yAxisID:'axFiyat', type:'line', hidden:true,
+      borderColor:'#cbd5e1', borderWidth:1.5, borderDash:[5,4], pointRadius:0, tension:0.3, fill:false, order:3 },
+    { label:'Net Tüketim (kWh)', data:netTuk, yAxisID:'axKwh', type:'bar', hidden:true,
+      backgroundColor:'rgba(148,163,184,0.18)', borderColor:'rgba(148,163,184,0.4)', borderWidth:1, borderRadius:3, barPercentage:0.7, order:5 }
+  ];
+
+  // Eksen hangi dataset'lere ait
+  const eksenDs = { axKwh:[0,4], axTl:[1], axFiyat:[2,3] };
+  function eksenGorunur(ax){ return eksenDs[ax].some(i => !datasets[i].hidden); }
 
   window._fatChart = new Chart(cv.getContext('2d'), {
-    data: {
-      labels: etiketler,
-      datasets: [
-        { type:'bar', label:'Net Tüketim (kWh)', data: netTuk, yAxisID:'y1',
-          backgroundColor:'rgba(148,163,184,0.18)', borderColor:'rgba(148,163,184,0.35)',
-          borderWidth:1, borderRadius:3, order:3, barPercentage:0.7 },
-        { type:'line', label:'Net Ağırlıklı (TL/kWh)', data: netFiyat, yAxisID:'y',
-          borderColor: OTO_G.ptf, backgroundColor:'rgba(52,210,235,0.08)',
-          borderWidth:2.5, pointRadius:2.5, pointBackgroundColor:OTO_G.ptf,
-          tension:0.3, fill:true, order:1 },
-        { type:'line', label:'Brüt (mahsup öncesi)', data: brutFiyat, yAxisID:'y',
-          borderColor:'#cbd5e1', borderWidth:1.5, borderDash:[5,4],
-          pointRadius:0, tension:0.3, fill:false, order:2 }
-      ]
-    },
+    data: { labels: etiketler, datasets: datasets },
     options: {
       responsive:true, maintainAspectRatio:false,
       interaction:{ mode:'index', intersect:false },
       plugins:{
-        legend:{ display:true, position:'top', labels:{ boxWidth:12, font:{size:10}, color:'#64748b' } },
+        legend:{ display:false },
         tooltip:{ callbacks:{
           title: items => 'Gün ' + items[0].label,
           label: it => {
-            if (it.dataset.yAxisID === 'y1') return ' ' + it.dataset.label + ': ' + Math.round(it.parsed.y).toLocaleString('tr-TR');
-            return ' ' + it.dataset.label + ': ' + (it.parsed.y != null ? it.parsed.y.toFixed(4) : '—');
+            const ax = it.dataset.yAxisID;
+            if (ax === 'axFiyat') return ' ' + it.dataset.label + ': ' + (it.parsed.y!=null ? it.parsed.y.toFixed(4) : '—');
+            return ' ' + it.dataset.label + ': ' + Math.round(it.parsed.y).toLocaleString('tr-TR');
           }
         }}
       },
       scales:{
-        y:{ position:'left', title:{ display:true, text:'TL/kWh', font:{size:9}, color:'#94a3b8' },
-            ticks:{ color:'#94a3b8', font:{size:9}, callback:v=>v.toFixed(2) }, grid:{ color:'rgba(148,163,184,0.1)' } },
-        y1:{ position:'right', title:{ display:true, text:'kWh', font:{size:9}, color:'#cbd5e1' },
-             ticks:{ color:'#cbd5e1', font:{size:9} }, grid:{ display:false } },
+        axKwh:{ position:'left', display:eksenGorunur('axKwh'),
+          title:{ display:true, text:'kWh', font:{size:9}, color:'#7c3aed' },
+          ticks:{ color:'#94a3b8', font:{size:9}, callback:val=>Math.round(val).toLocaleString('tr-TR') },
+          grid:{ color:'rgba(148,163,184,0.1)' } },
+        axTl:{ position:'right', display:eksenGorunur('axTl'),
+          title:{ display:true, text:'TL', font:{size:9}, color:'#16a34a' },
+          ticks:{ color:'#94a3b8', font:{size:9}, callback:val=>Math.round(val).toLocaleString('tr-TR') },
+          grid:{ display:false } },
+        axFiyat:{ position:'right', display:eksenGorunur('axFiyat'),
+          title:{ display:true, text:'TL/kWh', font:{size:9}, color:OTO_G.ptf },
+          ticks:{ color:'#94a3b8', font:{size:9}, callback:val=>val.toFixed(2) },
+          grid:{ display:false } },
         x:{ ticks:{ color:'#94a3b8', font:{size:9} }, grid:{ display:false } }
       }
     }
   });
+
+  // Toggle butonlari
+  const tog = document.getElementById('fat-grafik-toggle');
+  if (tog) {
+    tog.querySelectorAll('.fat-gtog').forEach(function(btn){
+      btn.onclick = function(){
+        const i = parseInt(btn.dataset.ds, 10);
+        const ch = window._fatChart;
+        ch.data.datasets[i].hidden = !ch.data.datasets[i].hidden;
+        btn.classList.toggle('aktif', !ch.data.datasets[i].hidden);
+        ch.options.scales.axKwh.display   = eksenGorunur('axKwh');
+        ch.options.scales.axTl.display    = eksenGorunur('axTl');
+        ch.options.scales.axFiyat.display = eksenGorunur('axFiyat');
+        ch.update();
+      };
+    });
+  }
 }
 
 function fatAboneSec(key){
@@ -6647,7 +6682,7 @@ function fatKartUret(ay, A, ab) {
     const gAgirlik = (gToplam !== null && gNetTuk > 0) ? (gToplam / gNetTuk) : null;
     if (gToplam !== null) {
       fatSeri.push({ gun: g.slice(-2), toplam: gToplam, ham: gHam, mhs: gMhs,
-                     netTuk: gNetTuk, agirlik: gAgirlik,
+                     mhsBed: gMhsBed, netTuk: gNetTuk, agirlik: gAgirlik,
                      brut: (gHam > 0 ? gTukBed / gHam : 0) });
     }
     saatRows += '<tr class="gun-tpl">';
@@ -7065,8 +7100,16 @@ function fatKartUret(ay, A, ab) {
   };
   if (fatSeri.length > 0) {
     h += '<div class="fat-chart-card" style="margin-top:14px;">';
-    h += '<div class="fat-chart-head"><div class="fat-chart-baslik">⚖️ Günlük Ağırlıklı Birim Fiyat (TL/kWh)</div>';
-    h += '<div style="font-size:10px;color:#94a3b8;font-weight:700;">Net vs Brüt · gün bazlı</div></div>';
+    h += '<div class="fat-chart-head"><div class="fat-chart-baslik">⚖️ Mahsuplaşma & Ağırlıklı Fiyat</div>';
+    h += '<div style="font-size:10px;color:#94a3b8;font-weight:700;">gün bazlı · butonlarla aç/kapat</div></div>';
+    // Toggle butonlari
+    h += '<div id="fat-grafik-toggle" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">';
+    h += '<button class="fat-gtog aktif" data-ds="0" style="--c:#7c3aed;">🟣 Mahsup (kWh)</button>';
+    h += '<button class="fat-gtog aktif" data-ds="1" style="--c:#16a34a;">💰 Mahsup (TL)</button>';
+    h += '<button class="fat-gtog" data-ds="2" style="--c:#34d2eb;">⚖️ Net Ağırlıklı (TL/kWh)</button>';
+    h += '<button class="fat-gtog" data-ds="3" style="--c:#cbd5e1;">Brüt (TL/kWh)</button>';
+    h += '<button class="fat-gtog" data-ds="4" style="--c:#94a3b8;">Net Tüketim (kWh)</button>';
+    h += '</div>';
     h += '<div style="position:relative;height:220px;width:100%;"><canvas id="fat-grafik-fiyat"></canvas></div>';
     h += '</div>';
   }
