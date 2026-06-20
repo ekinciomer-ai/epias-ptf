@@ -14,7 +14,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 60
+PANEL_VERSIYON_BUILD = 61
 
 def _panel_tarih():
     try:
@@ -6186,12 +6186,22 @@ function _fatChartYap(){
     const gun = v.seri.find(d => d.gun === window._fatGun);
     const saatler = (gun && gun.saatler) ? gun.saatler : [];
     labels = saatler.map(x => x.s);
-    datasets = [
-      { label:'🌞 Ham Üretim', data:saatler.map(x=>tl?x.hamUretTl:x.hamUretKwh), backgroundColor:OTO_G.gunes, borderRadius:3, categoryPercentage:0.78, barPercentage:0.92 },
-      { label:'🟣 Mahsup', data:saatler.map(x=>tl?x.uretMhsTl:x.uretMhsKwh), backgroundColor:'#7c3aed', borderRadius:3, categoryPercentage:0.78, barPercentage:0.92 }
-    ];
-    const bl = document.getElementById('fat-grafik-baslik'); if (bl) bl.textContent = '🕐 ' + window._fatGun + ' — Saatlik: Ham Üretim vs Mahsup';
-    const lg = document.getElementById('fat-grafik-legend'); if (lg) lg.textContent = 'Saat bazlı · 🌞 ham üretim (toplam) vs 🟣 mahsuba giden — aradaki fark = satılan (bedelli)';
+    const gesMi = v.uretim && v.uretim.gesMi;
+    if (gesMi) {
+      datasets = [
+        { label:'🌞 Ham Üretim', data:saatler.map(x=>tl?x.hamUretTl:x.hamUretKwh), backgroundColor:OTO_G.gunes, borderRadius:3, categoryPercentage:0.78, barPercentage:0.92 },
+        { label:'🟣 Mahsup', data:saatler.map(x=>tl?x.uretMhsTl:x.uretMhsKwh), backgroundColor:'#7c3aed', borderRadius:3, categoryPercentage:0.78, barPercentage:0.92 }
+      ];
+      const bl = document.getElementById('fat-grafik-baslik'); if (bl) bl.textContent = '🕐 ' + window._fatGun + ' — Saatlik: Ham Üretim vs Mahsup';
+      const lg = document.getElementById('fat-grafik-legend'); if (lg) lg.textContent = 'Saat bazlı · 🌞 ham üretim (toplam) vs 🟣 mahsuba giden — aradaki fark = satılan (bedelli)';
+    } else {
+      datasets = [
+        { label:'🔵 Ham Tüketim', data:saatler.map(x=>tl?x.hamTukTl:x.hamTukKwh), backgroundColor:OTO_G.cekis, borderRadius:3, categoryPercentage:0.78, barPercentage:0.92 },
+        { label:'🟣 Mahsup', data:saatler.map(x=>tl?x.mhsTl:x.mhsKwh), backgroundColor:'#7c3aed', borderRadius:3, categoryPercentage:0.78, barPercentage:0.92 }
+      ];
+      const bl = document.getElementById('fat-grafik-baslik'); if (bl) bl.textContent = '🕐 ' + window._fatGun + ' — Saatlik: Ham Tüketim vs Mahsup';
+      const lg = document.getElementById('fat-grafik-legend'); if (lg) lg.textContent = 'Saat bazlı · 🔵 ham tüketim vs 🟣 mahsup — aradaki fark = net (ödenen)';
+    }
   }
 
   window._fatChart = new Chart(cv.getContext('2d'), {
@@ -6742,6 +6752,9 @@ function fatKartUret(ay, A, ab) {
         hamUretTl: ((sMal !== null) ? (sUretMhs * sMal) : 0) + (sUretBedelli * FAT_SANAYI_AKTIF),
         uretMhsKwh: sUretMhs,
         uretMhsTl: (sMal !== null) ? (sUretMhs * sMal) : 0,
+        // A3 (uretimsiz) icin: ham tuketim vs mahsup
+        hamTukKwh: sHam,
+        hamTukTl: (sTukBed !== null ? sTukBed : 0),
         // (eski net/fazla alanlari da dursun — baska yerde lazim olursa)
         netKwh: sHam - sMhs,
         netTl: (sToplam !== null ? sToplam : 0),
