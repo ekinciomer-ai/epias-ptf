@@ -15,7 +15,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 69
+PANEL_VERSIYON_BUILD = 71
 
 def _panel_tarih():
     try:
@@ -311,68 +311,97 @@ def github_oku(dosya):
     return None
 
 
+def github_oku_taze(dosya):
+    """api.github.com'dan DOGRUDAN okur (CDN cache YOK) — yazma oncesi taze taban.
+    Sirali yuklemelerde (T1 yaz, hemen T2 yukle) bayat CDN yuzunden onceki
+    yazimin ezilmesini onler. Token yoksa / hata olursa CDN'li github_oku'ya duser."""
+    if not GH_TOKEN:
+        return github_oku(dosya)
+    try:
+        import base64, time as _t2
+        url = (f"https://api.github.com/repos/{GITHUB_REPO}/contents/{dosya}"
+               f"?ref=main&_t={int(_t2.time()*1000)}")
+        req = urllib.request.Request(url, headers={
+            "Authorization": f"Bearer {GH_TOKEN}",
+            "Accept": "application/vnd.github+json",
+        })
+        with urllib.request.urlopen(req, timeout=12) as r:
+            data = json.loads(r.read())
+            icerik = base64.b64decode(data.get("content", "")).decode("utf-8")
+            return json.loads(icerik)
+    except Exception:
+        return github_oku(dosya)
+
+
 def github_yaz(dosya, payload):
-    """GitHub'a dosya yaz/guncelle. Hata sebebini _github_son_hata'ya yazar."""
+    """GitHub'a dosya yaz/guncelle. 409/422 (sha cakismasi / yaz-sonrasi-oku
+    tutarsizligi) durumunda taze sha cekip 4 denemeye kadar yeniden dener.
+    Hata sebebini _github_son_hata'ya yazar."""
     global _github_son_hata
     if not GH_TOKEN:
         _github_son_hata = "GH_TOKEN tanimli degil (Railway env)"
         return False
-    try:
-        import base64
-        content_json = json.dumps(payload, ensure_ascii=False, indent=2)
-        content_b64 = base64.b64encode(content_json.encode("utf-8")).decode()
-        api_url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{dosya}"
-        # Mevcut SHA al
-        sha = None
-        try:
-            req = urllib.request.Request(api_url, headers={
-                "Authorization": f"Bearer {GH_TOKEN}",
-                "Accept": "application/vnd.github+json",
-            })
-            with urllib.request.urlopen(req, timeout=3) as r:
-                sha = json.loads(r.read()).get("sha")
-        except:
-            pass
+    import base64, time as _gh_time
+    content_json = json.dumps(payload, ensure_ascii=False, indent=2)
+    content_b64 = base64.b64encode(content_json.encode("utf-8")).decode()
+    api_url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{dosya}"
+    H = {"Authorization": f"Bearer {GH_TOKEN}", "Accept": "application/vnd.github+json"}
 
+    def _sha_al():
+        # cache-buster + ref=main + 10sn timeout: her seferinde taze sha
+        try:
+            url = f"{api_url}?ref=main&_t={int(_gh_time.time()*1000)}"
+            req = urllib.request.Request(url, headers=H)
+            with urllib.request.urlopen(req, timeout=10) as r:
+                return json.loads(r.read()).get("sha")
+        except Exception:
+            return None
+
+    son_cakisma = ""
+    for deneme in range(4):
+        sha = _sha_al()
         body = {
             "message": f"komut {datetime.datetime.now().strftime('%H:%M:%S')}",
             "content": content_b64,
         }
         if sha:
             body["sha"] = sha
-
-        req = urllib.request.Request(
-            api_url,
-            data=json.dumps(body).encode(),
-            headers={
-                "Authorization": f"Bearer {GH_TOKEN}",
-                "Accept": "application/vnd.github+json",
-                "Content-Type": "application/json",
-            },
-            method="PUT"
-        )
-        with urllib.request.urlopen(req, timeout=15) as r:
-            ok = r.status in (200, 201)
-            _github_son_hata = "ok" if ok else f"HTTP {r.status}"
-            return ok
-    except urllib.error.HTTPError as e:
-        govde = ""
         try:
-            govde = e.read().decode("utf-8", "replace")[:120]
-        except Exception:
-            pass
-        ipucu = ""
-        if e.code == 401:
-            t = GH_TOKEN or ""
-            bosluk = " [BOSLUK/SATIR VAR]" if (t != t.strip()) else ""
-            ipucu = f" | token: {len(t)} karakter, basi '{t[:4]}'{bosluk}"
-        _github_son_hata = f"HTTP {e.code} ({govde}){ipucu}"
-        print(f"github_yaz HTTP {e.code} ({dosya}): {govde}", flush=True)
-        return False
-    except Exception as e:
-        _github_son_hata = f"baglanti: {str(e)[:120]}"
-        print(f"github_yaz hatasi ({dosya}): {e}")
-        return False
+            req = urllib.request.Request(
+                api_url,
+                data=json.dumps(body).encode(),
+                headers={**H, "Content-Type": "application/json"},
+                method="PUT",
+            )
+            with urllib.request.urlopen(req, timeout=15) as r:
+                ok = r.status in (200, 201)
+                _github_son_hata = "ok" if ok else f"HTTP {r.status}"
+                return ok
+        except urllib.error.HTTPError as e:
+            govde = ""
+            try:
+                govde = e.read().decode("utf-8", "replace")[:120]
+            except Exception:
+                pass
+            if e.code in (409, 422):
+                # sha cakismasi: kisa bekle, taze sha ile yeniden dene
+                son_cakisma = f"HTTP {e.code} ({govde})"
+                _gh_time.sleep(0.8 * (deneme + 1))
+                continue
+            ipucu = ""
+            if e.code == 401:
+                t = GH_TOKEN or ""
+                bosluk = " [BOSLUK/SATIR VAR]" if (t != t.strip()) else ""
+                ipucu = f" | token: {len(t)} karakter, basi '{t[:4]}'{bosluk}"
+            _github_son_hata = f"HTTP {e.code} ({govde}){ipucu}"
+            print(f"github_yaz HTTP {e.code} ({dosya}): {govde}", flush=True)
+            return False
+        except Exception as e:
+            _github_son_hata = f"baglanti: {str(e)[:120]}"
+            print(f"github_yaz hatasi ({dosya}): {e}")
+            return False
+    _github_son_hata = f"{son_cakisma} — 4 denemede sha oturmadi (tekrar Yükle'ye bas)"
+    return False
 
 def f2pool_post(endpoint, body):
     try:
@@ -7710,14 +7739,24 @@ def osos():
         abone['aylar'] = aylar
     return jsonify(data)
 
+_osos_raw_cache = {"ts": 0, "veri": None}
+
 @app.route("/api/osos_raw")
 def osos_raw():
-    """3 abone icin ham saatlik veri - Veri sekmesi kullanir."""
+    """3 abone icin ham saatlik veri - Veri + Faturalandirma sekmesi kullanir.
+    api.github.com'dan TAZE okur (CDN cache yok) ki yeni yuklenen gun aninda gorunsun.
+    20sn'lik server-side cache: bir sayfa yuklemesindeki ardisik cagrilari kollar."""
     if "kullanici" not in session:
         return jsonify({"hata":"yetkisiz"}), 401
-    data = github_oku("2026_osos_endeks.json")
+    import time as _t3
+    simdi = _t3.time()
+    if _osos_raw_cache["veri"] is not None and (simdi - _osos_raw_cache["ts"] < 20):
+        return jsonify(_osos_raw_cache["veri"])
+    data = github_oku_taze("2026_osos_endeks.json")
     if not data:
-        return jsonify({})
+        return jsonify(_osos_raw_cache["veri"] or {})
+    _osos_raw_cache["ts"] = simdi
+    _osos_raw_cache["veri"] = data
     return jsonify(data)
 
 @app.route("/api/aylik_ptf")
@@ -8899,7 +8938,7 @@ def osos_yukle_endpoint():
     if not parsed:
         return jsonify({"hata": "Hiç tam saat bulunamadı. Dosya boş veya hatalı olabilir."}), 200
 
-    endeks = github_oku("2026_osos_endeks.json") or {}
+    endeks = github_oku_taze("2026_osos_endeks.json") or {}
     if sayac not in endeks:
         return jsonify({"hata": f"{sayac} JSON'da yok"}), 200
     carpan = float(endeks[sayac].get("carpan", 0)) or 1
@@ -8928,6 +8967,13 @@ def osos_yukle_endpoint():
         eklenen += 1
 
     ok = github_yaz("2026_osos_endeks.json", endeks)
+    # yeni veri aninda gorunsun: osos_raw cache'ini yeni yazilan endeks'le doldur
+    try:
+        import time as _t4
+        _osos_raw_cache["ts"] = _t4.time()
+        _osos_raw_cache["veri"] = endeks
+    except Exception:
+        pass
     return jsonify({
         "sayac": sayac, "carpan": carpan, "gun": eklenen,
         "yazildi": ok, "hata_git": "" if ok else _github_son_hata,
