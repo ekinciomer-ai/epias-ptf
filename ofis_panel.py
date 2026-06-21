@@ -15,7 +15,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 68
+PANEL_VERSIYON_BUILD = 69
 
 def _panel_tarih():
     try:
@@ -8814,7 +8814,8 @@ _OSOS_NS = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
 
 def _osos_xlsx_parse(data_bytes):
     """OSOS YkProfili xlsx'ini (saf stdlib) parse eder.
-    Donus: {tarih_iso: {saat: {cekis_ham, veris_ham}}} — sadece tam (24 saat) gunler.
+    Donus: {tarih_iso: {saat: {cekis, veris}}} — gelen saate kadar TUM gunler
+    (gun tam 24 saat olmasa da; sadece tam saatler, yarim son saat atlanir).
     Ham fark degeri (carpan UYGULANMAMIS)."""
     import zipfile, io
     import xml.etree.ElementTree as ET
@@ -8842,7 +8843,7 @@ def _osos_xlsx_parse(data_bytes):
         except Exception:
             return 0.0
 
-    saatlik = defaultdict(lambda: {"cekis": 0.0, "veris": 0.0})
+    saatlik = defaultdict(lambda: {"cekis": 0.0, "veris": 0.0, "adet": 0})
     ilk = True
     for row in sheet.iter(_OSOS_NS + "row"):
         hucre = {}
@@ -8867,15 +8868,18 @@ def _osos_xlsx_parse(data_bytes):
         k = (ait.date().isoformat(), f"{ait.hour:02d}")
         saatlik[k]["cekis"] += sayi(hucre.get("C"))   # Aktif Endeks Fark
         saatlik[k]["veris"] += sayi(hucre.get("E"))   # Aktif Endeks Veris Fark
+        saatlik[k]["adet"] += 1                         # ceyrek sayisi (tam saat = 4)
 
-    # gunlere topla, sadece 24 saati tam olanlari al
+    # gunlere topla — gelen saate kadar yaz. Tam saatleri (4 ceyrek) al,
+    # gun tam 24 saat olmasa da. Yarim son saati (eksik ceyrek) atla ki kWh dusuk gorunmesin.
     gunluk = defaultdict(dict)
     for (g, s), v in saatlik.items():
-        gunluk[g][s] = v
+        if v["adet"] >= 4:
+            gunluk[g][s] = {"cekis": v["cekis"], "veris": v["veris"]}
     sonuc = {}
     for g, saatler in gunluk.items():
-        if all(f"{h:02d}" in saatler for h in range(24)):
-            sonuc[g] = {f"{h:02d}": saatler[f"{h:02d}"] for h in range(24)}
+        if saatler:  # en az 1 tam saat varsa gunu yaz
+            sonuc[g] = {s: saatler[s] for s in sorted(saatler)}
     return sonuc
 
 @app.route("/api/osos_yukle", methods=["POST"])
@@ -8893,7 +8897,7 @@ def osos_yukle_endpoint():
     except Exception as e:
         return jsonify({"hata": f"Excel okunamadi: {str(e)[:120]}"}), 200
     if not parsed:
-        return jsonify({"hata": "Tam gun bulunamadi (24 saat). Dosya eksik olabilir."}), 200
+        return jsonify({"hata": "Hiç tam saat bulunamadı. Dosya boş veya hatalı olabilir."}), 200
 
     endeks = github_oku("2026_osos_endeks.json") or {}
     if sayac not in endeks:
@@ -8905,15 +8909,22 @@ def osos_yukle_endpoint():
     eklenen = 0
     for g in sorted(parsed.keys()):
         yeni = {}
-        for s in [f"{h:02d}" for h in range(24)]:
+        for s in sorted(parsed[g].keys()):   # gelen saatler (tam olmayabilir)
             ham = parsed[g][s]
             yeni[s] = {"cekis": round(ham["cekis"] * carpan, 2),
                        "veris": round(ham["veris"] * carpan, 2)}
-        vardi = g in veri
-        veri[g] = yeni  # OSOS otoritedir, gunceller
-        tc = sum(yeni[s]["cekis"] for s in yeni)
-        tv = sum(yeni[s]["veris"] for s in yeni)
-        notlar.append(f"{g} {'güncellendi' if vardi else 'eklendi'} (çekiş {tc:.0f}, veriş {tv:.0f})")
+        eski = veri.get(g, {})
+        vardi = bool(eski)
+        # saat-saat birlestir: yeni saatler ekler/günceller, eski saatleri silmez
+        # (kismi yukleme dolu gunu kucultmesin)
+        birlesik = dict(eski)
+        birlesik.update(yeni)
+        veri[g] = {s: birlesik[s] for s in sorted(birlesik.keys())}
+        sayi_saat = len(veri[g])
+        tc = sum(veri[g][s]["cekis"] for s in veri[g])
+        tv = sum(veri[g][s]["veris"] for s in veri[g])
+        tamMi = "tam" if sayi_saat >= 24 else f"{sayi_saat} saat"
+        notlar.append(f"{g} {'güncellendi' if vardi else 'eklendi'} [{tamMi}] (çekiş {tc:.0f}, veriş {tv:.0f})")
         eklenen += 1
 
     ok = github_yaz("2026_osos_endeks.json", endeks)
