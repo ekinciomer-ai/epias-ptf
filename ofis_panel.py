@@ -15,7 +15,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 71
+PANEL_VERSIYON_BUILD = 73
 
 def _panel_tarih():
     try:
@@ -6874,7 +6874,7 @@ function fatKartUret(ay, A, ab) {
   const aylar = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
   const fatSeri = [];  // gunluk seri: agirlikli birim fiyat grafigi + karsilastirma icin
 
-  const mhsMal = FAT_SANAYI_AKTIF;  // 2,909687 - tum aboneler icin
+  const mhsMal = FAT_SANAYI_AKTIF;  // (kullanilmiyor) — mahsup artik PTF-bazli (PTF+YEKDEM)x1.035 gosteriliyor; 2.91 yalniz bedelli/satista
   const gesMi = (ab.key === 'T1' || ab.key === 'T2');  // GES aboneleri (uretim kolonu icin)
 
   // Ay toplamlar (icin gerekli)
@@ -7039,7 +7039,7 @@ function fatKartUret(ay, A, ab) {
       saatRows += '<div class="fat-popup mor">';
       saatRows += '<div class="fat-popup-title mor">🟣 Mahsup Bedeli</div>';
       saatRows += '<div class="fat-popup-row"><span>Mahsup</span><span>' + fatFmt(sMhs, 2) + ' kWh</span></div>';
-      saatRows += '<div class="fat-popup-row"><span>× M.Maliyeti</span><span>' + fatFmt(mhsMal, 3) + ' TL/kWh</span></div>';
+      saatRows += '<div class="fat-popup-row"><span>× M.Maliyeti</span><span>' + (sMal !== null ? fatFmt(sMal, 3) : '—') + ' TL/kWh</span></div>';
       saatRows += '<div class="fat-popup-sonuc mor"><span>Mhs.Bedeli</span><span>−' + fatFmt(sMhsBed, 2) + ' TL</span></div>';
       saatRows += '</div>';
       saatRows += '</td>';
@@ -7118,7 +7118,7 @@ function fatKartUret(ay, A, ab) {
     saatRows += '<div class="fat-popup mor">';
     saatRows += '<div class="fat-popup-title mor">🟣 Gün Mahsup Bedeli</div>';
     saatRows += '<div class="fat-popup-row"><span>Mahsup</span><span>' + fatFmt(gMhs, 2) + ' kWh</span></div>';
-    saatRows += '<div class="fat-popup-row"><span>× M.Maliyeti</span><span>' + fatFmt(mhsMal, 3) + '</span></div>';
+    saatRows += '<div class="fat-popup-row"><span>× M.Maliyeti</span><span>' + (gMhs > 0 ? fatFmt(gMhsBed/gMhs, 3) : '—') + '</span></div>';
     saatRows += '<div class="fat-popup-sonuc mor"><span>Gün Mhs.Bedeli</span><span>−' + fatFmt(gMhsBed, 2) + ' TL</span></div>';
     saatRows += '</div>';
     saatRows += '</td>';
@@ -7208,7 +7208,7 @@ function fatKartUret(ay, A, ab) {
     satirlar += '<div class="fat-popup mor">';
     satirlar += '<div class="fat-popup-title mor">🟣 Gün Mahsup Bedeli</div>';
     satirlar += '<div class="fat-popup-row"><span>Mahsup</span><span>' + fatFmt(gMhs, 2) + ' kWh</span></div>';
-    satirlar += '<div class="fat-popup-row"><span>× M.Maliyeti</span><span>' + fatFmt(mhsMal, 3) + '</span></div>';
+    satirlar += '<div class="fat-popup-row"><span>× M.Maliyeti</span><span>' + (gMhs > 0 ? fatFmt(gMhsBed/gMhs, 3) : '—') + '</span></div>';
     satirlar += '<div class="fat-popup-sonuc mor"><span>Mhs.Bedeli</span><span>−' + fatFmt(gMhsBed, 2) + ' TL</span></div>';
     satirlar += '</div>';
     satirlar += '</td>';
@@ -7303,7 +7303,7 @@ function fatKartUret(ay, A, ab) {
   satirlar += '<div class="fat-popup mor">';
   satirlar += '<div class="fat-popup-title mor">🟣 Ay Mahsup Bedeli</div>';
   satirlar += '<div class="fat-popup-row"><span>Mahsup</span><span>' + fatFmt(ayMhs, 2) + ' kWh</span></div>';
-  satirlar += '<div class="fat-popup-row"><span>× M.Maliyeti</span><span>' + fatFmt(mhsMal, 3) + '</span></div>';
+  satirlar += '<div class="fat-popup-row"><span>× M.Maliyeti</span><span>' + (ayMhs > 0 ? fatFmt(ayMhsBed/ayMhs, 3) : '—') + '</span></div>';
   satirlar += '<div class="fat-popup-sonuc mor"><span>Mhs.Bedeli</span><span>−' + fatFmt(ayMhsBed, 2) + ' TL</span></div>';
   satirlar += '</div>';
   satirlar += '</td>';
