@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, session, redirect, render_template_string, request, Response
 import hashlib, json, os, urllib.request, urllib.parse, urllib.error
 import datetime
+import re
 
 app = Flask(__name__)
 app.secret_key = "otocoin-ofis-2026"
@@ -14,7 +15,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 62
+PANEL_VERSIYON_BUILD = 63
 
 def _panel_tarih():
     try:
@@ -1024,6 +1025,19 @@ function otoEksen(birim) {
 </div>
 
 <div class="tab-content" id="t-epias">
+
+<!-- GAIN ENERJI PTF OTOMASYON -->
+<div class="section-header">
+<div class="section-title">🔄 PTF Otomatik Çekim (Gain Enerji)</div>
+<div style="font-size:10px;color:#64748b">rapor.gainenerji.com · EPİAŞ girişi gerekmez</div>
+</div>
+<div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+  <div style="flex:1;min-width:200px;">
+    <div id="ptf-oto-durum" style="font-size:12px;color:#cbd5e1;font-weight:600;">Durum yükleniyor…</div>
+    <div id="ptf-oto-zaman" style="font-size:10px;color:#64748b;margin-top:3px;">—</div>
+  </div>
+  <button onclick="ptfGainCek(this)" style="background:#0e7490;color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">🔄 Şimdi Çek</button>
+</div>
 
 <!-- YEKDEM AYLIK TABLOSU -->
 <div class="section-header">
@@ -3558,6 +3572,29 @@ setInterval(function(){
   if (['anlik','10dk','1saat','1gun'].includes(window._btcAralik)) btcGrafikCiz();
 }, 120000);
 // ====================== /BTC FIYAT GRAFIGI ======================
+
+// ====================== GAIN PTF OTOMASYON ======================
+function ptfDurumYukle(){
+  fetch('/api/ptf_durum').then(r=>r.json()).then(d=>{
+    const ds = document.getElementById('ptf-oto-durum');
+    const zm = document.getElementById('ptf-oto-zaman');
+    if (ds) ds.textContent = d.durum || 'henüz çalışmadı';
+    if (zm) zm.textContent = d.zaman ? ('Son: ' + d.zaman) : 'Arka planda her 2 saatte bir kontrol eder';
+  }).catch(e=>{});
+}
+function ptfGainCek(btn){
+  if (btn){ btn.disabled = true; btn.textContent = '⏳ Çekiliyor…'; }
+  const ds = document.getElementById('ptf-oto-durum');
+  if (ds) ds.textContent = 'Gain Enerji\'den çekiliyor…';
+  fetch('/api/ptf_cek').then(r=>r.json()).then(d=>{
+    if (ds) ds.textContent = d.durum || 'tamam';
+    const zm = document.getElementById('ptf-oto-zaman');
+    if (zm) zm.textContent = d.zaman ? ('Son: ' + d.zaman) : '';
+  }).catch(e=>{ if (ds) ds.textContent = 'hata: ' + e; })
+    .finally(()=>{ if (btn){ btn.disabled = false; btn.textContent = '🔄 Şimdi Çek'; } });
+}
+ptfDurumYukle();
+// ====================== /GAIN PTF OTOMASYON ======================
 
 // ====================== İNVERTER (Huawei FusionSolar) ======================
 let invData = null;
@@ -8545,27 +8582,109 @@ def epias_ptf_cek(tarih_iso):
         return None, f"hata: {str(e)[:80]}"
 
 
+# ===================== GAIN ENERJI PTF KAYNAGI =====================
+# rapor.gainenerji.com bir Plotly Dash uygulamasi; tum veri _dash-layout
+# (GET, JSON) icinde gomulu geliyor. EPIAS girisine gerek yok.
+GAIN_LAYOUT_URL = "https://rapor.gainenerji.com/_dash-layout"
+_gain_cache = {"ts": 0.0, "veri": {}}
+
+def _gain_d_tarih(layout):
+    """Layout'taki 'Rapor Tarihi (D)' kartindan D gununu (date) cikarir."""
+    raw = json.dumps(layout, ensure_ascii=False, separators=(',', ':'))
+    m = re.search(r'Rapor Tarihi \(D\)".{0,200}?"children":"(\d{2})\.(\d{2})\.(\d{4})"', raw)
+    if not m:
+        return None
+    g, a, y = m.groups()
+    return datetime.date(int(y), int(a), int(g))
+
+def _gain_ptf_parse(layout):
+    """_dash-layout JSON'undan PTF(D-1/D/D+1) saatlik serilerini cikarir.
+    Donus: {iso_tarih: [24 saatlik TL/MWh]}."""
+    figurler = []
+    def figbul(node):
+        if isinstance(node, dict):
+            for k, v in node.items():
+                if k == "figure" and isinstance(v, dict):
+                    figurler.append(v)
+                figbul(v)
+        elif isinstance(node, list):
+            for v in node:
+                figbul(v)
+    figbul(layout)
+    ptf_fig = None
+    for f in figurler:
+        t = f.get("layout", {}).get("title", {})
+        baslik = t.get("text", "") if isinstance(t, dict) else str(t)
+        if "PTF Karşılaştırması" in baslik and "D-1" in baslik:
+            ptf_fig = f
+            break
+    if not ptf_fig:
+        return {}
+    traceler = {tr.get("name", ""): tr.get("y", []) for tr in ptf_fig.get("data", [])}
+    d = _gain_d_tarih(layout)
+    if not d:
+        return {}
+    sonuc = {}
+    for ad, off in {"PTF(D-1)": -1, "PTF(D)": 0, "PTF(D+1)": 1}.items():
+        y = traceler.get(ad, [])
+        if y and len(y) >= 24:
+            yv = []
+            try:
+                yv = [round(float(v), 2) for v in y[:24]]
+            except Exception:
+                continue
+            if sum(yv) == 0:
+                continue  # henuz yayinlanmamis
+            iso = (d + datetime.timedelta(days=off)).isoformat()
+            sonuc[iso] = yv
+    return sonuc
+
+def _gain_ptf_dict():
+    """Gain Enerji'den PTF serisi {iso: [24]}. 30 dk cache."""
+    global _gain_cache
+    if (_btc_time.time() - _gain_cache["ts"]) < 1800 and _gain_cache["veri"]:
+        return _gain_cache["veri"]
+    try:
+        req = urllib.request.Request(GAIN_LAYOUT_URL, headers={
+            "User-Agent": "Mozilla/5.0", "Accept": "application/json"})
+        layout = json.loads(urllib.request.urlopen(req, timeout=20).read())
+        veri = _gain_ptf_parse(layout)
+        if veri:
+            _gain_cache = {"ts": _btc_time.time(), "veri": veri}
+            return veri
+    except Exception as e:
+        print("[GAIN] cekme hatasi:", e, flush=True)
+    return _gain_cache["veri"]
+# ===================== /GAIN ENERJI PTF KAYNAGI =====================
+
+
 def ptf_otomatik_guncelle():
-    """Yarin (ve eksikse bugun) PTF'sini cekip aylik_ptf.json'a yazar."""
+    """Gain Enerji'den PTF (D-1/D/D+1) cekip aylik_ptf.json'a yazar.
+    Mevcut gunleri EZMEZ — sadece dogrular; eksik gunleri ekler."""
     tr = _tr_simdi()
-    hedefler = [
-        (tr + datetime.timedelta(days=1)).date().isoformat(),  # yarin (oncelik)
-        tr.date().isoformat(),                                  # bugun (eksikse)
-    ]
     ayptf = github_oku("aylik_ptf.json") or {}
+    gain = _gain_ptf_dict()
     degisti = False
     notlar = []
-    for tarih in hedefler:
+    if not gain:
+        notlar.append("Gain verisi alinamadi")
+    for tarih in sorted(gain.keys()):
+        fiyatlar = gain[tarih]
+        if not fiyatlar or len(fiyatlar) < 24:
+            continue
         ay, gun = tarih[:7], tarih[8:10]
-        if ay in ayptf and gun in ayptf[ay] and len(ayptf[ay][gun]) >= 24:
-            continue  # zaten var
-        fiyatlar, durum = epias_ptf_cek(tarih)
-        if fiyatlar:
-            ayptf.setdefault(ay, {})[gun] = fiyatlar
-            degisti = True
-            notlar.append(f"{tarih} eklendi ({len(fiyatlar)} saat)")
-        else:
-            notlar.append(f"{tarih}: {durum}")
+        yeni_ort = sum(fiyatlar) / len(fiyatlar)
+        mevcut = ayptf.get(ay, {}).get(gun)
+        if mevcut and len(mevcut) >= 24:
+            eski_ort = sum(mevcut) / len(mevcut)
+            if abs(yeni_ort - eski_ort) < 0.5:
+                notlar.append(f"{tarih} ✓ ({yeni_ort:.2f})")
+            else:
+                notlar.append(f"{tarih} ⚠ fark (var {eski_ort:.2f}/gain {yeni_ort:.2f}) korundu")
+            continue  # kullanicinin dogruladigi gunu ezme
+        ayptf.setdefault(ay, {})[gun] = fiyatlar
+        degisti = True
+        notlar.append(f"{tarih} + eklendi ({yeni_ort:.2f})")
     if degisti:
         github_yaz("aylik_ptf.json", ayptf)
         notlar.append("GitHub'a yazildi")
