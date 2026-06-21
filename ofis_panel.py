@@ -15,7 +15,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 67
+PANEL_VERSIYON_BUILD = 68
 
 def _panel_tarih():
     try:
@@ -1262,6 +1262,24 @@ function otoEksen(birim) {
 </div>
 
 <div class="tab-content" id="t-osos">
+
+<!-- OSOS EXCEL YUKLEME -->
+<div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;margin-bottom:16px;">
+  <div style="font-size:13px;font-weight:800;color:#e8edf2;margin-bottom:4px;">📥 OSOS Excel Yükle</div>
+  <div style="font-size:10px;color:#64748b;margin-bottom:10px;">Portaldan indirdiğin YkProfili Excel'ini bırak — panel parse edip GitHub'a yazar. Sayaç seç, dosyayı seç, yükle.</div>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+    <select id="osos-yukle-sayac" class="fat-gun-sec">
+      <option value="tekyildiz_1">☀️ Tekyildiz 1 (T1)</option>
+      <option value="tekyildiz_2">⚡ Tekyildiz 2 (T2)</option>
+      <option value="aksaray_3">🏭 Aksaray 3 (A3)</option>
+    </select>
+    <input type="file" id="osos-yukle-dosya" accept=".xlsx" style="font-size:11px;color:#cbd5e1;max-width:230px;">
+    <button onclick="ososYukle(this)" style="background:#0e7490;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">📤 Yükle</button>
+  </div>
+  <div id="osos-yukle-sonuc" style="font-size:11px;color:#94a3b8;margin-top:10px;line-height:1.6;"></div>
+</div>
+<!-- /OSOS EXCEL YUKLEME -->
+
 <div class="osos-tabs">
 <button class="osos-tab active" onclick="ososAbone('tekyildiz_1', this)">☀️ Tekyildiz 1</button>
 <button class="osos-tab" onclick="ososAbone('tekyildiz_2', this)">⚡ Tekyildiz 2</button>
@@ -3633,6 +3651,31 @@ function ptfGainCek(btn){
 }
 ptfDurumYukle();
 // ====================== /GAIN PTF OTOMASYON ======================
+
+// ====================== OSOS EXCEL YUKLEME ======================
+function ososYukle(btn){
+  var sel = document.getElementById('osos-yukle-sayac');
+  var inp = document.getElementById('osos-yukle-dosya');
+  var snc = document.getElementById('osos-yukle-sonuc');
+  if (!inp.files || !inp.files.length){ snc.innerHTML = '<span style="color:#fbbf24;">Önce bir Excel dosyası seç.</span>'; return; }
+  var fd = new FormData();
+  fd.append('sayac', sel.value);
+  fd.append('dosya', inp.files[0]);
+  btn.disabled = true; btn.textContent = '⏳ İşleniyor…';
+  snc.innerHTML = 'Parse ediliyor…';
+  fetch('/api/osos_yukle', { method:'POST', body: fd })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.hata){ snc.innerHTML = '<span style="color:#f87171;">Hata: ' + d.hata + '</span>'; return; }
+      var bas = (d.yazildi ? '<span style="color:#4ade80;font-weight:700;">✓ ' + d.gun + ' gün GitHuba yazıldı</span>'
+                           : '<span style="color:#f87171;font-weight:700;">⚠ GitHub yazma başarısız: ' + (d.hata_git||'') + '</span>');
+      var det = (d.notlar||[]).map(function(n){ return '· ' + n; }).join('<br>');
+      snc.innerHTML = bas + '<br><span style="color:#64748b;">çarpan ×' + d.carpan + '</span><br>' + det;
+    })
+    .catch(function(e){ snc.innerHTML = '<span style="color:#f87171;">Bağlantı hatası: ' + e + '</span>'; })
+    .finally(function(){ btn.disabled = false; btn.textContent = '📤 Yükle'; });
+}
+// ====================== /OSOS EXCEL YUKLEME ======================
 
 // ====================== İNVERTER (Huawei FusionSolar) ======================
 let invData = null;
@@ -8764,6 +8807,122 @@ def ptf_cek_endpoint():
     """Tarayicidan elle tetikleme: panel.../api/ptf_cek"""
     durum = ptf_otomatik_guncelle()
     return jsonify({"zaman": _ptf_son_log["zaman"], "durum": durum})
+
+
+# ===================== OSOS EXCEL YUKLEME (yari-otomatik) =====================
+_OSOS_NS = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
+
+def _osos_xlsx_parse(data_bytes):
+    """OSOS YkProfili xlsx'ini (saf stdlib) parse eder.
+    Donus: {tarih_iso: {saat: {cekis_ham, veris_ham}}} — sadece tam (24 saat) gunler.
+    Ham fark degeri (carpan UYGULANMAMIS)."""
+    import zipfile, io
+    import xml.etree.ElementTree as ET
+    from collections import defaultdict
+    z = zipfile.ZipFile(io.BytesIO(data_bytes))
+    # shared strings
+    ss = []
+    if "xl/sharedStrings.xml" in z.namelist():
+        r = ET.fromstring(z.read("xl/sharedStrings.xml"))
+        for si in r.findall(_OSOS_NS + "si"):
+            ss.append("".join(n.text or "" for n in si.iter(_OSOS_NS + "t")))
+    # ilk worksheet
+    wsname = "xl/worksheets/sheet1.xml"
+    if wsname not in z.namelist():
+        wsname = [n for n in z.namelist() if n.startswith("xl/worksheets/")][0]
+    sheet = ET.fromstring(z.read(wsname))
+
+    def harf(ref):
+        return "".join(ch for ch in ref if ch.isalpha())
+    def sayi(x):
+        if x in (None, ""):
+            return 0.0
+        try:
+            return float(str(x).replace(",", "."))
+        except Exception:
+            return 0.0
+
+    saatlik = defaultdict(lambda: {"cekis": 0.0, "veris": 0.0})
+    ilk = True
+    for row in sheet.iter(_OSOS_NS + "row"):
+        hucre = {}
+        for c in row.findall(_OSOS_NS + "c"):
+            col = harf(c.get("r"))
+            v = c.find(_OSOS_NS + "v")
+            val = v.text if v is not None else None
+            if c.get("t") == "s" and val is not None:
+                val = ss[int(val)]
+            hucre[col] = val
+        if ilk:
+            ilk = False  # baslik satiri
+            continue
+        t = hucre.get("A")
+        if not t:
+            continue
+        try:
+            dt = datetime.datetime.strptime(t, "%d.%m.%Y %H:%M:%S")
+        except Exception:
+            continue
+        ait = dt - datetime.timedelta(minutes=15)  # fark, biten 15dk'ya ait
+        k = (ait.date().isoformat(), f"{ait.hour:02d}")
+        saatlik[k]["cekis"] += sayi(hucre.get("C"))   # Aktif Endeks Fark
+        saatlik[k]["veris"] += sayi(hucre.get("E"))   # Aktif Endeks Veris Fark
+
+    # gunlere topla, sadece 24 saati tam olanlari al
+    gunluk = defaultdict(dict)
+    for (g, s), v in saatlik.items():
+        gunluk[g][s] = v
+    sonuc = {}
+    for g, saatler in gunluk.items():
+        if all(f"{h:02d}" in saatler for h in range(24)):
+            sonuc[g] = {f"{h:02d}": saatler[f"{h:02d}"] for h in range(24)}
+    return sonuc
+
+@app.route("/api/osos_yukle", methods=["POST"])
+def osos_yukle_endpoint():
+    if "kullanici" not in session:
+        return jsonify({"hata": "yetkisiz"}), 401
+    sayac = request.form.get("sayac", "")
+    if sayac not in ("tekyildiz_1", "tekyildiz_2", "aksaray_3"):
+        return jsonify({"hata": "gecersiz sayac"}), 400
+    if "dosya" not in request.files:
+        return jsonify({"hata": "dosya yok"}), 400
+    try:
+        data = request.files["dosya"].read()
+        parsed = _osos_xlsx_parse(data)
+    except Exception as e:
+        return jsonify({"hata": f"Excel okunamadi: {str(e)[:120]}"}), 200
+    if not parsed:
+        return jsonify({"hata": "Tam gun bulunamadi (24 saat). Dosya eksik olabilir."}), 200
+
+    endeks = github_oku("2026_osos_endeks.json") or {}
+    if sayac not in endeks:
+        return jsonify({"hata": f"{sayac} JSON'da yok"}), 200
+    carpan = float(endeks[sayac].get("carpan", 0)) or 1
+    veri = endeks[sayac].setdefault("veri", {})
+
+    notlar = []
+    eklenen = 0
+    for g in sorted(parsed.keys()):
+        yeni = {}
+        for s in [f"{h:02d}" for h in range(24)]:
+            ham = parsed[g][s]
+            yeni[s] = {"cekis": round(ham["cekis"] * carpan, 2),
+                       "veris": round(ham["veris"] * carpan, 2)}
+        vardi = g in veri
+        veri[g] = yeni  # OSOS otoritedir, gunceller
+        tc = sum(yeni[s]["cekis"] for s in yeni)
+        tv = sum(yeni[s]["veris"] for s in yeni)
+        notlar.append(f"{g} {'güncellendi' if vardi else 'eklendi'} (çekiş {tc:.0f}, veriş {tv:.0f})")
+        eklenen += 1
+
+    ok = github_yaz("2026_osos_endeks.json", endeks)
+    return jsonify({
+        "sayac": sayac, "carpan": carpan, "gun": eklenen,
+        "yazildi": ok, "hata_git": "" if ok else _github_son_hata,
+        "notlar": notlar
+    })
+# ===================== /OSOS EXCEL YUKLEME =====================
 
 
 @app.route("/api/ptf_durum")
