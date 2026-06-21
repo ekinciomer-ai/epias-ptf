@@ -15,7 +15,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 63
+PANEL_VERSIYON_BUILD = 64
 
 def _panel_tarih():
     try:
@@ -3585,7 +3585,7 @@ function ptfDurumYukle(){
 function ptfGainCek(btn){
   if (btn){ btn.disabled = true; btn.textContent = '⏳ Çekiliyor…'; }
   const ds = document.getElementById('ptf-oto-durum');
-  if (ds) ds.textContent = 'Gain Enerji\'den çekiliyor…';
+  if (ds) ds.textContent = 'Gain Enerjiden çekiliyor…';
   fetch('/api/ptf_cek').then(r=>r.json()).then(d=>{
     if (ds) ds.textContent = d.durum || 'tamam';
     const zm = document.getElementById('ptf-oto-zaman');
@@ -8587,6 +8587,7 @@ def epias_ptf_cek(tarih_iso):
 # (GET, JSON) icinde gomulu geliyor. EPIAS girisine gerek yok.
 GAIN_LAYOUT_URL = "https://rapor.gainenerji.com/_dash-layout"
 _gain_cache = {"ts": 0.0, "veri": {}}
+_gain_son_hata = {"mesaj": "henuz denenmedi", "http": None, "ornek": ""}
 
 def _gain_d_tarih(layout):
     """Layout'taki 'Rapor Tarihi (D)' kartindan D gununu (date) cikarir."""
@@ -8641,19 +8642,33 @@ def _gain_ptf_parse(layout):
 
 def _gain_ptf_dict():
     """Gain Enerji'den PTF serisi {iso: [24]}. 30 dk cache."""
-    global _gain_cache
+    global _gain_cache, _gain_son_hata
     if (_btc_time.time() - _gain_cache["ts"]) < 1800 and _gain_cache["veri"]:
         return _gain_cache["veri"]
     try:
         req = urllib.request.Request(GAIN_LAYOUT_URL, headers={
-            "User-Agent": "Mozilla/5.0", "Accept": "application/json"})
-        layout = json.loads(urllib.request.urlopen(req, timeout=20).read())
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "Accept": "application/json, text/plain, */*",
+            "Referer": "https://rapor.gainenerji.com/"})
+        with urllib.request.urlopen(req, timeout=20) as r:
+            ham = r.read()
+            kod = r.getcode()
+        try:
+            layout = json.loads(ham)
+        except Exception:
+            _gain_son_hata = {"mesaj": "yanit JSON degil (muhtemelen engel/HTML)", "http": kod,
+                              "ornek": ham[:200].decode("utf-8", "replace")}
+            return _gain_cache["veri"]
         veri = _gain_ptf_parse(layout)
         if veri:
             _gain_cache = {"ts": _btc_time.time(), "veri": veri}
+            _gain_son_hata = {"mesaj": "ok", "http": kod, "ornek": str(sorted(veri.keys()))}
             return veri
+        _gain_son_hata = {"mesaj": "JSON geldi ama PTF figure/tarih bulunamadi", "http": kod, "ornek": ""}
+    except urllib.error.HTTPError as e:
+        _gain_son_hata = {"mesaj": f"HTTP hata {e.code}", "http": e.code, "ornek": str(e.reason)[:120]}
     except Exception as e:
-        print("[GAIN] cekme hatasi:", e, flush=True)
+        _gain_son_hata = {"mesaj": f"baglanti hatasi: {str(e)[:120]}", "http": None, "ornek": ""}
     return _gain_cache["veri"]
 # ===================== /GAIN ENERJI PTF KAYNAGI =====================
 
@@ -8667,7 +8682,7 @@ def ptf_otomatik_guncelle():
     degisti = False
     notlar = []
     if not gain:
-        notlar.append("Gain verisi alinamadi")
+        notlar.append("Gain verisi YOK: " + _gain_son_hata.get("mesaj", "?"))
     for tarih in sorted(gain.keys()):
         fiyatlar = gain[tarih]
         if not fiyatlar or len(fiyatlar) < 24:
@@ -8686,8 +8701,8 @@ def ptf_otomatik_guncelle():
         degisti = True
         notlar.append(f"{tarih} + eklendi ({yeni_ort:.2f})")
     if degisti:
-        github_yaz("aylik_ptf.json", ayptf)
-        notlar.append("GitHub'a yazildi")
+        ok = github_yaz("aylik_ptf.json", ayptf)
+        notlar.append("GitHub'a yazildi ✓" if ok else "GitHub yazma BASARISIZ (GH_TOKEN?)")
     _ptf_son_log["zaman"] = tr.strftime("%Y-%m-%d %H:%M TR")
     _ptf_son_log["durum"] = " | ".join(notlar) if notlar else "guncel"
     print(f"[PTF] {_ptf_son_log['zaman']} -> {_ptf_son_log['durum']}", flush=True)
