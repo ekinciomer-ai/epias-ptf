@@ -15,7 +15,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 65
+PANEL_VERSIYON_BUILD = 67
 
 def _panel_tarih():
     try:
@@ -108,7 +108,7 @@ KULLANICILAR = {
 
 GITHUB_RAW   = "https://raw.githubusercontent.com/ekinciomer-ai/epias-ptf/main"
 GITHUB_REPO  = "ekinciomer-ai/epias-ptf"
-GH_TOKEN     = os.environ.get("GH_TOKEN", "")
+GH_TOKEN     = os.environ.get("GH_TOKEN", "").strip()
 _github_son_hata = "henuz denenmedi"
 F2POOL_TOKEN = os.environ.get("F2POOL_TOKEN", "")
 F2POOL_USER  = "mehmetas"
@@ -116,6 +116,7 @@ F2POOL_USER  = "mehmetas"
 # BTC fiyati: canli cekilir (CoinGecko), basarisizsa sinyal.json'daki son deger kullanilir.
 import time as _btc_time
 _btc_cache = {"ts": 0.0, "usd": 0.0, "try": 0.0}
+_btc_grafik_cache = {}  # {aralik: (ts, veri)} — BTC grafik onbellegi
 
 def _btc_canli_cek():
     """Canli BTC fiyati (TL, USD). 2 dk cache. CoinGecko -> Binance -> (0,0)."""
@@ -190,85 +191,98 @@ def _usdtry_oran():
     return (tl / usd) if (usd and tl) else 0
 
 def _btc_grafik_cek(aralik):
-    """Zaman araligina gore BTC fiyat serisi (TL + USD). {labels, fiyatlar_tl, fiyatlar_usd, ...}."""
-    # Uzun araliklar: CoinGecko (gercek gecmis, hem TRY hem USD)
-    if aralik in ("1ay", "3ay"):
-        gun = 30 if aralik == "1ay" else 90
-        def _cg_seri(cur):
-            url = ("https://api.coingecko.com/api/v3/coins/bitcoin/market_chart"
-                   "?vs_currency=" + cur + "&days=" + str(gun))
-            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-            d = json.loads(urllib.request.urlopen(req, timeout=10).read())
-            gunluk = {}
-            for ts_ms, fiyat in d.get("prices", []):
-                dt = datetime.datetime.utcfromtimestamp(ts_ms / 1000.0) + datetime.timedelta(hours=3)
-                gunluk[dt.strftime("%Y-%m-%d")] = fiyat
-            return gunluk
-        try:
-            g_tl = _cg_seri("try")
-            g_usd = _cg_seri("usd")
-            anahtar = sorted(g_tl.keys())
-            labels = [k[8:10] + "." + k[5:7] for k in anahtar]
-            fiyatlar_tl = [round(g_tl[k], 2) for k in anahtar]
-            fiyatlar_usd = [round(g_usd.get(k, 0), 2) for k in anahtar]
-            if fiyatlar_tl:
-                return {"labels": labels, "fiyatlar_tl": fiyatlar_tl, "fiyatlar_usd": fiyatlar_usd, "aralik": aralik, "kaynak": "coingecko"}
-        except Exception as e:
-            print("BTC grafik CoinGecko hatasi:", e)
+    """Zaman araligina gore BTC fiyat serisi (TL + USD). CoinGecko oncelikli
+    (Railway'de Binance engelli olabilir), Binance sadece dakikalik kisa araliklarda."""
+    now = _btc_time.time()
+    ttl = 600 if aralik in ("1ay", "3ay") else 90
+    c = _btc_grafik_cache.get(aralik)
+    if c and (now - c[0]) < ttl and c[1].get("fiyatlar_tl"):
+        return c[1]
+    veri = _btc_grafik_uret(aralik)
+    if veri.get("fiyatlar_tl"):
+        _btc_grafik_cache[aralik] = (now, veri)
+    return veri
 
-    # Kisa araliklar: Binance klines (dakikalik). USD native, TL = USD × guncel kur
-    cfg = {"anlik": ("1m", 5), "10dk": ("1m", 10), "1saat": ("1m", 60), "1gun": ("15m", 96)}
-    interval, limit = cfg.get(aralik, ("15m", 96))
+def _cg_market_chart(days, cur):
+    """CoinGecko market_chart ham [[ts_ms, fiyat], ...]."""
+    url = ("https://api.coingecko.com/api/v3/coins/bitcoin/market_chart"
+           "?vs_currency=" + cur + "&days=" + str(days))
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    d = json.loads(urllib.request.urlopen(req, timeout=12).read())
+    return d.get("prices", [])
+
+def _btc_grafik_uret(aralik):
     usdtry = _usdtry_oran() or 1
-    try:
-        url = ("https://api.binance.com/api/v3/klines?symbol=BTCUSDT"
-               "&interval=" + interval + "&limit=" + str(limit))
-        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-        arr = json.loads(urllib.request.urlopen(req, timeout=10).read())
-        labels, fiyatlar_tl, fiyatlar_usd = [], [], []
-        for k in arr:
-            dt = datetime.datetime.utcfromtimestamp(k[0] / 1000.0) + datetime.timedelta(hours=3)
-            labels.append(dt.strftime("%H:%M"))
-            usd = float(k[4])
-            fiyatlar_usd.append(round(usd, 2))
-            fiyatlar_tl.append(round(usd * usdtry, 2))
-        if fiyatlar_tl:
-            return {"labels": labels, "fiyatlar_tl": fiyatlar_tl, "fiyatlar_usd": fiyatlar_usd, "aralik": aralik, "kaynak": "binance"}
-    except Exception as e:
-        print("BTC grafik Binance hatasi:", e)
+    hata = ""
 
-    # Son care: CoinGecko gunluk (days=1) son N nokta, TL + USD turetilmis
-    try:
-        url = "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=try&days=1"
-        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-        d = json.loads(urllib.request.urlopen(req, timeout=10).read())
-        prices = d.get("prices", [])
-        n = {"anlik": 3, "10dk": 3, "1saat": 12, "1gun": 288}.get(aralik, 288)
-        prices = prices[-n:]
-        oran = usdtry if usdtry else 1
-        labels = [(datetime.datetime.utcfromtimestamp(p[0]/1000.0) + datetime.timedelta(hours=3)).strftime("%H:%M") for p in prices]
-        fiyatlar_tl = [round(p[1], 2) for p in prices]
-        fiyatlar_usd = [round(p[1] / oran, 2) for p in prices]
-        if fiyatlar_tl:
-            return {"labels": labels, "fiyatlar_tl": fiyatlar_tl, "fiyatlar_usd": fiyatlar_usd, "aralik": aralik, "kaynak": "coingecko-1d"}
-    except Exception as e:
-        print("BTC grafik son care hatasi:", e)
-    return {"labels": [], "fiyatlar_tl": [], "fiyatlar_usd": [], "aralik": aralik, "kaynak": "yok"}
-ZARARLI_ESIK = 2200
-DOGRULAMA_TOLERANS = 50  # kWh tolerans
+    # ---- UZUN/GUN: CoinGecko (guvenilir) ----
+    cg_gun = {"1gun": 1, "1ay": 30, "3ay": 90}
+    if aralik in cg_gun:
+        gun = cg_gun[aralik]
+        try:
+            tl_ham = _cg_market_chart(gun, "try")
+            # USD: 1gun'de turet (intraday kur sabit sayilir), 1ay/3ay'de gercek cek
+            usd_map = {}
+            if aralik in ("1ay", "3ay"):
+                for ts, f in _cg_market_chart(gun, "usd"):
+                    dt = datetime.datetime.utcfromtimestamp(ts/1000.0) + datetime.timedelta(hours=3)
+                    usd_map[dt.strftime("%Y-%m-%d")] = f
+            if aralik == "1gun":
+                labels, ftl, fusd = [], [], []
+                for ts, f in tl_ham:
+                    dt = datetime.datetime.utcfromtimestamp(ts/1000.0) + datetime.timedelta(hours=3)
+                    labels.append(dt.strftime("%H:%M"))
+                    ftl.append(round(f, 2))
+                    fusd.append(round(f / usdtry, 2))
+                if ftl:
+                    return {"labels": labels, "fiyatlar_tl": ftl, "fiyatlar_usd": fusd, "aralik": aralik, "kaynak": "coingecko"}
+            else:
+                gunluk = {}
+                for ts, f in tl_ham:
+                    dt = datetime.datetime.utcfromtimestamp(ts/1000.0) + datetime.timedelta(hours=3)
+                    gunluk[dt.strftime("%Y-%m-%d")] = f
+                anahtar = sorted(gunluk.keys())
+                labels = [k[8:10] + "." + k[5:7] for k in anahtar]
+                ftl = [round(gunluk[k], 2) for k in anahtar]
+                fusd = [round(usd_map.get(k, gunluk[k]/usdtry), 2) for k in anahtar]
+                if ftl:
+                    return {"labels": labels, "fiyatlar_tl": ftl, "fiyatlar_usd": fusd, "aralik": aralik, "kaynak": "coingecko"}
+        except Exception as e:
+            hata = "coingecko: " + str(e)[:80]
 
-MANIFEST = json.dumps({
-    "name": "Otocoin", "short_name": "Otocoin",
-    "start_url": "/", "display": "standalone",
-    "background_color": "#050917", "theme_color": "#16a34a",
-    "icons": [{"src": "/icon.svg", "sizes": "any", "type": "image/svg+xml"}]
-})
+    # ---- KISA (anlik/10dk/1saat): Binance 1m (varsa) ----
+    if aralik in ("anlik", "10dk", "1saat"):
+        cfg = {"anlik": 5, "10dk": 10, "1saat": 60}
+        try:
+            url = ("https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit="
+                   + str(cfg[aralik]))
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            arr = json.loads(urllib.request.urlopen(req, timeout=8).read())
+            labels, ftl, fusd = [], [], []
+            for k in arr:
+                dt = datetime.datetime.utcfromtimestamp(k[0]/1000.0) + datetime.timedelta(hours=3)
+                labels.append(dt.strftime("%H:%M"))
+                usd = float(k[4])
+                fusd.append(round(usd, 2))
+                ftl.append(round(usd * usdtry, 2))
+            if ftl:
+                return {"labels": labels, "fiyatlar_tl": ftl, "fiyatlar_usd": fusd, "aralik": aralik, "kaynak": "binance"}
+        except Exception as e:
+            hata = "binance: " + str(e)[:80]
+        # Binance yoksa CoinGecko 5dk veriden son N nokta
+        try:
+            ham = _cg_market_chart(1, "try")
+            n = {"anlik": 4, "10dk": 4, "1saat": 12}.get(aralik, 12)
+            ham = ham[-n:]
+            labels = [(datetime.datetime.utcfromtimestamp(p[0]/1000.0)+datetime.timedelta(hours=3)).strftime("%H:%M") for p in ham]
+            ftl = [round(p[1], 2) for p in ham]
+            fusd = [round(p[1]/usdtry, 2) for p in ham]
+            if ftl:
+                return {"labels": labels, "fiyatlar_tl": ftl, "fiyatlar_usd": fusd, "aralik": aralik, "kaynak": "coingecko-5dk"}
+        except Exception as e:
+            hata = (hata + " | " if hata else "") + "cg-fallback: " + str(e)[:60]
 
-ICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-<rect width="512" height="512" rx="100" fill="#050917"/>
-<polygon points="290,110 220,270 262,270 222,400 320,210 272,210 310,110" fill="#22c55e"/>
-</svg>"""
-
+    return {"labels": [], "fiyatlar_tl": [], "fiyatlar_usd": [], "aralik": aralik, "kaynak": "yok", "hata": hata}
 def github_oku(dosya):
     """Public repo - ONCE CDN dene (token gerekmez), basarisizsa token ile API dene."""
     # 1. Once CDN (public repo, token gerekmiyor)
@@ -344,10 +358,15 @@ def github_yaz(dosya, payload):
     except urllib.error.HTTPError as e:
         govde = ""
         try:
-            govde = e.read().decode("utf-8", "replace")[:160]
+            govde = e.read().decode("utf-8", "replace")[:120]
         except Exception:
             pass
-        _github_son_hata = f"HTTP {e.code} ({govde})"
+        ipucu = ""
+        if e.code == 401:
+            t = GH_TOKEN or ""
+            bosluk = " [BOSLUK/SATIR VAR]" if (t != t.strip()) else ""
+            ipucu = f" | token: {len(t)} karakter, basi '{t[:4]}'{bosluk}"
+        _github_son_hata = f"HTTP {e.code} ({govde}){ipucu}"
         print(f"github_yaz HTTP {e.code} ({dosya}): {govde}", flush=True)
         return False
     except Exception as e:
@@ -3523,7 +3542,11 @@ function _btcCizdir(){
   if (!cv || !window.Chart || !d) return;
   const usd = (window._btcBirim === 'usd');
   const seri = usd ? d.fiyatlar_usd : d.fiyatlar_tl;
-  if (!seri || !seri.length) return;
+  if (!seri || !seri.length) {
+    const e1 = document.getElementById('btc-grafik-fiyat');
+    if (e1) e1.textContent = 'veri yok' + (d.hata ? ' (' + d.hata + ')' : '');
+    return;
+  }
   const sembol = usd ? '$' : '₺';
   const son = seri[seri.length - 1], ilk = seri[0];
   const yuzde = ilk > 0 ? ((son - ilk) / ilk * 100) : 0;
