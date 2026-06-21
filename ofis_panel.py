@@ -15,7 +15,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 64
+PANEL_VERSIYON_BUILD = 65
 
 def _panel_tarih():
     try:
@@ -109,6 +109,7 @@ KULLANICILAR = {
 GITHUB_RAW   = "https://raw.githubusercontent.com/ekinciomer-ai/epias-ptf/main"
 GITHUB_REPO  = "ekinciomer-ai/epias-ptf"
 GH_TOKEN     = os.environ.get("GH_TOKEN", "")
+_github_son_hata = "henuz denenmedi"
 F2POOL_TOKEN = os.environ.get("F2POOL_TOKEN", "")
 F2POOL_USER  = "mehmetas"
 
@@ -297,8 +298,10 @@ def github_oku(dosya):
 
 
 def github_yaz(dosya, payload):
-    """GitHub'a dosya yaz/guncelle."""
+    """GitHub'a dosya yaz/guncelle. Hata sebebini _github_son_hata'ya yazar."""
+    global _github_son_hata
     if not GH_TOKEN:
+        _github_son_hata = "GH_TOKEN tanimli degil (Railway env)"
         return False
     try:
         import base64
@@ -335,8 +338,20 @@ def github_yaz(dosya, payload):
             method="PUT"
         )
         with urllib.request.urlopen(req, timeout=15) as r:
-            return r.status in (200, 201)
+            ok = r.status in (200, 201)
+            _github_son_hata = "ok" if ok else f"HTTP {r.status}"
+            return ok
+    except urllib.error.HTTPError as e:
+        govde = ""
+        try:
+            govde = e.read().decode("utf-8", "replace")[:160]
+        except Exception:
+            pass
+        _github_son_hata = f"HTTP {e.code} ({govde})"
+        print(f"github_yaz HTTP {e.code} ({dosya}): {govde}", flush=True)
+        return False
     except Exception as e:
+        _github_son_hata = f"baglanti: {str(e)[:120]}"
         print(f"github_yaz hatasi ({dosya}): {e}")
         return False
 
@@ -8702,7 +8717,7 @@ def ptf_otomatik_guncelle():
         notlar.append(f"{tarih} + eklendi ({yeni_ort:.2f})")
     if degisti:
         ok = github_yaz("aylik_ptf.json", ayptf)
-        notlar.append("GitHub'a yazildi ✓" if ok else "GitHub yazma BASARISIZ (GH_TOKEN?)")
+        notlar.append("GitHub'a yazildi ✓" if ok else ("GitHub yazma BASARISIZ: " + _github_son_hata))
     _ptf_son_log["zaman"] = tr.strftime("%Y-%m-%d %H:%M TR")
     _ptf_son_log["durum"] = " | ".join(notlar) if notlar else "guncel"
     print(f"[PTF] {_ptf_son_log['zaman']} -> {_ptf_son_log['durum']}", flush=True)
