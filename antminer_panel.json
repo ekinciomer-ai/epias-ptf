@@ -1,16 +1,16 @@
 {
-  "timestamp": "2026-07-01T23:47:05.210674",
+  "timestamp": "2026-07-01T23:48:12.016723",
   "source": "Tek Yildiz 2 GES - Saha PC",
   "summary": {
     "total": 29,
-    "online": 0,
-    "sleeping": 29,
+    "online": 2,
+    "sleeping": 27,
     "offline": 0,
-    "total_hashrate_TH": 0,
-    "total_target_TH": 0,
-    "efficiency_pct": 0,
-    "avg_temp_C": 0,
-    "avg_water_temp_C": 0,
+    "total_hashrate_TH": 447.59,
+    "total_target_TH": 484.0,
+    "efficiency_pct": 92.5,
+    "avg_temp_C": 54.0,
+    "avg_water_temp_C": 49.0,
     "models": {
       "S19e XP Hyd": 1,
       "S21e Hyd": 25,
@@ -53,19 +53,19 @@
       "havuz_worker": "mehmetas.027",
       "actual_worker": "mehmetas.027",
       "hashrate_TH": 0.0,
-      "target_hashrate_TH": 0.0,
-      "efficiency_pct": null,
-      "temp_max": 45,
-      "temp_water": 45,
+      "target_hashrate_TH": 251.0,
+      "efficiency_pct": 0.0,
+      "temp_max": 70,
+      "temp_water": 70,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
       "online": true,
       "sleeping": true,
       "is_hydro": true,
-      "accepted": 0,
+      "accepted": 80,
       "rejected": 0,
-      "hw_errors_total": 0,
+      "hw_errors_total": 3,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -86,7 +86,20 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [],
+      "health_issues": [
+        {
+          "severity": "high",
+          "code": "WATER_HOT",
+          "icon": "💧",
+          "title": "Su Sicakligi Yuksek (70°C)",
+          "reason": "Soguma sistemi yetersiz",
+          "solutions": [
+            "Radyatoru kontrol et (toz, tikanma)",
+            "Dis fan calisiyor mu?",
+            "Dis ortam sicakligi cok yuksek olabilir"
+          ]
+        }
+      ],
       "daily_history": [
         {
           "date": "2026-06-02",
@@ -264,15 +277,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 250.0,
-          "uptime_pct": 99.2,
+          "avg_hash_TH": 249.8,
+          "uptime_pct": 99.1,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 250.0,
+          "avg_hash_TH": 249.8,
           "earn_btc": 0,
           "days": 1
         },
@@ -305,8 +318,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 44,
-      "temp_water": 37,
+      "temp_max": 51,
+      "temp_water": 44,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -514,15 +527,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 314.9,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 314.6,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 314.9,
+          "avg_hash_TH": 314.6,
           "earn_btc": 0,
           "days": 1
         },
@@ -555,8 +568,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 43,
-      "temp_water": 38,
+      "temp_max": 49,
+      "temp_water": 42,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -764,15 +777,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 317.3,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 317.0,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 317.3,
+          "avg_hash_TH": 317.0,
           "earn_btc": 0,
           "days": 1
         },
@@ -805,8 +818,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 42,
-      "temp_water": 38,
+      "temp_max": 48,
+      "temp_water": 42,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -1014,15 +1027,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 316.2,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 315.9,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 316.2,
+          "avg_hash_TH": 315.9,
           "earn_btc": 0,
           "days": 1
         },
@@ -1055,8 +1068,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 43,
-      "temp_water": 37,
+      "temp_max": 48,
+      "temp_water": 41,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -1264,15 +1277,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 316.6,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 316.3,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 316.6,
+          "avg_hash_TH": 316.3,
           "earn_btc": 0,
           "days": 1
         },
@@ -1305,8 +1318,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 43,
-      "temp_water": 37,
+      "temp_max": 46,
+      "temp_water": 39,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -1514,15 +1527,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 318.4,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 318.1,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 318.4,
+          "avg_hash_TH": 318.1,
           "earn_btc": 0,
           "days": 1
         },
@@ -1552,20 +1565,20 @@
       "saha_worker": "saha.7D07",
       "havuz_worker": "mehmetas.022",
       "actual_worker": "mehmetas.022",
-      "hashrate_TH": 0.0,
-      "target_hashrate_TH": 197.0,
-      "efficiency_pct": 0.0,
-      "temp_max": 48,
-      "temp_water": 47,
+      "hashrate_TH": 231.82,
+      "target_hashrate_TH": 252.0,
+      "efficiency_pct": 92.0,
+      "temp_max": 54,
+      "temp_water": 49,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
-      "status": "SLEEP",
+      "status": "ONLINE",
       "online": true,
-      "sleeping": true,
+      "sleeping": false,
       "is_hydro": false,
-      "accepted": 0,
+      "accepted": 41,
       "rejected": 0,
-      "hw_errors_total": 0,
+      "hw_errors_total": 2,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -1764,7 +1777,7 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 297.7,
+          "avg_hash_TH": 297.6,
           "uptime_pct": 99.4,
           "earn_btc": 0
         }
@@ -1772,7 +1785,7 @@
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 297.7,
+          "avg_hash_TH": 297.6,
           "earn_btc": 0,
           "days": 1
         },
@@ -1802,18 +1815,18 @@
       "saha_worker": "saha.A4F9",
       "havuz_worker": "mehmetas.024",
       "actual_worker": "mehmetas.024",
-      "hashrate_TH": 0.0,
-      "target_hashrate_TH": 197.0,
-      "efficiency_pct": 0.0,
-      "temp_max": 48,
-      "temp_water": 47,
+      "hashrate_TH": 215.77,
+      "target_hashrate_TH": 232.0,
+      "efficiency_pct": 93.0,
+      "temp_max": 54,
+      "temp_water": 49,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
-      "status": "SLEEP",
+      "status": "ONLINE",
       "online": true,
-      "sleeping": true,
+      "sleeping": false,
       "is_hydro": false,
-      "accepted": 0,
+      "accepted": 41,
       "rejected": 0,
       "hw_errors_total": 0,
       "f2pool_name": null,
@@ -2014,7 +2027,7 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 296.4,
+          "avg_hash_TH": 296.3,
           "uptime_pct": 99.4,
           "earn_btc": 0
         }
@@ -2022,7 +2035,7 @@
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 296.4,
+          "avg_hash_TH": 296.3,
           "earn_btc": 0,
           "days": 1
         },
@@ -2055,8 +2068,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 44,
-      "temp_water": 37,
+      "temp_max": 47,
+      "temp_water": 39,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -2264,15 +2277,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 315.7,
-          "uptime_pct": 99.1,
+          "avg_hash_TH": 315.4,
+          "uptime_pct": 99.0,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 315.7,
+          "avg_hash_TH": 315.4,
           "earn_btc": 0,
           "days": 1
         },
@@ -2305,8 +2318,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 44,
-      "temp_water": 37,
+      "temp_max": 47,
+      "temp_water": 39,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -2514,15 +2527,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 313.0,
-          "uptime_pct": 99.1,
+          "avg_hash_TH": 312.7,
+          "uptime_pct": 99.0,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 313.0,
+          "avg_hash_TH": 312.7,
           "earn_btc": 0,
           "days": 1
         },
@@ -2555,8 +2568,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 44,
-      "temp_water": 37,
+      "temp_max": 47,
+      "temp_water": 40,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -2764,15 +2777,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 314.6,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 314.3,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 314.6,
+          "avg_hash_TH": 314.3,
           "earn_btc": 0,
           "days": 1
         },
@@ -2805,8 +2818,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 45,
-      "temp_water": 37,
+      "temp_max": 47,
+      "temp_water": 40,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -3014,15 +3027,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 313.9,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 313.6,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 313.9,
+          "avg_hash_TH": 313.6,
           "earn_btc": 0,
           "days": 1
         },
@@ -3055,8 +3068,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 42,
-      "temp_water": 37,
+      "temp_max": 45,
+      "temp_water": 40,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -3264,15 +3277,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 313.1,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 312.8,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 313.1,
+          "avg_hash_TH": 312.8,
           "earn_btc": 0,
           "days": 1
         },
@@ -3305,8 +3318,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 43,
-      "temp_water": 37,
+      "temp_max": 47,
+      "temp_water": 40,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -3514,15 +3527,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 316.2,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 315.9,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 316.2,
+          "avg_hash_TH": 315.9,
           "earn_btc": 0,
           "days": 1
         },
@@ -3555,8 +3568,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 44,
-      "temp_water": 37,
+      "temp_max": 47,
+      "temp_water": 40,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -3764,15 +3777,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 314.2,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 313.8,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 314.2,
+          "avg_hash_TH": 313.8,
           "earn_btc": 0,
           "days": 1
         },
@@ -3805,8 +3818,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 43,
-      "temp_water": 36,
+      "temp_max": 48,
+      "temp_water": 40,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -4014,15 +4027,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 318.4,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 318.1,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 318.4,
+          "avg_hash_TH": 318.1,
           "earn_btc": 0,
           "days": 1
         },
@@ -4055,8 +4068,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 43,
-      "temp_water": 37,
+      "temp_max": 46,
+      "temp_water": 41,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -4264,15 +4277,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 315.0,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 314.7,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 315.0,
+          "avg_hash_TH": 314.7,
           "earn_btc": 0,
           "days": 1
         },
@@ -4305,8 +4318,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 42,
-      "temp_water": 35,
+      "temp_max": 45,
+      "temp_water": 38,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -4514,15 +4527,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 318.1,
-          "uptime_pct": 98.9,
+          "avg_hash_TH": 317.8,
+          "uptime_pct": 98.8,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 318.1,
+          "avg_hash_TH": 317.8,
           "earn_btc": 0,
           "days": 1
         },
@@ -4555,8 +4568,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 41,
-      "temp_water": 35,
+      "temp_max": 45,
+      "temp_water": 38,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -4764,15 +4777,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 316.7,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 316.4,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 316.7,
+          "avg_hash_TH": 316.4,
           "earn_btc": 0,
           "days": 1
         },
@@ -4805,8 +4818,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 42,
-      "temp_water": 35,
+      "temp_max": 46,
+      "temp_water": 39,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -5014,15 +5027,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 314.1,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 313.8,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 314.1,
+          "avg_hash_TH": 313.8,
           "earn_btc": 0,
           "days": 1
         },
@@ -5055,8 +5068,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 42,
-      "temp_water": 35,
+      "temp_max": 46,
+      "temp_water": 39,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -5264,15 +5277,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 314.8,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 314.5,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 314.8,
+          "avg_hash_TH": 314.5,
           "earn_btc": 0,
           "days": 1
         },
@@ -5305,8 +5318,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 39,
-      "temp_water": 36,
+      "temp_max": 44,
+      "temp_water": 39,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -5514,15 +5527,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 316.4,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 316.1,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 316.4,
+          "avg_hash_TH": 316.1,
           "earn_btc": 0,
           "days": 1
         },
@@ -5555,8 +5568,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 41,
-      "temp_water": 36,
+      "temp_max": 46,
+      "temp_water": 39,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -5764,15 +5777,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 313.2,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 312.9,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 313.2,
+          "avg_hash_TH": 312.9,
           "earn_btc": 0,
           "days": 1
         },
@@ -5805,9 +5818,9 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 41,
-      "temp_water": 35,
-      "elapsed_hours": 0.0,
+      "temp_max": 46,
+      "temp_water": 39,
+      "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
       "online": true,
@@ -6014,15 +6027,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 314.8,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 314.5,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 314.8,
+          "avg_hash_TH": 314.5,
           "earn_btc": 0,
           "days": 1
         },
@@ -6055,9 +6068,9 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 42,
-      "temp_water": 35,
-      "elapsed_hours": 0.0,
+      "temp_max": 47,
+      "temp_water": 38,
+      "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
       "online": true,
@@ -6264,15 +6277,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 313.2,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 312.9,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 313.2,
+          "avg_hash_TH": 312.9,
           "earn_btc": 0,
           "days": 1
         },
@@ -6303,11 +6316,11 @@
       "havuz_worker": "mehmetas.023",
       "actual_worker": "mehmetas.023",
       "hashrate_TH": 0.0,
-      "target_hashrate_TH": 136.0,
+      "target_hashrate_TH": 238.0,
       "efficiency_pct": 0.0,
-      "temp_max": 45,
-      "temp_water": 45,
-      "elapsed_hours": 0.0,
+      "temp_max": 51,
+      "temp_water": 47,
+      "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
       "online": true,
@@ -6514,15 +6527,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 296.8,
-          "uptime_pct": 99.0,
+          "avg_hash_TH": 296.5,
+          "uptime_pct": 98.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 296.8,
+          "avg_hash_TH": 296.5,
           "earn_btc": 0,
           "days": 1
         },
@@ -6555,9 +6568,9 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 42,
-      "temp_water": 35,
-      "elapsed_hours": 0.0,
+      "temp_max": 46,
+      "temp_water": 37,
+      "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
       "online": true,
@@ -6764,15 +6777,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 311.0,
-          "uptime_pct": 98.6,
+          "avg_hash_TH": 310.7,
+          "uptime_pct": 98.5,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 311.0,
+          "avg_hash_TH": 310.7,
           "earn_btc": 0,
           "days": 1
         },
@@ -6805,9 +6818,9 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 39,
-      "temp_water": 35,
-      "elapsed_hours": 0.0,
+      "temp_max": 42,
+      "temp_water": 38,
+      "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
       "online": true,
@@ -7014,15 +7027,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 310.9,
-          "uptime_pct": 98.4,
+          "avg_hash_TH": 310.6,
+          "uptime_pct": 98.3,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 310.9,
+          "avg_hash_TH": 310.6,
           "earn_btc": 0,
           "days": 1
         },
@@ -7055,9 +7068,9 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 42,
-      "temp_water": 35,
-      "elapsed_hours": 0.0,
+      "temp_max": 44,
+      "temp_water": 38,
+      "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
       "online": true,
@@ -7264,15 +7277,15 @@
         },
         {
           "date": "2026-07-01",
-          "avg_hash_TH": 314.8,
-          "uptime_pct": 98.5,
+          "avg_hash_TH": 314.5,
+          "uptime_pct": 98.4,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-07",
-          "avg_hash_TH": 314.8,
+          "avg_hash_TH": 314.5,
           "earn_btc": 0,
           "days": 1
         },
@@ -7470,7 +7483,7 @@
     },
     {
       "date": "2026-07-01",
-      "total_hash_TH": 9016.4,
+      "total_hash_TH": 9008.2,
       "total_earn_btc": 0,
       "online_avg": 28.7
     }
@@ -7478,7 +7491,7 @@
   "monthly_history": [
     {
       "month": "2026-07",
-      "avg_hash_TH": 9016.4,
+      "avg_hash_TH": 9008.2,
       "earn_btc": 0,
       "days": 1
     },
