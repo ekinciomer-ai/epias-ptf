@@ -4,10 +4,7 @@ import datetime
 import re
 
 app = Flask(__name__)
-# GUVENLIK: Oturum imzalama anahtari. Sabit deger guvenli degildir (bilen sahte
-# oturum cerezi uretip giris yapmadan girebilir). Railway/sunucuda SECRET_KEY
-# ortam degiskenine uzun-rastgele bir deger ata. Env yoksa eski deger kullanilir.
-app.secret_key = os.environ.get("SECRET_KEY") or "otocoin-ofis-2026"
+app.secret_key = "otocoin-ofis-2026"
 
 # === VERSIYON TAKIBI ===
 # Format: ver.AA.BB.CC
@@ -18,7 +15,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 74
+PANEL_VERSIYON_BUILD = 76
 
 def _panel_tarih():
     try:
@@ -102,14 +99,11 @@ def sistem_durum_hesapla():
     return durum
 
 
-# GUVENLIK: Sifreler ortam degiskeninden okunur. ZAYIF varsayilanlar (sifre =
-# kullanici adi) saldirgan icin kolay tahmin edilir. Railway/sunucuda ADMIN1_SIFRE,
-# ADMIN2_SIFRE, KULLANICI1_SIFRE, KULLANICI2_SIFRE degiskenlerine GUCLU sifreler ata.
 KULLANICILAR = {
-    "admin1":    {"sifre": hashlib.sha256((os.environ.get("ADMIN1_SIFRE") or "admin1").encode()).hexdigest(),         "rol": "yonetici"},
-    "admin2":    {"sifre": hashlib.sha256((os.environ.get("ADMIN2_SIFRE") or "admin2").encode()).hexdigest(),         "rol": "yonetici"},
-    "kullanici1":{"sifre": hashlib.sha256((os.environ.get("KULLANICI1_SIFRE") or "kullanici1").encode()).hexdigest(), "rol": "izleyici"},
-    "kullanici2":{"sifre": hashlib.sha256((os.environ.get("KULLANICI2_SIFRE") or "kullanici2").encode()).hexdigest(), "rol": "izleyici"},
+    "admin1":    {"sifre": hashlib.sha256("admin1".encode()).hexdigest(),    "rol": "yonetici"},
+    "admin2":    {"sifre": hashlib.sha256("admin2".encode()).hexdigest(),    "rol": "yonetici"},
+    "kullanici1":{"sifre": hashlib.sha256("kullanici1".encode()).hexdigest(),"rol": "izleyici"},
+    "kullanici2":{"sifre": hashlib.sha256("kullanici2".encode()).hexdigest(),"rol": "izleyici"},
 }
 
 GITHUB_RAW   = "https://raw.githubusercontent.com/ekinciomer-ai/epias-ptf/main"
@@ -1949,7 +1943,8 @@ function otoEksen(birim) {
       <option value="2026-03">Mart 2026</option>
       <option value="2026-04">Nisan 2026</option>
       <option value="2026-05">Mayıs 2026</option>
-      <option value="2026-06" selected>Haziran 2026</option>
+      <option value="2026-06">Haziran 2026</option>
+      <option value="2026-07" selected>Temmuz 2026</option>
     </select>
   </div>
 
@@ -1986,7 +1981,8 @@ function otoEksen(birim) {
       <option value="2026-03">Mart 2026</option>
       <option value="2026-04">Nisan 2026</option>
       <option value="2026-05">Mayis 2026</option>
-      <option value="2026-06" selected>Haziran 2026</option>
+      <option value="2026-06">Haziran 2026</option>
+      <option value="2026-07" selected>Temmuz 2026</option>
     </select>
   </div>
 
@@ -3706,6 +3702,10 @@ function ososYukle(btn){
                            : '<span style="color:#f87171;font-weight:700;">⚠ GitHub yazma başarısız: ' + (d.hata_git||'') + '</span>');
       var det = (d.notlar||[]).map(function(n){ return '· ' + n; }).join('<br>');
       snc.innerHTML = bas + '<br><span style="color:#64748b;">çarpan ×' + d.carpan + '</span><br>' + det;
+      if (d.yazildi){
+        snc.innerHTML += '<br><span style="color:#34d2eb;">↻ Panel yenileniyor…</span>';
+        setTimeout(function(){ location.reload(); }, 2500);
+      }
     })
     .catch(function(e){ snc.innerHTML = '<span style="color:#f87171;">Bağlantı hatası: ' + e + '</span>'; })
     .finally(function(){ btn.disabled = false; btn.textContent = '📤 Yükle'; });
@@ -8555,13 +8555,7 @@ def api_uretim_tuketim():
         ay = datetime.datetime.now().strftime("%Y-%m")
     if not gun:
         gun = datetime.datetime.now().strftime("%Y-%m-%d")
-
-    # GUVENLIK: Gelen tarih parametrelerinin formatini dogrula (gecersiz/zararli girdiyi reddet)
-    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", gun):
-        return jsonify({"hata": "gecersiz gun formati (YYYY-MM-DD bekleniyor)"}), 400
-    if not re.fullmatch(r"\d{4}-\d{2}", ay):
-        return jsonify({"hata": "gecersiz ay formati (YYYY-MM bekleniyor)"}), 400
-
+    
     # Veri kaynaklarini hazirla
     fusion = github_oku("fusion_data.json") or {}
     osos = github_oku("2026_osos_endeks.json") or {}
@@ -8575,10 +8569,7 @@ def api_uretim_tuketim():
         saatler_data = abone_veri.get(gun_str, {})
         def oku(h):
             d = saatler_data.get(f"{h:02d}") or saatler_data.get(str(h)) or {}
-            try:
-                return float(d.get(alan, 0))
-            except (TypeError, ValueError):
-                return 0.0
+            return float(d.get(alan, 0))
         return [oku(h) for h in range(24)]
     
     # ===== GUNLUK DETAY (saatlik tablo icin) =====
