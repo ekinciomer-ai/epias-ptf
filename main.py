@@ -399,16 +399,29 @@ hedef_ay = hedef_tarih[:7]   # "2026-05"
 hedef_gun = hedef_tarih[8:10]  # "14"
 
 ayptf, ayptf_sha = dosya_oku("aylik_ptf.json")
-if not ayptf:
-    ayptf = {}
-if hedef_ay not in ayptf:
-    ayptf[hedef_ay] = {}
 
-# Saatlik fiyatlari TL/MWh formatinda yaz (EPiAS'dan geldigi gibi)
-ayptf[hedef_ay][hedef_gun] = [round(item["price"], 2) for item in items]
+# *** GUVENLIK KILIDI: gecmis veriyi asla ezme ***
+# Okuma basarisiz (None) ise ya da beklenmedik tip ise YAZMA.
+# Bos dict sadece ilk kurulumda olur; dosya zaten aylardir var, bos gelirse okuma hatasidir.
+_ptf_yaz = True
+if ayptf is None or not isinstance(ayptf, dict):
+    print("[GUVENLIK] aylik_ptf.json okunamadi (None/gecersiz) - gecmisi korumak icin YAZILMIYOR")
+    _ptf_yaz = False
+else:
+    _onceki_gun = sum(len(v) for v in ayptf.values() if isinstance(v, dict))
+    if hedef_ay not in ayptf:
+        ayptf[hedef_ay] = {}
+    # Saatlik fiyatlari TL/MWh formatinda yaz (EPiAS'dan geldigi gibi)
+    ayptf[hedef_ay][hedef_gun] = [round(item["price"], 2) for item in items]
+    _yeni_gun = sum(len(v) for v in ayptf.values() if isinstance(v, dict))
+    # Normalde sadece gun EKLENIR (yeni >= onceki). Dususe geciyorsa okuma bozuk demektir.
+    if _onceki_gun >= 10 and _yeni_gun < _onceki_gun:
+        print(f"[GUVENLIK] gun sayisi {_onceki_gun}->{_yeni_gun} DUSUYOR - YAZILMIYOR")
+        _ptf_yaz = False
 
-dosya_yaz("aylik_ptf.json", ayptf, ayptf_sha)
-print(f"aylik_ptf.json guncellendi: {hedef_ay}/{hedef_gun}")
+if _ptf_yaz:
+    dosya_yaz("aylik_ptf.json", ayptf, ayptf_sha)
+    print(f"aylik_ptf.json guncellendi: {hedef_ay}/{hedef_gun} ({_yeni_gun} gun)")
 
 # son_gonderim.json - HEDEF TARIH'i sakla (bugun degil)
 dosya_yaz("son_gonderim.json", {
