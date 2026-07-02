@@ -15,7 +15,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 79
+PANEL_VERSIYON_BUILD = 80
 
 def _panel_tarih():
     try:
@@ -6196,59 +6196,68 @@ let fatAktifAbone = 'A3';
 
 // ============================================================
 // BEDELLI SATIS - ay ay bedelli (mahsup sonrasi satilan fazla uretim)
-// Satis tarifesi ve sistem kullanim bedeli AYRI gosterilir:
-//   Tarife (satis)   = FAT_SANAYI_AKTIF = 2,909687 TL/kWh
-//   Sistem kullanim  = FAT_URETIM_SKB   = 0,656008 TL/kWh
-//   Net birim        = 2,909687 - 0,656008 = 2,253679 TL/kWh
+// Tarife + sistem kullanim DONEM BAZLI degisir:
+//   Nisandan once (2026-01..03): tarife 2,97   / sistem kullanim 0,49   → net 2,48
+//   Nisan ve sonrasi (2026-04+): tarife 2,909687 / sistem kullanim 0,656008 → net 2,253679
 // ============================================================
+function bedelliTarifeAl(ay) {
+  if (ay < '2026-04') return { tarife: 2.97, sistemKul: 0.49 };
+  return { tarife: FAT_SANAYI_AKTIF, sistemKul: FAT_URETIM_SKB };
+}
+
 function bedelliSatisRender(cont) {
   if (!mhsData || Object.keys(mhsData).length === 0) {
     cont.innerHTML = '<div style="padding:30px;text-align:center;color:#94a3b8;font-size:12px;">Veri yükleniyor…</div>';
     return;
   }
-  const tarife = FAT_SANAYI_AKTIF;      // 2,909687
-  const sistemKul = FAT_URETIM_SKB;     // 0,656008
-  const netBirim = tarife - sistemKul;  // 2,253679
   const aylar = Object.keys(mhsData).sort();
   let rows = '', topKwh = 0, topSatis = 0, topSkb = 0, topNet = 0;
   aylar.forEach(function(ay){
+    const t = bedelliTarifeAl(ay);
+    const netBirim = t.tarife - t.sistemKul;
     const b = (mhsData[ay] && mhsData[ay].bedelli) || 0;
-    const satis = b * tarife;
-    const skb = b * sistemKul;
+    const satis = b * t.tarife;
+    const skb = b * t.sistemKul;
     const net = b * netBirim;
     topKwh += b; topSatis += satis; topSkb += skb; topNet += net;
     const ayNo = parseInt(ay.slice(5), 10);
     const ayAd = (MHS_AY_ISIM[ayNo - 1] || ay) + ' ' + ay.slice(0, 4);
     rows += '<tr>'
-      + '<td style="padding:11px 14px;font-weight:800;color:#1e293b;border-bottom:1px solid #f1f5f9;">' + ayAd + '</td>'
-      + '<td style="padding:11px 14px;text-align:right;font-weight:800;color:#16a34a;border-bottom:1px solid #f1f5f9;">' + fatFmt(b, 2) + '</td>'
-      + '<td style="padding:11px 14px;text-align:right;font-weight:800;color:#15803d;border-bottom:1px solid #f1f5f9;">' + fatFmt(satis, 2) + '</td>'
-      + '<td style="padding:11px 14px;text-align:right;font-weight:700;color:#dc2626;border-bottom:1px solid #f1f5f9;">−' + fatFmt(skb, 2) + '</td>'
-      + '<td style="padding:11px 14px;text-align:right;font-weight:900;color:#0f172a;border-bottom:1px solid #f1f5f9;">' + fatFmt(net, 2) + '</td>'
+      + '<td style="padding:10px 12px;font-weight:800;color:#1e293b;border-bottom:1px solid #f1f5f9;">' + ayAd + '</td>'
+      + '<td style="padding:10px 12px;text-align:right;font-weight:800;color:#16a34a;border-bottom:1px solid #f1f5f9;">' + fatFmt(b, 2) + '</td>'
+      + '<td style="padding:10px 12px;text-align:right;font-weight:700;color:#64748b;border-bottom:1px solid #f1f5f9;">' + fatFmt(t.tarife, 4) + '</td>'
+      + '<td style="padding:10px 12px;text-align:right;font-weight:800;color:#15803d;border-bottom:1px solid #f1f5f9;">' + fatFmt(satis, 2) + '</td>'
+      + '<td style="padding:10px 12px;text-align:right;font-weight:700;color:#94a3b8;border-bottom:1px solid #f1f5f9;">' + fatFmt(t.sistemKul, 4) + '</td>'
+      + '<td style="padding:10px 12px;text-align:right;font-weight:700;color:#dc2626;border-bottom:1px solid #f1f5f9;">−' + fatFmt(skb, 2) + '</td>'
+      + '<td style="padding:10px 12px;text-align:right;font-weight:900;color:#0f172a;border-bottom:1px solid #f1f5f9;">' + fatFmt(net, 2) + '</td>'
       + '</tr>';
   });
   cont.innerHTML =
     '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;overflow:hidden;">'
     + '<div style="padding:14px 16px;border-bottom:1px solid #e2e8f0;">'
     +   '<div style="font-size:15px;font-weight:900;color:#15803d;">💰 Bedelli Satış — Aylık</div>'
-    +   '<div style="font-size:11px;color:#64748b;margin-top:2px;">Satış tarifesi ' + fatFmt(tarife, 4) + ' − Sistem kullanım ' + fatFmt(sistemKul, 4) + ' = Net ' + fatFmt(netBirim, 4) + ' TL/kWh</div>'
+    +   '<div style="font-size:11px;color:#64748b;margin-top:2px;">Nisandan önce: tarife 2,97 · sistem kul. 0,49 &nbsp;|&nbsp; Nisan ve sonrası: tarife 2,909687 · sistem kul. 0,656008</div>'
     + '</div>'
-    + '<table style="width:100%;border-collapse:collapse;font-size:12px;">'
-    + '<thead><tr style="background:#f8fafc;color:#64748b;font-size:10px;letter-spacing:.03em;">'
-    +   '<th style="padding:9px 14px;text-align:left;">AY</th>'
-    +   '<th style="padding:9px 14px;text-align:right;">BEDELLİ (kWh)</th>'
-    +   '<th style="padding:9px 14px;text-align:right;">SATIŞ (× ' + fatFmt(tarife, 2) + ')</th>'
-    +   '<th style="padding:9px 14px;text-align:right;">SİSTEM KUL. (× ' + fatFmt(sistemKul, 2) + ')</th>'
-    +   '<th style="padding:9px 14px;text-align:right;">NET GELİR (TL)</th>'
+    + '<table style="width:100%;border-collapse:collapse;font-size:11px;">'
+    + '<thead><tr style="background:#f8fafc;color:#64748b;font-size:9px;letter-spacing:.02em;">'
+    +   '<th style="padding:9px 12px;text-align:left;">AY</th>'
+    +   '<th style="padding:9px 12px;text-align:right;">BEDELLİ (kWh)</th>'
+    +   '<th style="padding:9px 12px;text-align:right;">TARİFE (TL/kWh)</th>'
+    +   '<th style="padding:9px 12px;text-align:right;">SATIŞ (TL)</th>'
+    +   '<th style="padding:9px 12px;text-align:right;">SİS.KUL (TL/kWh)</th>'
+    +   '<th style="padding:9px 12px;text-align:right;">KESİNTİ (TL)</th>'
+    +   '<th style="padding:9px 12px;text-align:right;">NET GELİR (TL)</th>'
     + '</tr></thead><tbody>' + rows + '</tbody>'
     + '<tfoot><tr style="background:#f1f5f9;border-top:2px solid #cbd5e1;">'
-    +   '<td style="padding:12px 14px;font-weight:900;color:#0f172a;">TOPLAM</td>'
-    +   '<td style="padding:12px 14px;text-align:right;font-weight:900;color:#16a34a;">' + fatFmt(topKwh, 2) + '</td>'
-    +   '<td style="padding:12px 14px;text-align:right;font-weight:900;color:#15803d;">' + fatFmt(topSatis, 2) + '</td>'
-    +   '<td style="padding:12px 14px;text-align:right;font-weight:800;color:#dc2626;">−' + fatFmt(topSkb, 2) + '</td>'
-    +   '<td style="padding:12px 14px;text-align:right;font-weight:900;color:#0f172a;">' + fatFmt(topNet, 2) + '</td>'
+    +   '<td style="padding:12px 12px;font-weight:900;color:#0f172a;">TOPLAM</td>'
+    +   '<td style="padding:12px 12px;text-align:right;font-weight:900;color:#16a34a;">' + fatFmt(topKwh, 2) + '</td>'
+    +   '<td style="padding:12px 12px;text-align:right;color:#94a3b8;">—</td>'
+    +   '<td style="padding:12px 12px;text-align:right;font-weight:900;color:#15803d;">' + fatFmt(topSatis, 2) + '</td>'
+    +   '<td style="padding:12px 12px;text-align:right;color:#94a3b8;">—</td>'
+    +   '<td style="padding:12px 12px;text-align:right;font-weight:800;color:#dc2626;">−' + fatFmt(topSkb, 2) + '</td>'
+    +   '<td style="padding:12px 12px;text-align:right;font-weight:900;color:#0f172a;">' + fatFmt(topNet, 2) + '</td>'
     + '</tr></tfoot></table>'
-    + '<div style="padding:10px 16px;font-size:10px;color:#94a3b8;border-top:1px solid #e2e8f0;">Tarife 2,909687 · Sistem kullanım 0,656008 · Net 2,253679 TL/kWh. Sistem kullanım bedeli burada bedelli miktarı üzerinden gösterildi.</div>'
+    + '<div style="padding:10px 16px;font-size:10px;color:#94a3b8;border-top:1px solid #e2e8f0;">NET = (tarife − sistem kullanım) × bedelli. Sistem kullanım bedeli burada bedelli miktarı üzerinden gösterildi.</div>'
     + '</div>';
 }
 
