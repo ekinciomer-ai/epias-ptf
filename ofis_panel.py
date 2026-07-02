@@ -15,7 +15,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 77
+PANEL_VERSIYON_BUILD = 78
 
 def _panel_tarih():
     try:
@@ -572,6 +572,7 @@ body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Int
 .fat-subtab.aktif.t1{border-color:#d97706;background:linear-gradient(135deg,rgba(217,119,6,0.1),rgba(245,158,11,0.05));color:#b45309;}
 .fat-subtab.aktif.t2{border-color:#2563eb;background:linear-gradient(135deg,rgba(37,99,235,0.1),rgba(96,165,250,0.05));color:#1d4ed8;}
 .fat-subtab.aktif.a3{border-color:#dc2626;background:linear-gradient(135deg,rgba(220,38,38,0.1),rgba(248,113,113,0.05));color:#b91c1c;}
+.fat-subtab.aktif.bedelli{border-color:#16a34a;background:linear-gradient(135deg,rgba(22,163,74,0.12),rgba(74,222,128,0.06));color:#15803d;}
 .fat-abone-kart{background:#ffffff;border:1px solid #e2e8f0;border-radius:18px;padding:16px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
 .fat-abone-kart.ty1{border-left:4px solid #d97706;}
 .fat-abone-kart.ty2{border-left:4px solid #2563eb;}
@@ -1968,6 +1969,7 @@ function otoEksen(birim) {
     <div class="fat-subtab t1" id="fst-T1" onclick="fatAboneSec('T1')">☀️ TEKYILDIZ 1</div>
     <div class="fat-subtab t2" id="fst-T2" onclick="fatAboneSec('T2')">⚡ TEKYILDIZ 2</div>
     <div class="fat-subtab a3 aktif" id="fst-A3" onclick="fatAboneSec('A3')">🏭 AKSARAY 3</div>
+    <div class="fat-subtab bedelli" id="fst-BEDELLI" onclick="fatAboneSec('BEDELLI')">💰 BEDELLİ SATIŞ</div>
   </div>
 
   <div id="fat-kartlar"><div style="padding:30px; text-align:center; color:#64748b; font-size:12px;">Yükleniyor...</div></div>
@@ -6191,6 +6193,66 @@ function mhsTabloRender() {
 // ====================== FATURALANDIRMA SEKMESI ======================
 // Aktif abone alt sekmesi (T1/T2/A3) - varsayilan A3
 let fatAktifAbone = 'A3';
+
+// ============================================================
+// BEDELLI SATIS - ay ay bedelli (mahsup sonrasi satilan fazla uretim) + o ayin tarife satis fiyati
+// NOT: Fiyatlar varsayilan 2,2537 TL/kWh. Aylik gercek tarife verilince buradan degistir.
+// ============================================================
+const BEDELLI_TARIFE_VAR = 2.2537; // tanimsiz ay icin varsayilan
+const BEDELLI_TARIFE = {
+  '2026-01': 2.2537,
+  '2026-02': 2.2537,
+  '2026-03': 2.2537,
+  '2026-04': 2.2537,
+  '2026-05': 2.2537,
+  '2026-06': 2.2537,
+  '2026-07': 2.2537
+};
+
+function bedelliSatisRender(cont) {
+  if (!mhsData || Object.keys(mhsData).length === 0) {
+    cont.innerHTML = '<div style="padding:30px;text-align:center;color:#94a3b8;font-size:12px;">Veri yükleniyor…</div>';
+    return;
+  }
+  const aylar = Object.keys(mhsData).sort();
+  let rows = '', topKwh = 0, topGelir = 0;
+  aylar.forEach(function(ay){
+    const b = (mhsData[ay] && mhsData[ay].bedelli) || 0;
+    const fiyat = (BEDELLI_TARIFE[ay] != null) ? BEDELLI_TARIFE[ay] : BEDELLI_TARIFE_VAR;
+    const gelir = b * fiyat;
+    topKwh += b; topGelir += gelir;
+    const ayNo = parseInt(ay.slice(5), 10);
+    const ayAd = (MHS_AY_ISIM[ayNo - 1] || ay) + ' ' + ay.slice(0, 4);
+    rows += '<tr>'
+      + '<td style="padding:11px 14px;font-weight:800;color:#1e293b;border-bottom:1px solid #f1f5f9;">' + ayAd + '</td>'
+      + '<td style="padding:11px 14px;text-align:right;font-weight:800;color:#16a34a;border-bottom:1px solid #f1f5f9;">' + fatFmt(b, 2) + '</td>'
+      + '<td style="padding:11px 14px;text-align:right;font-weight:700;color:#334155;border-bottom:1px solid #f1f5f9;">' + fatFmt(fiyat, 4) + '</td>'
+      + '<td style="padding:11px 14px;text-align:right;font-weight:900;color:#15803d;border-bottom:1px solid #f1f5f9;">' + fatFmt(gelir, 2) + '</td>'
+      + '</tr>';
+  });
+  cont.innerHTML =
+    '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;overflow:hidden;">'
+    + '<div style="padding:14px 16px;border-bottom:1px solid #e2e8f0;">'
+    +   '<div style="font-size:15px;font-weight:900;color:#15803d;">💰 Bedelli Satış — Aylık</div>'
+    +   '<div style="font-size:11px;color:#64748b;margin-top:2px;">Mahsup sonrası şebekeye satılan fazla üretim × o ayın tarife satış fiyatı</div>'
+    + '</div>'
+    + '<table style="width:100%;border-collapse:collapse;font-size:12px;">'
+    + '<thead><tr style="background:#f8fafc;color:#64748b;font-size:10px;letter-spacing:.04em;">'
+    +   '<th style="padding:9px 14px;text-align:left;">AY</th>'
+    +   '<th style="padding:9px 14px;text-align:right;">BEDELLİ (kWh)</th>'
+    +   '<th style="padding:9px 14px;text-align:right;">SATIŞ FİYATI (TL/kWh)</th>'
+    +   '<th style="padding:9px 14px;text-align:right;">GELİR (TL)</th>'
+    + '</tr></thead><tbody>' + rows + '</tbody>'
+    + '<tfoot><tr style="background:#f1f5f9;border-top:2px solid #cbd5e1;">'
+    +   '<td style="padding:12px 14px;font-weight:900;color:#0f172a;">TOPLAM</td>'
+    +   '<td style="padding:12px 14px;text-align:right;font-weight:900;color:#16a34a;">' + fatFmt(topKwh, 2) + '</td>'
+    +   '<td style="padding:12px 14px;text-align:right;color:#94a3b8;">—</td>'
+    +   '<td style="padding:12px 14px;text-align:right;font-weight:900;color:#15803d;">' + fatFmt(topGelir, 2) + '</td>'
+    + '</tr></tfoot></table>'
+    + '<div style="padding:10px 16px;font-size:10px;color:#94a3b8;border-top:1px solid #e2e8f0;">Satış fiyatı varsayılan 2,2537 TL/kWh alındı. Ayların gerçek tarife fiyatını verirsen güncellerim.</div>'
+    + '</div>';
+}
+
 // YEKDEM aylik bedelleri EPIAS_YEKDEM sozlugunden okunur (EPİAŞ sekmesi).
 // Karar mantigi (yekdemHesapla fonksiyonunda):
 //  - Gerceklesme varsa -> kesin (yesil)
@@ -6284,6 +6346,15 @@ function faturaRender() {
   const A = (mhsData || {})[ay];
   const cont = document.getElementById('fat-kartlar');
   if (!cont) return;
+
+  // Alt sekme aktif durumlari (BEDELLI dahil)
+  ['T1','T2','A3','BEDELLI'].forEach(function(k){
+    var el = document.getElementById('fst-' + k);
+    if (el) el.classList.toggle('aktif', k === fatAktifAbone);
+  });
+
+  // BEDELLI SATIS gorunumu - ay secicisinden bagimsiz, tum aylar
+  if (fatAktifAbone === 'BEDELLI') { bedelliSatisRender(cont); return; }
 
   // YEKDEM bilgi bar'ini guncelle
   const yekdemEl = document.getElementById('fat-yekdem-bilgi');
