@@ -15,7 +15,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 76
+PANEL_VERSIYON_BUILD = 77
 
 def _panel_tarih():
     try:
@@ -105,6 +105,14 @@ KULLANICILAR = {
     "kullanici1":{"sifre": hashlib.sha256("kullanici1".encode()).hexdigest(),"rol": "izleyici"},
     "kullanici2":{"sifre": hashlib.sha256("kullanici2".encode()).hexdigest(),"rol": "izleyici"},
 }
+
+# *** GIRIS SIFRESI KALDIRILDI: oturum yoksa otomatik yonetici olarak giris yap ***
+# Giris sayfasi artik hic gorunmez; sifre sorulmaz. Geri almak icin bu blogu sil.
+@app.before_request
+def _otomatik_giris():
+    if "kullanici" not in session:
+        session["kullanici"] = "admin1"
+        session["rol"] = "yonetici"
 
 GITHUB_RAW   = "https://raw.githubusercontent.com/ekinciomer-ai/epias-ptf/main"
 GITHUB_REPO  = "ekinciomer-ai/epias-ptf"
@@ -7705,7 +7713,7 @@ def giris():
 @app.route("/cikis")
 def cikis():
     session.clear()
-    return redirect("/giris")
+    return redirect("/")
 
 @app.route("/api/osos")
 def osos():
