@@ -15,7 +15,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.1"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 81
+PANEL_VERSIYON_BUILD = 82
 
 def _panel_tarih():
     try:
@@ -2267,7 +2267,7 @@ const EPIAS_YEKDEM = {
   '2026-03': {ongoru: 747.797, gercek: 747.398},
   '2026-04': {ongoru: 574.54,  gercek: 1038.343},
   '2026-05': {ongoru: 602.51,  gercek: 1306.10},
-  '2026-06': {ongoru: 580.99,  gercek: null},
+  '2026-06': {ongoru: 580.99,  gercek: 1083.629},
   // 07-12 ongoru: EPDK 02/07/2026 tarih 14718 sayili Kurul Karari ile revize (RG 04.07.2026)
   // (Onceki ongoru: 07=189.15, 08=213.89)
   '2026-07': {ongoru: 423.99,  gercek: null},
