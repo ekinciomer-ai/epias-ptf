@@ -1,16 +1,16 @@
 {
-  "timestamp": "2026-07-29T16:50:36.549734",
+  "timestamp": "2026-07-29T16:52:09.727362",
   "source": "Tek Yildiz 2 GES - Saha PC",
   "summary": {
     "total": 29,
     "online": 27,
     "sleeping": 0,
     "offline": 2,
-    "total_hashrate_TH": 8515.87,
+    "total_hashrate_TH": 8515.8,
     "total_target_TH": 8260.0,
     "efficiency_pct": 103.1,
-    "avg_temp_C": 64.8,
-    "avg_water_temp_C": 56.7,
+    "avg_temp_C": 65.6,
+    "avg_water_temp_C": 56.9,
     "models": {
       "?": 2,
       "S19e XP Hyd": 1,
@@ -20,8 +20,8 @@
     "f2pool": {
       "enabled": true,
       "total_workers": 1,
-      "matched_devices": 17,
-      "unmatched_devices": 12
+      "matched_devices": 2,
+      "unmatched_devices": 27
     },
     "earnings": {
       "today_btc": 0.0,
@@ -47,70 +47,6 @@
       "ip": "192.168.0.100",
       "suffix": 100,
       "name": "Miner-100",
-      "model": "?",
-      "mac": null,
-      "serial": null,
-      "saha_worker": null,
-      "havuz_worker": null,
-      "actual_worker": null,
-      "hashrate_TH": null,
-      "target_hashrate_TH": null,
-      "efficiency_pct": null,
-      "temp_max": null,
-      "temp_water": null,
-      "elapsed_hours": null,
-      "fan_avg_rpm": null,
-      "status": "TIMEOUT",
-      "online": false,
-      "sleeping": false,
-      "is_hydro": null,
-      "accepted": null,
-      "rejected": null,
-      "hw_errors_total": null,
-      "f2pool_name": null,
-      "f2pool_hashrate_TH": 0.0,
-      "f2pool_h1_TH": 0.0,
-      "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1785332875,
-      "f2pool_state": null,
-      "f2pool_matched": true,
-      "hashrate_diff_pct": null,
-      "earn_today_btc": null,
-      "earn_yesterday_btc": null,
-      "earn_7d_btc": null,
-      "earn_total_btc": null,
-      "earn_today_usd": null,
-      "earn_yesterday_usd": null,
-      "earn_7d_usd": null,
-      "earn_total_usd": null,
-      "earn_today_try": null,
-      "earn_yesterday_try": null,
-      "earn_7d_try": null,
-      "earn_total_try": null,
-      "health_issues": [
-        {
-          "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
-          "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
-          ]
-        }
-      ],
-      "daily_history": [],
-      "monthly_history": [],
-      "label": null,
-      "physical_location": null
-    },
-    {
-      "ip": "192.168.0.101",
-      "suffix": 101,
-      "name": "Miner-101",
       "model": "?",
       "mac": null,
       "serial": null,
@@ -172,15 +108,79 @@
       "physical_location": null
     },
     {
-      "ip": "192.168.0.102",
-      "suffix": 102,
-      "name": "S19e XP Hyd-102",
-      "model": "S19e XP Hyd",
+      "ip": "192.168.0.101",
+      "suffix": 101,
+      "name": "Miner-101",
+      "model": "?",
       "mac": null,
       "serial": null,
       "saha_worker": null,
       "havuz_worker": null,
       "actual_worker": null,
+      "hashrate_TH": null,
+      "target_hashrate_TH": null,
+      "efficiency_pct": null,
+      "temp_max": null,
+      "temp_water": null,
+      "elapsed_hours": null,
+      "fan_avg_rpm": null,
+      "status": "TIMEOUT",
+      "online": false,
+      "sleeping": false,
+      "is_hydro": null,
+      "accepted": null,
+      "rejected": null,
+      "hw_errors_total": null,
+      "f2pool_name": null,
+      "f2pool_hashrate_TH": 0.0,
+      "f2pool_h1_TH": 0.0,
+      "f2pool_h24_TH": 0.0,
+      "f2pool_last_share": 1785332875,
+      "f2pool_state": null,
+      "f2pool_matched": true,
+      "hashrate_diff_pct": null,
+      "earn_today_btc": null,
+      "earn_yesterday_btc": null,
+      "earn_7d_btc": null,
+      "earn_total_btc": null,
+      "earn_today_usd": null,
+      "earn_yesterday_usd": null,
+      "earn_7d_usd": null,
+      "earn_total_usd": null,
+      "earn_today_try": null,
+      "earn_yesterday_try": null,
+      "earn_7d_try": null,
+      "earn_total_try": null,
+      "health_issues": [
+        {
+          "severity": "high",
+          "code": "TIMEOUT",
+          "icon": "⏱",
+          "title": "Cevap Vermiyor (Timeout)",
+          "reason": "Network gecikmesi veya cihaz dondu",
+          "solutions": [
+            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
+            "Network kablosunu kontrol et",
+            "Switch portunun LED'i yaniyor mu bak",
+            "Ayni switche bagli diger cihazlari kontrol et"
+          ]
+        }
+      ],
+      "daily_history": [],
+      "monthly_history": [],
+      "label": null,
+      "physical_location": null
+    },
+    {
+      "ip": "192.168.0.102",
+      "suffix": 102,
+      "name": "S19e XP Hyd-102",
+      "model": "S19e XP Hyd",
+      "mac": "EC:84:39:2D:17:25",
+      "serial": "OLTTFLUBEAAAD04BY",
+      "saha_worker": "saha.1725",
+      "havuz_worker": "mehmetas.027",
+      "actual_worker": "mehmetas.027",
       "hashrate_TH": 254.2,
       "target_hashrate_TH": 251.0,
       "efficiency_pct": 101.3,
@@ -192,16 +192,16 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1650,
+      "accepted": 1655,
       "rejected": 1,
-      "hw_errors_total": 1635,
+      "hw_errors_total": 1648,
       "f2pool_name": null,
-      "f2pool_hashrate_TH": 0.0,
-      "f2pool_h1_TH": 0.0,
-      "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1785332875,
+      "f2pool_hashrate_TH": null,
+      "f2pool_h1_TH": null,
+      "f2pool_h24_TH": null,
+      "f2pool_last_share": null,
       "f2pool_state": null,
-      "f2pool_matched": true,
+      "f2pool_matched": false,
       "hashrate_diff_pct": null,
       "earn_today_btc": null,
       "earn_yesterday_btc": null,
@@ -232,7 +232,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (1635)",
+          "title": "Yuksek Donanim Hatasi (1648)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -241,8 +241,208 @@
           ]
         }
       ],
-      "daily_history": [],
-      "monthly_history": [],
+      "daily_history": [
+        {
+          "date": "2026-06-30",
+          "avg_hash_TH": 251.8,
+          "uptime_pct": 99.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-01",
+          "avg_hash_TH": 249.8,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-02",
+          "avg_hash_TH": 250.0,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-03",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-04",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-05",
+          "avg_hash_TH": 251.6,
+          "uptime_pct": 99.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-06",
+          "avg_hash_TH": 243.4,
+          "uptime_pct": 97.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-07",
+          "avg_hash_TH": 248.9,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-08",
+          "avg_hash_TH": 225.4,
+          "uptime_pct": 96.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-09",
+          "avg_hash_TH": 246.8,
+          "uptime_pct": 98.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-10",
+          "avg_hash_TH": 247.3,
+          "uptime_pct": 98.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-11",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-12",
+          "avg_hash_TH": 251.0,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-13",
+          "avg_hash_TH": 250.6,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-14",
+          "avg_hash_TH": 249.0,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-15",
+          "avg_hash_TH": 251.4,
+          "uptime_pct": 99.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-16",
+          "avg_hash_TH": 251.1,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-17",
+          "avg_hash_TH": 249.6,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-18",
+          "avg_hash_TH": 251.6,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-19",
+          "avg_hash_TH": 251.0,
+          "uptime_pct": 99.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-20",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-21",
+          "avg_hash_TH": 0.0,
+          "uptime_pct": 100.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-22",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-23",
+          "avg_hash_TH": 249.5,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-24",
+          "avg_hash_TH": 239.1,
+          "uptime_pct": 96.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-25",
+          "avg_hash_TH": 251.9,
+          "uptime_pct": 99.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-26",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-27",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-28",
+          "avg_hash_TH": 251.1,
+          "uptime_pct": 99.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-29",
+          "avg_hash_TH": 251.8,
+          "uptime_pct": 99.6,
+          "earn_btc": 0
+        }
+      ],
+      "monthly_history": [
+        {
+          "month": "2026-07",
+          "avg_hash_TH": 236.9,
+          "earn_btc": 0,
+          "days": 22
+        },
+        {
+          "month": "2026-06",
+          "avg_hash_TH": 250.7,
+          "earn_btc": 0,
+          "days": 30
+        },
+        {
+          "month": "2026-05",
+          "avg_hash_TH": 251.5,
+          "earn_btc": 0,
+          "days": 17
+        }
+      ],
       "label": null,
       "physical_location": null
     },
@@ -267,9 +467,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1588,
+      "accepted": 1590,
       "rejected": 1,
-      "hw_errors_total": 314,
+      "hw_errors_total": 322,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -509,17 +709,17 @@
       "hashrate_TH": 321.8,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.8,
-      "temp_max": 64,
-      "temp_water": 55,
+      "temp_max": 65,
+      "temp_water": 56,
       "elapsed_hours": 10.9,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1601,
+      "accepted": 1602,
       "rejected": 0,
-      "hw_errors_total": 35792,
+      "hw_errors_total": 35860,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -542,10 +742,22 @@
       "earn_total_try": null,
       "health_issues": [
         {
+          "severity": "high",
+          "code": "WATER_HOT",
+          "icon": "💧",
+          "title": "Su Sicakligi Yuksek (56°C)",
+          "reason": "Soguma sistemi yetersiz",
+          "solutions": [
+            "Radyatoru kontrol et (toz, tikanma)",
+            "Dis fan calisiyor mu?",
+            "Dis ortam sicakligi cok yuksek olabilir"
+          ]
+        },
+        {
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (35792)",
+          "title": "Yuksek Donanim Hatasi (35860)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -731,7 +943,7 @@
         },
         {
           "date": "2026-07-29",
-          "avg_hash_TH": 317.9,
+          "avg_hash_TH": 317.5,
           "uptime_pct": 99.1,
           "earn_btc": 0
         }
@@ -764,15 +976,15 @@
       "suffix": 105,
       "name": "S21e Hyd-105",
       "model": "S21e Hyd",
-      "mac": null,
-      "serial": null,
-      "saha_worker": null,
-      "havuz_worker": null,
-      "actual_worker": null,
+      "mac": "F4:C7:5A:FE:7F:A4",
+      "serial": "PIEMGBUBEJEBF01A0",
+      "saha_worker": "saha.7FA4",
+      "havuz_worker": "mehmetas.019",
+      "actual_worker": "mehmetas.019",
       "hashrate_TH": 320.36,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.3,
-      "temp_max": 61,
+      "temp_max": 62,
       "temp_water": 55,
       "elapsed_hours": 10.9,
       "fan_avg_rpm": 0,
@@ -780,16 +992,16 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1575,
+      "accepted": 1577,
       "rejected": 1,
       "hw_errors_total": 340,
       "f2pool_name": null,
-      "f2pool_hashrate_TH": 0.0,
-      "f2pool_h1_TH": 0.0,
-      "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1785332875,
+      "f2pool_hashrate_TH": null,
+      "f2pool_h1_TH": null,
+      "f2pool_h24_TH": null,
+      "f2pool_last_share": null,
       "f2pool_state": null,
-      "f2pool_matched": true,
+      "f2pool_matched": false,
       "hashrate_diff_pct": null,
       "earn_today_btc": null,
       "earn_yesterday_btc": null,
@@ -804,8 +1016,208 @@
       "earn_7d_try": null,
       "earn_total_try": null,
       "health_issues": [],
-      "daily_history": [],
-      "monthly_history": [],
+      "daily_history": [
+        {
+          "date": "2026-06-30",
+          "avg_hash_TH": 319.1,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-01",
+          "avg_hash_TH": 315.2,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-02",
+          "avg_hash_TH": 316.4,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-03",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-04",
+          "avg_hash_TH": 225.1,
+          "uptime_pct": 97.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-05",
+          "avg_hash_TH": 317.9,
+          "uptime_pct": 99.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-06",
+          "avg_hash_TH": 296.3,
+          "uptime_pct": 95.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-07",
+          "avg_hash_TH": 313.3,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-08",
+          "avg_hash_TH": 298.4,
+          "uptime_pct": 96.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-09",
+          "avg_hash_TH": 253.4,
+          "uptime_pct": 79.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-10",
+          "avg_hash_TH": 183.9,
+          "uptime_pct": 58.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-11",
+          "avg_hash_TH": 316.6,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-12",
+          "avg_hash_TH": 316.1,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-13",
+          "avg_hash_TH": 315.7,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-14",
+          "avg_hash_TH": 8.5,
+          "uptime_pct": 74.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-15",
+          "avg_hash_TH": 316.8,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-16",
+          "avg_hash_TH": 314.1,
+          "uptime_pct": 98.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-17",
+          "avg_hash_TH": 313.1,
+          "uptime_pct": 98.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-18",
+          "avg_hash_TH": 274.7,
+          "uptime_pct": 85.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-19",
+          "avg_hash_TH": 315.5,
+          "uptime_pct": 98.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-20",
+          "avg_hash_TH": 315.7,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-21",
+          "avg_hash_TH": 315.2,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-22",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-23",
+          "avg_hash_TH": 307.0,
+          "uptime_pct": 97.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-24",
+          "avg_hash_TH": 300.8,
+          "uptime_pct": 95.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-25",
+          "avg_hash_TH": 302.8,
+          "uptime_pct": 98.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-26",
+          "avg_hash_TH": 308.8,
+          "uptime_pct": 97.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-27",
+          "avg_hash_TH": 316.1,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-28",
+          "avg_hash_TH": 317.3,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-29",
+          "avg_hash_TH": 316.7,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        }
+      ],
+      "monthly_history": [
+        {
+          "month": "2026-07",
+          "avg_hash_TH": 289.3,
+          "earn_btc": 0,
+          "days": 27
+        },
+        {
+          "month": "2026-06",
+          "avg_hash_TH": 309.6,
+          "earn_btc": 0,
+          "days": 30
+        },
+        {
+          "month": "2026-05",
+          "avg_hash_TH": 305.6,
+          "earn_btc": 0,
+          "days": 17
+        }
+      ],
       "label": null,
       "physical_location": null
     },
@@ -822,7 +1234,7 @@
       "hashrate_TH": 321.53,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.7,
-      "temp_max": 63,
+      "temp_max": 64,
       "temp_water": 54,
       "elapsed_hours": 10.9,
       "fan_avg_rpm": 0,
@@ -830,9 +1242,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1554,
+      "accepted": 1560,
       "rejected": 0,
-      "hw_errors_total": 370,
+      "hw_errors_total": 372,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -1067,12 +1479,12 @@
       "mac": "EC:84:39:C9:5D:AD",
       "serial": "OLTTGBUBEAAAA00LF",
       "saha_worker": "saha.5DAD",
-      "havuz_worker": null,
-      "actual_worker": null,
+      "havuz_worker": "mehmetas.021",
+      "actual_worker": "mehmetas.021",
       "hashrate_TH": 322.41,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 104.0,
-      "temp_max": 69,
+      "temp_max": 70,
       "temp_water": 58,
       "elapsed_hours": 10.9,
       "fan_avg_rpm": 0,
@@ -1080,16 +1492,16 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1580,
+      "accepted": 1583,
       "rejected": 0,
       "hw_errors_total": 430,
       "f2pool_name": null,
-      "f2pool_hashrate_TH": 0.0,
-      "f2pool_h1_TH": 0.0,
-      "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1785332875,
+      "f2pool_hashrate_TH": null,
+      "f2pool_h1_TH": null,
+      "f2pool_h24_TH": null,
+      "f2pool_last_share": null,
       "f2pool_state": null,
-      "f2pool_matched": true,
+      "f2pool_matched": false,
       "hashrate_diff_pct": null,
       "earn_today_btc": null,
       "earn_yesterday_btc": null,
@@ -1327,15 +1739,15 @@
       "suffix": 108,
       "name": "S19 XP+ Hyd-108",
       "model": "S19 XP+ Hyd",
-      "mac": null,
-      "serial": null,
-      "saha_worker": null,
+      "mac": "84:69:5B:7D:7D:07",
+      "serial": "PIEMFCUBEJBBF02HS",
+      "saha_worker": "saha.7D07",
       "havuz_worker": "mehmetas.022",
       "actual_worker": "mehmetas.022",
-      "hashrate_TH": 301.8,
+      "hashrate_TH": 301.78,
       "target_hashrate_TH": 293.0,
       "efficiency_pct": 103.0,
-      "temp_max": 67,
+      "temp_max": 68,
       "temp_water": 61,
       "elapsed_hours": 10.9,
       "fan_avg_rpm": 0,
@@ -1343,9 +1755,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": false,
-      "accepted": 1451,
+      "accepted": 1453,
       "rejected": 0,
-      "hw_errors_total": 1846,
+      "hw_errors_total": 1850,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -1383,7 +1795,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (1846)",
+          "title": "Yuksek Donanim Hatasi (1850)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -1392,8 +1804,208 @@
           ]
         }
       ],
-      "daily_history": [],
-      "monthly_history": [],
+      "daily_history": [
+        {
+          "date": "2026-06-30",
+          "avg_hash_TH": 299.5,
+          "uptime_pct": 99.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-01",
+          "avg_hash_TH": 297.5,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-02",
+          "avg_hash_TH": 298.7,
+          "uptime_pct": 99.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-03",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-04",
+          "avg_hash_TH": 93.4,
+          "uptime_pct": 99.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-05",
+          "avg_hash_TH": 298.8,
+          "uptime_pct": 99.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-06",
+          "avg_hash_TH": 288.2,
+          "uptime_pct": 97.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-07",
+          "avg_hash_TH": 295.9,
+          "uptime_pct": 99.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-08",
+          "avg_hash_TH": 291.1,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-09",
+          "avg_hash_TH": 240.0,
+          "uptime_pct": 81.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-10",
+          "avg_hash_TH": 175.8,
+          "uptime_pct": 59.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-11",
+          "avg_hash_TH": 219.5,
+          "uptime_pct": 73.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-12",
+          "avg_hash_TH": 282.3,
+          "uptime_pct": 94.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-13",
+          "avg_hash_TH": 298.1,
+          "uptime_pct": 99.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-14",
+          "avg_hash_TH": 15.5,
+          "uptime_pct": 74.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-15",
+          "avg_hash_TH": 192.3,
+          "uptime_pct": 64.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-16",
+          "avg_hash_TH": 297.6,
+          "uptime_pct": 99.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-17",
+          "avg_hash_TH": 296.0,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-18",
+          "avg_hash_TH": 258.5,
+          "uptime_pct": 86.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-19",
+          "avg_hash_TH": 297.8,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-20",
+          "avg_hash_TH": 296.9,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-21",
+          "avg_hash_TH": 223.7,
+          "uptime_pct": 75.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-22",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-23",
+          "avg_hash_TH": 277.2,
+          "uptime_pct": 93.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-24",
+          "avg_hash_TH": 290.3,
+          "uptime_pct": 98.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-25",
+          "avg_hash_TH": 285.6,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-26",
+          "avg_hash_TH": 166.7,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-27",
+          "avg_hash_TH": 298.0,
+          "uptime_pct": 99.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-28",
+          "avg_hash_TH": 297.8,
+          "uptime_pct": 99.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-29",
+          "avg_hash_TH": 298.8,
+          "uptime_pct": 99.6,
+          "earn_btc": 0
+        }
+      ],
+      "monthly_history": [
+        {
+          "month": "2026-07",
+          "avg_hash_TH": 254.5,
+          "earn_btc": 0,
+          "days": 27
+        },
+        {
+          "month": "2026-06",
+          "avg_hash_TH": 293.6,
+          "earn_btc": 0,
+          "days": 30
+        },
+        {
+          "month": "2026-05",
+          "avg_hash_TH": 276.7,
+          "earn_btc": 0,
+          "days": 17
+        }
+      ],
       "label": null,
       "physical_location": null
     },
@@ -1410,17 +2022,17 @@
       "hashrate_TH": 301.02,
       "target_hashrate_TH": 293.0,
       "efficiency_pct": 102.7,
-      "temp_max": 66,
-      "temp_water": 60,
+      "temp_max": 67,
+      "temp_water": 61,
       "elapsed_hours": 10.9,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": false,
-      "accepted": 1451,
+      "accepted": 1454,
       "rejected": 0,
-      "hw_errors_total": 2500,
+      "hw_errors_total": 2528,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -1446,7 +2058,7 @@
           "severity": "high",
           "code": "WATER_HOT",
           "icon": "💧",
-          "title": "Su Sicakligi Yuksek (60°C)",
+          "title": "Su Sicakligi Yuksek (61°C)",
           "reason": "Soguma sistemi yetersiz",
           "solutions": [
             "Radyatoru kontrol et (toz, tikanma)",
@@ -1458,7 +2070,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (2500)",
+          "title": "Yuksek Donanim Hatasi (2528)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -1644,7 +2256,7 @@
         },
         {
           "date": "2026-07-29",
-          "avg_hash_TH": 297.8,
+          "avg_hash_TH": 297.9,
           "uptime_pct": 99.6,
           "earn_btc": 0
         }
@@ -1677,15 +2289,15 @@
       "suffix": 110,
       "name": "S21e Hyd-110",
       "model": "S21e Hyd",
-      "mac": null,
-      "serial": null,
-      "saha_worker": null,
+      "mac": "EC:84:39:45:6B:1E",
+      "serial": "OLTTGBUBEAAAA020Z",
+      "saha_worker": "saha.6B1E",
       "havuz_worker": "mehmetas.025",
       "actual_worker": "mehmetas.025",
       "hashrate_TH": 320.21,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.3,
-      "temp_max": 67,
+      "temp_max": 68,
       "temp_water": 59,
       "elapsed_hours": 10.9,
       "fan_avg_rpm": 0,
@@ -1693,9 +2305,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1665,
+      "accepted": 1672,
       "rejected": 1,
-      "hw_errors_total": 2457,
+      "hw_errors_total": 2461,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -1733,7 +2345,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (2457)",
+          "title": "Yuksek Donanim Hatasi (2461)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -1742,8 +2354,208 @@
           ]
         }
       ],
-      "daily_history": [],
-      "monthly_history": [],
+      "daily_history": [
+        {
+          "date": "2026-06-30",
+          "avg_hash_TH": 319.0,
+          "uptime_pct": 99.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-01",
+          "avg_hash_TH": 314.8,
+          "uptime_pct": 98.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-02",
+          "avg_hash_TH": 317.3,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-03",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-04",
+          "avg_hash_TH": 225.6,
+          "uptime_pct": 97.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-05",
+          "avg_hash_TH": 317.5,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-06",
+          "avg_hash_TH": 301.6,
+          "uptime_pct": 96.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-07",
+          "avg_hash_TH": 313.4,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-08",
+          "avg_hash_TH": 303.3,
+          "uptime_pct": 96.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-09",
+          "avg_hash_TH": 253.2,
+          "uptime_pct": 79.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-10",
+          "avg_hash_TH": 182.8,
+          "uptime_pct": 58.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-11",
+          "avg_hash_TH": 317.0,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-12",
+          "avg_hash_TH": 299.5,
+          "uptime_pct": 95.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-13",
+          "avg_hash_TH": 316.6,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-14",
+          "avg_hash_TH": 203.4,
+          "uptime_pct": 73.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-15",
+          "avg_hash_TH": 316.8,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-16",
+          "avg_hash_TH": 313.9,
+          "uptime_pct": 98.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-17",
+          "avg_hash_TH": 312.5,
+          "uptime_pct": 98.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-18",
+          "avg_hash_TH": 274.3,
+          "uptime_pct": 85.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-19",
+          "avg_hash_TH": 305.8,
+          "uptime_pct": 96.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-20",
+          "avg_hash_TH": 314.7,
+          "uptime_pct": 98.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-21",
+          "avg_hash_TH": 315.8,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-22",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-23",
+          "avg_hash_TH": 314.7,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-24",
+          "avg_hash_TH": 301.1,
+          "uptime_pct": 95.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-25",
+          "avg_hash_TH": 302.2,
+          "uptime_pct": 98.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-26",
+          "avg_hash_TH": 310.1,
+          "uptime_pct": 97.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-27",
+          "avg_hash_TH": 315.5,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-28",
+          "avg_hash_TH": 313.3,
+          "uptime_pct": 98.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-29",
+          "avg_hash_TH": 315.9,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        }
+      ],
+      "monthly_history": [
+        {
+          "month": "2026-07",
+          "avg_hash_TH": 296.0,
+          "earn_btc": 0,
+          "days": 27
+        },
+        {
+          "month": "2026-06",
+          "avg_hash_TH": 318.5,
+          "earn_btc": 0,
+          "days": 30
+        },
+        {
+          "month": "2026-05",
+          "avg_hash_TH": 306.0,
+          "earn_btc": 0,
+          "days": 17
+        }
+      ],
       "label": null,
       "physical_location": null
     },
@@ -1755,29 +2567,29 @@
       "mac": "4C:24:F7:23:A2:2C",
       "serial": "PIEMGBUBEJEBF01GV",
       "saha_worker": "saha.A22C",
-      "havuz_worker": null,
-      "actual_worker": null,
+      "havuz_worker": "mehmetas.006",
+      "actual_worker": "mehmetas.006",
       "hashrate_TH": 313.11,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 101.0,
-      "temp_max": 64,
-      "temp_water": 55,
+      "temp_max": 65,
+      "temp_water": 56,
       "elapsed_hours": 10.9,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1619,
+      "accepted": 1621,
       "rejected": 0,
       "hw_errors_total": 287,
       "f2pool_name": null,
-      "f2pool_hashrate_TH": 0.0,
-      "f2pool_h1_TH": 0.0,
-      "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1785332875,
+      "f2pool_hashrate_TH": null,
+      "f2pool_h1_TH": null,
+      "f2pool_h24_TH": null,
+      "f2pool_last_share": null,
       "f2pool_state": null,
-      "f2pool_matched": true,
+      "f2pool_matched": false,
       "hashrate_diff_pct": null,
       "earn_today_btc": null,
       "earn_yesterday_btc": null,
@@ -1791,7 +2603,20 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [],
+      "health_issues": [
+        {
+          "severity": "high",
+          "code": "WATER_HOT",
+          "icon": "💧",
+          "title": "Su Sicakligi Yuksek (56°C)",
+          "reason": "Soguma sistemi yetersiz",
+          "solutions": [
+            "Radyatoru kontrol et (toz, tikanma)",
+            "Dis fan calisiyor mu?",
+            "Dis ortam sicakligi cok yuksek olabilir"
+          ]
+        }
+      ],
       "daily_history": [
         {
           "date": "2026-06-30",
@@ -1969,7 +2794,7 @@
         },
         {
           "date": "2026-07-29",
-          "avg_hash_TH": 307.3,
+          "avg_hash_TH": 307.4,
           "uptime_pct": 99.0,
           "earn_btc": 0
         }
@@ -2002,15 +2827,15 @@
       "suffix": 112,
       "name": "S21e Hyd-112",
       "model": "S21e Hyd",
-      "mac": null,
-      "serial": null,
-      "saha_worker": null,
+      "mac": "EC:84:39:06:14:03",
+      "serial": "OLTTGBUBEAAAA01PJ",
+      "saha_worker": "saha.1403",
       "havuz_worker": "mehmetas.014",
       "actual_worker": "mehmetas.014",
-      "hashrate_TH": 319.18,
+      "hashrate_TH": 319.17,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.0,
-      "temp_max": 64,
+      "temp_max": 65,
       "temp_water": 56,
       "elapsed_hours": 10.9,
       "fan_avg_rpm": 0,
@@ -2018,9 +2843,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1619,
+      "accepted": 1623,
       "rejected": 1,
-      "hw_errors_total": 28474,
+      "hw_errors_total": 28724,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -2058,7 +2883,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (28474)",
+          "title": "Yuksek Donanim Hatasi (28724)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -2067,8 +2892,208 @@
           ]
         }
       ],
-      "daily_history": [],
-      "monthly_history": [],
+      "daily_history": [
+        {
+          "date": "2026-06-30",
+          "avg_hash_TH": 317.4,
+          "uptime_pct": 99.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-01",
+          "avg_hash_TH": 313.6,
+          "uptime_pct": 98.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-02",
+          "avg_hash_TH": 316.0,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-03",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-04",
+          "avg_hash_TH": 225.4,
+          "uptime_pct": 97.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-05",
+          "avg_hash_TH": 316.8,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-06",
+          "avg_hash_TH": 303.9,
+          "uptime_pct": 97.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-07",
+          "avg_hash_TH": 312.1,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-08",
+          "avg_hash_TH": 302.0,
+          "uptime_pct": 96.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-09",
+          "avg_hash_TH": 252.7,
+          "uptime_pct": 79.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-10",
+          "avg_hash_TH": 183.7,
+          "uptime_pct": 58.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-11",
+          "avg_hash_TH": 315.2,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-12",
+          "avg_hash_TH": 310.8,
+          "uptime_pct": 98.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-13",
+          "avg_hash_TH": 314.4,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-14",
+          "avg_hash_TH": 202.4,
+          "uptime_pct": 73.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-15",
+          "avg_hash_TH": 316.1,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-16",
+          "avg_hash_TH": 313.2,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-17",
+          "avg_hash_TH": 311.3,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-18",
+          "avg_hash_TH": 273.3,
+          "uptime_pct": 86.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-19",
+          "avg_hash_TH": 314.4,
+          "uptime_pct": 98.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-20",
+          "avg_hash_TH": 314.2,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-21",
+          "avg_hash_TH": 314.5,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-22",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-23",
+          "avg_hash_TH": 311.4,
+          "uptime_pct": 98.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-24",
+          "avg_hash_TH": 299.5,
+          "uptime_pct": 95.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-25",
+          "avg_hash_TH": 299.0,
+          "uptime_pct": 98.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-26",
+          "avg_hash_TH": 309.7,
+          "uptime_pct": 98.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-27",
+          "avg_hash_TH": 314.5,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-28",
+          "avg_hash_TH": 316.1,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-29",
+          "avg_hash_TH": 313.6,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        }
+      ],
+      "monthly_history": [
+        {
+          "month": "2026-07",
+          "avg_hash_TH": 295.9,
+          "earn_btc": 0,
+          "days": 27
+        },
+        {
+          "month": "2026-06",
+          "avg_hash_TH": 317.3,
+          "earn_btc": 0,
+          "days": 30
+        },
+        {
+          "month": "2026-05",
+          "avg_hash_TH": 316.7,
+          "earn_btc": 0,
+          "days": 17
+        }
+      ],
       "label": null,
       "physical_location": null
     },
@@ -2080,8 +3105,8 @@
       "mac": "EC:84:39:74:57:8B",
       "serial": "OLTTGBUBEAAAA01NZ",
       "saha_worker": "saha.578B",
-      "havuz_worker": null,
-      "actual_worker": null,
+      "havuz_worker": "mehmetas.015",
+      "actual_worker": "mehmetas.015",
       "hashrate_TH": 318.59,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 102.8,
@@ -2093,16 +3118,16 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1560,
+      "accepted": 1563,
       "rejected": 0,
       "hw_errors_total": 363,
       "f2pool_name": null,
-      "f2pool_hashrate_TH": 0.0,
-      "f2pool_h1_TH": 0.0,
-      "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1785332875,
+      "f2pool_hashrate_TH": null,
+      "f2pool_h1_TH": null,
+      "f2pool_h24_TH": null,
+      "f2pool_last_share": null,
       "f2pool_state": null,
-      "f2pool_matched": true,
+      "f2pool_matched": false,
       "hashrate_diff_pct": null,
       "earn_today_btc": null,
       "earn_yesterday_btc": null,
@@ -2307,7 +3332,7 @@
         },
         {
           "date": "2026-07-29",
-          "avg_hash_TH": 313.8,
+          "avg_hash_TH": 313.9,
           "uptime_pct": 99.0,
           "earn_btc": 0
         }
@@ -2340,11 +3365,11 @@
       "suffix": 114,
       "name": "S21e Hyd-114",
       "model": "S21e Hyd",
-      "mac": null,
-      "serial": null,
-      "saha_worker": null,
-      "havuz_worker": null,
-      "actual_worker": null,
+      "mac": "A2:ED:87:03:64:F4",
+      "serial": "PIEMGBUBEJEBF01RZ",
+      "saha_worker": "saha.64F4",
+      "havuz_worker": "mehmetas.016",
+      "actual_worker": "mehmetas.016",
       "hashrate_TH": 317.91,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 102.6,
@@ -2356,16 +3381,16 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1549,
+      "accepted": 1552,
       "rejected": 0,
       "hw_errors_total": 363,
       "f2pool_name": null,
-      "f2pool_hashrate_TH": 0.0,
-      "f2pool_h1_TH": 0.0,
-      "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1785332875,
+      "f2pool_hashrate_TH": null,
+      "f2pool_h1_TH": null,
+      "f2pool_h24_TH": null,
+      "f2pool_last_share": null,
       "f2pool_state": null,
-      "f2pool_matched": true,
+      "f2pool_matched": false,
       "hashrate_diff_pct": null,
       "earn_today_btc": null,
       "earn_yesterday_btc": null,
@@ -2380,8 +3405,208 @@
       "earn_7d_try": null,
       "earn_total_try": null,
       "health_issues": [],
-      "daily_history": [],
-      "monthly_history": [],
+      "daily_history": [
+        {
+          "date": "2026-06-30",
+          "avg_hash_TH": 316.2,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-01",
+          "avg_hash_TH": 312.0,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-02",
+          "avg_hash_TH": 314.9,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-03",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-04",
+          "avg_hash_TH": 224.1,
+          "uptime_pct": 97.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-05",
+          "avg_hash_TH": 315.4,
+          "uptime_pct": 99.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-06",
+          "avg_hash_TH": 301.1,
+          "uptime_pct": 96.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-07",
+          "avg_hash_TH": 310.4,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-08",
+          "avg_hash_TH": 296.4,
+          "uptime_pct": 96.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-09",
+          "avg_hash_TH": 251.3,
+          "uptime_pct": 79.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-10",
+          "avg_hash_TH": 182.8,
+          "uptime_pct": 58.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-11",
+          "avg_hash_TH": 313.6,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-12",
+          "avg_hash_TH": 296.8,
+          "uptime_pct": 94.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-13",
+          "avg_hash_TH": 312.8,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-14",
+          "avg_hash_TH": 303.5,
+          "uptime_pct": 98.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-15",
+          "avg_hash_TH": 316.0,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-16",
+          "avg_hash_TH": 312.2,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-17",
+          "avg_hash_TH": 309.6,
+          "uptime_pct": 98.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-18",
+          "avg_hash_TH": 271.5,
+          "uptime_pct": 85.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-19",
+          "avg_hash_TH": 303.3,
+          "uptime_pct": 96.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-20",
+          "avg_hash_TH": 313.1,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-21",
+          "avg_hash_TH": 50.7,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-22",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-23",
+          "avg_hash_TH": 311.8,
+          "uptime_pct": 98.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-24",
+          "avg_hash_TH": 298.1,
+          "uptime_pct": 95.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-25",
+          "avg_hash_TH": 300.1,
+          "uptime_pct": 98.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-26",
+          "avg_hash_TH": 309.0,
+          "uptime_pct": 98.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-27",
+          "avg_hash_TH": 314.2,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-28",
+          "avg_hash_TH": 314.8,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-29",
+          "avg_hash_TH": 313.3,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        }
+      ],
+      "monthly_history": [
+        {
+          "month": "2026-07",
+          "avg_hash_TH": 287.9,
+          "earn_btc": 0,
+          "days": 27
+        },
+        {
+          "month": "2026-06",
+          "avg_hash_TH": 315.8,
+          "earn_btc": 0,
+          "days": 30
+        },
+        {
+          "month": "2026-05",
+          "avg_hash_TH": 315.5,
+          "earn_btc": 0,
+          "days": 17
+        }
+      ],
       "label": null,
       "physical_location": null
     },
@@ -2390,9 +3615,9 @@
       "suffix": 115,
       "name": "S21e Hyd-115",
       "model": "S21e Hyd",
-      "mac": null,
-      "serial": null,
-      "saha_worker": null,
+      "mac": "EC:84:39:64:10:A2",
+      "serial": "OLTTGBUBEAAAA01W4",
+      "saha_worker": "saha.10A2",
       "havuz_worker": "mehmetas.001",
       "actual_worker": "mehmetas.001",
       "hashrate_TH": 321.48,
@@ -2406,7 +3631,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1590,
+      "accepted": 1593,
       "rejected": 0,
       "hw_errors_total": 304,
       "f2pool_name": null,
@@ -2430,8 +3655,208 @@
       "earn_7d_try": null,
       "earn_total_try": null,
       "health_issues": [],
-      "daily_history": [],
-      "monthly_history": [],
+      "daily_history": [
+        {
+          "date": "2026-06-30",
+          "avg_hash_TH": 319.2,
+          "uptime_pct": 99.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-01",
+          "avg_hash_TH": 315.2,
+          "uptime_pct": 98.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-02",
+          "avg_hash_TH": 317.8,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-03",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-04",
+          "avg_hash_TH": 226.7,
+          "uptime_pct": 97.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-05",
+          "avg_hash_TH": 318.5,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-06",
+          "avg_hash_TH": 294.3,
+          "uptime_pct": 94.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-07",
+          "avg_hash_TH": 313.7,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-08",
+          "avg_hash_TH": 304.0,
+          "uptime_pct": 96.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-09",
+          "avg_hash_TH": 254.5,
+          "uptime_pct": 79.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-10",
+          "avg_hash_TH": 184.9,
+          "uptime_pct": 59.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-11",
+          "avg_hash_TH": 316.9,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-12",
+          "avg_hash_TH": 316.7,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-13",
+          "avg_hash_TH": 315.9,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-14",
+          "avg_hash_TH": 199.3,
+          "uptime_pct": 73.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-15",
+          "avg_hash_TH": 317.4,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-16",
+          "avg_hash_TH": 315.8,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-17",
+          "avg_hash_TH": 313.4,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-18",
+          "avg_hash_TH": 274.3,
+          "uptime_pct": 86.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-19",
+          "avg_hash_TH": 316.2,
+          "uptime_pct": 98.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-20",
+          "avg_hash_TH": 316.3,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-21",
+          "avg_hash_TH": 316.5,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-22",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-23",
+          "avg_hash_TH": 313.5,
+          "uptime_pct": 98.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-24",
+          "avg_hash_TH": 301.2,
+          "uptime_pct": 95.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-25",
+          "avg_hash_TH": 302.4,
+          "uptime_pct": 98.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-26",
+          "avg_hash_TH": 310.3,
+          "uptime_pct": 98.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-27",
+          "avg_hash_TH": 317.0,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-28",
+          "avg_hash_TH": 317.7,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-29",
+          "avg_hash_TH": 316.0,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        }
+      ],
+      "monthly_history": [
+        {
+          "month": "2026-07",
+          "avg_hash_TH": 297.3,
+          "earn_btc": 0,
+          "days": 27
+        },
+        {
+          "month": "2026-06",
+          "avg_hash_TH": 318.7,
+          "earn_btc": 0,
+          "days": 30
+        },
+        {
+          "month": "2026-05",
+          "avg_hash_TH": 317.6,
+          "earn_btc": 0,
+          "days": 17
+        }
+      ],
       "label": null,
       "physical_location": null
     },
@@ -2440,15 +3865,15 @@
       "suffix": 116,
       "name": "S21e Hyd-116",
       "model": "S21e Hyd",
-      "mac": null,
-      "serial": null,
-      "saha_worker": null,
+      "mac": "EC:84:39:FD:4B:DF",
+      "serial": "OLTTGBUBEAAAA00GD",
+      "saha_worker": "saha.4BDF",
       "havuz_worker": "mehmetas.012",
       "actual_worker": "mehmetas.012",
       "hashrate_TH": 323.47,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 104.3,
-      "temp_max": 65,
+      "temp_max": 66,
       "temp_water": 55,
       "elapsed_hours": 10.9,
       "fan_avg_rpm": 0,
@@ -2456,7 +3881,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1545,
+      "accepted": 1548,
       "rejected": 0,
       "hw_errors_total": 350,
       "f2pool_name": null,
@@ -2480,8 +3905,208 @@
       "earn_7d_try": null,
       "earn_total_try": null,
       "health_issues": [],
-      "daily_history": [],
-      "monthly_history": [],
+      "daily_history": [
+        {
+          "date": "2026-06-30",
+          "avg_hash_TH": 320.9,
+          "uptime_pct": 99.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-01",
+          "avg_hash_TH": 317.3,
+          "uptime_pct": 98.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-02",
+          "avg_hash_TH": 319.2,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-03",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-04",
+          "avg_hash_TH": 221.7,
+          "uptime_pct": 98.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-05",
+          "avg_hash_TH": 319.2,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-06",
+          "avg_hash_TH": 303.0,
+          "uptime_pct": 96.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-07",
+          "avg_hash_TH": 313.9,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-08",
+          "avg_hash_TH": 306.0,
+          "uptime_pct": 96.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-09",
+          "avg_hash_TH": 255.9,
+          "uptime_pct": 79.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-10",
+          "avg_hash_TH": 186.0,
+          "uptime_pct": 58.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-11",
+          "avg_hash_TH": 318.8,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-12",
+          "avg_hash_TH": 318.8,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-13",
+          "avg_hash_TH": 319.2,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-14",
+          "avg_hash_TH": 200.8,
+          "uptime_pct": 73.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-15",
+          "avg_hash_TH": 319.4,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-16",
+          "avg_hash_TH": 317.6,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-17",
+          "avg_hash_TH": 315.6,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-18",
+          "avg_hash_TH": 274.4,
+          "uptime_pct": 86.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-19",
+          "avg_hash_TH": 317.1,
+          "uptime_pct": 98.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-20",
+          "avg_hash_TH": 318.4,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-21",
+          "avg_hash_TH": 318.3,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-22",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-23",
+          "avg_hash_TH": 316.6,
+          "uptime_pct": 98.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-24",
+          "avg_hash_TH": 298.4,
+          "uptime_pct": 95.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-25",
+          "avg_hash_TH": 304.0,
+          "uptime_pct": 98.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-26",
+          "avg_hash_TH": 312.1,
+          "uptime_pct": 98.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-27",
+          "avg_hash_TH": 319.0,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-28",
+          "avg_hash_TH": 319.7,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-29",
+          "avg_hash_TH": 317.2,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        }
+      ],
+      "monthly_history": [
+        {
+          "month": "2026-07",
+          "avg_hash_TH": 298.8,
+          "earn_btc": 0,
+          "days": 27
+        },
+        {
+          "month": "2026-06",
+          "avg_hash_TH": 319.8,
+          "earn_btc": 0,
+          "days": 30
+        },
+        {
+          "month": "2026-05",
+          "avg_hash_TH": 318.3,
+          "earn_btc": 0,
+          "days": 17
+        }
+      ],
       "label": null,
       "physical_location": null
     },
@@ -2490,32 +4115,32 @@
       "suffix": 117,
       "name": "S21e Hyd-117",
       "model": "S21e Hyd",
-      "mac": null,
-      "serial": null,
-      "saha_worker": null,
-      "havuz_worker": null,
-      "actual_worker": null,
+      "mac": "EC:84:39:4C:7A:D8",
+      "serial": "OLTTGBUBEAAAA01PB",
+      "saha_worker": "saha.7AD8",
+      "havuz_worker": "mehmetas.010",
+      "actual_worker": "mehmetas.010",
       "hashrate_TH": 319.23,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.0,
-      "temp_max": 63,
-      "temp_water": 53,
+      "temp_max": 64,
+      "temp_water": 54,
       "elapsed_hours": 10.9,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1557,
+      "accepted": 1564,
       "rejected": 0,
-      "hw_errors_total": 1776,
+      "hw_errors_total": 1779,
       "f2pool_name": null,
-      "f2pool_hashrate_TH": 0.0,
-      "f2pool_h1_TH": 0.0,
-      "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1785332875,
+      "f2pool_hashrate_TH": null,
+      "f2pool_h1_TH": null,
+      "f2pool_h24_TH": null,
+      "f2pool_last_share": null,
       "f2pool_state": null,
-      "f2pool_matched": true,
+      "f2pool_matched": false,
       "hashrate_diff_pct": null,
       "earn_today_btc": null,
       "earn_yesterday_btc": null,
@@ -2534,7 +4159,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (1776)",
+          "title": "Yuksek Donanim Hatasi (1779)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -2543,8 +4168,208 @@
           ]
         }
       ],
-      "daily_history": [],
-      "monthly_history": [],
+      "daily_history": [
+        {
+          "date": "2026-06-30",
+          "avg_hash_TH": 317.3,
+          "uptime_pct": 99.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-01",
+          "avg_hash_TH": 313.1,
+          "uptime_pct": 98.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-02",
+          "avg_hash_TH": 316.0,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-03",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-04",
+          "avg_hash_TH": 224.8,
+          "uptime_pct": 97.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-05",
+          "avg_hash_TH": 316.9,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-06",
+          "avg_hash_TH": 301.3,
+          "uptime_pct": 96.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-07",
+          "avg_hash_TH": 312.0,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-08",
+          "avg_hash_TH": 303.3,
+          "uptime_pct": 96.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-09",
+          "avg_hash_TH": 252.9,
+          "uptime_pct": 79.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-10",
+          "avg_hash_TH": 183.8,
+          "uptime_pct": 58.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-11",
+          "avg_hash_TH": 314.5,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-12",
+          "avg_hash_TH": 306.8,
+          "uptime_pct": 97.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-13",
+          "avg_hash_TH": 315.3,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-14",
+          "avg_hash_TH": 197.9,
+          "uptime_pct": 73.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-15",
+          "avg_hash_TH": 316.5,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-16",
+          "avg_hash_TH": 313.8,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-17",
+          "avg_hash_TH": 311.3,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-18",
+          "avg_hash_TH": 272.9,
+          "uptime_pct": 86.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-19",
+          "avg_hash_TH": 304.7,
+          "uptime_pct": 96.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-20",
+          "avg_hash_TH": 313.4,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-21",
+          "avg_hash_TH": 314.6,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-22",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-23",
+          "avg_hash_TH": 311.3,
+          "uptime_pct": 98.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-24",
+          "avg_hash_TH": 298.0,
+          "uptime_pct": 95.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-25",
+          "avg_hash_TH": 301.3,
+          "uptime_pct": 98.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-26",
+          "avg_hash_TH": 305.8,
+          "uptime_pct": 98.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-27",
+          "avg_hash_TH": 314.9,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-28",
+          "avg_hash_TH": 315.7,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-29",
+          "avg_hash_TH": 315.2,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        }
+      ],
+      "monthly_history": [
+        {
+          "month": "2026-07",
+          "avg_hash_TH": 295.1,
+          "earn_btc": 0,
+          "days": 27
+        },
+        {
+          "month": "2026-06",
+          "avg_hash_TH": 317.0,
+          "earn_btc": 0,
+          "days": 30
+        },
+        {
+          "month": "2026-05",
+          "avg_hash_TH": 316.3,
+          "earn_btc": 0,
+          "days": 17
+        }
+      ],
       "label": null,
       "physical_location": null
     },
@@ -2553,15 +4378,15 @@
       "suffix": 118,
       "name": "S21e Hyd-118",
       "model": "S21e Hyd",
-      "mac": null,
-      "serial": null,
-      "saha_worker": null,
-      "havuz_worker": null,
-      "actual_worker": null,
-      "hashrate_TH": 319.78,
+      "mac": "52:08:9D:36:A8:D3",
+      "serial": "PIEMGBUBEJEBF01DR",
+      "saha_worker": "saha.A8D3",
+      "havuz_worker": "mehmetas.009",
+      "actual_worker": "mehmetas.009",
+      "hashrate_TH": 319.76,
       "target_hashrate_TH": 310.0,
-      "efficiency_pct": 103.2,
-      "temp_max": 62,
+      "efficiency_pct": 103.1,
+      "temp_max": 63,
       "temp_water": 55,
       "elapsed_hours": 10.9,
       "fan_avg_rpm": 0,
@@ -2571,14 +4396,14 @@
       "is_hydro": true,
       "accepted": 1589,
       "rejected": 0,
-      "hw_errors_total": 882,
+      "hw_errors_total": 885,
       "f2pool_name": null,
-      "f2pool_hashrate_TH": 0.0,
-      "f2pool_h1_TH": 0.0,
-      "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1785332875,
+      "f2pool_hashrate_TH": null,
+      "f2pool_h1_TH": null,
+      "f2pool_h24_TH": null,
+      "f2pool_last_share": null,
       "f2pool_state": null,
-      "f2pool_matched": true,
+      "f2pool_matched": false,
       "hashrate_diff_pct": null,
       "earn_today_btc": null,
       "earn_yesterday_btc": null,
@@ -2593,8 +4418,208 @@
       "earn_7d_try": null,
       "earn_total_try": null,
       "health_issues": [],
-      "daily_history": [],
-      "monthly_history": [],
+      "daily_history": [
+        {
+          "date": "2026-06-30",
+          "avg_hash_TH": 318.4,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-01",
+          "avg_hash_TH": 313.9,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-02",
+          "avg_hash_TH": 316.4,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-03",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-04",
+          "avg_hash_TH": 225.2,
+          "uptime_pct": 97.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-05",
+          "avg_hash_TH": 317.5,
+          "uptime_pct": 99.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-06",
+          "avg_hash_TH": 298.8,
+          "uptime_pct": 95.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-07",
+          "avg_hash_TH": 313.0,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-08",
+          "avg_hash_TH": 303.3,
+          "uptime_pct": 96.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-09",
+          "avg_hash_TH": 252.9,
+          "uptime_pct": 79.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-10",
+          "avg_hash_TH": 184.2,
+          "uptime_pct": 58.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-11",
+          "avg_hash_TH": 315.7,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-12",
+          "avg_hash_TH": 298.6,
+          "uptime_pct": 95.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-13",
+          "avg_hash_TH": 314.9,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-14",
+          "avg_hash_TH": 197.4,
+          "uptime_pct": 73.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-15",
+          "avg_hash_TH": 316.0,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-16",
+          "avg_hash_TH": 313.6,
+          "uptime_pct": 98.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-17",
+          "avg_hash_TH": 311.7,
+          "uptime_pct": 98.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-18",
+          "avg_hash_TH": 272.8,
+          "uptime_pct": 85.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-19",
+          "avg_hash_TH": 304.9,
+          "uptime_pct": 96.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-20",
+          "avg_hash_TH": 314.2,
+          "uptime_pct": 98.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-21",
+          "avg_hash_TH": 51.3,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-22",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-23",
+          "avg_hash_TH": 311.9,
+          "uptime_pct": 98.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-24",
+          "avg_hash_TH": 294.9,
+          "uptime_pct": 94.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-25",
+          "avg_hash_TH": 300.2,
+          "uptime_pct": 98.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-26",
+          "avg_hash_TH": 306.7,
+          "uptime_pct": 98.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-27",
+          "avg_hash_TH": 315.2,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-28",
+          "avg_hash_TH": 316.6,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-29",
+          "avg_hash_TH": 314.8,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        }
+      ],
+      "monthly_history": [
+        {
+          "month": "2026-07",
+          "avg_hash_TH": 285.1,
+          "earn_btc": 0,
+          "days": 27
+        },
+        {
+          "month": "2026-06",
+          "avg_hash_TH": 317.8,
+          "earn_btc": 0,
+          "days": 30
+        },
+        {
+          "month": "2026-05",
+          "avg_hash_TH": 316.8,
+          "earn_btc": 0,
+          "days": 17
+        }
+      ],
       "label": null,
       "physical_location": null
     },
@@ -2603,15 +4628,15 @@
       "suffix": 119,
       "name": "S21e Hyd-119",
       "model": "S21e Hyd",
-      "mac": null,
-      "serial": null,
-      "saha_worker": null,
-      "havuz_worker": null,
-      "actual_worker": null,
-      "hashrate_TH": 323.35,
+      "mac": "EC:84:39:FC:90:A1",
+      "serial": "OLTTGBUBEAAAA00MS",
+      "saha_worker": "saha.90A1",
+      "havuz_worker": "mehmetas.029",
+      "actual_worker": "mehmetas.029",
+      "hashrate_TH": 323.36,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 104.3,
-      "temp_max": 64,
+      "temp_max": 65,
       "temp_water": 54,
       "elapsed_hours": 10.9,
       "fan_avg_rpm": 0,
@@ -2619,16 +4644,16 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1611,
+      "accepted": 1613,
       "rejected": 0,
       "hw_errors_total": 359,
       "f2pool_name": null,
-      "f2pool_hashrate_TH": 0.0,
-      "f2pool_h1_TH": 0.0,
-      "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1785332875,
+      "f2pool_hashrate_TH": null,
+      "f2pool_h1_TH": null,
+      "f2pool_h24_TH": null,
+      "f2pool_last_share": null,
       "f2pool_state": null,
-      "f2pool_matched": true,
+      "f2pool_matched": false,
       "hashrate_diff_pct": null,
       "earn_today_btc": null,
       "earn_yesterday_btc": null,
@@ -2643,8 +4668,208 @@
       "earn_7d_try": null,
       "earn_total_try": null,
       "health_issues": [],
-      "daily_history": [],
-      "monthly_history": [],
+      "daily_history": [
+        {
+          "date": "2026-06-30",
+          "avg_hash_TH": 320.8,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-01",
+          "avg_hash_TH": 316.9,
+          "uptime_pct": 98.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-02",
+          "avg_hash_TH": 319.7,
+          "uptime_pct": 99.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-03",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-04",
+          "avg_hash_TH": 226.4,
+          "uptime_pct": 97.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-05",
+          "avg_hash_TH": 320.0,
+          "uptime_pct": 99.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-06",
+          "avg_hash_TH": 306.2,
+          "uptime_pct": 96.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-07",
+          "avg_hash_TH": 316.0,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-08",
+          "avg_hash_TH": 305.6,
+          "uptime_pct": 95.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-09",
+          "avg_hash_TH": 256.1,
+          "uptime_pct": 79.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-10",
+          "avg_hash_TH": 186.6,
+          "uptime_pct": 58.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-11",
+          "avg_hash_TH": 319.3,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-12",
+          "avg_hash_TH": 313.1,
+          "uptime_pct": 97.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-13",
+          "avg_hash_TH": 318.6,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-14",
+          "avg_hash_TH": 200.5,
+          "uptime_pct": 73.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-15",
+          "avg_hash_TH": 320.1,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-16",
+          "avg_hash_TH": 318.1,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-17",
+          "avg_hash_TH": 315.5,
+          "uptime_pct": 98.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-18",
+          "avg_hash_TH": 276.5,
+          "uptime_pct": 85.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-19",
+          "avg_hash_TH": 318.3,
+          "uptime_pct": 98.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-20",
+          "avg_hash_TH": 318.6,
+          "uptime_pct": 98.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-21",
+          "avg_hash_TH": 317.8,
+          "uptime_pct": 98.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-22",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-23",
+          "avg_hash_TH": 316.7,
+          "uptime_pct": 98.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-24",
+          "avg_hash_TH": 296.6,
+          "uptime_pct": 94.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-25",
+          "avg_hash_TH": 304.6,
+          "uptime_pct": 98.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-26",
+          "avg_hash_TH": 312.8,
+          "uptime_pct": 98.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-27",
+          "avg_hash_TH": 318.8,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-28",
+          "avg_hash_TH": 319.5,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-29",
+          "avg_hash_TH": 317.8,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        }
+      ],
+      "monthly_history": [
+        {
+          "month": "2026-07",
+          "avg_hash_TH": 299.1,
+          "earn_btc": 0,
+          "days": 27
+        },
+        {
+          "month": "2026-06",
+          "avg_hash_TH": 320.1,
+          "earn_btc": 0,
+          "days": 30
+        },
+        {
+          "month": "2026-05",
+          "avg_hash_TH": 314.9,
+          "earn_btc": 0,
+          "days": 17
+        }
+      ],
       "label": null,
       "physical_location": null
     },
@@ -2656,12 +4881,12 @@
       "mac": "EA:73:20:1E:DE:39",
       "serial": "PIEMGBUBEJEBF01F8",
       "saha_worker": "saha.DE39",
-      "havuz_worker": null,
-      "actual_worker": null,
-      "hashrate_TH": 321.43,
+      "havuz_worker": "mehmetas.028",
+      "actual_worker": "mehmetas.028",
+      "hashrate_TH": 321.44,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.7,
-      "temp_max": 63,
+      "temp_max": 64,
       "temp_water": 54,
       "elapsed_hours": 10.9,
       "fan_avg_rpm": 0,
@@ -2669,16 +4894,16 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1568,
+      "accepted": 1571,
       "rejected": 0,
-      "hw_errors_total": 10498,
+      "hw_errors_total": 10553,
       "f2pool_name": null,
-      "f2pool_hashrate_TH": 0.0,
-      "f2pool_h1_TH": 0.0,
-      "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1785332875,
+      "f2pool_hashrate_TH": null,
+      "f2pool_h1_TH": null,
+      "f2pool_h24_TH": null,
+      "f2pool_last_share": null,
       "f2pool_state": null,
-      "f2pool_matched": true,
+      "f2pool_matched": false,
       "hashrate_diff_pct": null,
       "earn_today_btc": null,
       "earn_yesterday_btc": null,
@@ -2697,7 +4922,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (10498)",
+          "title": "Yuksek Donanim Hatasi (10553)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -2883,7 +5108,7 @@
         },
         {
           "date": "2026-07-29",
-          "avg_hash_TH": 317.4,
+          "avg_hash_TH": 317.0,
           "uptime_pct": 99.0,
           "earn_btc": 0
         }
@@ -2916,9 +5141,9 @@
       "suffix": 121,
       "name": "S21e Hyd-121",
       "model": "S21e Hyd",
-      "mac": null,
-      "serial": null,
-      "saha_worker": null,
+      "mac": "EC:84:39:41:52:A1",
+      "serial": "OLTTGBUBEAAAA01NY",
+      "saha_worker": "saha.52A1",
       "havuz_worker": "mehmetas.026",
       "actual_worker": "mehmetas.026",
       "hashrate_TH": 318.41,
@@ -2932,7 +5157,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1549,
+      "accepted": 1557,
       "rejected": 0,
       "hw_errors_total": 354,
       "f2pool_name": null,
@@ -2956,8 +5181,208 @@
       "earn_7d_try": null,
       "earn_total_try": null,
       "health_issues": [],
-      "daily_history": [],
-      "monthly_history": [],
+      "daily_history": [
+        {
+          "date": "2026-06-30",
+          "avg_hash_TH": 317.3,
+          "uptime_pct": 99.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-01",
+          "avg_hash_TH": 312.9,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-02",
+          "avg_hash_TH": 315.3,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-03",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-04",
+          "avg_hash_TH": 224.3,
+          "uptime_pct": 97.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-05",
+          "avg_hash_TH": 316.3,
+          "uptime_pct": 99.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-06",
+          "avg_hash_TH": 302.7,
+          "uptime_pct": 97.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-07",
+          "avg_hash_TH": 311.7,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-08",
+          "avg_hash_TH": 300.3,
+          "uptime_pct": 96.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-09",
+          "avg_hash_TH": 252.3,
+          "uptime_pct": 80.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-10",
+          "avg_hash_TH": 183.7,
+          "uptime_pct": 58.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-11",
+          "avg_hash_TH": 313.2,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-12",
+          "avg_hash_TH": 304.6,
+          "uptime_pct": 97.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-13",
+          "avg_hash_TH": 314.2,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-14",
+          "avg_hash_TH": 198.1,
+          "uptime_pct": 73.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-15",
+          "avg_hash_TH": 316.5,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-16",
+          "avg_hash_TH": 313.1,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-17",
+          "avg_hash_TH": 310.4,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-18",
+          "avg_hash_TH": 271.9,
+          "uptime_pct": 85.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-19",
+          "avg_hash_TH": 308.5,
+          "uptime_pct": 97.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-20",
+          "avg_hash_TH": 313.0,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-21",
+          "avg_hash_TH": 313.4,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-22",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-23",
+          "avg_hash_TH": 310.5,
+          "uptime_pct": 98.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-24",
+          "avg_hash_TH": 297.3,
+          "uptime_pct": 95.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-25",
+          "avg_hash_TH": 300.8,
+          "uptime_pct": 98.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-26",
+          "avg_hash_TH": 174.3,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-27",
+          "avg_hash_TH": 314.8,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-28",
+          "avg_hash_TH": 315.1,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-29",
+          "avg_hash_TH": 313.9,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        }
+      ],
+      "monthly_history": [
+        {
+          "month": "2026-07",
+          "avg_hash_TH": 289.7,
+          "earn_btc": 0,
+          "days": 27
+        },
+        {
+          "month": "2026-06",
+          "avg_hash_TH": 317.0,
+          "earn_btc": 0,
+          "days": 30
+        },
+        {
+          "month": "2026-05",
+          "avg_hash_TH": 312.2,
+          "earn_btc": 0,
+          "days": 17
+        }
+      ],
       "label": null,
       "physical_location": null
     },
@@ -2966,15 +5391,15 @@
       "suffix": 122,
       "name": "S21e Hyd-122",
       "model": "S21e Hyd",
-      "mac": null,
-      "serial": null,
-      "saha_worker": null,
-      "havuz_worker": null,
-      "actual_worker": null,
+      "mac": "EC:84:39:6E:1F:FC",
+      "serial": "OLTTGBUBEAAAA00CG",
+      "saha_worker": "saha.1FFC",
+      "havuz_worker": "mehmetas.011",
+      "actual_worker": "mehmetas.011",
       "hashrate_TH": 319.68,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.1,
-      "temp_max": 64,
+      "temp_max": 65,
       "temp_water": 55,
       "elapsed_hours": 10.9,
       "fan_avg_rpm": 0,
@@ -2982,16 +5407,16 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1567,
+      "accepted": 1574,
       "rejected": 1,
-      "hw_errors_total": 25371,
+      "hw_errors_total": 25440,
       "f2pool_name": null,
-      "f2pool_hashrate_TH": 0.0,
-      "f2pool_h1_TH": 0.0,
-      "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1785332875,
+      "f2pool_hashrate_TH": null,
+      "f2pool_h1_TH": null,
+      "f2pool_h24_TH": null,
+      "f2pool_last_share": null,
       "f2pool_state": null,
-      "f2pool_matched": true,
+      "f2pool_matched": false,
       "hashrate_diff_pct": null,
       "earn_today_btc": null,
       "earn_yesterday_btc": null,
@@ -3010,7 +5435,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (25371)",
+          "title": "Yuksek Donanim Hatasi (25440)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -3019,8 +5444,208 @@
           ]
         }
       ],
-      "daily_history": [],
-      "monthly_history": [],
+      "daily_history": [
+        {
+          "date": "2026-06-30",
+          "avg_hash_TH": 317.9,
+          "uptime_pct": 99.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-01",
+          "avg_hash_TH": 313.7,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-02",
+          "avg_hash_TH": 316.4,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-03",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-04",
+          "avg_hash_TH": 219.5,
+          "uptime_pct": 98.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-05",
+          "avg_hash_TH": 317.1,
+          "uptime_pct": 99.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-06",
+          "avg_hash_TH": 304.0,
+          "uptime_pct": 96.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-07",
+          "avg_hash_TH": 312.8,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-08",
+          "avg_hash_TH": 298.3,
+          "uptime_pct": 96.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-09",
+          "avg_hash_TH": 253.2,
+          "uptime_pct": 80.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-10",
+          "avg_hash_TH": 181.5,
+          "uptime_pct": 57.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-11",
+          "avg_hash_TH": 314.2,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-12",
+          "avg_hash_TH": 298.5,
+          "uptime_pct": 95.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-13",
+          "avg_hash_TH": 315.5,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-14",
+          "avg_hash_TH": 12.0,
+          "uptime_pct": 74.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-15",
+          "avg_hash_TH": 317.3,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-16",
+          "avg_hash_TH": 314.5,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-17",
+          "avg_hash_TH": 311.8,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-18",
+          "avg_hash_TH": 273.5,
+          "uptime_pct": 86.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-19",
+          "avg_hash_TH": 308.7,
+          "uptime_pct": 97.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-20",
+          "avg_hash_TH": 314.5,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-21",
+          "avg_hash_TH": 314.6,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-22",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-23",
+          "avg_hash_TH": 313.3,
+          "uptime_pct": 98.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-24",
+          "avg_hash_TH": 300.3,
+          "uptime_pct": 95.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-25",
+          "avg_hash_TH": 302.0,
+          "uptime_pct": 98.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-26",
+          "avg_hash_TH": 176.0,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-27",
+          "avg_hash_TH": 316.0,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-28",
+          "avg_hash_TH": 316.2,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-29",
+          "avg_hash_TH": 315.9,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        }
+      ],
+      "monthly_history": [
+        {
+          "month": "2026-07",
+          "avg_hash_TH": 283.4,
+          "earn_btc": 0,
+          "days": 27
+        },
+        {
+          "month": "2026-06",
+          "avg_hash_TH": 317.6,
+          "earn_btc": 0,
+          "days": 30
+        },
+        {
+          "month": "2026-05",
+          "avg_hash_TH": 316.9,
+          "earn_btc": 0,
+          "days": 17
+        }
+      ],
       "label": null,
       "physical_location": null
     },
@@ -3029,32 +5654,32 @@
       "suffix": 123,
       "name": "S21e Hyd-123",
       "model": "S21e Hyd",
-      "mac": null,
-      "serial": null,
-      "saha_worker": null,
-      "havuz_worker": null,
-      "actual_worker": null,
-      "hashrate_TH": 321.15,
+      "mac": "B8:FC:A2:8D:81:D4",
+      "serial": "PIEMGBUBEJEBF01GT",
+      "saha_worker": "saha.81D4",
+      "havuz_worker": "mehmetas.017",
+      "actual_worker": "mehmetas.017",
+      "hashrate_TH": 321.14,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.6,
-      "temp_max": 62,
-      "temp_water": 56,
+      "temp_max": 63,
+      "temp_water": 57,
       "elapsed_hours": 10.9,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1583,
+      "accepted": 1586,
       "rejected": 0,
-      "hw_errors_total": 132873,
+      "hw_errors_total": 132919,
       "f2pool_name": null,
-      "f2pool_hashrate_TH": 0.0,
-      "f2pool_h1_TH": 0.0,
-      "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1785332875,
+      "f2pool_hashrate_TH": null,
+      "f2pool_h1_TH": null,
+      "f2pool_h24_TH": null,
+      "f2pool_last_share": null,
       "f2pool_state": null,
-      "f2pool_matched": true,
+      "f2pool_matched": false,
       "hashrate_diff_pct": null,
       "earn_today_btc": null,
       "earn_yesterday_btc": null,
@@ -3073,7 +5698,7 @@
           "severity": "high",
           "code": "WATER_HOT",
           "icon": "💧",
-          "title": "Su Sicakligi Yuksek (56°C)",
+          "title": "Su Sicakligi Yuksek (57°C)",
           "reason": "Soguma sistemi yetersiz",
           "solutions": [
             "Radyatoru kontrol et (toz, tikanma)",
@@ -3085,7 +5710,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (132873)",
+          "title": "Yuksek Donanim Hatasi (132919)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -3094,8 +5719,208 @@
           ]
         }
       ],
-      "daily_history": [],
-      "monthly_history": [],
+      "daily_history": [
+        {
+          "date": "2026-06-30",
+          "avg_hash_TH": 318.9,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-01",
+          "avg_hash_TH": 315.2,
+          "uptime_pct": 98.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-02",
+          "avg_hash_TH": 316.5,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-03",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-04",
+          "avg_hash_TH": 97.8,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-05",
+          "avg_hash_TH": 317.3,
+          "uptime_pct": 99.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-06",
+          "avg_hash_TH": 303.1,
+          "uptime_pct": 96.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-07",
+          "avg_hash_TH": 313.1,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-08",
+          "avg_hash_TH": 299.9,
+          "uptime_pct": 96.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-09",
+          "avg_hash_TH": 254.1,
+          "uptime_pct": 80.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-10",
+          "avg_hash_TH": 185.4,
+          "uptime_pct": 59.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-11",
+          "avg_hash_TH": 316.6,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-12",
+          "avg_hash_TH": 309.2,
+          "uptime_pct": 97.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-13",
+          "avg_hash_TH": 316.5,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-14",
+          "avg_hash_TH": 199.4,
+          "uptime_pct": 73.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-15",
+          "avg_hash_TH": 318.2,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-16",
+          "avg_hash_TH": 315.3,
+          "uptime_pct": 98.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-17",
+          "avg_hash_TH": 313.1,
+          "uptime_pct": 98.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-18",
+          "avg_hash_TH": 274.1,
+          "uptime_pct": 85.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-19",
+          "avg_hash_TH": 315.7,
+          "uptime_pct": 98.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-20",
+          "avg_hash_TH": 316.2,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-21",
+          "avg_hash_TH": 316.2,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-22",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-23",
+          "avg_hash_TH": 305.7,
+          "uptime_pct": 96.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-24",
+          "avg_hash_TH": 298.3,
+          "uptime_pct": 94.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-25",
+          "avg_hash_TH": 302.8,
+          "uptime_pct": 98.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-26",
+          "avg_hash_TH": 308.3,
+          "uptime_pct": 97.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-27",
+          "avg_hash_TH": 316.5,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-28",
+          "avg_hash_TH": 317.1,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-29",
+          "avg_hash_TH": 316.2,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        }
+      ],
+      "monthly_history": [
+        {
+          "month": "2026-07",
+          "avg_hash_TH": 291.8,
+          "earn_btc": 0,
+          "days": 27
+        },
+        {
+          "month": "2026-06",
+          "avg_hash_TH": 318.5,
+          "earn_btc": 0,
+          "days": 30
+        },
+        {
+          "month": "2026-05",
+          "avg_hash_TH": 317.1,
+          "earn_btc": 0,
+          "days": 17
+        }
+      ],
       "label": null,
       "physical_location": null
     },
@@ -3104,15 +5929,15 @@
       "suffix": 124,
       "name": "S21e Hyd-124",
       "model": "S21e Hyd",
-      "mac": null,
-      "serial": null,
-      "saha_worker": null,
-      "havuz_worker": null,
-      "actual_worker": null,
+      "mac": "4A:44:DD:A9:EB:FD",
+      "serial": "PIEMGBUBEJEBF00WM",
+      "saha_worker": "saha.EBFD",
+      "havuz_worker": "mehmetas.005",
+      "actual_worker": "mehmetas.005",
       "hashrate_TH": 317.64,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 102.5,
-      "temp_max": 64,
+      "temp_max": 66,
       "temp_water": 56,
       "elapsed_hours": 10.9,
       "fan_avg_rpm": 0,
@@ -3120,16 +5945,16 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1612,
+      "accepted": 1620,
       "rejected": 0,
-      "hw_errors_total": 1071,
+      "hw_errors_total": 1078,
       "f2pool_name": null,
-      "f2pool_hashrate_TH": 0.0,
-      "f2pool_h1_TH": 0.0,
-      "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1785332875,
+      "f2pool_hashrate_TH": null,
+      "f2pool_h1_TH": null,
+      "f2pool_h24_TH": null,
+      "f2pool_last_share": null,
       "f2pool_state": null,
-      "f2pool_matched": true,
+      "f2pool_matched": false,
       "hashrate_diff_pct": null,
       "earn_today_btc": null,
       "earn_yesterday_btc": null,
@@ -3160,7 +5985,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (1071)",
+          "title": "Yuksek Donanim Hatasi (1078)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -3169,8 +5994,208 @@
           ]
         }
       ],
-      "daily_history": [],
-      "monthly_history": [],
+      "daily_history": [
+        {
+          "date": "2026-06-30",
+          "avg_hash_TH": 316.4,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-01",
+          "avg_hash_TH": 312.1,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-02",
+          "avg_hash_TH": 313.7,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-03",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-04",
+          "avg_hash_TH": 224.9,
+          "uptime_pct": 97.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-05",
+          "avg_hash_TH": 315.6,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-06",
+          "avg_hash_TH": 301.3,
+          "uptime_pct": 96.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-07",
+          "avg_hash_TH": 311.3,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-08",
+          "avg_hash_TH": 300.5,
+          "uptime_pct": 96.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-09",
+          "avg_hash_TH": 251.7,
+          "uptime_pct": 80.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-10",
+          "avg_hash_TH": 183.8,
+          "uptime_pct": 58.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-11",
+          "avg_hash_TH": 313.2,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-12",
+          "avg_hash_TH": 307.9,
+          "uptime_pct": 97.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-13",
+          "avg_hash_TH": 312.7,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-14",
+          "avg_hash_TH": 197.3,
+          "uptime_pct": 73.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-15",
+          "avg_hash_TH": 315.7,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-16",
+          "avg_hash_TH": 311.1,
+          "uptime_pct": 98.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-17",
+          "avg_hash_TH": 309.6,
+          "uptime_pct": 98.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-18",
+          "avg_hash_TH": 271.6,
+          "uptime_pct": 85.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-19",
+          "avg_hash_TH": 312.8,
+          "uptime_pct": 98.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-20",
+          "avg_hash_TH": 313.2,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-21",
+          "avg_hash_TH": 51.3,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-22",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-23",
+          "avg_hash_TH": 304.1,
+          "uptime_pct": 97.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-24",
+          "avg_hash_TH": 296.5,
+          "uptime_pct": 95.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-25",
+          "avg_hash_TH": 300.6,
+          "uptime_pct": 98.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-26",
+          "avg_hash_TH": 307.6,
+          "uptime_pct": 97.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-27",
+          "avg_hash_TH": 313.9,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-28",
+          "avg_hash_TH": 314.5,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-29",
+          "avg_hash_TH": 313.3,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        }
+      ],
+      "monthly_history": [
+        {
+          "month": "2026-07",
+          "avg_hash_TH": 284.5,
+          "earn_btc": 0,
+          "days": 27
+        },
+        {
+          "month": "2026-06",
+          "avg_hash_TH": 316.5,
+          "earn_btc": 0,
+          "days": 30
+        },
+        {
+          "month": "2026-05",
+          "avg_hash_TH": 315.4,
+          "earn_btc": 0,
+          "days": 17
+        }
+      ],
       "label": null,
       "physical_location": null
     },
@@ -3179,12 +6204,12 @@
       "suffix": 125,
       "name": "S21e Hyd-125",
       "model": "S21e Hyd",
-      "mac": null,
-      "serial": null,
-      "saha_worker": null,
-      "havuz_worker": null,
-      "actual_worker": null,
-      "hashrate_TH": 318.76,
+      "mac": "BA:0F:6C:F2:A3:1B",
+      "serial": "PIEMGBUBEJEBF00Y5",
+      "saha_worker": "saha.A31B",
+      "havuz_worker": "mehmetas.008",
+      "actual_worker": "mehmetas.008",
+      "hashrate_TH": 318.75,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 102.8,
       "temp_max": 67,
@@ -3195,16 +6220,16 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1567,
+      "accepted": 1579,
       "rejected": 0,
-      "hw_errors_total": 395,
+      "hw_errors_total": 396,
       "f2pool_name": null,
-      "f2pool_hashrate_TH": 0.0,
-      "f2pool_h1_TH": 0.0,
-      "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1785332875,
+      "f2pool_hashrate_TH": null,
+      "f2pool_h1_TH": null,
+      "f2pool_h24_TH": null,
+      "f2pool_last_share": null,
       "f2pool_state": null,
-      "f2pool_matched": true,
+      "f2pool_matched": false,
       "hashrate_diff_pct": null,
       "earn_today_btc": null,
       "earn_yesterday_btc": null,
@@ -3232,8 +6257,208 @@
           ]
         }
       ],
-      "daily_history": [],
-      "monthly_history": [],
+      "daily_history": [
+        {
+          "date": "2026-06-30",
+          "avg_hash_TH": 315.3,
+          "uptime_pct": 99.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-01",
+          "avg_hash_TH": 312.0,
+          "uptime_pct": 98.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-02",
+          "avg_hash_TH": 312.3,
+          "uptime_pct": 99.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-03",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-04",
+          "avg_hash_TH": 223.7,
+          "uptime_pct": 97.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-05",
+          "avg_hash_TH": 314.4,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-06",
+          "avg_hash_TH": 299.7,
+          "uptime_pct": 96.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-07",
+          "avg_hash_TH": 309.4,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-08",
+          "avg_hash_TH": 299.4,
+          "uptime_pct": 96.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-09",
+          "avg_hash_TH": 249.7,
+          "uptime_pct": 80.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-10",
+          "avg_hash_TH": 182.0,
+          "uptime_pct": 59.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-11",
+          "avg_hash_TH": 311.6,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-12",
+          "avg_hash_TH": 291.5,
+          "uptime_pct": 94.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-13",
+          "avg_hash_TH": 311.3,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-14",
+          "avg_hash_TH": 11.6,
+          "uptime_pct": 74.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-15",
+          "avg_hash_TH": 313.9,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-16",
+          "avg_hash_TH": 311.2,
+          "uptime_pct": 98.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-17",
+          "avg_hash_TH": 309.7,
+          "uptime_pct": 98.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-18",
+          "avg_hash_TH": 270.4,
+          "uptime_pct": 86.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-19",
+          "avg_hash_TH": 307.2,
+          "uptime_pct": 97.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-20",
+          "avg_hash_TH": 311.0,
+          "uptime_pct": 98.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-21",
+          "avg_hash_TH": 311.4,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-22",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-23",
+          "avg_hash_TH": 302.0,
+          "uptime_pct": 97.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-24",
+          "avg_hash_TH": 291.0,
+          "uptime_pct": 95.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-25",
+          "avg_hash_TH": 295.8,
+          "uptime_pct": 98.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-26",
+          "avg_hash_TH": 304.8,
+          "uptime_pct": 98.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-27",
+          "avg_hash_TH": 313.0,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-28",
+          "avg_hash_TH": 313.1,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-29",
+          "avg_hash_TH": 311.8,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        }
+      ],
+      "monthly_history": [
+        {
+          "month": "2026-07",
+          "avg_hash_TH": 285.0,
+          "earn_btc": 0,
+          "days": 27
+        },
+        {
+          "month": "2026-06",
+          "avg_hash_TH": 315.1,
+          "earn_btc": 0,
+          "days": 30
+        },
+        {
+          "month": "2026-05",
+          "avg_hash_TH": 313.3,
+          "earn_btc": 0,
+          "days": 17
+        }
+      ],
       "label": null,
       "physical_location": null
     },
@@ -3250,7 +6475,7 @@
       "hashrate_TH": 318.94,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 102.9,
-      "temp_max": 64,
+      "temp_max": 65,
       "temp_water": 56,
       "elapsed_hours": 10.9,
       "fan_avg_rpm": 0,
@@ -3258,9 +6483,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1545,
+      "accepted": 1551,
       "rejected": 0,
-      "hw_errors_total": 352,
+      "hw_errors_total": 353,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -3472,7 +6697,7 @@
         },
         {
           "date": "2026-07-29",
-          "avg_hash_TH": 314.3,
+          "avg_hash_TH": 314.0,
           "uptime_pct": 99.0,
           "earn_btc": 0
         }
@@ -3505,15 +6730,15 @@
       "suffix": 127,
       "name": "S19 XP+ Hyd-127",
       "model": "S19 XP+ Hyd",
-      "mac": null,
-      "serial": null,
-      "saha_worker": null,
-      "havuz_worker": null,
-      "actual_worker": null,
+      "mac": "F2:95:6B:27:D4:8E",
+      "serial": "PIEMFCUBEJBBF02HL",
+      "saha_worker": "saha.D48E",
+      "havuz_worker": "mehmetas.023",
+      "actual_worker": "mehmetas.023",
       "hashrate_TH": 302.44,
       "target_hashrate_TH": 293.0,
       "efficiency_pct": 103.2,
-      "temp_max": 65,
+      "temp_max": 66,
       "temp_water": 59,
       "elapsed_hours": 10.9,
       "fan_avg_rpm": 0,
@@ -3521,16 +6746,16 @@
       "online": true,
       "sleeping": false,
       "is_hydro": false,
-      "accepted": 1459,
+      "accepted": 1462,
       "rejected": 1,
-      "hw_errors_total": 14472,
+      "hw_errors_total": 14510,
       "f2pool_name": null,
-      "f2pool_hashrate_TH": 0.0,
-      "f2pool_h1_TH": 0.0,
-      "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1785332875,
+      "f2pool_hashrate_TH": null,
+      "f2pool_h1_TH": null,
+      "f2pool_h24_TH": null,
+      "f2pool_last_share": null,
       "f2pool_state": null,
-      "f2pool_matched": true,
+      "f2pool_matched": false,
       "hashrate_diff_pct": null,
       "earn_today_btc": null,
       "earn_yesterday_btc": null,
@@ -3561,7 +6786,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (14472)",
+          "title": "Yuksek Donanim Hatasi (14510)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -3570,8 +6795,208 @@
           ]
         }
       ],
-      "daily_history": [],
-      "monthly_history": [],
+      "daily_history": [
+        {
+          "date": "2026-06-30",
+          "avg_hash_TH": 300.6,
+          "uptime_pct": 99.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-01",
+          "avg_hash_TH": 296.5,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-02",
+          "avg_hash_TH": 299.0,
+          "uptime_pct": 99.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-03",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-04",
+          "avg_hash_TH": 95.5,
+          "uptime_pct": 99.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-05",
+          "avg_hash_TH": 299.9,
+          "uptime_pct": 99.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-06",
+          "avg_hash_TH": 290.9,
+          "uptime_pct": 97.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-07",
+          "avg_hash_TH": 296.7,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-08",
+          "avg_hash_TH": 293.0,
+          "uptime_pct": 98.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-09",
+          "avg_hash_TH": 197.2,
+          "uptime_pct": 65.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-10",
+          "avg_hash_TH": 177.5,
+          "uptime_pct": 59.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-11",
+          "avg_hash_TH": 299.6,
+          "uptime_pct": 99.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-12",
+          "avg_hash_TH": 279.6,
+          "uptime_pct": 93.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-13",
+          "avg_hash_TH": 298.3,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-14",
+          "avg_hash_TH": 17.4,
+          "uptime_pct": 74.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-15",
+          "avg_hash_TH": 192.5,
+          "uptime_pct": 64.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-16",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-17",
+          "avg_hash_TH": 297.4,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-18",
+          "avg_hash_TH": 259.0,
+          "uptime_pct": 86.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-19",
+          "avg_hash_TH": 298.7,
+          "uptime_pct": 99.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-20",
+          "avg_hash_TH": 299.3,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-21",
+          "avg_hash_TH": 224.1,
+          "uptime_pct": 74.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-22",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-23",
+          "avg_hash_TH": 290.5,
+          "uptime_pct": 96.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-24",
+          "avg_hash_TH": 284.2,
+          "uptime_pct": 96.8,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-25",
+          "avg_hash_TH": 286.8,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-26",
+          "avg_hash_TH": 167.1,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-27",
+          "avg_hash_TH": 299.1,
+          "uptime_pct": 99.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-28",
+          "avg_hash_TH": 235.8,
+          "uptime_pct": 78.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-29",
+          "avg_hash_TH": 297.8,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        }
+      ],
+      "monthly_history": [
+        {
+          "month": "2026-07",
+          "avg_hash_TH": 252.8,
+          "earn_btc": 0,
+          "days": 26
+        },
+        {
+          "month": "2026-06",
+          "avg_hash_TH": 291.4,
+          "earn_btc": 0,
+          "days": 30
+        },
+        {
+          "month": "2026-05",
+          "avg_hash_TH": 270.5,
+          "earn_btc": 0,
+          "days": 17
+        }
+      ],
       "label": null,
       "physical_location": null
     },
@@ -3580,15 +7005,15 @@
       "suffix": 128,
       "name": "S21e Hyd-128",
       "model": "S21e Hyd",
-      "mac": null,
-      "serial": null,
-      "saha_worker": null,
+      "mac": "76:04:39:F7:82:A1",
+      "serial": "PIEMGBUBEJEBF01PT",
+      "saha_worker": "saha.82A1",
       "havuz_worker": "mehmetas.002",
       "actual_worker": "mehmetas.002",
-      "hashrate_TH": 317.32,
+      "hashrate_TH": 317.3,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 102.4,
-      "temp_max": 64,
+      "temp_max": 65,
       "temp_water": 58,
       "elapsed_hours": 10.9,
       "fan_avg_rpm": 0,
@@ -3596,7 +7021,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 1568,
+      "accepted": 1572,
       "rejected": 0,
       "hw_errors_total": 399,
       "f2pool_name": null,
@@ -3633,8 +7058,208 @@
           ]
         }
       ],
-      "daily_history": [],
-      "monthly_history": [],
+      "daily_history": [
+        {
+          "date": "2026-06-30",
+          "avg_hash_TH": 314.9,
+          "uptime_pct": 99.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-01",
+          "avg_hash_TH": 309.8,
+          "uptime_pct": 98.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-02",
+          "avg_hash_TH": 312.8,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-03",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-04",
+          "avg_hash_TH": 221.6,
+          "uptime_pct": 97.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-05",
+          "avg_hash_TH": 313.8,
+          "uptime_pct": 99.4,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-06",
+          "avg_hash_TH": 299.7,
+          "uptime_pct": 96.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-07",
+          "avg_hash_TH": 308.4,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-08",
+          "avg_hash_TH": 300.6,
+          "uptime_pct": 96.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-09",
+          "avg_hash_TH": 183.9,
+          "uptime_pct": 61.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-10",
+          "avg_hash_TH": 182.8,
+          "uptime_pct": 58.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-11",
+          "avg_hash_TH": 311.9,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-12",
+          "avg_hash_TH": 304.1,
+          "uptime_pct": 97.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-13",
+          "avg_hash_TH": 312.5,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-14",
+          "avg_hash_TH": 300.9,
+          "uptime_pct": 98.3,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-15",
+          "avg_hash_TH": 313.8,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-16",
+          "avg_hash_TH": 310.8,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-17",
+          "avg_hash_TH": 309.1,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-18",
+          "avg_hash_TH": 270.5,
+          "uptime_pct": 85.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-19",
+          "avg_hash_TH": 312.0,
+          "uptime_pct": 98.9,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-20",
+          "avg_hash_TH": 311.4,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-21",
+          "avg_hash_TH": 306.1,
+          "uptime_pct": 98.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-22",
+          "avg_hash_TH": 0,
+          "uptime_pct": 0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-23",
+          "avg_hash_TH": 308.7,
+          "uptime_pct": 98.7,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-24",
+          "avg_hash_TH": 290.4,
+          "uptime_pct": 95.5,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-25",
+          "avg_hash_TH": 298.6,
+          "uptime_pct": 98.6,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-26",
+          "avg_hash_TH": 305.2,
+          "uptime_pct": 98.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-27",
+          "avg_hash_TH": 311.8,
+          "uptime_pct": 99.0,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-28",
+          "avg_hash_TH": 313.5,
+          "uptime_pct": 99.2,
+          "earn_btc": 0
+        },
+        {
+          "date": "2026-07-29",
+          "avg_hash_TH": 310.3,
+          "uptime_pct": 99.1,
+          "earn_btc": 0
+        }
+      ],
+      "monthly_history": [
+        {
+          "month": "2026-07",
+          "avg_hash_TH": 293.9,
+          "earn_btc": 0,
+          "days": 27
+        },
+        {
+          "month": "2026-06",
+          "avg_hash_TH": 314.9,
+          "earn_btc": 0,
+          "days": 30
+        },
+        {
+          "month": "2026-05",
+          "avg_hash_TH": 313.2,
+          "earn_btc": 0,
+          "days": 17
+        }
+      ],
       "label": null,
       "physical_location": null
     }
@@ -3816,7 +7441,7 @@
     },
     {
       "date": "2026-07-29",
-      "total_hash_TH": 8389.6,
+      "total_hash_TH": 8388.0,
       "total_earn_btc": 0,
       "online_avg": 26.8
     }
