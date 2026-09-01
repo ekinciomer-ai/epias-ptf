@@ -1,16 +1,16 @@
 {
-  "timestamp": "2026-09-01T14:18:03.149212",
+  "timestamp": "2026-09-01T14:19:30.093446",
   "source": "Tek Yildiz 2 GES - Saha PC",
   "summary": {
     "total": 29,
     "online": 27,
     "sleeping": 0,
     "offline": 2,
-    "total_hashrate_TH": 8500.8,
+    "total_hashrate_TH": 8500.78,
     "total_target_TH": 8260.0,
     "efficiency_pct": 102.9,
-    "avg_temp_C": 67.8,
-    "avg_water_temp_C": 59.2,
+    "avg_temp_C": 67.1,
+    "avg_water_temp_C": 58.7,
     "models": {
       "?": 2,
       "S19 XP+ Hyd": 3,
@@ -124,7 +124,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -154,15 +154,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -181,20 +181,20 @@
       "saha_worker": "saha.7D07",
       "havuz_worker": "mehmetas.022",
       "actual_worker": "mehmetas.022",
-      "hashrate_TH": 301.23,
+      "hashrate_TH": 301.22,
       "target_hashrate_TH": 293.0,
       "efficiency_pct": 102.8,
-      "temp_max": 71,
-      "temp_water": 64,
+      "temp_max": 70,
+      "temp_water": 63,
       "elapsed_hours": 4.4,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": false,
-      "accepted": 629,
+      "accepted": 632,
       "rejected": 1,
-      "hw_errors_total": 1486,
+      "hw_errors_total": 1491,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -220,7 +220,7 @@
           "severity": "high",
           "code": "WATER_HOT",
           "icon": "💧",
-          "title": "Su Sicakligi Yuksek (64°C)",
+          "title": "Su Sicakligi Yuksek (63°C)",
           "reason": "Soguma sistemi yetersiz",
           "solutions": [
             "Radyatoru kontrol et (toz, tikanma)",
@@ -232,7 +232,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (1486)",
+          "title": "Yuksek Donanim Hatasi (1491)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -462,7 +462,7 @@
       "saha_worker": "saha.DE39",
       "havuz_worker": "mehmetas.028",
       "actual_worker": "mehmetas.028",
-      "hashrate_TH": 320.98,
+      "hashrate_TH": 320.99,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.5,
       "temp_max": 64,
@@ -473,9 +473,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 706,
+      "accepted": 712,
       "rejected": 0,
-      "hw_errors_total": 2474,
+      "hw_errors_total": 2530,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -501,7 +501,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (2474)",
+          "title": "Yuksek Donanim Hatasi (2530)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -687,7 +687,7 @@
         },
         {
           "date": "2026-09-01",
-          "avg_hash_TH": 308.0,
+          "avg_hash_TH": 308.1,
           "uptime_pct": 97.3,
           "earn_btc": 0
         }
@@ -695,7 +695,7 @@
       "monthly_history": [
         {
           "month": "2026-09",
-          "avg_hash_TH": 308.0,
+          "avg_hash_TH": 308.1,
           "earn_btc": 0,
           "days": 1
         },
@@ -734,7 +734,7 @@
       "hashrate_TH": 300.67,
       "target_hashrate_TH": 293.0,
       "efficiency_pct": 102.6,
-      "temp_max": 70,
+      "temp_max": 69,
       "temp_water": 63,
       "elapsed_hours": 4.4,
       "fan_avg_rpm": 0,
@@ -744,7 +744,7 @@
       "is_hydro": false,
       "accepted": 600,
       "rejected": 0,
-      "hw_errors_total": 1980,
+      "hw_errors_total": 1982,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -782,7 +782,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (1980)",
+          "title": "Yuksek Donanim Hatasi (1982)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -968,7 +968,7 @@
         },
         {
           "date": "2026-09-01",
-          "avg_hash_TH": 291.1,
+          "avg_hash_TH": 291.2,
           "uptime_pct": 98.4,
           "earn_btc": 0
         }
@@ -976,7 +976,7 @@
       "monthly_history": [
         {
           "month": "2026-09",
-          "avg_hash_TH": 291.1,
+          "avg_hash_TH": 291.2,
           "earn_btc": 0,
           "days": 1
         },
@@ -1012,20 +1012,20 @@
       "saha_worker": "saha.EBFD",
       "havuz_worker": "mehmetas.005",
       "actual_worker": "mehmetas.005",
-      "hashrate_TH": 315.85,
+      "hashrate_TH": 315.84,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 101.9,
       "temp_max": 67,
-      "temp_water": 58,
+      "temp_water": 57,
       "elapsed_hours": 4.4,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 701,
+      "accepted": 707,
       "rejected": 0,
-      "hw_errors_total": 624,
+      "hw_errors_total": 630,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -1051,7 +1051,7 @@
           "severity": "high",
           "code": "WATER_HOT",
           "icon": "💧",
-          "title": "Su Sicakligi Yuksek (58°C)",
+          "title": "Su Sicakligi Yuksek (57°C)",
           "reason": "Soguma sistemi yetersiz",
           "solutions": [
             "Radyatoru kontrol et (toz, tikanma)",
@@ -1237,7 +1237,7 @@
         },
         {
           "date": "2026-09-01",
-          "avg_hash_TH": 304.1,
+          "avg_hash_TH": 304.2,
           "uptime_pct": 97.3,
           "earn_btc": 0
         }
@@ -1245,7 +1245,7 @@
       "monthly_history": [
         {
           "month": "2026-09",
-          "avg_hash_TH": 304.1,
+          "avg_hash_TH": 304.2,
           "earn_btc": 0,
           "days": 1
         },
@@ -1281,7 +1281,7 @@
       "saha_worker": "saha.7AD8",
       "havuz_worker": "mehmetas.010",
       "actual_worker": "mehmetas.010",
-      "hashrate_TH": 318.02,
+      "hashrate_TH": 317.99,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 102.6,
       "temp_max": 65,
@@ -1292,9 +1292,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 715,
+      "accepted": 719,
       "rejected": 0,
-      "hw_errors_total": 771,
+      "hw_errors_total": 775,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -1493,7 +1493,7 @@
         },
         {
           "date": "2026-09-01",
-          "avg_hash_TH": 305.1,
+          "avg_hash_TH": 305.2,
           "uptime_pct": 97.3,
           "earn_btc": 0
         }
@@ -1501,7 +1501,7 @@
       "monthly_history": [
         {
           "month": "2026-09",
-          "avg_hash_TH": 305.1,
+          "avg_hash_TH": 305.2,
           "earn_btc": 0,
           "days": 1
         },
@@ -1537,10 +1537,10 @@
       "saha_worker": "saha.7019",
       "havuz_worker": "mehmetas.004",
       "actual_worker": "mehmetas.004",
-      "hashrate_TH": 321.58,
+      "hashrate_TH": 321.6,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.7,
-      "temp_max": 72,
+      "temp_max": 71,
       "temp_water": 61,
       "elapsed_hours": 4.4,
       "fan_avg_rpm": 0,
@@ -1548,9 +1548,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 762,
+      "accepted": 764,
       "rejected": 0,
-      "hw_errors_total": 150,
+      "hw_errors_total": 151,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -1806,10 +1806,10 @@
       "saha_worker": "saha.578B",
       "havuz_worker": "mehmetas.015",
       "actual_worker": "mehmetas.015",
-      "hashrate_TH": 318.0,
+      "hashrate_TH": 317.98,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 102.6,
-      "temp_max": 64,
+      "temp_max": 65,
       "temp_water": 55,
       "elapsed_hours": 4.4,
       "fan_avg_rpm": 0,
@@ -1817,7 +1817,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 764,
+      "accepted": 766,
       "rejected": 0,
       "hw_errors_total": 171,
       "f2pool_name": null,
@@ -2018,7 +2018,7 @@
         },
         {
           "date": "2026-09-01",
-          "avg_hash_TH": 308.6,
+          "avg_hash_TH": 308.7,
           "uptime_pct": 97.8,
           "earn_btc": 0
         }
@@ -2026,7 +2026,7 @@
       "monthly_history": [
         {
           "month": "2026-09",
-          "avg_hash_TH": 308.6,
+          "avg_hash_TH": 308.7,
           "earn_btc": 0,
           "days": 1
         },
@@ -2062,10 +2062,10 @@
       "saha_worker": "saha.82A1",
       "havuz_worker": "mehmetas.002",
       "actual_worker": "mehmetas.002",
-      "hashrate_TH": 316.67,
+      "hashrate_TH": 316.69,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 102.2,
-      "temp_max": 65,
+      "temp_max": 64,
       "temp_water": 59,
       "elapsed_hours": 4.4,
       "fan_avg_rpm": 0,
@@ -2073,7 +2073,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 743,
+      "accepted": 745,
       "rejected": 0,
       "hw_errors_total": 178,
       "f2pool_name": null,
@@ -2342,9 +2342,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 688,
+      "accepted": 691,
       "rejected": 1,
-      "hw_errors_total": 684,
+      "hw_errors_total": 687,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -2614,17 +2614,17 @@
       "hashrate_TH": 319.18,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.0,
-      "temp_max": 66,
-      "temp_water": 58,
+      "temp_max": 64,
+      "temp_water": 57,
       "elapsed_hours": 4.4,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 780,
+      "accepted": 781,
       "rejected": 0,
-      "hw_errors_total": 99,
+      "hw_errors_total": 104,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -2650,7 +2650,7 @@
           "severity": "high",
           "code": "WATER_HOT",
           "icon": "💧",
-          "title": "Su Sicakligi Yuksek (58°C)",
+          "title": "Su Sicakligi Yuksek (57°C)",
           "reason": "Soguma sistemi yetersiz",
           "solutions": [
             "Radyatoru kontrol et (toz, tikanma)",
@@ -2836,15 +2836,15 @@
         },
         {
           "date": "2026-09-01",
-          "avg_hash_TH": 309.5,
-          "uptime_pct": 97.5,
+          "avg_hash_TH": 309.6,
+          "uptime_pct": 97.6,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-09",
-          "avg_hash_TH": 309.5,
+          "avg_hash_TH": 309.6,
           "earn_btc": 0,
           "days": 1
         },
@@ -2880,20 +2880,20 @@
       "saha_worker": "saha.1403",
       "havuz_worker": "mehmetas.014",
       "actual_worker": "mehmetas.014",
-      "hashrate_TH": 318.68,
+      "hashrate_TH": 318.67,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 102.8,
       "temp_max": 63,
-      "temp_water": 56,
+      "temp_water": 55,
       "elapsed_hours": 4.4,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 734,
+      "accepted": 736,
       "rejected": 0,
-      "hw_errors_total": 13564,
+      "hw_errors_total": 13670,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -2916,22 +2916,10 @@
       "earn_total_try": null,
       "health_issues": [
         {
-          "severity": "high",
-          "code": "WATER_HOT",
-          "icon": "💧",
-          "title": "Su Sicakligi Yuksek (56°C)",
-          "reason": "Soguma sistemi yetersiz",
-          "solutions": [
-            "Radyatoru kontrol et (toz, tikanma)",
-            "Dis fan calisiyor mu?",
-            "Dis ortam sicakligi cok yuksek olabilir"
-          ]
-        },
-        {
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (13564)",
+          "title": "Yuksek Donanim Hatasi (13670)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -3161,7 +3149,7 @@
       "saha_worker": "saha.D48E",
       "havuz_worker": "mehmetas.023",
       "actual_worker": "mehmetas.023",
-      "hashrate_TH": 302.17,
+      "hashrate_TH": 302.18,
       "target_hashrate_TH": 293.0,
       "efficiency_pct": 103.1,
       "temp_max": 67,
@@ -3172,9 +3160,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": false,
-      "accepted": 630,
+      "accepted": 633,
       "rejected": 0,
-      "hw_errors_total": 2826,
+      "hw_errors_total": 2835,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -3212,7 +3200,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (2826)",
+          "title": "Yuksek Donanim Hatasi (2835)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -3442,10 +3430,10 @@
       "saha_worker": "saha.A31B",
       "havuz_worker": "mehmetas.008",
       "actual_worker": "mehmetas.008",
-      "hashrate_TH": 318.18,
+      "hashrate_TH": 318.17,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 102.6,
-      "temp_max": 68,
+      "temp_max": 67,
       "temp_water": 58,
       "elapsed_hours": 4.4,
       "fan_avg_rpm": 0,
@@ -3453,7 +3441,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 735,
+      "accepted": 736,
       "rejected": 1,
       "hw_errors_total": 285,
       "f2pool_name": null,
@@ -3667,7 +3655,7 @@
         },
         {
           "date": "2026-09-01",
-          "avg_hash_TH": 306.8,
+          "avg_hash_TH": 306.9,
           "uptime_pct": 97.8,
           "earn_btc": 0
         }
@@ -3675,7 +3663,7 @@
       "monthly_history": [
         {
           "month": "2026-09",
-          "avg_hash_TH": 306.8,
+          "avg_hash_TH": 306.9,
           "earn_btc": 0,
           "days": 1
         },
@@ -3711,11 +3699,11 @@
       "saha_worker": "saha.A22C",
       "havuz_worker": "mehmetas.006",
       "actual_worker": "mehmetas.006",
-      "hashrate_TH": 316.83,
+      "hashrate_TH": 316.84,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 102.2,
       "temp_max": 62,
-      "temp_water": 55,
+      "temp_water": 54,
       "elapsed_hours": 4.4,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
@@ -3967,20 +3955,20 @@
       "saha_worker": "saha.3AFE",
       "havuz_worker": "mehmetas.007",
       "actual_worker": "mehmetas.007",
-      "hashrate_TH": 317.34,
+      "hashrate_TH": 317.35,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 102.4,
       "temp_max": 68,
-      "temp_water": 59,
+      "temp_water": 58,
       "elapsed_hours": 4.4,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 799,
+      "accepted": 803,
       "rejected": 0,
-      "hw_errors_total": 160,
+      "hw_errors_total": 162,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -4006,7 +3994,7 @@
           "severity": "high",
           "code": "WATER_HOT",
           "icon": "💧",
-          "title": "Su Sicakligi Yuksek (59°C)",
+          "title": "Su Sicakligi Yuksek (58°C)",
           "reason": "Soguma sistemi yetersiz",
           "solutions": [
             "Radyatoru kontrol et (toz, tikanma)",
@@ -4193,7 +4181,7 @@
         {
           "date": "2026-09-01",
           "avg_hash_TH": 308.0,
-          "uptime_pct": 97.5,
+          "uptime_pct": 97.6,
           "earn_btc": 0
         }
       ],
@@ -4236,10 +4224,10 @@
       "saha_worker": "saha.F240",
       "havuz_worker": "mehmetas.013",
       "actual_worker": "mehmetas.013",
-      "hashrate_TH": 319.26,
+      "hashrate_TH": 319.24,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.0,
-      "temp_max": 72,
+      "temp_max": 71,
       "temp_water": 64,
       "elapsed_hours": 4.4,
       "fan_avg_rpm": 0,
@@ -4247,9 +4235,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 743,
+      "accepted": 746,
       "rejected": 0,
-      "hw_errors_total": 133,
+      "hw_errors_total": 139,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -4461,7 +4449,7 @@
         },
         {
           "date": "2026-09-01",
-          "avg_hash_TH": 309.9,
+          "avg_hash_TH": 310.0,
           "uptime_pct": 97.8,
           "earn_btc": 0
         }
@@ -4469,7 +4457,7 @@
       "monthly_history": [
         {
           "month": "2026-09",
-          "avg_hash_TH": 309.9,
+          "avg_hash_TH": 310.0,
           "earn_btc": 0,
           "days": 1
         },
@@ -4505,10 +4493,10 @@
       "saha_worker": "saha.4BDF",
       "havuz_worker": "mehmetas.012",
       "actual_worker": "mehmetas.012",
-      "hashrate_TH": 323.32,
+      "hashrate_TH": 323.34,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 104.3,
-      "temp_max": 68,
+      "temp_max": 66,
       "temp_water": 56,
       "elapsed_hours": 4.4,
       "fan_avg_rpm": 0,
@@ -4516,7 +4504,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 729,
+      "accepted": 732,
       "rejected": 0,
       "hw_errors_total": 121,
       "f2pool_name": null,
@@ -4774,20 +4762,20 @@
       "saha_worker": "saha.81D4",
       "havuz_worker": "mehmetas.017",
       "actual_worker": "mehmetas.017",
-      "hashrate_TH": 319.98,
+      "hashrate_TH": 319.97,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.2,
-      "temp_max": 65,
-      "temp_water": 59,
+      "temp_max": 63,
+      "temp_water": 58,
       "elapsed_hours": 4.4,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 752,
+      "accepted": 757,
       "rejected": 0,
-      "hw_errors_total": 78361,
+      "hw_errors_total": 78743,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -4813,7 +4801,7 @@
           "severity": "high",
           "code": "WATER_HOT",
           "icon": "💧",
-          "title": "Su Sicakligi Yuksek (59°C)",
+          "title": "Su Sicakligi Yuksek (58°C)",
           "reason": "Soguma sistemi yetersiz",
           "solutions": [
             "Radyatoru kontrol et (toz, tikanma)",
@@ -4825,7 +4813,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (78361)",
+          "title": "Yuksek Donanim Hatasi (78743)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -5011,15 +4999,15 @@
         },
         {
           "date": "2026-09-01",
-          "avg_hash_TH": 309.7,
-          "uptime_pct": 97.5,
+          "avg_hash_TH": 309.8,
+          "uptime_pct": 97.6,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-09",
-          "avg_hash_TH": 309.7,
+          "avg_hash_TH": 309.8,
           "earn_btc": 0,
           "days": 1
         },
@@ -5055,20 +5043,20 @@
       "saha_worker": "saha.5DAD",
       "havuz_worker": "mehmetas.021",
       "actual_worker": "mehmetas.021",
-      "hashrate_TH": 321.75,
+      "hashrate_TH": 321.74,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.8,
-      "temp_max": 73,
-      "temp_water": 62,
+      "temp_max": 72,
+      "temp_water": 61,
       "elapsed_hours": 4.4,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 744,
+      "accepted": 746,
       "rejected": 1,
-      "hw_errors_total": 121,
+      "hw_errors_total": 122,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -5094,7 +5082,7 @@
           "severity": "high",
           "code": "WATER_HOT",
           "icon": "💧",
-          "title": "Su Sicakligi Yuksek (62°C)",
+          "title": "Su Sicakligi Yuksek (61°C)",
           "reason": "Soguma sistemi yetersiz",
           "solutions": [
             "Radyatoru kontrol et (toz, tikanma)",
@@ -5280,7 +5268,7 @@
         },
         {
           "date": "2026-09-01",
-          "avg_hash_TH": 312.3,
+          "avg_hash_TH": 312.4,
           "uptime_pct": 97.8,
           "earn_btc": 0
         }
@@ -5288,7 +5276,7 @@
       "monthly_history": [
         {
           "month": "2026-09",
-          "avg_hash_TH": 312.3,
+          "avg_hash_TH": 312.4,
           "earn_btc": 0,
           "days": 1
         },
@@ -5328,16 +5316,16 @@
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.0,
       "temp_max": 71,
-      "temp_water": 62,
+      "temp_water": 61,
       "elapsed_hours": 4.4,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 785,
+      "accepted": 789,
       "rejected": 0,
-      "hw_errors_total": 903,
+      "hw_errors_total": 915,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -5363,7 +5351,7 @@
           "severity": "high",
           "code": "WATER_HOT",
           "icon": "💧",
-          "title": "Su Sicakligi Yuksek (62°C)",
+          "title": "Su Sicakligi Yuksek (61°C)",
           "reason": "Soguma sistemi yetersiz",
           "solutions": [
             "Radyatoru kontrol et (toz, tikanma)",
@@ -5549,7 +5537,7 @@
         },
         {
           "date": "2026-09-01",
-          "avg_hash_TH": 309.9,
+          "avg_hash_TH": 310.0,
           "uptime_pct": 97.8,
           "earn_btc": 0
         }
@@ -5557,7 +5545,7 @@
       "monthly_history": [
         {
           "month": "2026-09",
-          "avg_hash_TH": 309.9,
+          "avg_hash_TH": 310.0,
           "earn_btc": 0,
           "days": 1
         },
@@ -5593,20 +5581,20 @@
       "saha_worker": "saha.90A1",
       "havuz_worker": "mehmetas.029",
       "actual_worker": "mehmetas.029",
-      "hashrate_TH": 323.1,
+      "hashrate_TH": 323.11,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 104.2,
-      "temp_max": 66,
-      "temp_water": 55,
+      "temp_max": 65,
+      "temp_water": 54,
       "elapsed_hours": 4.4,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 757,
+      "accepted": 762,
       "rejected": 0,
-      "hw_errors_total": 129,
+      "hw_errors_total": 130,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -5805,7 +5793,7 @@
         },
         {
           "date": "2026-09-01",
-          "avg_hash_TH": 312.5,
+          "avg_hash_TH": 312.6,
           "uptime_pct": 97.3,
           "earn_btc": 0
         }
@@ -5813,7 +5801,7 @@
       "monthly_history": [
         {
           "month": "2026-09",
-          "avg_hash_TH": 312.5,
+          "avg_hash_TH": 312.6,
           "earn_btc": 0,
           "days": 1
         },
@@ -5852,17 +5840,17 @@
       "hashrate_TH": 321.34,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.7,
-      "temp_max": 68,
-      "temp_water": 58,
+      "temp_max": 66,
+      "temp_water": 57,
       "elapsed_hours": 4.4,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 754,
+      "accepted": 760,
       "rejected": 1,
-      "hw_errors_total": 28259,
+      "hw_errors_total": 28366,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -5888,7 +5876,7 @@
           "severity": "high",
           "code": "WATER_HOT",
           "icon": "💧",
-          "title": "Su Sicakligi Yuksek (58°C)",
+          "title": "Su Sicakligi Yuksek (57°C)",
           "reason": "Soguma sistemi yetersiz",
           "solutions": [
             "Radyatoru kontrol et (toz, tikanma)",
@@ -5900,7 +5888,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (28259)",
+          "title": "Yuksek Donanim Hatasi (28366)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -6086,15 +6074,15 @@
         },
         {
           "date": "2026-09-01",
-          "avg_hash_TH": 310.6,
-          "uptime_pct": 97.5,
+          "avg_hash_TH": 310.7,
+          "uptime_pct": 97.6,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-09",
-          "avg_hash_TH": 310.6,
+          "avg_hash_TH": 310.7,
           "earn_btc": 0,
           "days": 1
         },
@@ -6130,10 +6118,10 @@
       "saha_worker": "saha.52A1",
       "havuz_worker": "mehmetas.026",
       "actual_worker": "mehmetas.026",
-      "hashrate_TH": 317.13,
+      "hashrate_TH": 317.16,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 102.3,
-      "temp_max": 68,
+      "temp_max": 66,
       "temp_water": 56,
       "elapsed_hours": 4.4,
       "fan_avg_rpm": 0,
@@ -6141,9 +6129,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 723,
+      "accepted": 732,
       "rejected": 0,
-      "hw_errors_total": 141,
+      "hw_errors_total": 142,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -6355,15 +6343,15 @@
         },
         {
           "date": "2026-09-01",
-          "avg_hash_TH": 305.3,
-          "uptime_pct": 97.5,
+          "avg_hash_TH": 305.4,
+          "uptime_pct": 97.6,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-09",
-          "avg_hash_TH": 305.3,
+          "avg_hash_TH": 305.4,
           "earn_btc": 0,
           "days": 1
         },
@@ -6399,20 +6387,20 @@
       "saha_worker": "saha.1FFC",
       "havuz_worker": "mehmetas.011",
       "actual_worker": "mehmetas.011",
-      "hashrate_TH": 318.22,
+      "hashrate_TH": 318.21,
       "target_hashrate_TH": 310.0,
-      "efficiency_pct": 102.7,
-      "temp_max": 67,
-      "temp_water": 56,
+      "efficiency_pct": 102.6,
+      "temp_max": 66,
+      "temp_water": 55,
       "elapsed_hours": 4.4,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 779,
+      "accepted": 783,
       "rejected": 0,
-      "hw_errors_total": 15034,
+      "hw_errors_total": 15229,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -6435,22 +6423,10 @@
       "earn_total_try": null,
       "health_issues": [
         {
-          "severity": "high",
-          "code": "WATER_HOT",
-          "icon": "💧",
-          "title": "Su Sicakligi Yuksek (56°C)",
-          "reason": "Soguma sistemi yetersiz",
-          "solutions": [
-            "Radyatoru kontrol et (toz, tikanma)",
-            "Dis fan calisiyor mu?",
-            "Dis ortam sicakligi cok yuksek olabilir"
-          ]
-        },
-        {
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (15034)",
+          "title": "Yuksek Donanim Hatasi (15229)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -6637,7 +6613,7 @@
         {
           "date": "2026-09-01",
           "avg_hash_TH": 308.3,
-          "uptime_pct": 97.5,
+          "uptime_pct": 97.6,
           "earn_btc": 0
         }
       ],
@@ -6680,9 +6656,9 @@
       "saha_worker": "saha.7708",
       "havuz_worker": "mehmetas.003",
       "actual_worker": "mehmetas.003",
-      "hashrate_TH": 316.36,
+      "hashrate_TH": 316.34,
       "target_hashrate_TH": 310.0,
-      "efficiency_pct": 102.1,
+      "efficiency_pct": 102.0,
       "temp_max": 64,
       "temp_water": 58,
       "elapsed_hours": 4.4,
@@ -6691,9 +6667,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 798,
+      "accepted": 800,
       "rejected": 0,
-      "hw_errors_total": 178,
+      "hw_errors_total": 179,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -6905,15 +6881,15 @@
         },
         {
           "date": "2026-09-01",
-          "avg_hash_TH": 306.5,
-          "uptime_pct": 97.5,
+          "avg_hash_TH": 306.6,
+          "uptime_pct": 97.6,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-09",
-          "avg_hash_TH": 306.5,
+          "avg_hash_TH": 306.6,
           "earn_btc": 0,
           "days": 1
         },
@@ -6960,7 +6936,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 742,
+      "accepted": 743,
       "rejected": 0,
       "hw_errors_total": 126,
       "f2pool_name": null,
@@ -7174,7 +7150,7 @@
         },
         {
           "date": "2026-09-01",
-          "avg_hash_TH": 307.3,
+          "avg_hash_TH": 307.4,
           "uptime_pct": 97.3,
           "earn_btc": 0
         }
@@ -7182,7 +7158,7 @@
       "monthly_history": [
         {
           "month": "2026-09",
-          "avg_hash_TH": 307.3,
+          "avg_hash_TH": 307.4,
           "earn_btc": 0,
           "days": 1
         },
@@ -7221,15 +7197,15 @@
       "hashrate_TH": 320.73,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.5,
-      "temp_max": 66,
-      "temp_water": 57,
+      "temp_max": 65,
+      "temp_water": 56,
       "elapsed_hours": 4.4,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 719,
+      "accepted": 726,
       "rejected": 0,
       "hw_errors_total": 124,
       "f2pool_name": null,
@@ -7257,7 +7233,7 @@
           "severity": "high",
           "code": "WATER_HOT",
           "icon": "💧",
-          "title": "Su Sicakligi Yuksek (57°C)",
+          "title": "Su Sicakligi Yuksek (56°C)",
           "reason": "Soguma sistemi yetersiz",
           "solutions": [
             "Radyatoru kontrol et (toz, tikanma)",
@@ -7444,7 +7420,7 @@
         {
           "date": "2026-09-01",
           "avg_hash_TH": 307.9,
-          "uptime_pct": 97.5,
+          "uptime_pct": 97.6,
           "earn_btc": 0
         }
       ],
@@ -7655,7 +7631,7 @@
     },
     {
       "date": "2026-09-01",
-      "total_hash_TH": 8225.2,
+      "total_hash_TH": 8226.7,
       "total_earn_btc": 0,
       "online_avg": 26.4
     }
@@ -7663,7 +7639,7 @@
   "monthly_history": [
     {
       "month": "2026-09",
-      "avg_hash_TH": 8225.2,
+      "avg_hash_TH": 8226.7,
       "earn_btc": 0,
       "days": 1
     },
