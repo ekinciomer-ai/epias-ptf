@@ -2270,7 +2270,7 @@ const EPIAS_YEKDEM = {
   '2026-06': {ongoru: 580.99,  gercek: 1083.629},
   // 07-12 ongoru: EPDK 02/07/2026 tarih 14718 sayili Kurul Karari ile revize (RG 04.07.2026)
   // (Onceki ongoru: 07=189.15, 08=213.89)
-  '2026-07': {ongoru: 423.99,  gercek: null},
+  '2026-07': {ongoru: 423.99,  gercek: 486.314},
   '2026-08': {ongoru: 450.45,  gercek: null},
   '2026-09': {ongoru: 581.14,  gercek: null},
   '2026-10': {ongoru: 526.39,  gercek: null},
