@@ -1,16 +1,16 @@
 {
-  "timestamp": "2026-10-01T09:14:18.109742",
+  "timestamp": "2026-10-01T09:15:39.109677",
   "source": "Tek Yildiz 2 GES - Saha PC",
   "summary": {
     "total": 29,
     "online": 27,
     "sleeping": 0,
     "offline": 2,
-    "total_hashrate_TH": 8490.92,
+    "total_hashrate_TH": 8519.28,
     "total_target_TH": 8260.0,
-    "efficiency_pct": 102.8,
-    "avg_temp_C": 59.4,
-    "avg_water_temp_C": 51.2,
+    "efficiency_pct": 103.1,
+    "avg_temp_C": 59.1,
+    "avg_water_temp_C": 50.9,
     "models": {
       "?": 2,
       "S21e Hyd": 23,
@@ -60,7 +60,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -90,15 +90,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -181,9 +181,9 @@
       "saha_worker": "saha.7019",
       "havuz_worker": "mehmetas.004",
       "actual_worker": "mehmetas.004",
-      "hashrate_TH": 322.55,
+      "hashrate_TH": 322.61,
       "target_hashrate_TH": 310.0,
-      "efficiency_pct": 104.0,
+      "efficiency_pct": 104.1,
       "temp_max": 62,
       "temp_water": 52,
       "elapsed_hours": 0.5,
@@ -192,9 +192,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 252,
+      "accepted": 256,
       "rejected": 0,
-      "hw_errors_total": 14,
+      "hw_errors_total": 16,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -393,15 +393,15 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 50.8,
-          "uptime_pct": 24.0,
+          "avg_hash_TH": 53.4,
+          "uptime_pct": 24.8,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 50.8,
+          "avg_hash_TH": 53.4,
           "earn_btc": 0,
           "days": 1
         },
@@ -437,9 +437,9 @@
       "saha_worker": "saha.1725",
       "havuz_worker": "mehmetas.027",
       "actual_worker": "mehmetas.027",
-      "hashrate_TH": 254.57,
+      "hashrate_TH": 254.66,
       "target_hashrate_TH": 251.0,
-      "efficiency_pct": 101.4,
+      "efficiency_pct": 101.5,
       "temp_max": 73,
       "temp_water": 73,
       "elapsed_hours": 0.5,
@@ -448,9 +448,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 205,
+      "accepted": 207,
       "rejected": 0,
-      "hw_errors_total": 48,
+      "hw_errors_total": 88,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -662,15 +662,15 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 41.6,
-          "uptime_pct": 28.4,
+          "avg_hash_TH": 43.6,
+          "uptime_pct": 29.0,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 41.6,
+          "avg_hash_TH": 43.6,
           "earn_btc": 0,
           "days": 1
         },
@@ -706,20 +706,20 @@
       "saha_worker": "saha.F240",
       "havuz_worker": "mehmetas.013",
       "actual_worker": "mehmetas.013",
-      "hashrate_TH": 318.73,
+      "hashrate_TH": 318.94,
       "target_hashrate_TH": 310.0,
-      "efficiency_pct": 102.8,
+      "efficiency_pct": 102.9,
       "temp_max": 62,
-      "temp_water": 54,
+      "temp_water": 55,
       "elapsed_hours": 0.5,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 220,
+      "accepted": 222,
       "rejected": 0,
-      "hw_errors_total": 6,
+      "hw_errors_total": 7,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -918,15 +918,15 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 50.0,
-          "uptime_pct": 25.0,
+          "avg_hash_TH": 52.5,
+          "uptime_pct": 25.7,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 50.0,
+          "avg_hash_TH": 52.5,
           "earn_btc": 0,
           "days": 1
         },
@@ -962,7 +962,7 @@
       "saha_worker": "saha.CF41",
       "havuz_worker": "mehmetas.018",
       "actual_worker": "mehmetas.018",
-      "hashrate_TH": 322.22,
+      "hashrate_TH": 322.18,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.9,
       "temp_max": 57,
@@ -973,9 +973,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 502,
+      "accepted": 507,
       "rejected": 0,
-      "hw_errors_total": 445,
+      "hw_errors_total": 446,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -1174,15 +1174,15 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 303.8,
-          "uptime_pct": 95.8,
+          "avg_hash_TH": 304.0,
+          "uptime_pct": 95.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 303.8,
+          "avg_hash_TH": 304.0,
           "earn_btc": 0,
           "days": 1
         },
@@ -1218,20 +1218,20 @@
       "saha_worker": "saha.7FA4",
       "havuz_worker": "mehmetas.019",
       "actual_worker": "mehmetas.019",
-      "hashrate_TH": 321.77,
+      "hashrate_TH": 321.75,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.8,
-      "temp_max": 56,
-      "temp_water": 48,
+      "temp_max": 55,
+      "temp_water": 47,
       "elapsed_hours": 2.6,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 533,
+      "accepted": 535,
       "rejected": 0,
-      "hw_errors_total": 93,
+      "hw_errors_total": 94,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -1430,15 +1430,15 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 304.8,
-          "uptime_pct": 95.8,
+          "avg_hash_TH": 304.9,
+          "uptime_pct": 95.9,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 304.8,
+          "avg_hash_TH": 304.9,
           "earn_btc": 0,
           "days": 1
         },
@@ -1474,20 +1474,20 @@
       "saha_worker": "saha.2F90",
       "havuz_worker": "mehmetas.020",
       "actual_worker": "mehmetas.020",
-      "hashrate_TH": 322.0,
+      "hashrate_TH": 321.97,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.9,
-      "temp_max": 56,
-      "temp_water": 47,
+      "temp_max": 55,
+      "temp_water": 46,
       "elapsed_hours": 2.6,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 534,
+      "accepted": 540,
       "rejected": 0,
-      "hw_errors_total": 87,
+      "hw_errors_total": 89,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -1686,15 +1686,15 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 301.8,
-          "uptime_pct": 95.3,
+          "avg_hash_TH": 302.0,
+          "uptime_pct": 95.4,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 301.8,
+          "avg_hash_TH": 302.0,
           "earn_btc": 0,
           "days": 1
         },
@@ -1730,18 +1730,18 @@
       "saha_worker": "saha.5DAD",
       "havuz_worker": "mehmetas.021",
       "actual_worker": "mehmetas.021",
-      "hashrate_TH": 322.89,
+      "hashrate_TH": 322.87,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 104.2,
       "temp_max": 61,
-      "temp_water": 51,
+      "temp_water": 52,
       "elapsed_hours": 2.6,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 532,
+      "accepted": 534,
       "rejected": 0,
       "hw_errors_total": 57,
       "f2pool_name": null,
@@ -1942,7 +1942,7 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 305.2,
+          "avg_hash_TH": 305.4,
           "uptime_pct": 96.3,
           "earn_btc": 0
         }
@@ -1950,7 +1950,7 @@
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 305.2,
+          "avg_hash_TH": 305.4,
           "earn_btc": 0,
           "days": 1
         },
@@ -1986,20 +1986,20 @@
       "saha_worker": "saha.7D07",
       "havuz_worker": "mehmetas.022",
       "actual_worker": "mehmetas.022",
-      "hashrate_TH": 301.63,
+      "hashrate_TH": 301.65,
       "target_hashrate_TH": 293.0,
-      "efficiency_pct": 102.9,
-      "temp_max": 60,
-      "temp_water": 53,
+      "efficiency_pct": 103.0,
+      "temp_max": 61,
+      "temp_water": 54,
       "elapsed_hours": 2.5,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": false,
-      "accepted": 412,
+      "accepted": 418,
       "rejected": 0,
-      "hw_errors_total": 725,
+      "hw_errors_total": 730,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -2198,7 +2198,7 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 286.5,
+          "avg_hash_TH": 286.6,
           "uptime_pct": 98.1,
           "earn_btc": 0
         }
@@ -2206,7 +2206,7 @@
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 286.5,
+          "avg_hash_TH": 286.6,
           "earn_btc": 0,
           "days": 1
         },
@@ -2242,7 +2242,7 @@
       "saha_worker": "saha.A4F9",
       "havuz_worker": "mehmetas.024",
       "actual_worker": "mehmetas.024",
-      "hashrate_TH": 300.53,
+      "hashrate_TH": 300.56,
       "target_hashrate_TH": 293.0,
       "efficiency_pct": 102.6,
       "temp_max": 59,
@@ -2253,9 +2253,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": false,
-      "accepted": 423,
+      "accepted": 424,
       "rejected": 0,
-      "hw_errors_total": 1248,
+      "hw_errors_total": 1255,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -2281,7 +2281,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (1248)",
+          "title": "Yuksek Donanim Hatasi (1255)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -2467,7 +2467,7 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 285.3,
+          "avg_hash_TH": 285.4,
           "uptime_pct": 98.1,
           "earn_btc": 0
         }
@@ -2475,7 +2475,7 @@
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 285.3,
+          "avg_hash_TH": 285.4,
           "earn_btc": 0,
           "days": 1
         },
@@ -2511,7 +2511,7 @@
       "saha_worker": "saha.6B1E",
       "havuz_worker": "mehmetas.025",
       "actual_worker": "mehmetas.025",
-      "hashrate_TH": 321.48,
+      "hashrate_TH": 321.52,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.7,
       "temp_max": 59,
@@ -2522,9 +2522,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 503,
+      "accepted": 507,
       "rejected": 0,
-      "hw_errors_total": 560,
+      "hw_errors_total": 567,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -2723,15 +2723,15 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 304.7,
-          "uptime_pct": 96.2,
+          "avg_hash_TH": 304.8,
+          "uptime_pct": 96.3,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 304.7,
+          "avg_hash_TH": 304.8,
           "earn_btc": 0,
           "days": 1
         },
@@ -2767,18 +2767,18 @@
       "saha_worker": "saha.A22C",
       "havuz_worker": "mehmetas.006",
       "actual_worker": "mehmetas.006",
-      "hashrate_TH": 318.98,
+      "hashrate_TH": 318.93,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 102.9,
-      "temp_max": 58,
-      "temp_water": 51,
-      "elapsed_hours": 2.5,
+      "temp_max": 55,
+      "temp_water": 47,
+      "elapsed_hours": 2.6,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 461,
+      "accepted": 464,
       "rejected": 109,
       "hw_errors_total": 98,
       "f2pool_name": null,
@@ -2806,7 +2806,7 @@
           "severity": "low",
           "code": "HIGH_REJECT",
           "icon": "📉",
-          "title": "Yuksek Reject Orani (%19.1)",
+          "title": "Yuksek Reject Orani (%19.0)",
           "reason": "Network gecikmesi veya overclock asiri",
           "solutions": [
             "Daha yakin pool sunucusu sec",
@@ -2991,7 +2991,7 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 293.5,
+          "avg_hash_TH": 293.8,
           "uptime_pct": 95.4,
           "earn_btc": 0
         }
@@ -2999,7 +2999,7 @@
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 293.5,
+          "avg_hash_TH": 293.8,
           "earn_btc": 0,
           "days": 1
         },
@@ -3035,18 +3035,18 @@
       "saha_worker": "saha.1403",
       "havuz_worker": "mehmetas.014",
       "actual_worker": "mehmetas.014",
-      "hashrate_TH": 320.99,
+      "hashrate_TH": 321.04,
       "target_hashrate_TH": 310.0,
-      "efficiency_pct": 103.5,
-      "temp_max": 60,
-      "temp_water": 52,
-      "elapsed_hours": 2.5,
+      "efficiency_pct": 103.6,
+      "temp_max": 55,
+      "temp_water": 47,
+      "elapsed_hours": 2.6,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 507,
+      "accepted": 510,
       "rejected": 106,
       "hw_errors_total": 70,
       "f2pool_name": null,
@@ -3074,7 +3074,7 @@
           "severity": "low",
           "code": "HIGH_REJECT",
           "icon": "📉",
-          "title": "Yuksek Reject Orani (%17.3)",
+          "title": "Yuksek Reject Orani (%17.2)",
           "reason": "Network gecikmesi veya overclock asiri",
           "solutions": [
             "Daha yakin pool sunucusu sec",
@@ -3259,7 +3259,7 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 297.6,
+          "avg_hash_TH": 297.8,
           "uptime_pct": 95.9,
           "earn_btc": 0
         }
@@ -3267,7 +3267,7 @@
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 297.6,
+          "avg_hash_TH": 297.8,
           "earn_btc": 0,
           "days": 1
         },
@@ -3303,20 +3303,20 @@
       "saha_worker": "saha.578B",
       "havuz_worker": "mehmetas.015",
       "actual_worker": "mehmetas.015",
-      "hashrate_TH": 270.48,
+      "hashrate_TH": 298.52,
       "target_hashrate_TH": 310.0,
-      "efficiency_pct": 87.3,
-      "temp_max": 57,
-      "temp_water": 47,
-      "elapsed_hours": 0.1,
+      "efficiency_pct": 96.3,
+      "temp_max": 55,
+      "temp_water": 46,
+      "elapsed_hours": 0.2,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 11,
+      "accepted": 144,
       "rejected": 0,
-      "hw_errors_total": 1,
+      "hw_errors_total": 3,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -3515,15 +3515,15 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 280.4,
-          "uptime_pct": 91.3,
+          "avg_hash_TH": 280.6,
+          "uptime_pct": 91.4,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 280.4,
+          "avg_hash_TH": 280.6,
           "earn_btc": 0,
           "days": 1
         },
@@ -3559,7 +3559,7 @@
       "saha_worker": "saha.4BDF",
       "havuz_worker": "mehmetas.012",
       "actual_worker": "mehmetas.012",
-      "hashrate_TH": 323.61,
+      "hashrate_TH": 323.6,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 104.4,
       "temp_max": 60,
@@ -3570,7 +3570,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 489,
+      "accepted": 492,
       "rejected": 0,
       "hw_errors_total": 69,
       "f2pool_name": null,
@@ -3771,15 +3771,15 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 304.0,
-          "uptime_pct": 96.0,
+          "avg_hash_TH": 304.2,
+          "uptime_pct": 96.1,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 304.0,
+          "avg_hash_TH": 304.2,
           "earn_btc": 0,
           "days": 1
         },
@@ -3819,14 +3819,14 @@
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.8,
       "temp_max": 59,
-      "temp_water": 48,
+      "temp_water": 49,
       "elapsed_hours": 2.4,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 471,
+      "accepted": 472,
       "rejected": 1,
       "hw_errors_total": 70,
       "f2pool_name": null,
@@ -4027,15 +4027,15 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 302.2,
-          "uptime_pct": 96.0,
+          "avg_hash_TH": 302.4,
+          "uptime_pct": 96.1,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 302.2,
+          "avg_hash_TH": 302.4,
           "earn_btc": 0,
           "days": 1
         },
@@ -4071,7 +4071,7 @@
       "saha_worker": "saha.7AD8",
       "havuz_worker": "mehmetas.010",
       "actual_worker": "mehmetas.010",
-      "hashrate_TH": 320.46,
+      "hashrate_TH": 320.47,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.4,
       "temp_max": 57,
@@ -4082,9 +4082,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 514,
+      "accepted": 515,
       "rejected": 0,
-      "hw_errors_total": 172,
+      "hw_errors_total": 174,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -4283,15 +4283,15 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 300.8,
-          "uptime_pct": 96.0,
+          "avg_hash_TH": 301.0,
+          "uptime_pct": 96.1,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 300.8,
+          "avg_hash_TH": 301.0,
           "earn_btc": 0,
           "days": 1
         },
@@ -4327,7 +4327,7 @@
       "saha_worker": "saha.A8D3",
       "havuz_worker": "mehmetas.009",
       "actual_worker": "mehmetas.009",
-      "hashrate_TH": 321.59,
+      "hashrate_TH": 321.54,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.7,
       "temp_max": 56,
@@ -4338,9 +4338,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 468,
+      "accepted": 474,
       "rejected": 0,
-      "hw_errors_total": 78,
+      "hw_errors_total": 79,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -4539,15 +4539,15 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 301.4,
-          "uptime_pct": 95.0,
+          "avg_hash_TH": 301.6,
+          "uptime_pct": 95.1,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 301.4,
+          "avg_hash_TH": 301.6,
           "earn_btc": 0,
           "days": 1
         },
@@ -4583,7 +4583,7 @@
       "saha_worker": "saha.90A1",
       "havuz_worker": "mehmetas.029",
       "actual_worker": "mehmetas.029",
-      "hashrate_TH": 323.23,
+      "hashrate_TH": 323.22,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 104.3,
       "temp_max": 59,
@@ -4594,9 +4594,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 497,
+      "accepted": 499,
       "rejected": 0,
-      "hw_errors_total": 62,
+      "hw_errors_total": 64,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -4795,7 +4795,7 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 302.1,
+          "avg_hash_TH": 302.3,
           "uptime_pct": 94.6,
           "earn_btc": 0
         }
@@ -4803,7 +4803,7 @@
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 302.1,
+          "avg_hash_TH": 302.3,
           "earn_btc": 0,
           "days": 1
         },
@@ -4839,10 +4839,10 @@
       "saha_worker": "saha.DE39",
       "havuz_worker": "mehmetas.028",
       "actual_worker": "mehmetas.028",
-      "hashrate_TH": 322.44,
+      "hashrate_TH": 322.41,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 104.0,
-      "temp_max": 58,
+      "temp_max": 59,
       "temp_water": 49,
       "elapsed_hours": 2.2,
       "fan_avg_rpm": 0,
@@ -4850,7 +4850,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 488,
+      "accepted": 489,
       "rejected": 0,
       "hw_errors_total": 58,
       "f2pool_name": null,
@@ -5051,15 +5051,15 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 301.9,
-          "uptime_pct": 95.1,
+          "avg_hash_TH": 302.1,
+          "uptime_pct": 95.2,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 301.9,
+          "avg_hash_TH": 302.1,
           "earn_btc": 0,
           "days": 1
         },
@@ -5095,7 +5095,7 @@
       "saha_worker": "saha.52A1",
       "havuz_worker": "mehmetas.026",
       "actual_worker": "mehmetas.026",
-      "hashrate_TH": 319.52,
+      "hashrate_TH": 319.49,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.1,
       "temp_max": 61,
@@ -5106,9 +5106,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 451,
+      "accepted": 455,
       "rejected": 1,
-      "hw_errors_total": 60,
+      "hw_errors_total": 62,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -5307,15 +5307,15 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 298.4,
-          "uptime_pct": 95.1,
+          "avg_hash_TH": 298.7,
+          "uptime_pct": 95.2,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 298.4,
+          "avg_hash_TH": 298.7,
           "earn_btc": 0,
           "days": 1
         },
@@ -5351,7 +5351,7 @@
       "saha_worker": "saha.1FFC",
       "havuz_worker": "mehmetas.011",
       "actual_worker": "mehmetas.011",
-      "hashrate_TH": 320.97,
+      "hashrate_TH": 320.94,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.5,
       "temp_max": 61,
@@ -5362,9 +5362,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 452,
+      "accepted": 454,
       "rejected": 0,
-      "hw_errors_total": 2487,
+      "hw_errors_total": 2556,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -5390,7 +5390,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (2487)",
+          "title": "Yuksek Donanim Hatasi (2556)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -5576,15 +5576,15 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 301.2,
-          "uptime_pct": 95.1,
+          "avg_hash_TH": 301.4,
+          "uptime_pct": 95.2,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 301.2,
+          "avg_hash_TH": 301.4,
           "earn_btc": 0,
           "days": 1
         },
@@ -5620,7 +5620,7 @@
       "saha_worker": "saha.D48E",
       "havuz_worker": "mehmetas.023",
       "actual_worker": "mehmetas.023",
-      "hashrate_TH": 302.32,
+      "hashrate_TH": 302.36,
       "target_hashrate_TH": 293.0,
       "efficiency_pct": 103.2,
       "temp_max": 61,
@@ -5631,9 +5631,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": false,
-      "accepted": 441,
+      "accepted": 447,
       "rejected": 0,
-      "hw_errors_total": 2226,
+      "hw_errors_total": 2242,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -5659,7 +5659,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (2226)",
+          "title": "Yuksek Donanim Hatasi (2242)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -5845,7 +5845,7 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 285.4,
+          "avg_hash_TH": 285.6,
           "uptime_pct": 96.7,
           "earn_btc": 0
         }
@@ -5853,7 +5853,7 @@
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 285.4,
+          "avg_hash_TH": 285.6,
           "earn_btc": 0,
           "days": 1
         },
@@ -5889,7 +5889,7 @@
       "saha_worker": "saha.82A1",
       "havuz_worker": "mehmetas.002",
       "actual_worker": "mehmetas.002",
-      "hashrate_TH": 317.53,
+      "hashrate_TH": 317.57,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 102.4,
       "temp_max": 58,
@@ -5900,7 +5900,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 436,
+      "accepted": 439,
       "rejected": 0,
       "hw_errors_total": 73,
       "f2pool_name": null,
@@ -6101,7 +6101,7 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 292.9,
+          "avg_hash_TH": 293.2,
           "uptime_pct": 96.2,
           "earn_btc": 0
         }
@@ -6109,7 +6109,7 @@
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 292.9,
+          "avg_hash_TH": 293.2,
           "earn_btc": 0,
           "days": 1
         },
@@ -6145,10 +6145,10 @@
       "saha_worker": "saha.7708",
       "havuz_worker": "mehmetas.003",
       "actual_worker": "mehmetas.003",
-      "hashrate_TH": 319.11,
+      "hashrate_TH": 319.12,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 102.9,
-      "temp_max": 57,
+      "temp_max": 58,
       "temp_water": 52,
       "elapsed_hours": 2.2,
       "fan_avg_rpm": 0,
@@ -6156,9 +6156,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 453,
+      "accepted": 458,
       "rejected": 0,
-      "hw_errors_total": 74,
+      "hw_errors_total": 75,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -6357,15 +6357,15 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 297.5,
-          "uptime_pct": 95.1,
+          "avg_hash_TH": 297.7,
+          "uptime_pct": 95.2,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 297.5,
+          "avg_hash_TH": 297.7,
           "earn_btc": 0,
           "days": 1
         },
@@ -6401,7 +6401,7 @@
       "saha_worker": "saha.81D4",
       "havuz_worker": "mehmetas.017",
       "actual_worker": "mehmetas.017",
-      "hashrate_TH": 322.11,
+      "hashrate_TH": 322.12,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.9,
       "temp_max": 57,
@@ -6412,9 +6412,9 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 486,
+      "accepted": 489,
       "rejected": 0,
-      "hw_errors_total": 4179,
+      "hw_errors_total": 4562,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -6440,7 +6440,7 @@
           "severity": "medium",
           "code": "HIGH_HW_ERRORS",
           "icon": "⚠",
-          "title": "Yuksek Donanim Hatasi (4179)",
+          "title": "Yuksek Donanim Hatasi (4562)",
           "reason": "Chip asinmasi veya asiri overclock",
           "solutions": [
             "Hangi board'da fazla?",
@@ -6626,15 +6626,15 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 301.6,
-          "uptime_pct": 95.0,
+          "avg_hash_TH": 301.9,
+          "uptime_pct": 95.1,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 301.6,
+          "avg_hash_TH": 301.9,
           "earn_btc": 0,
           "days": 1
         },
@@ -6670,7 +6670,7 @@
       "saha_worker": "saha.A31B",
       "havuz_worker": "mehmetas.008",
       "actual_worker": "mehmetas.008",
-      "hashrate_TH": 316.76,
+      "hashrate_TH": 316.82,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 102.2,
       "temp_max": 60,
@@ -6681,7 +6681,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 463,
+      "accepted": 469,
       "rejected": 0,
       "hw_errors_total": 69,
       "f2pool_name": null,
@@ -6882,7 +6882,7 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 293.1,
+          "avg_hash_TH": 293.3,
           "uptime_pct": 95.6,
           "earn_btc": 0
         }
@@ -6890,7 +6890,7 @@
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 293.1,
+          "avg_hash_TH": 293.3,
           "earn_btc": 0,
           "days": 1
         },
@@ -6926,7 +6926,7 @@
       "saha_worker": "saha.3AFE",
       "havuz_worker": "mehmetas.007",
       "actual_worker": "mehmetas.007",
-      "hashrate_TH": 320.57,
+      "hashrate_TH": 320.54,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 103.4,
       "temp_max": 60,
@@ -6937,7 +6937,7 @@
       "online": true,
       "sleeping": false,
       "is_hydro": true,
-      "accepted": 467,
+      "accepted": 470,
       "rejected": 0,
       "hw_errors_total": 56,
       "f2pool_name": null,
@@ -7138,15 +7138,15 @@
         },
         {
           "date": "2026-10-01",
-          "avg_hash_TH": 300.6,
-          "uptime_pct": 95.0,
+          "avg_hash_TH": 300.8,
+          "uptime_pct": 95.1,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 300.6,
+          "avg_hash_TH": 300.8,
           "earn_btc": 0,
           "days": 1
         },
@@ -7350,15 +7350,15 @@
     },
     {
       "date": "2026-10-01",
-      "total_hash_TH": 7288.9,
+      "total_hash_TH": 7300.9,
       "total_earn_btc": 0,
-      "online_avg": 23.7
+      "online_avg": 23.8
     }
   ],
   "monthly_history": [
     {
       "month": "2026-10",
-      "avg_hash_TH": 7288.9,
+      "avg_hash_TH": 7300.9,
       "earn_btc": 0,
       "days": 1
     },
