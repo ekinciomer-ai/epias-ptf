@@ -471,24 +471,24 @@ def cihaz_durum(info):
 
 LOGIN_HTML = """<!DOCTYPE html>
 <html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#16a34a"><link rel="manifest" href="/manifest.json"><title>Otocoin</title>
+<meta name="theme-color" content="#f59e0b"><link rel="manifest" href="/manifest.json"><title>Paycoin</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Inter',-apple-system,sans-serif;background:#050917;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
 .card{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);border:1px solid #1e293b;border-radius:28px;padding:40px 32px;width:100%;max-width:380px;}
 .logo-wrap{text-align:center;margin-bottom:28px;}
-.logo{width:80px;height:80px;background:linear-gradient(135deg,#16a34a,#22c55e,#4ade80);border-radius:22px;display:inline-flex;align-items:center;justify-content:center;font-size:42px;margin-bottom:14px;box-shadow:0 8px 30px rgba(34,197,94,0.5);}
+.logo{width:80px;height:80px;background:linear-gradient(135deg,#d97706,#f59e0b,#fbbf24);border-radius:22px;display:inline-flex;align-items:center;justify-content:center;font-size:42px;margin-bottom:14px;box-shadow:0 8px 30px rgba(245,158,11,0.5);}
 h1{font-size:28px;font-weight:900;color:white;}
 .alt{font-size:13px;color:#64748b;margin-top:6px;}
 label{font-size:12px;color:#94a3b8;display:block;margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
 input{width:100%;padding:14px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;color:white;font-size:15px;margin-bottom:18px;outline:none;font-family:inherit;}
-input:focus{border-color:#22c55e;}
-button{width:100%;padding:15px;background:linear-gradient(135deg,#16a34a,#22c55e);color:white;border:none;border-radius:14px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;}
+input:focus{border-color:#f59e0b;}
+button{width:100%;padding:15px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#111;border:none;border-radius:14px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;}
 .error{background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.3);color:#fca5a5;padding:12px 16px;border-radius:12px;font-size:13px;margin-bottom:18px;text-align:center;}
 </style></head><body>
 <div class="card">
-<div class="logo-wrap"><div class="logo">⚡</div><h1>Otocoin</h1><div class="alt">Aksaray Enerji Yönetim Sistemi</div></div>
+<div class="logo-wrap"><div class="logo">🪙</div><h1>Paycoin</h1><div class="alt">Aksaray Enerji Yönetim Sistemi</div></div>
 {% if hata %}<div class="error">{{ hata }}</div>{% endif %}
 <form method="POST" action="/giris">
 <label>Kullanıcı Adı</label><input type="text" name="kullanici" autocomplete="username">
@@ -502,14 +502,14 @@ print("Bölüm 1 yazıldı")
 PANEL_HTML = """<!DOCTYPE html>
 <html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#050917"><meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="manifest" href="/manifest.json"><title>Otocoin</title>
+<link rel="manifest" href="/manifest.json"><title>Paycoin</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:linear-gradient(180deg,#0a0e1a 0%,#050917 100%);font-family:'Inter',-apple-system,sans-serif;color:white;min-height:100vh;padding-bottom:20px;}
 .header{padding:18px 20px 16px;padding-top:calc(18px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(10,14,26,0.9);backdrop-filter:blur(20px);position:sticky;top:0;z-index:100;}
 .brand{display:flex;align-items:center;gap:10px;}
-.brand-logo{width:38px;height:38px;background:linear-gradient(135deg,#16a34a,#22c55e,#4ade80);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 16px rgba(34,197,94,0.4);}
+.brand-logo{width:38px;height:38px;background:linear-gradient(135deg,#d97706,#f59e0b,#fbbf24);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 16px rgba(245,158,11,0.4);}
 .brand-text{font-size:18px;font-weight:900;}
 .user-pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);padding:6px 10px;border-radius:20px;border:1px solid rgba(255,255,255,0.08);}
 .user-avatar{width:22px;height:22px;background:linear-gradient(135deg,#3b82f6,#6366f1);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:10px;font-weight:700;}
@@ -1028,7 +1028,7 @@ function otoEksen(birim) {
   </div>
 </div>
 <div class="header">
-<div class="brand"><div class="brand-logo">⚡</div><div class="brand-text">Otocoin</div></div>
+<div class="brand"><div class="brand-logo">🪙</div><div class="brand-text">Paycoin</div></div>
 <div style="display:flex;align-items:center;gap:8px">
 <div class="user-pill"><div class="user-avatar">{{ kullanici[:2].upper() }}</div><div class="user-name">{{ kullanici }}</div></div>
 <a href="/cikis" class="cikis-link">Çıkış</a>
@@ -1049,6 +1049,7 @@ function otoEksen(birim) {
 <div class="tab" onclick="sekme('inverter', this)">🌞 İnverter</div>
 <div class="tab" onclick="sekme('antminer', this)">⛏️ Antminer Saha</div>
 <div class="tab" onclick="sekme('rapor', this)" style="background:linear-gradient(135deg,rgba(100,116,139,0.12),rgba(71,85,105,0.08));border-color:rgba(100,116,139,0.4);">📋 Rapor</div>
+<div class="tab" onclick="sekme('paycoin', this)" style="background:linear-gradient(135deg,rgba(14,116,144,0.22),rgba(34,197,94,0.14));border-color:rgba(56,189,248,0.5);font-weight:800;">🪙 Paycoin</div>
 </div>
 <div class="content">
 
@@ -2023,6 +2024,74 @@ function otoEksen(birim) {
 <!-- ====================== T2 KIYAS SEKMESI SONU ====================== -->
 
 <!-- ====================== RAPOR SEKMESI ====================== -->
+<div class="tab-content" id="t-paycoin" style="background:#f1f5f9;border-radius:16px;padding:16px;margin-top:8px;">
+  <div style="background:linear-gradient(135deg,#0e7490,#0f172a);color:#fff;border-radius:16px;padding:20px 18px;margin-bottom:14px;">
+    <div style="font-size:22px;font-weight:900;letter-spacing:.5px;">🪙 PAYCOIN</div>
+    <div style="font-size:13px;opacity:.85;margin-top:4px;">Tekyıldız GES + Madencilik — Saatlik Mahsuplaşma Fizibilite &amp; İzleme Raporu</div>
+    <div style="font-size:11px;opacity:.6;margin-top:6px;" id="pc-guncel">Yükleniyor…</div>
+  </div>
+
+  <div style="background:#fff;border:1px solid #e2e8f0;border-left:4px solid #0e7490;border-radius:12px;padding:14px 16px;margin-bottom:14px;font-size:13px;line-height:1.6;color:#334155;">
+    <b>Ana tez:</b> 01.05.2026'dan beri yürürlükteki <b>saatlik mahsuplaşma</b> ile öğle saatlerindeki fazla üretim neredeyse değersizleşiyor (PTF öğlen ~0, YEKDEM baskın). Enermost raporunun vardığı <i>"batarya geri ödemiyor"</i> sonucunun bizdeki karşılığı: fazla üretimi <b>bataryada değil, Bitcoin madenciliğinde</b> değerlendiriyoruz.
+  </div>
+
+  <!-- Özet kartları -->
+  <div id="pc-kartlar" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px;"></div>
+
+  <!-- Batarya vs Madencilik -->
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;margin-bottom:16px;">
+    <div style="font-weight:800;color:#0f172a;margin-bottom:10px;">⚖️ Batarya (BESS) vs. Madencilik</div>
+    <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+      <thead><tr style="background:#f8fafc;color:#475569;text-align:left;">
+        <th style="padding:8px;border-bottom:2px solid #e2e8f0;">Kriter</th>
+        <th style="padding:8px;border-bottom:2px solid #e2e8f0;">🔋 Batarya (BESS)</th>
+        <th style="padding:8px;border-bottom:2px solid #e2e8f0;">⛏️ Madencilik</th>
+      </tr></thead>
+      <tbody id="pc-vs"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- Aylik tablo -->
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;margin-bottom:16px;">
+    <div style="font-weight:800;color:#0f172a;margin-bottom:10px;">📊 Aylık Üretim / Tüketim / Madencilik</div>
+    <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead><tr style="background:#f8fafc;color:#475569;text-align:right;">
+        <th style="padding:7px;text-align:left;border-bottom:2px solid #e2e8f0;">Ay</th>
+        <th style="padding:7px;border-bottom:2px solid #e2e8f0;">GES Üretim (kWh)</th>
+        <th style="padding:7px;border-bottom:2px solid #e2e8f0;">A3 Tüketim (kWh)</th>
+        <th style="padding:7px;border-bottom:2px solid #e2e8f0;">Madencilik (BTC)</th>
+        <th style="padding:7px;border-bottom:2px solid #e2e8f0;">Madencilik ($)</th>
+      </tr></thead>
+      <tbody id="pc-aylik"></tbody>
+      <tfoot id="pc-aylik-ft"></tfoot>
+    </table>
+    </div>
+  </div>
+
+  <!-- Grafikler -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-bottom:16px;">
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;">
+      <div style="font-weight:800;color:#0f172a;margin-bottom:8px;font-size:13px;">Aylık GES Üretim (MWh)</div>
+      <div id="pc-chart-ges"></div>
+    </div>
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;">
+      <div style="font-weight:800;color:#0f172a;margin-bottom:8px;font-size:13px;">Aylık Madencilik (BTC)</div>
+      <div id="pc-chart-btc"></div>
+    </div>
+  </div>
+
+  <!-- Filo -->
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;margin-bottom:16px;">
+    <div style="font-weight:800;color:#0f172a;margin-bottom:8px;">🖥️ Madencilik Filosu (canlı)</div>
+    <div id="pc-filo" style="font-size:13px;color:#334155;line-height:1.7;">—</div>
+  </div>
+
+  <div style="font-size:11px;color:#94a3b8;text-align:center;padding:8px;">Hazırlayan: Ömer Ekinci, Elektrik Mühendisi — Aksaray Enerji · Veri: OSOS endeks + F2Pool arşiv (canlı)</div>
+</div>
+
 <div class="tab-content" id="t-rapor">
   <div style="font-size:11px;color:#64748b;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin-bottom:12px;line-height:1.5;">
     Sistem aktivite raporu. GitHub commits API'den son güncellemeler. Saat değerleri TR (UTC+3).
@@ -2140,6 +2209,93 @@ function sekme(ad, btn) {
   if (ad === 'epias') epiasYukle();
   if (ad === 'f2pool') { try { if (window.f2GunlukHam && window.f2GunlukHam.length) f2Render(); } catch(e) { console.error('f2 sekme render:', e); } }
   if (ad === 'rapor') raporYukle();
+  if (ad === 'paycoin') pcYukle();
+}
+
+// === PAYCOIN SEKMESI ===
+function pcFmt(n){ return (n||0).toLocaleString('tr-TR'); }
+function pcBars(el, data, valf, renk, fmtf){
+  el = (typeof el==='string')? document.getElementById(el): el;
+  if(!el) return;
+  var W=el.clientWidth||320, H=180, pad=24, n=data.length;
+  if(!n){ el.innerHTML='<div style="color:#94a3b8;font-size:12px;">veri yok</div>'; return; }
+  var mx=Math.max.apply(null,data.map(valf))||1;
+  var bw=(W-pad)/n*0.68, gap=(W-pad)/n*0.32;
+  var s='<svg width="100%" viewBox="0 0 '+W+' '+H+'" font-family="Inter,sans-serif">';
+  data.forEach(function(d,i){
+    var v=valf(d), h=mx>0?(v/mx)*(H-46):0;
+    var x=pad+ i*((W-pad)/n)+gap/2, y=H-26-h;
+    s+='<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(h,0).toFixed(1)+'" rx="3" fill="'+renk+'"/>';
+    s+='<text x="'+(x+bw/2).toFixed(1)+'" y="'+(y-4).toFixed(1)+'" font-size="9.5" fill="#334155" text-anchor="middle">'+fmtf(v)+'</text>';
+    s+='<text x="'+(x+bw/2).toFixed(1)+'" y="'+(H-10)+'" font-size="9" fill="#94a3b8" text-anchor="middle">'+(d.ay? d.ay.slice(2): '')+'</text>';
+  });
+  s+='</svg>'; el.innerHTML=s;
+}
+var pcYuklendi=false;
+function pcYukle(){
+  var g=document.getElementById('pc-guncel');
+  if(g) g.textContent='Yükleniyor…';
+  fetch('/api/paycoin').then(function(r){return r.json();}).then(function(d){
+    if(d.hata){ if(g) g.textContent='Hata: '+d.hata; return; }
+    pcYuklendi=true;
+    if(g) g.textContent='Son güncelleme: '+d.guncel+'  ·  BTC $'+pcFmt(d.btc_usd)+'  ·  USD/TRY '+d.usd_try;
+    var t=d.toplam||{};
+    // Ozet kartlari
+    var kartlar=[
+      ['GES Üretim (12 ay)', (t.ges_kwh/1e6).toFixed(2)+' GWh', '#f59e0b'],
+      ['A3 Tüketim (12 ay)', (t.a3_kwh/1e6).toFixed(2)+' GWh', '#ef4444'],
+      ['Madencilik (eldeki)', (t.btc||0).toFixed(4)+' BTC', '#22c55e'],
+      ['Madencilik ($)', '$'+pcFmt(t.btc_usd), '#22c55e'],
+      ['12 ay projeksiyon', (t.proj_12_btc||0).toFixed(3)+' BTC', '#38bdf8'],
+      ['Projeksiyon ($)', '$'+pcFmt(t.proj_12_usd), '#38bdf8'],
+    ];
+    document.getElementById('pc-kartlar').innerHTML=kartlar.map(function(k){
+      return '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;">'
+        +'<div style="font-size:11px;color:#64748b;font-weight:600;">'+k[0]+'</div>'
+        +'<div style="font-size:19px;font-weight:900;color:'+k[2]+';margin-top:3px;">'+k[1]+'</div></div>';
+    }).join('');
+    // Batarya vs Madencilik
+    var vs=[
+      ['Fazla üretimi değere çevirme','Şarj/deşarj verimi ~%85, öğlen ucuz enerjiyi akşam satış','Fazla enerji anında hashrate → BTC, zaman arbitrajı gerekmez'],
+      ['Gelir kaynağı','PTF farkı (gündüz-akşam makası daralıyor)','Küresel BTC bloğu + işlem ücreti (TL değer artışı)'],
+      ['Geri ödeme','Enermost: makas dar → geri ödeme çok uzun / yok','F2Pool gerçek: aylık ort. '+(t.ay_ort_btc||0).toFixed(4)+' BTC nakit akışı'],
+      ['Ölçeklenebilirlik','MW/MWh kademeli, yüksek CAPEX','Cihaz bazında modüler, kademeli eklenebilir'],
+      ['Mahsuplaşma uyumu','Saatlik mahsupta fazla üretim değeri düşük','Fazla üretim saatinde tüketime dönüştürür'],
+    ];
+    document.getElementById('pc-vs').innerHTML=vs.map(function(r){
+      return '<tr><td style="padding:8px;border-bottom:1px solid #f1f5f9;font-weight:700;color:#0f172a;">'+r[0]
+        +'</td><td style="padding:8px;border-bottom:1px solid #f1f5f9;color:#64748b;">'+r[1]
+        +'</td><td style="padding:8px;border-bottom:1px solid #f1f5f9;color:#166534;">'+r[2]+'</td></tr>';
+    }).join('');
+    // Aylik tablo
+    var ay=d.aylik||[];
+    document.getElementById('pc-aylik').innerHTML=ay.map(function(s){
+      return '<tr style="text-align:right;">'
+        +'<td style="padding:6px 7px;text-align:left;border-bottom:1px solid #f1f5f9;font-weight:600;">'+s.ay+'</td>'
+        +'<td style="padding:6px 7px;border-bottom:1px solid #f1f5f9;">'+pcFmt(s.ges_kwh)+'</td>'
+        +'<td style="padding:6px 7px;border-bottom:1px solid #f1f5f9;">'+pcFmt(s.a3_kwh)+'</td>'
+        +'<td style="padding:6px 7px;border-bottom:1px solid #f1f5f9;color:#166534;font-weight:600;">'+(s.btc?s.btc.toFixed(5):'—')+'</td>'
+        +'<td style="padding:6px 7px;border-bottom:1px solid #f1f5f9;color:#166534;">'+(s.btc_usd?'$'+pcFmt(s.btc_usd):'—')+'</td></tr>';
+    }).join('');
+    document.getElementById('pc-aylik-ft').innerHTML='<tr style="text-align:right;font-weight:800;background:#f8fafc;">'
+      +'<td style="padding:8px 7px;text-align:left;">12 AY TOPLAM</td>'
+      +'<td style="padding:8px 7px;">'+pcFmt(t.ges_kwh)+'</td>'
+      +'<td style="padding:8px 7px;">'+pcFmt(t.a3_kwh)+'</td>'
+      +'<td style="padding:8px 7px;color:#166534;">'+(t.btc||0).toFixed(5)+'</td>'
+      +'<td style="padding:8px 7px;color:#166534;">$'+pcFmt(t.btc_usd)+'</td></tr>';
+    // Grafikler
+    var son12=ay.slice(-12);
+    pcBars('pc-chart-ges', son12, function(s){return s.ges_kwh/1000;}, '#f59e0b', function(v){return Math.round(v);});
+    pcBars('pc-chart-btc', son12.filter(function(s){return s.btc>0;}), function(s){return s.btc;}, '#22c55e', function(v){return v.toFixed(3);});
+    // Filo
+    var f=d.filo||{}; var mods=f.modeller||{};
+    var modstr=Object.keys(mods).map(function(k){return k+': '+mods[k];}).join(' · ');
+    document.getElementById('pc-filo').innerHTML=
+      '<b>'+(f.cihaz||0)+'</b> cihaz ('+(f.online||0)+' online) · <b>'+(f.hash_ph||0)+'</b> PH/s · ~<b>'+(f.guc_kw||0)+'</b> kW güç<br>'
+      +'<span style="color:#64748b;font-size:12px;">'+modstr+'</span>';
+    // pencere boyutu degisince grafikleri yeniden ciz
+    if(!window._pcResize){ window._pcResize=true; window.addEventListener('resize', function(){ if(pcYuklendi && document.getElementById('t-paycoin').classList.contains('active')) pcYukle(); }); }
+  }).catch(function(e){ if(g) g.textContent='Bağlantı hatası'; console.error('paycoin:',e); });
 }
 
 // === RAPOR SEKMESI ===
@@ -7765,6 +7921,22 @@ if ('serviceWorker' in navigator) {
 </script>
 </body></html>"""
 
+MANIFEST = ('{"name":"Paycoin","short_name":"Paycoin","start_url":"/",'
+            '"display":"standalone","background_color":"#050917",'
+            '"theme_color":"#f59e0b","description":"Aksaray Enerji — GES + Madencilik Yönetim Sistemi",'
+            '"icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}')
+
+ICON_SVG = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">'
+            '<defs><linearGradient id="pc" x1="0" y1="0" x2="1" y2="1">'
+            '<stop offset="0" stop-color="#fbbf24"/><stop offset="0.5" stop-color="#f59e0b"/>'
+            '<stop offset="1" stop-color="#d97706"/></linearGradient></defs>'
+            '<rect width="512" height="512" rx="112" fill="#050917"/>'
+            '<circle cx="256" cy="256" r="150" fill="url(#pc)"/>'
+            '<circle cx="256" cy="256" r="150" fill="none" stroke="#fde68a" stroke-width="10" opacity="0.6"/>'
+            '<text x="256" y="322" font-family="Inter,Arial,sans-serif" font-size="190" '
+            'font-weight="900" fill="#050917" text-anchor="middle">P</text></svg>')
+
+
 @app.route("/manifest.json")
 def manifest():
     return Response(MANIFEST, mimetype="application/manifest+json")
@@ -8938,6 +9110,114 @@ def _ptf_zamanlayici():
         except Exception as e:
             print(f"[PTF] zamanlayici hata: {e}", flush=True)
         _time.sleep(2 * 3600)  # 2 saat
+
+
+@app.route("/api/paycoin")
+def api_paycoin():
+    """PAYCOIN — Tekyildiz GES + madencilik fizibilite/izleme raporu (canli).
+    OSOS endeks + arsiv_f2pool arsivlerinden aylik uretim/tuketim/BTC uretir."""
+    if "kullanici" not in session:
+        return jsonify({"hata": "yetkisiz"}), 401
+    import collections as _col
+    osos = github_oku("2026_osos_endeks.json") or {}
+
+    def _aylik(key, alan):
+        v = (osos.get(key) or {}).get("veri", {})
+        m = _col.defaultdict(float)
+        for g, saatler in v.items():
+            ay = g[:7]
+            for h, d in saatler.items():
+                try:
+                    x = float(d.get(alan, 0) or 0)
+                except Exception:
+                    x = 0.0
+                if abs(x) > 50000:   # sayac sifirlama artefakti
+                    continue
+                m[ay] += x
+        return m
+
+    t1   = _aylik("tekyildiz_1", "veris")
+    t2v  = _aylik("tekyildiz_2", "veris")
+    t2c  = _aylik("tekyildiz_2", "cekis")
+    a3   = _aylik("aksaray_3",   "cekis")
+
+    # --- F2Pool aylik gerceklesen BTC (gunun son okumasi yontemi) ---
+    bugun = datetime.date.today()
+    f2_aylik = {}
+    for geri in range(0, 24):
+        yil = bugun.year; aynum = bugun.month - geri
+        while aynum <= 0:
+            aynum += 12; yil -= 1
+        ayk = f"{yil:04d}-{aynum:02d}"
+        arsiv = github_oku(f"arsiv_f2pool_{ayk}.json")
+        if not arsiv:
+            continue
+        byday = {}
+        for ts, rec in arsiv.items():
+            try:
+                gun = ts[:10]
+                btc = float((rec or {}).get("btc", 0) or 0)
+            except Exception:
+                continue
+            if gun not in byday or ts > byday[gun][0]:
+                byday[gun] = (ts, btc)
+        f2_aylik[ayk] = round(sum(x[1] for x in byday.values()), 6)
+
+    aylar = sorted(set(t1) | set(t2v) | set(a3) | set(f2_aylik))
+    btc_try, btc_usd = _btc_kur_uygula(github_oku("sinyal.json"))
+    usd_try = round(btc_try / btc_usd, 2) if (btc_try and btc_usd) else 0
+
+    satirlar = []
+    for ay in aylar:
+        ges = round(t1.get(ay, 0) + t2v.get(ay, 0))
+        btc = f2_aylik.get(ay, 0)
+        satirlar.append({
+            "ay": ay,
+            "ges_kwh": ges,
+            "t1_kwh": round(t1.get(ay, 0)),
+            "t2v_kwh": round(t2v.get(ay, 0)),
+            "t2c_kwh": round(t2c.get(ay, 0)),
+            "a3_kwh": round(max(a3.get(ay, 0), 0)),
+            "btc": btc,
+            "btc_tl": round(btc * btc_try),
+            "btc_usd": round(btc * btc_usd),
+        })
+
+    # Son 12 ay (yuvarlanan) toplam
+    son12 = satirlar[-12:] if len(satirlar) >= 12 else satirlar
+    top_ges   = sum(s["ges_kwh"] for s in son12)
+    top_a3    = sum(s["a3_kwh"] for s in son12)
+    top_t2c   = sum(s["t2c_kwh"] for s in son12)
+    top_btc   = round(sum(s["btc"] for s in son12), 5)
+    # Tam 12 ay projeksiyonu (eldeki F2Pool ortalamasindan)
+    btc_dolu = [s["btc"] for s in satirlar if s["btc"] > 0]
+    ay_ort_btc = round(sum(btc_dolu) / len(btc_dolu), 5) if btc_dolu else 0
+    proj_12_btc = round(ay_ort_btc * 12, 5)
+
+    # --- Filo (canli antminer_panel ozeti) ---
+    ap = github_oku("antminer_panel.json") or {}
+    smm = ap.get("summary", {}) if isinstance(ap, dict) else {}
+    hash_th = float(smm.get("total_hashrate_TH", 0) or 0)
+    filo = {
+        "cihaz": smm.get("total", 0),
+        "online": smm.get("online", 0),
+        "hash_ph": round(hash_th / 1000, 2),
+        "guc_kw": round(hash_th * 0.0198, 1),   # ~19.8 W/TH hidro ort. (tahmini)
+        "modeller": smm.get("models", {}),
+    }
+
+    return jsonify({
+        "guncel": (datetime.datetime.utcnow() + datetime.timedelta(hours=3)).strftime("%d.%m.%Y %H:%M"),
+        "aylik": satirlar,
+        "toplam": {
+            "ges_kwh": top_ges, "a3_kwh": top_a3, "t2c_kwh": top_t2c,
+            "btc": top_btc, "btc_tl": round(top_btc * btc_try), "btc_usd": round(top_btc * btc_usd),
+            "ay_ort_btc": ay_ort_btc, "proj_12_btc": proj_12_btc,
+            "proj_12_usd": round(proj_12_btc * btc_usd), "proj_12_tl": round(proj_12_btc * btc_try),
+        },
+        "btc_usd": round(btc_usd), "btc_try": round(btc_try), "usd_try": usd_try,
+        "filo": filo,
+    })
 
 
 @app.route("/api/ptf_cek")
