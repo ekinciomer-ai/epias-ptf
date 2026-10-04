@@ -11,11 +11,11 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-_PANEL_VERSIYON_ANA = "ver.02.01.2"
+_PANEL_VERSIYON_ANA = "ver.02.01.3"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 84
+PANEL_VERSIYON_BUILD = 85
 
 def _panel_tarih():
     try:
@@ -2431,7 +2431,7 @@ const EPIAS_YEKDEM = {
   // 07-12 ongoru: EPDK 02/07/2026 tarih 14718 sayili Kurul Karari ile revize (RG 04.07.2026)
   // (Onceki ongoru: 07=189.15, 08=213.89)
   '2026-07': {ongoru: 423.99,  gercek: 486.314},
-  '2026-08': {ongoru: 450.45,  gercek: null},
+  '2026-08': {ongoru: 450.45,  gercek: 395.303},
   '2026-09': {ongoru: 581.14,  gercek: null},
   '2026-10': {ongoru: 526.39,  gercek: null},
   '2026-11': {ongoru: 488.86,  gercek: null},
