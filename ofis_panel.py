@@ -15,7 +15,7 @@ _PANEL_VERSIYON_ANA = "ver.02.01.2"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 83
+PANEL_VERSIYON_BUILD = 84
 
 def _panel_tarih():
     try:
@@ -5766,6 +5766,24 @@ async function mahsupYukleAsync() {
     }
     
     Object.entries(raw).forEach(([key, abone]) => {
+      // YD (Yilmaz Darilmaz): SADECE IZLEME - uretim/tuketim/mahsup hesabina KATILMAZ
+      if (key === 'yilmaz_darilmaz' && abone.veri) {
+        Object.entries(abone.veri).forEach(([gun, saatler]) => {
+          if (!gun.startsWith('2026')) return;
+          const ay = gun.substring(0, 7);
+          if (!aylar[ay]) aylar[ay] = { ...bosVeri(), gunler: {}, miningAylik: 0 };
+          if (!aylar[ay].gunler[gun]) aylar[ay].gunler[gun] = { ...bosVeri(), saatler: {} };
+          Object.entries(saatler).forEach(([saatRaw, v]) => {
+            const saat = saatRaw.substring(0, 2);
+            if (!aylar[ay].gunler[gun].saatler[saat]) aylar[ay].gunler[gun].saatler[saat] = bosVeri();
+            const S = aylar[ay].gunler[gun].saatler[saat];
+            if (!S.yd) S.yd = { u: 0, t: 0 };
+            S.yd.u += (v.veris || 0);
+            S.yd.t += (v.cekis || 0);
+          });
+        });
+        return;
+      }
       if (!aboneTip[key] || !abone.veri) return;
       const tipler = aboneTip[key];
       const k = aboneKisalt[key];
@@ -6051,6 +6069,19 @@ async function mahsupYukleAsync() {
       }
     });
     
+    // YD izleme toplamlari (mahsup matematigine dokunmaz)
+    Object.values(aylar).forEach(function(A) {
+      A.yd = { u: 0, t: 0 };
+      Object.values(A.gunler).forEach(function(G) {
+        G.yd = { u: 0, t: 0 };
+        Object.values(G.saatler).forEach(function(S) {
+          if (!S.yd) S.yd = { u: 0, t: 0 };
+          G.yd.u += S.yd.u; G.yd.t += S.yd.t;
+        });
+        A.yd.u += G.yd.u; A.yd.t += G.yd.t;
+      });
+    });
+
     mhsData = aylar;
     mhsTabloRender();
     mhsKpiGuncelle();
@@ -6216,6 +6247,14 @@ function mhsTabloRender() {
     // Bedelli
     s += '<td style="padding:8px 10px; text-align:right; color:' + bColor + '; font-weight:600; font-size:' + fs + ';' + bdLStrong + 'background:' + (bg || 'transparent') + ';">' + (bedelli ? Math.round(bedelli).toLocaleString('tr-TR') : '<span style="opacity:0.4">—</span>') + '</td>';
     
+    // YD - sadece izleme (mahsuba dahil degil)
+    const yd = opts.yd || { u: 0, t: 0 };
+    const ydColor = secili ? '#fff' : '#64748b';
+    const ydBg = secili ? bg : '#f8fafc';
+    const bdYd = 'border-left:2px dashed ' + (secili ? 'rgba(255,255,255,0.4)' : '#94a3b8') + ';';
+    s += td(yd.u, ydColor, ydBg, w, false).replace('<td style="', '<td style="' + bdYd);
+    s += td(yd.t, ydColor, ydBg, w, false);
+    
     s += '</tr>';
     return s;
   }
@@ -6232,6 +6271,7 @@ function mhsTabloRender() {
       th += '<th colspan="4" style="padding:10px; text-align:center; font-weight:600; color:#7c3aed; background:#e9d5ff; border-left:2px solid #cbd5e1; font-size:12px; letter-spacing:0.5px;">MAHSUP <span style="font-weight:400; opacity:0.7;">(kWh)</span></th>';
       th += '<th colspan="4" style="padding:10px; text-align:center; font-weight:600; color:#ea580c; background:#fed7aa; border-left:2px solid #cbd5e1; font-size:12px; letter-spacing:0.5px;">MAHSUP SONRASI <span style="font-weight:400; opacity:0.7;">(kWh)</span></th>';
       th += '<th rowspan="2" style="padding:10px; text-align:right; font-weight:600; color:#16a34a; vertical-align:middle; border-left:2px solid #cbd5e1; font-size:12px;">Bedelli<br><span style="font-size:10px; font-weight:400; opacity:0.7;">(kWh)</span></th>';
+      th += '<th colspan="2" style="padding:10px; text-align:center; font-weight:600; color:#475569; background:#f1f5f9; border-left:2px dashed #94a3b8; font-size:12px; letter-spacing:0.5px;" title="Yılmaz Darılmaz - mahsuplaşmaya dahil değil">YD <span style="font-weight:400; opacity:0.7; font-size:10px;">(izleme · dahil değil)</span></th>';
       th += '</tr>';
       th += '<tr style="background:#f1f5f9; border-bottom:1px solid #e2e8f0;">';
       th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#1e40af; background:#eff6ff; border-left:2px solid #cbd5e1; font-size:11px;">T1</th>';
@@ -6250,6 +6290,8 @@ function mhsTabloRender() {
       th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#9a3412; background:#fff7ed; font-size:11px;">T2</th>';
       th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#9a3412; background:#fff7ed; font-size:11px;">A3</th>';
       th += '<th style="padding:7px 10px; text-align:right; font-weight:700; color:#ea580c; background:#fdba74; font-size:11px;">TPL</th>';
+      th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#475569; background:#f8fafc; border-left:2px dashed #94a3b8; font-size:11px;">Üretim</th>';
+      th += '<th style="padding:7px 10px; text-align:right; font-weight:500; color:#475569; background:#f8fafc; font-size:11px;">Tüketim</th>';
       th += '</tr>';
     } else {
       th += '<tr style="background:#f8fafc; border-bottom:2px solid #cbd5e1;">';
@@ -6260,6 +6302,8 @@ function mhsTabloRender() {
       th += '<th style="padding:12px; text-align:right; font-weight:600; color:#7c3aed; border-left:2px solid #cbd5e1; font-size:12px;">MAHSUP <span style="font-weight:400; opacity:0.7; font-size:10px;">(kWh)</span></th>';
       th += '<th style="padding:12px; text-align:right; font-weight:600; color:#ea580c; border-left:2px solid #cbd5e1; font-size:12px; letter-spacing:0.5px;">MAHSUP SONRASI <span style="font-weight:400; opacity:0.7; font-size:10px;">(kWh)</span></th>';
       th += '<th style="padding:12px; text-align:right; font-weight:600; color:#16a34a; border-left:2px solid #cbd5e1; font-size:12px;">BEDELLİ <span style="font-weight:400; opacity:0.7; font-size:10px;">(kWh)</span></th>';
+      th += '<th style="padding:12px; text-align:right; font-weight:600; color:#475569; border-left:2px dashed #94a3b8; font-size:12px;" title="Yılmaz Darılmaz - mahsuplaşmaya dahil değil">YD ÜRETİM <span style="font-weight:400; opacity:0.7; font-size:10px;">(izleme)</span></th>';
+      th += '<th style="padding:12px; text-align:right; font-weight:600; color:#475569; font-size:12px;" title="Yılmaz Darılmaz - mahsuplaşmaya dahil değil">YD TÜKETİM <span style="font-weight:400; opacity:0.7; font-size:10px;">(izleme)</span></th>';
       th += '</tr>';
     }
     document.getElementById('mhs-thead').innerHTML = th;
@@ -6276,6 +6320,7 @@ function mhsTabloRender() {
   let topM = 0, topB = 0;
   let topS = { T1:0, T2:0, A3:0, TPL:0 };
   let topMDag = { T1:0, T2:0, A3:0, TPL:0 };
+  let topYD = { u: 0, t: 0 };
   
   aylar.forEach(ay => {
     const d = mhsData[ay];
@@ -6291,12 +6336,13 @@ function mhsTabloRender() {
     });
     topM += d.mahsup;
     topB += d.bedelli;
+    if (d.yd) { topYD.u += d.yd.u; topYD.t += d.yd.t; }
     
     // AY satırı - seçilince yumuşak slate-blue
     tbl += renderSatir({
       uretim: d.uretim, tuketim: d.tuketim, mahsup: d.mahsup, 
       mahsupDag: d.mahsup_dagilim,
-      sonra: d.sonra, bedelli: d.bedelli,
+      sonra: d.sonra, bedelli: d.bedelli, yd: d.yd,
       indent: 0, 
       bg: ayAcik ? '#475569' : '#f8fafc',
       textColor: ayAcik ? '#fff' : '#0f172a',
@@ -6318,7 +6364,7 @@ function mhsTabloRender() {
         tbl += renderSatir({
           uretim: g.uretim, tuketim: g.tuketim, mahsup: g.mahsup,
           mahsupDag: g.mahsup_dagilim,
-          sonra: g.sonra, bedelli: g.bedelli,
+          sonra: g.sonra, bedelli: g.bedelli, yd: g.yd,
           indent: 24, 
           bg: gunAcik ? '#64748b' : '',
           textColor: gunAcik ? '#fff' : '#334155',
@@ -6342,7 +6388,7 @@ function mhsTabloRender() {
             tbl += renderSatir({
               uretim: sv.uretim, tuketim: sv.tuketim, mahsup: sMahsup,
               mahsupDag: sMahsupDag,
-              sonra: sSonra, bedelli: sBedelli,
+              sonra: sSonra, bedelli: sBedelli, yd: sv.yd,
               indent: 48, 
               bg: '#f0f9ff',
               textColor: '#475569',
@@ -6360,7 +6406,7 @@ function mhsTabloRender() {
   tbl += renderSatir({
     uretim: topU, tuketim: topT, mahsup: topM,
     mahsupDag: topMDag,
-    sonra: topS, bedelli: topB,
+    sonra: topS, bedelli: topB, yd: topYD,
     indent: 0, bg: '#fff7ed', textColor: '#9a3412', 
     weight: '700', fontSize: '13px',
     level: 'toplam', ayText: 'TOPLAM (' + aylar.length + ' ay)',
