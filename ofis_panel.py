@@ -11,11 +11,11 @@ app.secret_key = "otocoin-ofis-2026"
 #   AA = menu degisikligi (sekme ekleme/cikarma, yapisal)
 #   BB = sekil/gorsel degisikligi (tema, renk, layout)
 #   CC = veri degisikligi (EPIAS, OSOS, manuel girisler)
-_PANEL_VERSIYON_ANA = "ver.02.01.1"
+_PANEL_VERSIYON_ANA = "ver.02.01.2"
 # Build numarasi: HER YENI DOSYA TESLIMATINDA +1 yapilir.
 # Calisma aninda DEGISMEZ - dosyaya gomulu sabit sayi.
 # Sen damgaya bakinca b15 -> b16 olursa yeni surum yuklenmis demektir.
-PANEL_VERSIYON_BUILD = 82
+PANEL_VERSIYON_BUILD = 83
 
 def _panel_tarih():
     try:
@@ -1311,9 +1311,10 @@ function otoEksen(birim) {
       <option value="tekyildiz_1">☀️ Tekyildiz 1 (T1)</option>
       <option value="tekyildiz_2">⚡ Tekyildiz 2 (T2)</option>
       <option value="aksaray_3">🏭 Aksaray 3 (A3)</option>
+      <option value="yilmaz_darilmaz">🔆 Yılmaz Darılmaz (YD)</option>
     </select>
     <input type="file" id="osos-yukle-dosya" accept=".xlsx" style="font-size:11px;color:#cbd5e1;max-width:230px;">
-    <button onclick="ososYukle(this)" style="background:#0e7490;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">📤 Yükle</button>
+    <button onclick="ososExcelYukle(this)" style="background:#0e7490;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">📤 Yükle</button>
   </div>
   <div id="osos-yukle-sonuc" style="font-size:11px;color:#94a3b8;margin-top:10px;line-height:1.6;"></div>
 </div>
@@ -1323,6 +1324,7 @@ function otoEksen(birim) {
 <button class="osos-tab active" onclick="ososAbone('tekyildiz_1', this)">☀️ Tekyildiz 1</button>
 <button class="osos-tab" onclick="ososAbone('tekyildiz_2', this)">⚡ Tekyildiz 2</button>
 <button class="osos-tab" onclick="ososAbone('aksaray_3', this)">🏭 Aksaray 3</button>
+<button class="osos-tab" onclick="ososAbone('yilmaz_darilmaz', this)">🔆 YD</button>
 </div>
 
 <div class="osos-info" id="osos-info">
@@ -1843,6 +1845,8 @@ function otoEksen(birim) {
         <th style="padding:10px 8px; text-align:right; font-weight:600; color:#d85a30;">TY2 Tük</th>
         <th style="padding:10px 8px; text-align:right; font-weight:600; color:#d85a30;">AKS3 Tük</th>
         <th style="padding:10px 8px; text-align:right; font-weight:600; color:#64748b;">Mahsup</th>
+        <th style="padding:10px 8px; text-align:right; font-weight:600; color:#7c3aed; border-left:2px dashed #cbd5e1;" title="Yılmaz Darılmaz - sadece izleme, mahsuba dahil değil">YD Üret</th>
+        <th style="padding:10px 8px; text-align:right; font-weight:600; color:#7c3aed;" title="Yılmaz Darılmaz - sadece izleme, mahsuba dahil değil">YD Tük</th>
       </tr>
     </thead>
     <tbody id="veri-tablo"></tbody>
@@ -3856,7 +3860,7 @@ ptfDurumYukle();
 // ====================== /GAIN PTF OTOMASYON ======================
 
 // ====================== OSOS EXCEL YUKLEME ======================
-function ososYukle(btn){
+function ososExcelYukle(btn){
   var sel = document.getElementById('osos-yukle-sayac');
   var inp = document.getElementById('osos-yukle-dosya');
   var snc = document.getElementById('osos-yukle-sonuc');
@@ -5467,10 +5471,10 @@ async function veriYukle() {
         if (!tarih.startsWith(secim)) return;
       }
       
-      if (!gunluk[tarih]) gunluk[tarih] = { ty1u:0, ty2u:0, ty2t:0, aks3t:0, saatler: {} };
+      if (!gunluk[tarih]) gunluk[tarih] = { ty1u:0, ty2u:0, ty2t:0, aks3t:0, ydu:0, ydt:0, saatler: {} };
       
       Object.entries(saatler).forEach(([saat, v]) => {
-        if (!gunluk[tarih].saatler[saat]) gunluk[tarih].saatler[saat] = { ty1u:0, ty2u:0, ty2t:0, aks3t:0 };
+        if (!gunluk[tarih].saatler[saat]) gunluk[tarih].saatler[saat] = { ty1u:0, ty2u:0, ty2t:0, aks3t:0, ydu:0, ydt:0 };
         
         if (key === 'tekyildiz_1') {
           gunluk[tarih].ty1u += v.veris || 0;
@@ -5483,6 +5487,12 @@ async function veriYukle() {
         } else if (key === 'aksaray_3') {
           gunluk[tarih].aks3t += v.cekis || 0;
           gunluk[tarih].saatler[saat].aks3t += v.cekis || 0;
+        } else if (key === 'yilmaz_darilmaz') {
+          // YD: sadece izleme - toplamlara/mahsuba KATILMAZ
+          gunluk[tarih].ydu += v.veris || 0;
+          gunluk[tarih].ydt += v.cekis || 0;
+          gunluk[tarih].saatler[saat].ydu += v.veris || 0;
+          gunluk[tarih].saatler[saat].ydt += v.cekis || 0;
         }
       });
     });
@@ -5556,10 +5566,12 @@ function veriTabloRender() {
     tbl += '<td style="padding:11px 8px; text-align:right; color:#d85a30;">' + fmtNum(g.ty2t) + '</td>';
     tbl += '<td style="padding:11px 8px; text-align:right; color:#d85a30;">' + fmtNum(g.aks3t) + '</td>';
     tbl += '<td style="padding:11px 8px; text-align:right; color:' + mahsupRenk + '; font-weight:600;">' + mahsupPrefix + fmtNum(mahsup) + '</td>';
+    tbl += '<td style="padding:11px 8px; text-align:right; color:#7c3aed; border-left:2px dashed #cbd5e1;">' + fmtNum(g.ydu) + '</td>';
+    tbl += '<td style="padding:11px 8px; text-align:right; color:#7c3aed;">' + fmtNum(g.ydt) + '</td>';
     tbl += '</tr>';
     
     if (acik && g.saatler) {
-      tbl += '<tr style="background:#dbeafe;"><td colspan="7" style="padding:0 12px 12px 12px;">';
+      tbl += '<tr style="background:#dbeafe;"><td colspan="9" style="padding:0 12px 12px 12px;">';
       tbl += '<div style="background:#fff; border:1px solid #cbd5e1; border-radius:6px; overflow:hidden;">';
       tbl += '<table style="width:100%; border-collapse:collapse; font-size:11px;">';
       tbl += '<thead><tr style="background:#f1f5f9;">';
@@ -5569,6 +5581,8 @@ function veriTabloRender() {
       tbl += '<th style="padding:7px 10px; text-align:right; color:#d85a30;">TY2 Tük</th>';
       tbl += '<th style="padding:7px 10px; text-align:right; color:#d85a30;">AKS3 Tük</th>';
       tbl += '<th style="padding:7px 10px; text-align:right; color:#64748b;">Mahsup</th>';
+      tbl += '<th style="padding:7px 10px; text-align:right; color:#7c3aed; border-left:2px dashed #cbd5e1;">YD Üret</th>';
+      tbl += '<th style="padding:7px 10px; text-align:right; color:#7c3aed;">YD Tük</th>';
       tbl += '</tr></thead><tbody>';
       
       const saatler = Object.keys(g.saatler).sort((a,b)=>parseInt(a)-parseInt(b));
@@ -5584,6 +5598,8 @@ function veriTabloRender() {
         tbl += '<td style="padding:5px 10px; text-align:right; color:#d85a30;">' + Math.round(v.ty2t) + '</td>';
         tbl += '<td style="padding:5px 10px; text-align:right; color:#d85a30;">' + Math.round(v.aks3t) + '</td>';
         tbl += '<td style="padding:5px 10px; text-align:right; color:' + mr + '; font-weight:600;">' + mp + Math.round(m) + '</td>';
+        tbl += '<td style="padding:5px 10px; text-align:right; color:#7c3aed; border-left:2px dashed #cbd5e1;">' + Math.round(v.ydu || 0) + '</td>';
+        tbl += '<td style="padding:5px 10px; text-align:right; color:#7c3aed;">' + Math.round(v.ydt || 0) + '</td>';
         tbl += '</tr>';
       });
       
@@ -5594,6 +5610,8 @@ function veriTabloRender() {
       tbl += '<td style="padding:7px 10px; text-align:right; font-weight:600; color:#d85a30;">' + fmtNum(g.ty2t) + '</td>';
       tbl += '<td style="padding:7px 10px; text-align:right; font-weight:600; color:#d85a30;">' + fmtNum(g.aks3t) + '</td>';
       tbl += '<td style="padding:7px 10px; text-align:right; font-weight:600; color:' + mahsupRenk + ';">' + mahsupPrefix + fmtNum(mahsup) + '</td>';
+      tbl += '<td style="padding:7px 10px; text-align:right; font-weight:600; color:#7c3aed; border-left:2px dashed #cbd5e1;">' + fmtNum(g.ydu) + '</td>';
+      tbl += '<td style="padding:7px 10px; text-align:right; font-weight:600; color:#7c3aed;">' + fmtNum(g.ydt) + '</td>';
       tbl += '</tr>';
       tbl += '</tbody></table></div></td></tr>';
     }
@@ -5611,6 +5629,8 @@ function veriTabloRender() {
   tbl += '<td style="padding:12px; text-align:right; font-weight:600; color:#d85a30;">' + fmtNum(veriData.gunler.reduce((s,g)=>s+g.ty2t,0)) + '</td>';
   tbl += '<td style="padding:12px; text-align:right; font-weight:600; color:#d85a30;">' + fmtNum(t.topAks3) + '</td>';
   tbl += '<td style="padding:12px; text-align:right; font-weight:600; color:' + tMahsupRenk + ';">' + tMahsupPrefix + fmtNum(t.topMahsup) + '</td>';
+  tbl += '<td style="padding:12px; text-align:right; font-weight:600; color:#7c3aed; border-left:2px dashed #cbd5e1;">' + fmtNum(veriData.gunler.reduce((s,g)=>s+(g.ydu||0),0)) + '</td>';
+  tbl += '<td style="padding:12px; text-align:right; font-weight:600; color:#7c3aed;">' + fmtNum(veriData.gunler.reduce((s,g)=>s+(g.ydt||0),0)) + '</td>';
   tbl += '</tr>';
   
   document.getElementById('veri-tablo').innerHTML = tbl;
@@ -7980,7 +8000,17 @@ def osos():
     if not data:
         return jsonify({})
     aysonu = github_oku("osos_aysonu.json") or {}
+    _ABONE_BILGI = {
+        "tekyildiz_1": ("Tekyıldız 1 (T1)", "ges_tuketim"),
+        "tekyildiz_2": ("Tekyıldız 2 (T2)", "ges_tuketim"),
+        "aksaray_3": ("Aksaray 3 (A3)", "tuketim"),
+        "yilmaz_darilmaz": ("YD · Yılmaz Darılmaz (mahsuba dahil değil)", "ges_tuketim"),
+    }
     for key, abone in data.items():
+        if isinstance(abone, dict):
+            _ad, _tip = _ABONE_BILGI.get(key, (key, "ges_tuketim"))
+            abone.setdefault("ad", _ad)
+            abone.setdefault("tip", _tip)
         aylar = {}
         for gun, saatler in abone.get('veri', {}).items():
             ay = gun[:7]
@@ -9305,7 +9335,7 @@ def osos_yukle_endpoint():
     if "kullanici" not in session:
         return jsonify({"hata": "yetkisiz"}), 401
     sayac = request.form.get("sayac", "")
-    if sayac not in ("tekyildiz_1", "tekyildiz_2", "aksaray_3"):
+    if sayac not in ("tekyildiz_1", "tekyildiz_2", "aksaray_3", "yilmaz_darilmaz"):
         return jsonify({"hata": "gecersiz sayac"}), 400
     if "dosya" not in request.files:
         return jsonify({"hata": "dosya yok"}), 400
