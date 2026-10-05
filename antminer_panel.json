@@ -1,16 +1,16 @@
 {
-  "timestamp": "2026-10-05T07:13:09.505898",
+  "timestamp": "2026-10-05T07:14:39.291007",
   "source": "Tek Yildiz 2 GES - Saha PC",
   "summary": {
     "total": 29,
-    "online": 1,
-    "sleeping": 11,
+    "online": 3,
+    "sleeping": 9,
     "offline": 17,
-    "total_hashrate_TH": 207.44,
-    "total_target_TH": 202.0,
-    "efficiency_pct": 102.7,
-    "avg_temp_C": 48.0,
-    "avg_water_temp_C": 45.0,
+    "total_hashrate_TH": 747.09,
+    "total_target_TH": 837.0,
+    "efficiency_pct": 89.3,
+    "avg_temp_C": 62.0,
+    "avg_water_temp_C": 57.0,
     "models": {
       "?": 17,
       "S21e Hyd": 9,
@@ -30,8 +30,8 @@
       "total_btc": 0.0,
       "balance_btc": 0.0,
       "paid_btc": 0.0,
-      "btc_price_usd": 86063.0,
-      "usd_try": 49.160951860846126,
+      "btc_price_usd": 85975.0,
+      "usd_try": 49.15845303867403,
       "today_usd": 0.0,
       "yesterday_usd": 0.0,
       "last7days_usd": 0.0,
@@ -71,7 +71,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1791127872,
+      "f2pool_last_share": 1791127821,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -135,7 +135,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1791127872,
+      "f2pool_last_share": 1791127821,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -199,7 +199,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1791127872,
+      "f2pool_last_share": 1791127821,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -248,8 +248,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 42,
-      "temp_water": 34,
+      "temp_max": 49,
+      "temp_water": 42,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -458,7 +458,7 @@
         {
           "date": "2026-10-05",
           "avg_hash_TH": 0.0,
-          "uptime_pct": 28.6,
+          "uptime_pct": 22.2,
           "earn_btc": 0
         }
       ],
@@ -501,20 +501,20 @@
       "saha_worker": "saha.1725",
       "havuz_worker": "mehmetas.027",
       "actual_worker": "mehmetas.027",
-      "hashrate_TH": 0.0,
+      "hashrate_TH": 261.49,
       "target_hashrate_TH": 251.0,
-      "efficiency_pct": 0.0,
-      "temp_max": 52,
-      "temp_water": 52,
+      "efficiency_pct": 104.2,
+      "temp_max": 71,
+      "temp_water": 71,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
-      "status": "SLEEP",
+      "status": "ONLINE",
       "online": true,
-      "sleeping": true,
+      "sleeping": false,
       "is_hydro": true,
-      "accepted": 0,
+      "accepted": 46,
       "rejected": 0,
-      "hw_errors_total": 0,
+      "hw_errors_total": 6,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -535,7 +535,20 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [],
+      "health_issues": [
+        {
+          "severity": "high",
+          "code": "WATER_HOT",
+          "icon": "💧",
+          "title": "Su Sicakligi Yuksek (71°C)",
+          "reason": "Soguma sistemi yetersiz",
+          "solutions": [
+            "Radyatoru kontrol et (toz, tikanma)",
+            "Dis fan calisiyor mu?",
+            "Dis ortam sicakligi cok yuksek olabilir"
+          ]
+        }
+      ],
       "daily_history": [
         {
           "date": "2026-09-06",
@@ -713,15 +726,15 @@
         },
         {
           "date": "2026-10-05",
-          "avg_hash_TH": 0.0,
-          "uptime_pct": 28.6,
+          "avg_hash_TH": 58.1,
+          "uptime_pct": 44.4,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 178.5,
+          "avg_hash_TH": 190.1,
           "earn_btc": 0,
           "days": 5
         },
@@ -760,8 +773,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 43,
-      "temp_water": 35,
+      "temp_max": 48,
+      "temp_water": 40,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -970,7 +983,7 @@
         {
           "date": "2026-10-05",
           "avg_hash_TH": 0.0,
-          "uptime_pct": 28.6,
+          "uptime_pct": 22.2,
           "earn_btc": 0
         }
       ],
@@ -1016,8 +1029,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 42,
-      "temp_water": 35,
+      "temp_max": 47,
+      "temp_water": 40,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -1226,7 +1239,7 @@
         {
           "date": "2026-10-05",
           "avg_hash_TH": 0.0,
-          "uptime_pct": 42.9,
+          "uptime_pct": 33.3,
           "earn_btc": 0
         }
       ],
@@ -1272,8 +1285,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 42,
-      "temp_water": 34,
+      "temp_max": 47,
+      "temp_water": 39,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -1482,7 +1495,7 @@
         {
           "date": "2026-10-05",
           "avg_hash_TH": 0.0,
-          "uptime_pct": 42.9,
+          "uptime_pct": 33.3,
           "earn_btc": 0
         }
       ],
@@ -1528,8 +1541,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 42,
-      "temp_water": 36,
+      "temp_max": 48,
+      "temp_water": 41,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -1738,7 +1751,7 @@
         {
           "date": "2026-10-05",
           "avg_hash_TH": 0.0,
-          "uptime_pct": 33.3,
+          "uptime_pct": 25.0,
           "earn_btc": 0
         }
       ],
@@ -1781,20 +1794,20 @@
       "saha_worker": "saha.7D07",
       "havuz_worker": "mehmetas.022",
       "actual_worker": "mehmetas.022",
-      "hashrate_TH": 0.0,
-      "target_hashrate_TH": 202.0,
-      "efficiency_pct": 0.0,
-      "temp_max": 48,
-      "temp_water": 46,
+      "hashrate_TH": 233.88,
+      "target_hashrate_TH": 293.0,
+      "efficiency_pct": 79.8,
+      "temp_max": 58,
+      "temp_water": 50,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
-      "status": "SLEEP",
+      "status": "ONLINE",
       "online": true,
-      "sleeping": true,
+      "sleeping": false,
       "is_hydro": false,
-      "accepted": 5,
+      "accepted": 41,
       "rejected": 0,
-      "hw_errors_total": 1,
+      "hw_errors_total": 18,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -1815,7 +1828,20 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [],
+      "health_issues": [
+        {
+          "severity": "medium",
+          "code": "LOW_EFFICIENCY",
+          "icon": "⚡",
+          "title": "Dusuk Verim (%79.8)",
+          "reason": "Board arizasi veya asiri isi",
+          "solutions": [
+            "Sicaklik degerlerini kontrol et",
+            "Tum board'lar aktif mi bak",
+            "Frekansi dusur"
+          ]
+        }
+      ],
       "daily_history": [
         {
           "date": "2026-09-06",
@@ -1993,15 +2019,15 @@
         },
         {
           "date": "2026-10-05",
-          "avg_hash_TH": 0.0,
-          "uptime_pct": 33.3,
+          "avg_hash_TH": 58.4,
+          "uptime_pct": 50.0,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 238.2,
+          "avg_hash_TH": 249.9,
           "earn_btc": 0,
           "days": 5
         },
@@ -2037,20 +2063,20 @@
       "saha_worker": "saha.A4F9",
       "havuz_worker": "mehmetas.024",
       "actual_worker": "mehmetas.024",
-      "hashrate_TH": 207.44,
-      "target_hashrate_TH": 202.0,
-      "efficiency_pct": 102.7,
-      "temp_max": 48,
-      "temp_water": 45,
+      "hashrate_TH": 251.72,
+      "target_hashrate_TH": 293.0,
+      "efficiency_pct": 85.9,
+      "temp_max": 57,
+      "temp_water": 50,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": false,
-      "accepted": 9,
+      "accepted": 43,
       "rejected": 0,
-      "hw_errors_total": 1,
+      "hw_errors_total": 168,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
       "f2pool_h1_TH": null,
@@ -2249,15 +2275,15 @@
         },
         {
           "date": "2026-10-05",
-          "avg_hash_TH": 34.6,
-          "uptime_pct": 50.0,
+          "avg_hash_TH": 85.8,
+          "uptime_pct": 62.5,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 244.7,
+          "avg_hash_TH": 255.0,
           "earn_btc": 0,
           "days": 5
         },
@@ -2296,8 +2322,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 43,
-      "temp_water": 36,
+      "temp_max": 48,
+      "temp_water": 41,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -2506,7 +2532,7 @@
         {
           "date": "2026-10-05",
           "avg_hash_TH": 0.0,
-          "uptime_pct": 33.3,
+          "uptime_pct": 25.0,
           "earn_btc": 0
         }
       ],
@@ -2552,9 +2578,9 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 32,
-      "temp_water": 25,
-      "elapsed_hours": 0.0,
+      "temp_max": 42,
+      "temp_water": 34,
+      "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
       "online": true,
@@ -2762,7 +2788,7 @@
         {
           "date": "2026-10-05",
           "avg_hash_TH": 0.0,
-          "uptime_pct": 40.0,
+          "uptime_pct": 28.6,
           "earn_btc": 0
         }
       ],
@@ -2808,9 +2834,9 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 32,
-      "temp_water": 25,
-      "elapsed_hours": 0.0,
+      "temp_max": 42,
+      "temp_water": 34,
+      "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
       "online": true,
@@ -3018,7 +3044,7 @@
         {
           "date": "2026-10-05",
           "avg_hash_TH": 0.0,
-          "uptime_pct": 40.0,
+          "uptime_pct": 28.6,
           "earn_btc": 0
         }
       ],
@@ -3064,9 +3090,9 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 33,
-      "temp_water": 25,
-      "elapsed_hours": 0.0,
+      "temp_max": 42,
+      "temp_water": 34,
+      "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
       "online": true,
@@ -3274,7 +3300,7 @@
         {
           "date": "2026-10-05",
           "avg_hash_TH": 0.0,
-          "uptime_pct": 40.0,
+          "uptime_pct": 28.6,
           "earn_btc": 0
         }
       ],
@@ -3335,7 +3361,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1791127872,
+      "f2pool_last_share": 1791127821,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -3399,7 +3425,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1791127872,
+      "f2pool_last_share": 1791127821,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -3463,7 +3489,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1791127872,
+      "f2pool_last_share": 1791127821,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -3527,7 +3553,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1791127872,
+      "f2pool_last_share": 1791127821,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -3591,7 +3617,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1791127872,
+      "f2pool_last_share": 1791127821,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -3655,7 +3681,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1791127872,
+      "f2pool_last_share": 1791127821,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -3719,7 +3745,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1791127872,
+      "f2pool_last_share": 1791127821,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -3783,7 +3809,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1791127872,
+      "f2pool_last_share": 1791127821,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -3847,7 +3873,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1791127872,
+      "f2pool_last_share": 1791127821,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -3911,7 +3937,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1791127872,
+      "f2pool_last_share": 1791127821,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -3975,7 +4001,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1791127872,
+      "f2pool_last_share": 1791127821,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -4039,7 +4065,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1791127872,
+      "f2pool_last_share": 1791127821,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -4103,7 +4129,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1791127872,
+      "f2pool_last_share": 1791127821,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -4167,7 +4193,7 @@
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
       "f2pool_h24_TH": 0.0,
-      "f2pool_last_share": 1791127872,
+      "f2pool_last_share": 1791127821,
       "f2pool_state": null,
       "f2pool_matched": true,
       "hashrate_diff_pct": null,
@@ -4381,15 +4407,15 @@
     },
     {
       "date": "2026-10-05",
-      "total_hash_TH": 34.6,
+      "total_hash_TH": 202.4,
       "total_earn_btc": 0,
-      "online_avg": 4.4
+      "online_avg": 4.0
     }
   ],
   "monthly_history": [
     {
       "month": "2026-10",
-      "avg_hash_TH": 6513.7,
+      "avg_hash_TH": 6547.3,
       "earn_btc": 0,
       "days": 5
     },
