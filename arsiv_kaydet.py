@@ -257,6 +257,12 @@ def arsivle_gelir():
             "currency": "bitcoin", "mining_user_name": F2POOL_USER, "type": "revenue",
             "start_time": int(bas.timestamp()), "end_time": int(bit.timestamp())})
         tx = (r or {}).get("transactions", []) or []
+        if pencere == 0:
+            mevcut["_tani"] = {"zaman": simdi.strftime("%Y-%m-%d %H:%M"), "kayit": len(tx),
+                               "anahtarlar": sorted((r or {}).keys())[:10], "kod": (r or {}).get("code"), "mesaj": str((r or {}).get("msg") or (r or {}).get("message") or "")[:120],
+                               "ornek": {k: v for k, v in (tx[0] if tx else {}).items() if k != "mining_extra"} if tx else None,
+                               "ornek_extra": (tx[0].get("mining_extra") if tx else None)}
+            eklenen += 1
         for t in tx:
             ex = t.get("mining_extra") or {}
             md = ex.get("mining_date")
