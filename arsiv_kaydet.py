@@ -388,12 +388,15 @@ def arsivle():
     # ============================================================
     # ARSIV_ANTMINER: Pi anlik snapshot
     # ============================================================
-    arsivle_antminer(ts_simdi, ay_simdi)
-
     try:
         arsivle_gelir()
     except Exception as e:
         log("  gelir arsivi hatasi:", str(e)[:200])
+
+    try:
+        arsivle_antminer(ts_simdi, ay_simdi)
+    except Exception as e:
+        log("  antminer arsivi hatasi:", str(e)[:300])
 
     log("Arsivleme tamamlandi.")
 
