@@ -239,6 +239,51 @@ def arsivle_antminer(ts, ay):
 # ============================================================
 # ANA ARSIVLE FONKSIYONU
 # ============================================================
+# ============================================================
+# GELIR: gunluk BTC geliri (assets/transactions/list, revenue) -> arsiv_f2pool_gelir.json
+# Ilk calismada 1 yil geriye 30 gunluk pencerelerle doldurur; sonra son 10 gunu yeniler.
+# ============================================================
+def arsivle_gelir():
+    dosya = "arsiv_f2pool_gelir.json"
+    mevcut, sha = gh_oku(dosya)
+    mevcut = mevcut or {}
+    simdi = datetime.datetime.now(datetime.timezone.utc)
+    ilk = not mevcut
+    pencere, bos, eklenen = 0, 0, 0
+    while pencere < (13 if ilk else 1):
+        bit = simdi - datetime.timedelta(days=30 * pencere)
+        bas = bit - datetime.timedelta(days=30 if ilk else 10)
+        r = f2pool_post("assets/transactions/list", {
+            "currency": "bitcoin", "mining_user_name": F2POOL_USER, "type": "revenue",
+            "start_time": int(bas.timestamp()), "end_time": int(bit.timestamp())})
+        tx = (r or {}).get("transactions", []) or []
+        for t in tx:
+            ex = t.get("mining_extra") or {}
+            md = ex.get("mining_date")
+            if not md:
+                continue
+            g = datetime.datetime.fromtimestamp(int(md), tz=datetime.timezone.utc).strftime("%Y-%m-%d")
+            kayit = {"btc": round(float(t.get("changed_balance") or 0), 8)}
+            for k in ("hash_rate", "pps_profit", "pps_fee_rate", "tx_fee_profit"):
+                if ex.get(k) is not None:
+                    kayit[k] = round(float(ex[k]) / 1e12, 2) if k == "hash_rate" else ex[k]
+            if mevcut.get(g) != kayit:
+                mevcut[g] = kayit
+                eklenen += 1
+        log(f"  gelir penceresi {bas:%Y-%m-%d}..{bit:%Y-%m-%d}: {len(tx)} kayit")
+        if ilk and not tx:
+            bos += 1
+            if bos >= 2:
+                break
+        elif tx:
+            bos = 0
+        pencere += 1
+        time.sleep(1)
+    if eklenen and gh_yaz(dosya, dict(sorted(mevcut.items())), sha):
+        log(f"  {dosya}: +{eklenen} gun (toplam {len(mevcut)})")
+    else:
+        log(f"  {dosya}: degisiklik yok (toplam {len(mevcut)})")
+
 def arsivle():
     if not F2POOL_TOKEN:
         log("HATA: F2POOL_TOKEN yok"); return
@@ -344,6 +389,11 @@ def arsivle():
     # ARSIV_ANTMINER: Pi anlik snapshot
     # ============================================================
     arsivle_antminer(ts_simdi, ay_simdi)
+
+    try:
+        arsivle_gelir()
+    except Exception as e:
+        log("  gelir arsivi hatasi:", str(e)[:200])
 
     log("Arsivleme tamamlandi.")
 
