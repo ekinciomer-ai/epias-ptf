@@ -247,8 +247,10 @@ def arsivle_gelir():
     dosya = "arsiv_f2pool_gelir.json"
     mevcut, sha = gh_oku(dosya)
     mevcut = mevcut or {}
+    if mevcut.get("_surum") != 2:  # surum 2: gun = mining_date - 1 gun (mining_date gun SONUNU gosterir)
+        mevcut = {"_surum": 2}
     simdi = datetime.datetime.now(datetime.timezone.utc)
-    ilk = not mevcut
+    ilk = len(mevcut) <= 2
     pencere, bos, eklenen = 0, 0, 0
     while pencere < (13 if ilk else 1):
         bit = simdi - datetime.timedelta(days=30 * pencere)
@@ -268,9 +270,9 @@ def arsivle_gelir():
             md = ex.get("mining_date")
             if not md:
                 continue
-            g = datetime.datetime.fromtimestamp(int(md), tz=datetime.timezone.utc).strftime("%Y-%m-%d")
+            g = datetime.datetime.fromtimestamp(int(md) - 86400, tz=datetime.timezone.utc).strftime("%Y-%m-%d")
             kayit = {"btc": round(float(t.get("changed_balance") or 0), 8)}
-            for k in ("hash_rate", "pps_profit", "pps_fee_rate", "tx_fee_profit"):
+            for k in ("hash_rate", "pps", "tx_fee"):
                 if ex.get(k) is not None:
                     kayit[k] = round(float(ex[k]) / 1e12, 2) if k == "hash_rate" else ex[k]
             if mevcut.get(g) != kayit:
