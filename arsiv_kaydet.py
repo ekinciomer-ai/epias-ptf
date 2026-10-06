@@ -292,6 +292,59 @@ def arsivle_gelir():
     else:
         log(f"  {dosya}: degisiklik yok (toplam {len(mevcut)})")
 
+# ============================================================
+# BTC FIYATI: Binance gunluk kapanis (UTC) -> arsiv_btc_fiyat.json {gun: {AAAA-AA-GG: {usd, try, usdtry}}}
+# Ilk calismada borsadaki en eski tarihten (BTCUSDT 2017-08) doldurur; sonra son 7 gunu yeniler.
+# Kaynak: data-api.binance.vision (ABD dahil her yerden erisilebilen herkese acik piyasa verisi), yedek api.binance.com
+# ============================================================
+def binance_gunluk(sembol, bas_ms):
+    out = {}
+    for kok in ("https://data-api.binance.vision", "https://api.binance.com"):
+        try:
+            t = bas_ms
+            while True:
+                url = f"{kok}/api/v3/klines?symbol={sembol}&interval=1d&startTime={t}&limit=1000"
+                with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "aesun-arsiv"}), timeout=20) as r:
+                    k = json.loads(r.read())
+                if not k:
+                    break
+                for x in k:
+                    g = datetime.datetime.fromtimestamp(x[0] / 1000, tz=datetime.timezone.utc).strftime("%Y-%m-%d")
+                    out[g] = float(x[4])
+                if len(k) < 1000:
+                    break
+                t = k[-1][0] + 86400000
+                time.sleep(0.3)
+            return out
+        except Exception as e:
+            log(f"  binance {sembol} ({kok}) hata:", str(e)[:120])
+    return out
+
+def arsivle_btc():
+    dosya = "arsiv_btc_fiyat.json"
+    mevcut, sha = gh_oku(dosya)
+    mevcut = mevcut or {"_kaynak": "Binance gunluk kapanis (UTC), BTCUSDT / BTCTRY / USDTTRY", "gun": {}}
+    gun = mevcut.setdefault("gun", {})
+    if gun:
+        bas = int((datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=7)).timestamp() * 1000)
+    else:
+        bas = int(datetime.datetime(2017, 1, 1, tzinfo=datetime.timezone.utc).timestamp() * 1000)
+    usd, tl, kur = binance_gunluk("BTCUSDT", bas), binance_gunluk("BTCTRY", bas), binance_gunluk("USDTTRY", bas)
+    degisen = 0
+    for g in sorted(set(usd) | set(tl)):
+        k = {}
+        if g in usd: k["usd"] = round(usd[g], 2)
+        if g in tl: k["try"] = round(tl[g], 0)
+        elif g in usd and g in kur: k["try"] = round(usd[g] * kur[g], 0)
+        if g in kur: k["usdtry"] = round(kur[g], 4)
+        if k and gun.get(g) != k:
+            gun[g] = k
+            degisen += 1
+    mevcut["gun"] = dict(sorted(gun.items()))
+    log(f"  btc fiyat: usd {len(usd)}, try {len(tl)}, kur {len(kur)} gun alindi, {degisen} degisti")
+    if degisen and gh_yaz(dosya, mevcut, sha):
+        log(f"  {dosya}: toplam {len(gun)} gun")
+
 def arsivle():
     if not F2POOL_TOKEN:
         log("HATA: F2POOL_TOKEN yok"); return
@@ -400,6 +453,11 @@ def arsivle():
         arsivle_gelir()
     except Exception as e:
         log("  gelir arsivi hatasi:", str(e)[:200])
+
+    try:
+        arsivle_btc()
+    except Exception as e:
+        log("  btc fiyat arsivi hatasi:", str(e)[:200])
 
     try:
         arsivle_antminer(ts_simdi, ay_simdi)
