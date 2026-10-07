@@ -1,0 +1,34 @@
+name: Saha uyarisi
+
+on:
+  schedule:
+    - cron: '7,22,37,52 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: saha-uyari
+  cancel-in-progress: false
+
+jobs:
+  uyari:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -q twilio
+      - name: Kontrol
+        env:
+          TWILIO_SID: ${{ secrets.TWILIO_SID }}
+          TWILIO_TOKEN: ${{ secrets.TWILIO_TOKEN }}
+        run: python saha_uyari.py
+      - name: Durumu yaz
+        run: |
+          git config user.name "aesun-bot"; git config user.email "aesun-bot@users.noreply.github.com"
+          git add n8n/uyari_durum.json; git diff --cached --quiet && exit 0
+          git commit -qm "Saha uyarı durumu"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done
