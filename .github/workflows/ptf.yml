@@ -28,7 +28,7 @@ jobs:
           EPIAS_SIFRE: ${{ secrets.EPIAS_SIFRE }}
           TWILIO_SID: ${{ secrets.TWILIO_SID }}
           TWILIO_TOKEN: ${{ secrets.TWILIO_TOKEN }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
           F2POOL_TOKEN: ${{ secrets.F2POOL_TOKEN }}
           F2POOL_KULLANICI: ${{ secrets.F2POOL_KULLANICI }}
         run: bash is_calistir.sh "EPİAŞ PTF sinyal" python main.py

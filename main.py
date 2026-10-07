@@ -225,91 +225,88 @@ GUNLUK_BTC = f2_btc if f2_btc and f2_btc > 0 else GUNLUK_BTC_VARSAYILAN
 f2_kaynak  = "F2Pool gercek" if f2_btc else "tahmini"
 print(f"Kullanilan gunluk BTC: {GUNLUK_BTC:.8f} ({f2_kaynak})")
 
-# Karli saat sayisi
-karli_saat_on = 0
+# ============================================================
+# Karlilik: panel ve Pi cihaz yonetimi ile AYNI kural ve degerler (n8n/cihaz_yonetimi_durum.json):
+#   cihaz basi saatlik maliyet = (PTF + YEKDEM) / 1000 x carpan x cihaz gucu (kW)
+#   cihaz basi saatlik gelir   = hashprice (F2Pool, BTC/TH/gun) x cihaz TH / 24 x BTC/TL
+#   gunes saatleri (dogus+1 .. batis-1) her zaman CALIS; diger saatler gelir >= maliyet ise CALIS
+# (Eski hesap dunku gercek BTC'yi "karli saat" sayisina bolup her saate yaziyordu; dunku calisma azsa
+#  saatlik gelir sisiyor, 24/24 karli ve +170.000 TL gibi yanlis sonuclar cikiyordu.)
+# ============================================================
+import math
+yon, _ = dosya_oku("n8n/cihaz_yonetimi_durum.json")
+yon = yon or {}
+ay = yon.get("ayarlar") or {}
+KAT      = ay.get("maliyet_carpani") or 1.035
+CIHAZ_KW = ay.get("cihaz_guc_kw") or 5.59
+CIHAZ_TH = ay.get("cihaz_th") or 285
+ESIK_KW  = ay.get("uretim_esik_kw") or 50
+YEKDEM   = yon.get("yekdem") or YEKDEM
+HP       = yon.get("hashprice_btc_th_gun")
+if not btc_try and yon.get("btc_try"):       # BTC fiyatı çekilemediyse cihaz yönetiminin son fiyatı
+    btc_try = yon["btc_try"]
+kim, _ = dosya_oku("n8n/cihaz_kimlik.json")
+FILO = len([v for v in (kim or {}).values() if not v.get("not")]) or CIHAZ_SAYISI
+TOPLAM_KW = FILO * CIHAZ_KW
+if HP:
+    gelir_cihaz = HP * CIHAZ_TH / 24 * btc_try if btc_try > 0 else 0
+    f2_kaynak = "hashprice " + f"{HP*1e8:.1f} sat/TH-gun"
+else:   # yedek: dunku gercek BTC / dunku ortalama TH (F2Pool)
+    gelir_cihaz = (GUNLUK_BTC / f2_ths * CIHAZ_TH / 24 * btc_try) if (f2_ths and btc_try > 0) else 0
+    f2_kaynak = "F2Pool dunku verim"
+
+def gunes_saatleri(gun):
+    n = gun.timetuple().tm_yday; g = 2 * math.pi / 365 * (n - 1)
+    dek = 0.006918 - 0.399912*math.cos(g) + 0.070257*math.sin(g) - 0.006758*math.cos(2*g) + 0.000907*math.sin(2*g)
+    eq = 229.18 * (0.000075 + 0.001868*math.cos(g) - 0.032077*math.sin(g) - 0.014615*math.cos(2*g) - 0.040849*math.sin(2*g))
+    la = math.radians(38.37)
+    ha = math.degrees(math.acos(math.cos(math.radians(90.833)) / (math.cos(la)*math.cos(dek)) - math.tan(la)*math.tan(dek)))
+    og = (720 - 4*34.03 - eq) / 60 + 3
+    return og - ha/15, og + ha/15
+dog, bat = gunes_saatleri(datetime.date.fromisoformat(hedef_tarih))
+
+satirlar = []; satirlar_sinyal = []
+toplam_kar = toplam_maliyet = toplam_btc_gelir = 0
+karli_saat = 0; karli_saatler = []; zararli_saatler = []; saatlik_detay = []
 for item in items:
-    ptf_tl     = item["price"] / 1000
-    yekdem_tl  = YEKDEM / 1000
-    maliyet_tl = (ptf_tl + yekdem_tl) * 1.05 * TOPLAM_KW
-    btc_gelir  = (GUNLUK_BTC / 24) * btc_try if btc_try > 0 else 0
-    if btc_gelir > maliyet_tl:
-        karli_saat_on += 1
-
-SAATLIK_BTC = GUNLUK_BTC / karli_saat_on if karli_saat_on > 0 else GUNLUK_BTC / 24
-
-# Saatlik karlılık hesabı
-satirlar      = []
-toplam_kar    = toplam_maliyet = toplam_btc_gelir = 0
-karli_saat    = 0
-karli_saatler = []
-zararli_saatler = []
-saatlik_detay = []  # Arşiv için
-
-for item in items:
-    saat      = item["hour"]
-    ptf_kurus = item["price"]
-    ptf_tl    = ptf_kurus / 1000
-    yekdem_tl = YEKDEM / 1000
-    maliyet_tl   = (ptf_tl + yekdem_tl) * 1.05 * TOPLAM_KW
-    btc_gelir_tl = SAATLIK_BTC * btc_try if btc_try > 0 else 0
-    kar = btc_gelir_tl - maliyet_tl
-    toplam_kar       += kar
-    toplam_maliyet   += maliyet_tl
-    toplam_btc_gelir += btc_gelir_tl
-    
-    saatlik_detay.append({
-        "saat": saat[:2],
-        "ptf": ptf_kurus,
-        "maliyet": round(maliyet_tl, 2),
-        "btc_gelir_tl": round(btc_gelir_tl, 2),
-        "kar": round(kar, 2),
-        "karli": kar > 0,
-    })
-    
-    if kar > 0:
-        karli_saat += 1
-        karli_saatler.append(saat[:2])
-        satirlar.append(f"✅ {saat[:2]} | {ptf_kurus:.0f} | {maliyet_tl:.0f} | {btc_gelir_tl:.0f} | +{kar:.0f}")
+    saat = item["hour"]; h = int(saat[:2]); ptf = item["price"]
+    m_c = (ptf + YEKDEM) / 1000 * KAT * CIHAZ_KW
+    gunes = (dog + 1.0) <= h and (h + 1) <= (bat - 1.0)
+    calis = gunes or gelir_cihaz >= m_c
+    maliyet_tl, gelir_tl = m_c * FILO, gelir_cihaz * FILO
+    kar = gelir_tl - maliyet_tl
+    saatlik_detay.append({"saat": saat[:2], "ptf": ptf, "maliyet": round(maliyet_tl, 2), "btc_gelir_tl": round(gelir_tl, 2),
+                          "kar": round(kar, 2), "karli": calis, "gunes": gunes})
+    if calis:
+        karli_saat += 1; karli_saatler.append(saat[:2])
+        toplam_kar += kar; toplam_maliyet += maliyet_tl; toplam_btc_gelir += gelir_tl
     else:
         zararli_saatler.append(saat[:2])
-        satirlar.append(f"❌ {saat[:2]} | {ptf_kurus:.0f} | {maliyet_tl:.0f} | {btc_gelir_tl:.0f} | {kar:.0f}")
+    isaret = "☀️" if gunes else ("✅" if calis else "❌")
+    satirlar.append(f"{isaret} {saat[:2]} | {ptf:.0f} | {maliyet_tl:,.0f} | {gelir_tl:,.0f} | {kar:+,.0f}")
+for row_start in range(0, 24, 6):
+    satirlar_sinyal.append("".join(f"{i:02d}{('☀️' if saatlik_detay[i]['gunes'] else '✅' if saatlik_detay[i]['karli'] else '❌')}"
+                                   for i in range(row_start, min(row_start + 6, len(saatlik_detay)))))
 
 gunluk_kwh     = karli_saat * TOPLAM_KW
-gunluk_btc_tl  = GUNLUK_BTC * btc_try if btc_try > 0 else 0
-gunluk_btc_usd = GUNLUK_BTC * btc_usd if btc_usd > 0 else 0
+gunluk_btc_tl  = toplam_btc_gelir
+gunluk_btc_usd = toplam_btc_gelir / kur if kur else 0
 gunluk_kar_usd = toplam_kar / kur
 maliyet_usd    = toplam_maliyet / kur
-
-# Sinyal mesajı (mesaj3)
-satirlar_sinyal = []
-for row_start in range(0, 24, 6):
-    satir = ""
-    for i in range(row_start, row_start + 6):
-        item = items[i] if i < len(items) else None
-        if item:
-            ptf_tl    = item["price"] / 1000
-            yekdem_tl = YEKDEM / 1000
-            maliyet   = (ptf_tl + yekdem_tl) * 1.05 * TOPLAM_KW
-            btc_gelir = SAATLIK_BTC * btc_try if btc_try > 0 else 0
-            isaret = "✅" if btc_gelir > maliyet else "❌"
-        else:
-            isaret = "✅"
-        satir += f"{i:02d}{isaret}"
-    satirlar_sinyal.append(satir)
+GUNLUK_BTC     = (toplam_btc_gelir / btc_try) if btc_try > 0 else GUNLUK_BTC
 
 mesaj3 = f"""EPiAS {hedef_str}
+☀️ gunes · ✅ karli · ❌ uyut
 ──────────────────────
 {chr(10).join(satirlar_sinyal)}"""
 
-# Karlılık tablosu (mesaj1)
 mesaj1 = f"""EPiAS KARLILIK {hedef_str}
-BTC:{btc_try:,.0f}TL|{btc_usd:,.0f}$
-YEKDEM:{YEKDEM}kr/MWh
-Kaynak:{f2_kaynak}
-Saat|PTF|Maliyet|BTC|Kar
+Filo {FILO} cihaz · {TOPLAM_KW:.0f} kW
+BTC:{btc_try:,.0f}TL · {f2_kaynak}
+Maliyet=(PTF+YEKDEM {YEKDEM:.0f})x{KAT:.3f}
+Saat|PTF|Maliyet|Gelir|Fark (TL/saat, filo)
 {chr(10).join(satirlar)}
-Karli:{karli_saat}/24 Kar:{toplam_kar:+,.0f}TL|{gunluk_kar_usd:+,.0f}$
-Guc:{TOPLAM_KW:.0f}kW/s Tuk:{gunluk_kwh:.0f}kWh"""
+Calisma:{karli_saat}/24 saat · Beklenen net:{toplam_kar:+,.0f}TL"""
 
 # Aylık birikim
 ay_data, ay_sha = dosya_oku(f"aylik_{ay_key}.json")
@@ -329,8 +326,8 @@ ay_maliyet_usd = ay_data["toplam_maliyet_tl"] / kur
 ay_btc_usd     = ay_data["toplam_btc"] * btc_usd if btc_usd > 0 else 0
 
 # Özet mesajı (mesaj2)
-mesaj2 = f"""GUNLUK OZET {hedef_str}
-BTC:{GUNLUK_BTC:.5f}BTC ({f2_kaynak})
+mesaj2 = f"""GUNLUK OZET (beklenen) {hedef_str}
+BTC:{GUNLUK_BTC:.5f}BTC ({karli_saat} saat calisma)
 Gelir:{gunluk_btc_tl:,.0f}TL|{gunluk_btc_usd:,.0f}$
 Enerji:{toplam_maliyet:,.0f}TL|{maliyet_usd:,.0f}$
 Kar:{toplam_kar:+,.0f}TL|{gunluk_kar_usd:+,.0f}$
@@ -345,12 +342,8 @@ print(mesaj3)
 print(mesaj1)
 print(mesaj2)
 
-client = Client(TWILIO_SID, TWILIO_TOKEN)
-for numara in [KENDI_NUMARA, IKINCI_NUMARA]:
-    client.messages.create(body=mesaj3, from_=TWILIO_NUMARA, to=numara)
-    client.messages.create(body=mesaj1, from_=TWILIO_NUMARA, to=numara)
-    client.messages.create(body=mesaj2, from_=TWILIO_NUMARA, to=numara)
-print("WhatsApp gonderildi!")
+for _m in (mesaj3, mesaj1, mesaj2):
+    whatsapp_gonder(_m)
 
 # Sinyal dosyası (her zaman üzerine yaz - en güncel gün)
 sinyal_data = {
