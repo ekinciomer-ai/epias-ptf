@@ -1,5 +1,5 @@
 {
- "guncellendi": "2026-10-08T01:50:02+03:00",
+ "guncellendi": "2026-10-08T02:00:03+03:00",
  "mod": "otomatik",
  "ayarlar": {
   "mod": "otomatik",
@@ -21,7 +21,7 @@
  "uretim_kw": 0.0,
  "uretim": false,
  "fs_taze": true,
- "ptf": 3434.88,
+ "ptf": 2694.99,
  "yekdem": 526.39,
  "btc_try": 4100996.0,
  "btc_tarih": "2026-10-07",
@@ -30,11 +30,11 @@
   "2026-09-30",
   "2026-10-06"
  ],
- "maliyet_tl_saat": 22.918521775499993,
+ "maliyet_tl_saat": 18.637777196999995,
  "gelir_tl_saat": 22.12031257463733,
  "basabas_ptf": 3296.916382971202,
- "karar": "uyut",
- "neden": "maliyet 23 ₺ > gelir 22 ₺ (cihaz/saat)",
+ "karar": "calis",
+ "neden": "gelir 22 ₺ ≥ maliyet 19 ₺ (cihaz/saat)",
  "istenen": "calis",
  "eylem": null,
  "eylem_not": "",
@@ -107,23 +107,11 @@
  },
  "plan": [
   {
-   "t": "2026-10-08 01:00",
-   "ptf": 3434.88,
-   "yekdem": 526.39,
-   "gunes_tahmini": false,
-   "gunes_kaynak": "anlık",
-   "maliyet": 22.918521775499993,
-   "gelir": 22.12031257463733,
-   "karar": "calis",
-   "karar_ham": "uyut",
-   "not": "kısa duruş kârsız: uyutmak -2 ₺, çalışmak 3 ₺ (cihaz başı; su ~35 °C'ye düşer, 24 dk önce uyandırma gerekir)"
-  },
-  {
    "t": "2026-10-08 02:00",
    "ptf": 2694.99,
    "yekdem": 526.39,
    "gunes_tahmini": false,
-   "gunes_kaynak": "doğuş/batış",
+   "gunes_kaynak": "anlık",
    "maliyet": 18.637777196999995,
    "gelir": 22.12031257463733,
    "karar": "calis",
@@ -764,6 +752,16 @@
    "neden": "maliyet 23 ₺ > gelir 22 ₺ (cihaz/saat)",
    "not": "",
    "gonderildi": true,
+   "mod": "otomatik"
+  },
+  {
+   "t": "2026-10-08 02:00",
+   "karar": "calis",
+   "istenen": "calis",
+   "eylem": "-",
+   "neden": "gelir 22 ₺ ≥ maliyet 19 ₺ (cihaz/saat)",
+   "not": "",
+   "gonderildi": false,
    "mod": "otomatik"
   }
  ]
