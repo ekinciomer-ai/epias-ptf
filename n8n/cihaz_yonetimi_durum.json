@@ -1,5 +1,5 @@
 {
- "guncellendi": "2026-10-07T19:25:02+03:00",
+ "guncellendi": "2026-10-07T20:15:03+03:00",
  "mod": "otomatik",
  "ayarlar": {
   "mod": "otomatik",
@@ -21,7 +21,7 @@
  "uretim_kw": 0.0,
  "uretim": false,
  "fs_taze": true,
- "ptf": 4500,
+ "ptf": 4111.25,
  "yekdem": 526.39,
  "btc_try": 4095849.0,
  "btc_tarih": "2026-10-07",
@@ -30,20 +30,20 @@
   "2026-09-30",
   "2026-10-06"
  ],
- "maliyet_tl_saat": 29.080933303499997,
+ "maliyet_tl_saat": 26.831761866,
  "gelir_tl_saat": 22.39711349256645,
  "basabas_ptf": 3344.7590485194323,
  "karar": "uyut",
- "neden": "maliyet 29 ₺ > gelir 22 ₺ (cihaz/saat)",
+ "neden": "maliyet 27 ₺ > gelir 22 ₺ (cihaz/saat)",
  "istenen": "uyut",
- "eylem": null,
- "eylem_not": "aynı komut 15 dk içinde gönderilmişti, bekleniyor",
- "gonderildi": false,
+ "eylem": "sleep",
+ "eylem_not": "",
+ "gonderildi": true,
  "cihaz": {
   "toplam": 30,
   "ulasilan": 28,
-  "calisan": 6,
-  "uyuyan": 22,
+  "calisan": 3,
+  "uyuyan": 25,
   "taze": true,
   "su_uyuyan": null
  },
@@ -56,87 +56,76 @@
    "d99": 7.4,
    "p80_ek": 0.9,
    "emniyet_dk": 3.0,
-   "sn_cihaz": 14.0,
+   "sn_cihaz": 24.1,
    "n": 53
   },
-  "yayilim_dk": 6.5,
+  "yayilim_dk": 11.2,
   "sonraki_uyandirma": {
-   "t_komut": "2026-10-08T01:36:00+03:00",
+   "t_komut": "2026-10-08T01:31:00+03:00",
    "eylem": "wake",
    "hedef": "2026-10-08T02:00:00+03:00",
-   "oncu_dk": 24.0,
-   "oncu_hazir_dk": 21,
+   "oncu_dk": 29.0,
+   "oncu_hazir_dk": 26,
    "oncu_ekonomik_dk": 0,
    "politika": "hazir",
-   "on_isitma_bedeli_tl": 5.8,
+   "on_isitma_bedeli_tl": 7.1,
    "su_tahmin": 19.0,
    "su_kaynak": "öğrenilmiş (>12 sa uyku, 25 olay)",
    "t95_tahmin": 14.3,
-   "neden": "02:00 kârlı saat; su ~19 °C → %95 hash 14 dk + yayılım 7 dk + emniyet 3 dk"
+   "neden": "02:00 kârlı saat; su ~19 °C → %95 hash 14 dk + yayılım 11 dk + emniyet 3 dk"
   },
   "takvim": [
    {
-    "t_komut": "2026-10-08T01:36:00+03:00",
+    "t_komut": "2026-10-08T01:31:00+03:00",
     "eylem": "wake",
     "hedef": "2026-10-08T02:00:00+03:00",
-    "oncu_dk": 24.0,
-    "oncu_hazir_dk": 21,
+    "oncu_dk": 29.0,
+    "oncu_hazir_dk": 26,
     "oncu_ekonomik_dk": 0,
     "politika": "hazir",
-    "on_isitma_bedeli_tl": 5.8,
+    "on_isitma_bedeli_tl": 7.1,
     "su_tahmin": 19.0,
     "su_kaynak": "öğrenilmiş (>12 sa uyku, 25 olay)",
     "t95_tahmin": 14.3,
-    "neden": "02:00 kârlı saat; su ~19 °C → %95 hash 14 dk + yayılım 7 dk + emniyet 3 dk"
+    "neden": "02:00 kârlı saat; su ~19 °C → %95 hash 14 dk + yayılım 11 dk + emniyet 3 dk"
    },
    {
-    "t_komut": "2026-10-08T16:56:44+03:00",
+    "t_komut": "2026-10-08T16:54:22+03:00",
     "eylem": "sleep",
     "hedef": "2026-10-08T17:00:00+03:00",
     "neden": "17:00 zararlı saat",
-    "oncu_dk": 3.3
+    "oncu_dk": 5.6
    },
    {
-    "t_komut": "2026-10-08T21:36:00+03:00",
+    "t_komut": "2026-10-08T21:31:00+03:00",
     "eylem": "wake",
     "hedef": "2026-10-08T22:00:00+03:00",
-    "oncu_dk": 24.0,
-    "oncu_hazir_dk": 21,
+    "oncu_dk": 29.0,
+    "oncu_hazir_dk": 26,
     "oncu_ekonomik_dk": 0,
     "politika": "hazir",
-    "on_isitma_bedeli_tl": 16.7,
+    "on_isitma_bedeli_tl": 20.1,
     "su_tahmin": 19.0,
     "su_kaynak": "öğrenilmiş (>12 sa uyku, 25 olay)",
     "t95_tahmin": 14.3,
-    "neden": "22:00 kârlı saat; su ~19 °C → %95 hash 14 dk + yayılım 7 dk + emniyet 3 dk"
+    "neden": "22:00 kârlı saat; su ~19 °C → %95 hash 14 dk + yayılım 11 dk + emniyet 3 dk"
    },
    {
-    "t_komut": "2026-10-08T22:56:44+03:00",
+    "t_komut": "2026-10-08T22:54:22+03:00",
     "eylem": "sleep",
     "hedef": "2026-10-08T23:00:00+03:00",
     "neden": "23:00 zararlı saat",
-    "oncu_dk": 3.3
+    "oncu_dk": 5.6
    }
   ]
  },
  "plan": [
   {
-   "t": "2026-10-07 19:00",
-   "ptf": 4500,
-   "yekdem": 526.39,
-   "gunes_tahmini": false,
-   "gunes_kaynak": "anlık",
-   "maliyet": 29.080933303499997,
-   "gelir": 22.39711349256645,
-   "karar": "uyut",
-   "karar_ham": "uyut"
-  },
-  {
    "t": "2026-10-07 20:00",
    "ptf": 4111.25,
    "yekdem": 526.39,
    "gunes_tahmini": false,
-   "gunes_kaynak": "doğuş/batış",
+   "gunes_kaynak": "anlık",
    "maliyet": 26.831761866,
    "gelir": 22.39711349256645,
    "karar": "uyut",
@@ -251,7 +240,7 @@
    "gelir": 22.39711349256645,
    "karar": "calis",
    "karar_ham": "uyut",
-   "not": "kısa duruş kârsız: uyutmak -2 ₺, çalışmak 3 ₺ (cihaz başı; su ~19 °C'ye düşer, 21 dk önce uyandırma gerekir)"
+   "not": "kısa duruş kârsız: uyutmak -3 ₺, çalışmak 3 ₺ (cihaz başı; su ~19 °C'ye düşer, 26 dk önce uyandırma gerekir)"
   },
   {
    "t": "2026-10-08 07:00",
@@ -450,6 +439,17 @@
    "gelir": 22.39711349256645,
    "karar": null,
    "karar_ham": null
+  },
+  {
+   "t": "2026-10-09 01:00",
+   "ptf": null,
+   "yekdem": 526.39,
+   "gunes_tahmini": false,
+   "gunes_kaynak": "doğuş/batış",
+   "maliyet": null,
+   "gelir": 22.39711349256645,
+   "karar": null,
+   "karar_ham": null
   }
  ],
  "gecmis": [
@@ -538,6 +538,16 @@
    "istenen": "uyut",
    "eylem": "sleep",
    "neden": "maliyet 29 ₺ > gelir 22 ₺ (cihaz/saat)",
+   "not": "",
+   "gonderildi": true,
+   "mod": "otomatik"
+  },
+  {
+   "t": "2026-10-07 20:15",
+   "karar": "uyut",
+   "istenen": "uyut",
+   "eylem": "sleep",
+   "neden": "maliyet 27 ₺ > gelir 22 ₺ (cihaz/saat)",
    "not": "",
    "gonderildi": true,
    "mod": "otomatik"
