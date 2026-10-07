@@ -1,8 +1,7 @@
 name: Saha saatlik ozeti
 
 on:
-  schedule:
-    - cron: '*/10 * * * *'
+  # Asıl yazıcı Pi (cihaz_ogrenme.py, 5 dk'da bir). Bu iş yalnız elle: Pi kapalıyken geçmişten doldurmak için.
   workflow_dispatch:
 
 permissions:
