@@ -16,6 +16,7 @@ import bildirim as B
 from bildirim import TR, oku
 
 KURU = "--kuru" in sys.argv
+ORNEK = False          # panelden "örnek mesajlar" istenince: zaman/gönderildi kontrolleri atlanır
 DURUM = "n8n/bildirim_durum.json"
 RAW = "https://raw.githubusercontent.com/ekinciomer-ai/epias-ptf/main/"
 DAG_BAS, DAG = "2026-09-14", (16, 13)
@@ -272,7 +273,7 @@ def plan_grafik(gun, sat, dosya):
 def plan_isi(simdi, durum):
     yarin = (simdi + timedelta(days=1)).strftime("%Y-%m-%d")
     gd = durum.setdefault("gonderildi", {})
-    if gd.get("plan") == yarin:
+    if gd.get("plan") == yarin and not ORNEK:
         return
     y = oku("n8n/cihaz_yonetimi_durum.json", {}) or {}
     pl = {p["t"][11:13]: p for p in y.get("plan") or [] if p.get("t", "").startswith(yarin) and p.get("ptf") is not None and p.get("karar")}
@@ -281,7 +282,7 @@ def plan_isi(simdi, durum):
         ep = oku("n8n/epias_gecmis.json", {}) or {}
         pt = (ep.get("ptf") or {}).get(yarin)
         # Pi verisi yoksa (saha kapalı) 17:00'den sonra aynı kuralla burada hesapla
-        if not (pt and len(pt) == 24 and simdi.hour >= 17 and simdi - zaman(y.get("guncellendi", "2000-01-01")) > timedelta(minutes=30)):
+        if not (pt and len(pt) == 24 and (ORNEK or (simdi.hour >= 17 and simdi - zaman(y.get("guncellendi", "2000-01-01")) > timedelta(minutes=30)))):
             if simdi.hour >= 17 and not (pt and len(pt) == 24) and gd.get("ptf_bekleme") != yarin:
                 B.gonder("sistem", f"🕔 Yarının ({gun_ad(yarin)}) PTF'si hâlâ yayınlanmadı ({simdi:%H:%M}). Yayınlanınca plan gönderilecek.")
                 gd["ptf_bekleme"] = yarin
@@ -290,12 +291,12 @@ def plan_isi(simdi, durum):
         yk, kat, kw = y.get("yekdem") or 0, a.get("maliyet_carpani") or 1.035, a.get("cihaz_guc_kw") or 5.59
         gel = (y.get("hashprice_btc_th_gun") or 0) * (a.get("cihaz_th") or 285) / 24 * (y.get("btc_try") or 0)
         dog, bat = gunes_saatleri(date.fromisoformat(yarin))
-        pl = {}
+        pi_pl, pl = pl, {}
         for h, p in enumerate(pt):
             gunes = (dog + 1.0) <= h and (h + 1) <= (bat - 1.0)
             m = (p + yk) / 1000 * kat * kw
-            pl[f"{h:02d}"] = {"ptf": p, "maliyet": m, "gelir": gel, "karar": "calis" if gunes or gel >= m else "uyut", "gunes_tahmini": gunes}
-        kaynak = "kural (Pi verisi yok)"
+            pl[f"{h:02d}"] = pi_pl.get(f"{h:02d}") or {"ptf": p, "maliyet": m, "gelir": gel, "karar": "calis" if gunes or gel >= m else "uyut", "gunes_tahmini": gunes}
+        kaynak = "Pi planı" if len(pi_pl) == 24 else "kural (Pi verisi yok)" if not pi_pl else f"{len(pi_pl)} saat Pi planı, kalanı aynı kural"
     _, kodlar = filo_kodlari()
     n = len(kodlar) or 28
     sat = []
@@ -346,7 +347,9 @@ def pay_isi(simdi, durum):
     gd = durum.setdefault("gonderildi", {})
     if not gunler:
         return
-    if not gd.get("pay"):
+    if ORNEK:
+        gd["pay"] = gunler[-2] if len(gunler) > 1 else ""
+    elif not gd.get("pay"):
         gd["pay"] = gunler[-2] if len(gunler) > 1 else gunler[-1]   # ilk çalıştırmada yalnız en son günü gönder
     bek = [g for g in gunler if g > gd["pay"]]
     if not bek:
@@ -440,7 +443,9 @@ def pay_isi(simdi, durum):
 def ges_gunluk_isi(simdi, durum):
     gd = durum.setdefault("gonderildi", {})
     bugun = simdi.strftime("%Y-%m-%d")
-    if gd.get("ges_gunluk") == bugun or (simdi.hour, simdi.minute) < (20, 30):
+    if ORNEK:
+        bugun = (simdi - timedelta(hours=6)).strftime("%Y-%m-%d")
+    elif gd.get("ges_gunluk") == bugun or (simdi.hour, simdi.minute) < (20, 30):
         return
     son = oku("n8n/aesun_son.json", {}) or {}
     osos = {r["ad"]: r.get("gunluk_kwh") for r in son.get("son") or [] if r.get("kaynak") == "osos"}
@@ -496,6 +501,36 @@ def test_isi(durum):
     return True
 
 
+def ornek_isi(simdi):
+    """bildirim_ayar.json "ornek": [anahtar...] → o kişilere tüm konuların örnek mesajı (durum değişmez)."""
+    global ORNEK
+    import copy
+    ay = B.ayar()
+    hedef = [k for k in ay.get("kisiler") or [] if k["anahtar"] in (ay.get("ornek") or [])]
+    if not hedef:
+        return
+    ORNEK = True
+    asil = B.gonder
+    B.gonder = lambda konu, metin, gorsel=None, kisiler=None: asil(konu, "🧪 *ÖRNEK* (" + konu + ")\n" + metin, gorsel, hedef)
+    try:
+        B.gonder("bilgi", "Aşağıda her konunun gerçek verilerle hazırlanmış örnek mesajı var. Anlık uyarılar (madenci, GES, sistem) yalnız sorun olunca gelir; örnekleri temsilidir.")
+        d = copy.deepcopy(oku(DURUM) or {})
+        for f, t in ((plan_isi, simdi - timedelta(days=1)), (pay_isi, simdi), (ges_gunluk_isi, simdi)):
+            try:
+                f(t, d)        # plan: yarınınki yoksa bugünün planı örnek gösterilir
+            except Exception as e:
+                import traceback; traceback.print_exc()
+        B.gonder("cihaz", "⚠️ *⛏️ Madenci uyarısı*\n• 012 ağda yok — seri OLTTGBUBEAAAA00XX, son IP 192.168.0.108. Kapalı, kablosu çıkmış ya da IP değişmiş olabilir.")
+        B.gonder("cihaz", "✅ *⛏️ Madenci: düzeldi*\n• 012 ağda yok (08.10 14:20'den beri sürüyordu)")
+        B.gonder("ges", "⚠️ *☀️ GES uyarısı*\n• Sera-1 Inverter 4 üretmiyor — diğer inverterler ~85 kW")
+        B.gonder("sistem", "⚠️ *🖥️ Sistem uyarısı*\n• Saha verisi gelmiyor — son kayıt 14:05. Pi, modem ya da saha interneti kontrol edilmeli.")
+    finally:
+        B.gonder, ORNEK = asil, False
+    ay["ornek"] = []
+    if not KURU:
+        json.dump(ay, open(B.AYAR, "w"), ensure_ascii=False, indent=1)
+
+
 def main():
     simdi = datetime.now(TR)
     if KURU:
@@ -521,6 +556,10 @@ def main():
             f(simdi, durum)
         except Exception as e:
             import traceback; traceback.print_exc(); print(ad, "hatası:", e)
+    try:
+        ornek_isi(simdi)
+    except Exception as e:
+        print("örnek hatası:", e)
     try:
         test_isi(durum)
     except Exception as e:
