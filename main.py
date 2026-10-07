@@ -27,10 +27,19 @@ saat_tr = (datetime.datetime.utcnow() + datetime.timedelta(hours=3)).strftime("%
 GUNLER  = ["Pazartesi","Sali","Carsamba","Persembe","Cuma","Cumartesi","Pazar"]
 
 def whatsapp_gonder(mesaj):
-    client = Client(TWILIO_SID, TWILIO_TOKEN)
+    """Twilio hatasi isi dusurmesin (sandbox suresi dolmus olabilir): hata yazilir, devam edilir."""
+    try:
+        client = Client(TWILIO_SID, TWILIO_TOKEN)
+    except Exception as e:
+        print(f"WhatsApp HATA (istemci): {e}"); return False
+    ok = True
     for numara in [KENDI_NUMARA, IKINCI_NUMARA]:
-        client.messages.create(body=mesaj, from_=TWILIO_NUMARA, to=numara)
-    print("WhatsApp gonderildi!")
+        try:
+            client.messages.create(body=mesaj, from_=TWILIO_NUMARA, to=numara)
+        except Exception as e:
+            ok = False; print(f"WhatsApp HATA ({numara[-4:]}): {str(e)[:200]}")
+    print("WhatsApp gonderildi!" if ok else "WhatsApp kismen/hic gonderilemedi")
+    return ok
 
 def dosya_oku(dosya):
     """CDN-oncelikli okuma (public repo, token gerekmez).

@@ -5,14 +5,17 @@ on:
     - cron: '*/30 10-15 * * *'  # Her 30 dakika, 13:00-18:00 Türkiye saati
   workflow_dispatch:  # Manuel çalıştırma
 
+permissions:
+  contents: write
+
 jobs:
   ptf-sinyal:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Python kur
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
@@ -28,4 +31,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           F2POOL_TOKEN: ${{ secrets.F2POOL_TOKEN }}
           F2POOL_KULLANICI: ${{ secrets.F2POOL_KULLANICI }}
-        run: python main.py
+        run: bash is_calistir.sh "EPİAŞ PTF sinyal" python main.py

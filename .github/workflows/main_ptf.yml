@@ -32,4 +32,4 @@ jobs:
           TWILIO_TOKEN: ${{ secrets.TWILIO_TOKEN }}
           F2POOL_TOKEN: ${{ secrets.F2POOL_TOKEN }}
           F2POOL_KULLANICI: mehmetas
-        run: python main.py
+        run: bash is_calistir.sh "EPİAŞ PTF (3 saatte bir)" python main.py

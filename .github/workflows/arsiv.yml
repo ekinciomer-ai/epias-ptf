@@ -26,4 +26,4 @@ jobs:
           F2POOL_KULLANICI: mehmetas
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ekinciomer-ai/epias-ptf
-        run: python arsiv_kaydet.py
+        run: bash is_calistir.sh "Veri arşivi" python arsiv_kaydet.py
