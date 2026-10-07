@@ -1,5 +1,5 @@
 {
- "guncellendi": "2026-10-07T21:05:03+03:00",
+ "guncellendi": "2026-10-07T21:15:02+03:00",
  "mod": "otomatik",
  "ayarlar": {
   "mod": "otomatik",
@@ -35,10 +35,10 @@
  "basabas_ptf": 3344.7590485194323,
  "karar": "uyut",
  "neden": "maliyet 26 ₺ > gelir 22 ₺ (cihaz/saat)",
- "istenen": "uyut",
- "eylem": null,
- "eylem_not": "aynı komut 15 dk içinde gönderilmişti, bekleniyor",
- "gonderildi": false,
+ "istenen": "calis",
+ "eylem": "wake",
+ "eylem_not": "",
+ "gonderildi": true,
  "cihaz": {
   "toplam": 30,
   "ulasilan": 28,
@@ -61,34 +61,20 @@
   },
   "yayilim_dk": 10.0,
   "sonraki_uyandirma": {
-   "t_komut": "2026-10-08T01:32:00+03:00",
+   "t_komut": "2026-10-08T21:32:00+03:00",
    "eylem": "wake",
-   "hedef": "2026-10-08T02:00:00+03:00",
+   "hedef": "2026-10-08T22:00:00+03:00",
    "oncu_dk": 28.0,
    "oncu_hazir_dk": 25,
    "oncu_ekonomik_dk": 0,
    "politika": "hazir",
-   "on_isitma_bedeli_tl": 6.8,
+   "on_isitma_bedeli_tl": 19.5,
    "su_tahmin": 19.0,
    "su_kaynak": "öğrenilmiş (>12 sa uyku, 25 olay)",
    "t95_tahmin": 14.3,
-   "neden": "02:00 kârlı saat; su ~19 °C → %95 hash 14 dk + yayılım 10 dk + emniyet 3 dk"
+   "neden": "22:00 kârlı saat; su ~19 °C → %95 hash 14 dk + yayılım 10 dk + emniyet 3 dk"
   },
   "takvim": [
-   {
-    "t_komut": "2026-10-08T01:32:00+03:00",
-    "eylem": "wake",
-    "hedef": "2026-10-08T02:00:00+03:00",
-    "oncu_dk": 28.0,
-    "oncu_hazir_dk": 25,
-    "oncu_ekonomik_dk": 0,
-    "politika": "hazir",
-    "on_isitma_bedeli_tl": 6.8,
-    "su_tahmin": 19.0,
-    "su_kaynak": "öğrenilmiş (>12 sa uyku, 25 olay)",
-    "t95_tahmin": 14.3,
-    "neden": "02:00 kârlı saat; su ~19 °C → %95 hash 14 dk + yayılım 10 dk + emniyet 3 dk"
-   },
    {
     "t_komut": "2026-10-08T16:54:59+03:00",
     "eylem": "sleep",
@@ -128,8 +114,9 @@
    "gunes_kaynak": "anlık",
    "maliyet": 26.229012848999997,
    "gelir": 22.39711349256645,
-   "karar": "uyut",
-   "karar_ham": "uyut"
+   "karar": "calis",
+   "karar_ham": "uyut",
+   "not": "kısa duruş kârsız: uyutmak -2 ₺, çalışmak -2 ₺ (cihaz başı; su ~19 °C'ye düşer, 25 dk önce uyandırma gerekir)"
   },
   {
    "t": "2026-10-07 22:00",
@@ -139,8 +126,9 @@
    "gunes_kaynak": "doğuş/batış",
    "maliyet": 23.307201742499995,
    "gelir": 22.39711349256645,
-   "karar": "uyut",
-   "karar_ham": "uyut"
+   "karar": "calis",
+   "karar_ham": "uyut",
+   "not": "kısa duruş kârsız: uyutmak -2 ₺, çalışmak -2 ₺ (cihaz başı; su ~19 °C'ye düşer, 25 dk önce uyandırma gerekir)"
   },
   {
    "t": "2026-10-07 23:00",
@@ -150,8 +138,9 @@
    "gunes_kaynak": "doğuş/batış",
    "maliyet": 22.716660446999995,
    "gelir": 22.39711349256645,
-   "karar": "uyut",
-   "karar_ham": "uyut"
+   "karar": "calis",
+   "karar_ham": "uyut",
+   "not": "kısa duruş kârsız: uyutmak -2 ₺, çalışmak -2 ₺ (cihaz başı; su ~19 °C'ye düşer, 25 dk önce uyandırma gerekir)"
   },
   {
    "t": "2026-10-08 00:00",
@@ -161,8 +150,9 @@
    "gunes_kaynak": "doğuş/batış",
    "maliyet": 23.3626282695,
    "gelir": 22.39711349256645,
-   "karar": "uyut",
-   "karar_ham": "uyut"
+   "karar": "calis",
+   "karar_ham": "uyut",
+   "not": "kısa duruş kârsız: uyutmak -2 ₺, çalışmak -2 ₺ (cihaz başı; su ~19 °C'ye düşer, 25 dk önce uyandırma gerekir)"
   },
   {
    "t": "2026-10-08 01:00",
@@ -172,8 +162,9 @@
    "gunes_kaynak": "doğuş/batış",
    "maliyet": 22.918521775499993,
    "gelir": 22.39711349256645,
-   "karar": "uyut",
-   "karar_ham": "uyut"
+   "karar": "calis",
+   "karar_ham": "uyut",
+   "not": "kısa duruş kârsız: uyutmak -2 ₺, çalışmak -2 ₺ (cihaz başı; su ~19 °C'ye düşer, 25 dk önce uyandırma gerekir)"
   },
   {
    "t": "2026-10-08 02:00",
@@ -558,6 +549,16 @@
    "istenen": "uyut",
    "eylem": "sleep",
    "neden": "maliyet 27 ₺ > gelir 22 ₺ (cihaz/saat)",
+   "not": "",
+   "gonderildi": true,
+   "mod": "otomatik"
+  },
+  {
+   "t": "2026-10-07 21:15",
+   "karar": "uyut",
+   "istenen": "calis",
+   "eylem": "wake",
+   "neden": "maliyet 26 ₺ > gelir 22 ₺ (cihaz/saat)",
    "not": "",
    "gonderildi": true,
    "mod": "otomatik"
