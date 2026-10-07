@@ -1,0 +1,33 @@
+name: Saha saatlik ozeti
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: saha-saatlik
+  cancel-in-progress: false
+
+jobs:
+  ozet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: blob:none
+      - name: Ozet hesapla
+        run: python3 saha_saatlik.py
+      - name: Yaz
+        run: |
+          git config user.name "aesun-bot"
+          git config user.email "aesun-bot@users.noreply.github.com"
+          git add n8n/saha_saatlik.json
+          git diff --cached --quiet && exit 0
+          git commit -m "Saha saatlik özeti" -q
+          for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done
+          exit 1
