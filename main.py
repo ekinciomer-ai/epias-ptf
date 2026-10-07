@@ -201,7 +201,7 @@ if not items:
     # Yarinin verisi yok - sadece sabah ilk denemede uyari at, sonraki denemelerde sessiz cik
     son_uyari = gonderim.get("son_bekleme_uyarisi") if gonderim else None
     if son_uyari != bugun:
-        whatsapp_gonder(f"EPiAS PTF Beklemede\nYarin ({yarin}) verisi henuz yayinlanmadi.\nSaat: {saat_tr}\nVeri cikinca otomatik gonderilecek.")
+        print(f"EPiAS PTF beklemede: yarin ({yarin}) verisi henuz yok ({saat_tr}). Uyari bildirim_isler.py'den (konu: sistem).")
         # Uyari gonderildi isaretle
         yeni_gonderim = gonderim or {}
         yeni_gonderim["son_bekleme_uyarisi"] = bugun
@@ -342,8 +342,8 @@ print(mesaj3)
 print(mesaj1)
 print(mesaj2)
 
-for _m in (mesaj3, mesaj1, mesaj2):
-    whatsapp_gonder(_m)
+# WhatsApp: artik buradan gonderilmiyor. Yarinin plani Pi planindan (cihaz_yonetimi_durum.json) grafikle
+# bildirim_isler.py tarafindan, n8n/bildirim_ayar.json'da "plan" konusunu secen kisilere gider.
 
 # Sinyal dosyası (her zaman üzerine yaz - en güncel gün)
 sinyal_data = {

@@ -9,7 +9,7 @@ python3 is_hata_kaydet.py "$ad" "$kod" /tmp/is_cikti.txt
 for i in 1 2 3; do
   git config user.name "aesun-bot"; git config user.email "aesun-bot@users.noreply.github.com"
   git add n8n/is_hatalari.json; git diff --cached --quiet && break
-  git commit -qm "İş durumu: $ad ($kod)" && git pull --rebase -q && git push -q && break
+  git commit -qm "İş durumu: $ad ($kod)" && git pull --rebase --autostash -q && git push -q && break
   sleep 5
 done
 exit 0

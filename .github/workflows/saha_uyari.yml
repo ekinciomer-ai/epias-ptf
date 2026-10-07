@@ -1,5 +1,7 @@
-name: Saha uyarisi
+name: Bildirimler (WhatsApp)
 
+# 15 dakikada bir: anlık uyarılar (sistem / madenci / GES), yarının planı, madencilik günlük raporu + pay, GES günlük.
+# Kim hangi konuyu alır: n8n/bildirim_ayar.json (panel → Bildirimler). Numaralar: gizli değişken BILDIRIM_K1 ... BILDIRIM_K8.
 on:
   schedule:
     - cron: '7,22,37,52 * * * *'
@@ -13,22 +15,30 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  uyari:
+  bildirim:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: pip install -q twilio
-      - name: Kontrol
+      - run: pip install -q twilio matplotlib
+      - name: Bildirimler
         env:
           TWILIO_SID: ${{ secrets.TWILIO_SID }}
           TWILIO_TOKEN: ${{ secrets.TWILIO_TOKEN }}
-        run: python saha_uyari.py
+          BILDIRIM_K1: ${{ secrets.BILDIRIM_K1 }}
+          BILDIRIM_K2: ${{ secrets.BILDIRIM_K2 }}
+          BILDIRIM_K3: ${{ secrets.BILDIRIM_K3 }}
+          BILDIRIM_K4: ${{ secrets.BILDIRIM_K4 }}
+          BILDIRIM_K5: ${{ secrets.BILDIRIM_K5 }}
+          BILDIRIM_K6: ${{ secrets.BILDIRIM_K6 }}
+          BILDIRIM_K7: ${{ secrets.BILDIRIM_K7 }}
+          BILDIRIM_K8: ${{ secrets.BILDIRIM_K8 }}
+        run: bash is_calistir.sh "Bildirimler" python bildirim_isler.py
       - name: Durumu yaz
         run: |
           git config user.name "aesun-bot"; git config user.email "aesun-bot@users.noreply.github.com"
-          git add n8n/uyari_durum.json; git diff --cached --quiet && exit 0
-          git commit -qm "Saha uyarı durumu"
-          for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done
+          git add n8n/bildirim_durum.json n8n/bildirim_kayit.json n8n/bildirim_ayar.json; git diff --cached --quiet && exit 0
+          git commit -qm "Bildirim durumu"
+          for i in 1 2 3 4; do git pull --rebase --autostash -q && git push -q && exit 0; sleep 5; done

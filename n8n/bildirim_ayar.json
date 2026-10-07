@@ -1,0 +1,16 @@
+{
+ "aciklama": "WhatsApp bildirimleri: kim hangi konuyu alır. Panelde Bildirimler sayfasından düzenlenir. Numaralar burada YOK: her kişinin numarası GitHub gizli değişkeni BILDIRIM_<anahtar> (ör. BILDIRIM_K3 = +905xxxxxxxxx).",
+ "konular": [
+  {"id": "plan", "ad": "Yarının çalışma planı", "aciklama": "Her gün PTF açıklanınca: grafik + çalış/uyut saatleri + beklenen kâr"},
+  {"id": "pay", "ad": "Madencilik günlük raporu ve pay dağılımı", "aciklama": "Her sabah dünün BTC geliri, 16/13 pay, çalışma saati, çalışmayan/eksik çalışan cihazlar"},
+  {"id": "cihaz", "ad": "Madenci arızası (anlık)", "aciklama": "Cihaz 1 saattir ulaşılamıyor / takıldı, bekçi onaramadı"},
+  {"id": "ges_gunluk", "ad": "GES günlük üretim", "aciklama": "Her akşam santral bazında üretim, inverter sayısı, üretmeyen/düşük inverter"},
+  {"id": "ges", "ad": "GES / inverter arızası (anlık)", "aciklama": "Gündüz üretmeyen inverter, kritik santral alarmı"},
+  {"id": "sistem", "ad": "Sistem uyarıları", "aciklama": "Saha Pi'si / internet kesildi, cihaz yönetimi durdu, veri gelmiyor, PTF yayınlanmadı"}
+ ],
+ "kisiler": [
+  {"anahtar": "K1", "ad": "Ömer", "son4": "3340", "aktif": true, "konular": ["plan", "pay", "cihaz", "ges_gunluk", "ges", "sistem"]},
+  {"anahtar": "K2", "ad": "2. numara", "son4": "7380", "aktif": true, "konular": ["plan", "pay", "cihaz", "ges_gunluk", "ges", "sistem"]}
+ ],
+ "test": []
+}
