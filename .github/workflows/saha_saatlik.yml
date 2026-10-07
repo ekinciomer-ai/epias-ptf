@@ -17,9 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          filter: blob:none
+      - name: Son 3 gunun gecmisi
+        run: git fetch -q --shallow-since="$(date -u -d '3 days ago' +%Y-%m-%d)" origin main
       - name: Ozet hesapla
         run: python3 saha_saatlik.py
       - name: Yaz
