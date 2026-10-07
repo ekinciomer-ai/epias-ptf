@@ -1,5 +1,5 @@
 {
- "guncellendi": "2026-10-07T10:10:03+03:00",
+ "guncellendi": "2026-10-07T10:15:02+03:00",
  "mod": "izleme",
  "ayarlar": {
   "mod": "izleme",
@@ -18,9 +18,9 @@
   "cihaz_th_kaynak": "F2Pool son 7 gün, 28 cihaz medyanı",
   "cihaz_guc_kaynak": "antminer arşivi 2026-08-13 11:50, 29 cihaz ortalaması"
  },
- "uretim_kw": 896.43,
- "uretim": null,
- "fs_taze": false,
+ "uretim_kw": 1187.35,
+ "uretim": true,
+ "fs_taze": true,
  "ptf": 1649,
  "yekdem": 526.39,
  "btc_try": 4145680.0,
@@ -30,12 +30,12 @@
   "2026-09-30",
   "2026-10-06"
  ],
- "maliyet_tl_saat": null,
- "gelir_tl_saat": null,
+ "maliyet_tl_saat": 12.586045153499997,
+ "gelir_tl_saat": 22.479897922630542,
  "basabas_ptf": 3359.0676275147207,
- "karar": null,
- "neden": "FusionSolar verisi eski ya da yok (değişiklik yapılmaz)",
- "istenen": null,
+ "karar": "calis",
+ "neden": "güneş üretimi var",
+ "istenen": "calis",
  "eylem": null,
  "eylem_not": "",
  "gonderildi": false,
@@ -77,11 +77,11 @@
    "ptf": 1649,
    "yekdem": 526.39,
    "gunes_tahmini": true,
-   "gunes_kaynak": "doğuş/batış",
+   "gunes_kaynak": "anlık",
    "maliyet": 12.586045153499997,
    "gelir": 22.479897922630542,
-   "karar": null,
-   "karar_ham": null
+   "karar": "calis",
+   "karar_ham": "calis"
   },
   {
    "t": "2026-10-07 11:00",
@@ -449,6 +449,16 @@
    "istenen": null,
    "eylem": "-",
    "neden": "FusionSolar verisi eski ya da yok (değişiklik yapılmaz)",
+   "not": "",
+   "gonderildi": false,
+   "mod": "izleme"
+  },
+  {
+   "t": "2026-10-07 10:15",
+   "karar": "calis",
+   "istenen": "calis",
+   "eylem": "-",
+   "neden": "güneş üretimi var",
    "not": "",
    "gonderildi": false,
    "mod": "izleme"
