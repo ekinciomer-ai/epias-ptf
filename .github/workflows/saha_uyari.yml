@@ -39,6 +39,6 @@ jobs:
       - name: Durumu yaz
         run: |
           git config user.name "aesun-bot"; git config user.email "aesun-bot@users.noreply.github.com"
-          git add n8n/bildirim_durum.json n8n/bildirim_kayit.json n8n/bildirim_ayar.json; git diff --cached --quiet && exit 0
+          git add n8n/bildirim_*.json; git diff --cached --quiet && exit 0
           git commit -qm "Bildirim durumu"
           for i in 1 2 3 4; do git pull --rebase --autostash -q && git push -q && exit 0; sleep 5; done
