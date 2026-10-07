@@ -158,7 +158,7 @@ def sistem_ve_cihaz(S, simdi, durum):
             pi_sessiz = True
             S.var("pi_sessiz", "sistem", f"Saha verisi gelmiyor — son kayıt {zaman(mad['timestamp']):%H:%M}. Pi, modem ya da saha interneti kontrol edilmeli.")
     y = oku("n8n/cihaz_yonetimi_durum.json", {}) or {}
-    if not pi_sessiz and y.get("guncellendi") and simdi - zaman(y["guncellendi"]) > timedelta(minutes=20):
+    if not pi_sessiz and y.get("guncellendi") and simdi - zaman(y["guncellendi"]) > timedelta(minutes=40):   # durum değişmezse Pi 30 dk'da bir yazar
         S.var("yonetim_durdu", "sistem", f"Cihaz yönetimi karar vermiyor — son karar {zaman(y['guncellendi']):%H:%M} (mod {y.get('mod')}).")
     son = oku("n8n/aesun_son.json", {}) or {}
     for r in son.get("son") or []:
