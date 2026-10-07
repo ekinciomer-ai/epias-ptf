@@ -1,5 +1,5 @@
 {
- "zaman": "2026-10-07T13:48:02+03:00",
+ "zaman": "2026-10-07T14:03:01+03:00",
  "alt_ag": "192.168.0.0/24",
  "pi_ip": "192.168.0.132",
  "acik_adres": 31,
@@ -310,25 +310,15 @@
    "havuz_kullanici": "mehmetas.023",
    "model": "S19 XP+ Hyd.",
    "mac": "F2:95:6B:27:D4:8E",
-   "toplayici_goruyor": false,
-   "toplayici_listesinde": false
+   "toplayici_goruyor": true,
+   "toplayici_listesinde": true
   }
  ],
  "toplayici_yanitsiz_ip": [
   "192.168.0.100",
   "192.168.0.101"
  ],
- "eksik": [
-  {
-   "worker": "023",
-   "serial": "PIEMFCUBEJBBF02HL",
-   "mac": "F2:95:6B:27:D4:8E",
-   "model": "S19 XP+ Hyd",
-   "eski_ip": null,
-   "yeni_ip": "192.168.0.129",
-   "durum": "agda_var_liste_disi"
-  }
- ],
+ "eksik": [],
  "web_adaylari": [
   {
    "ip": "192.168.0.1",
@@ -343,7 +333,7 @@
   "ip_satirlari": [
    "/home/pi/SAHA/antminer/antminer_panel.py:6: Sahadaki PC uzerinde calisir, 192.168.0.100-128 araligindaki 29 cihazi",
    "/home/pi/SAHA/antminer/antminer_panel.py:34: IP_BASE = \"192.168.0\"",
-   "/home/pi/SAHA/antminer/antminer_panel.py:35: IP_RANGE = list(range(100, 129))  # 100-128 (29 cihaz)",
+   "/home/pi/SAHA/antminer/antminer_panel.py:35: IP_RANGE = list(range(100, 130))  # 100-128 (29 cihaz)",
    "/home/pi/SAHA/antminer/antminer_panel.py:196: target_list = list(IP_RANGE)",
    "/home/pi/SAHA/antminer/antminer_panel.py:239: ip = f\"{IP_BASE}.{suffix}\"",
    "/home/pi/SAHA/antminer/antminer_panel.py:1119: ip = f\"{IP_BASE}.{ip_suffix}\"",
@@ -356,7 +346,7 @@
    "/home/pi/SAHA/antminer/antminer_scan.py:17: py antminer_scan.py --sleep 105  # 192.168.0.105'i uyut",
    "/home/pi/SAHA/antminer/antminer_scan.py:18: py antminer_scan.py --wake 105   # 192.168.0.105'i calistir",
    "/home/pi/SAHA/antminer/antminer_scan.py:32: IP_BASE = \"192.168.0\"",
-   "/home/pi/SAHA/antminer/antminer_scan.py:33: IP_RANGE = range(100, 129)  # 100-128 (29 cihaz)",
+   "/home/pi/SAHA/antminer/antminer_scan.py:33: IP_RANGE = range(100, 130)  # 100-128 (29 cihaz)",
    "/home/pi/SAHA/antminer/antminer_scan.py:100: ip = f\"{IP_BASE}.{ip_suffix}\"",
    "/home/pi/SAHA/antminer/antminer_scan.py:211: print(f\"Aralik: {IP_BASE}.{IP_RANGE.start} - {IP_BASE}.{IP_RANGE.stop - 1}\")",
    "/home/pi/SAHA/antminer/antminer_scan.py:212: print(f\"Toplam: {len(IP_RANGE)} cihaz, paralel {MAX_WORKERS}\")",
