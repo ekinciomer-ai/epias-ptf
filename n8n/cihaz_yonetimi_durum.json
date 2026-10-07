@@ -1,5 +1,5 @@
 {
- "guncellendi": "2026-10-07T18:05:02+03:00",
+ "guncellendi": "2026-10-07T18:20:02+03:00",
  "mod": "otomatik",
  "ayarlar": {
   "mod": "otomatik",
@@ -18,8 +18,8 @@
   "cihaz_th_kaynak": "F2Pool son 7 gün, 28 cihaz medyanı",
   "cihaz_guc_kaynak": "antminer arşivi 2026-08-13 11:50, 29 cihaz ortalaması"
  },
- "uretim_kw": 102.94999999999999,
- "uretim": true,
+ "uretim_kw": 37.45,
+ "uretim": false,
  "fs_taze": true,
  "ptf": 4437.98,
  "yekdem": 526.39,
@@ -33,17 +33,17 @@
  "maliyet_tl_saat": 28.7221072905,
  "gelir_tl_saat": 22.334638977942838,
  "basabas_ptf": 3333.9608642836743,
- "karar": "calis",
- "neden": "güneş üretimi var",
- "istenen": "calis",
- "eylem": "wake",
+ "karar": "uyut",
+ "neden": "maliyet 29 ₺ > gelir 22 ₺ (cihaz/saat)",
+ "istenen": "uyut",
+ "eylem": "sleep",
  "eylem_not": "",
  "gonderildi": true,
  "cihaz": {
   "toplam": 30,
   "ulasilan": 28,
-  "calisan": 7,
-  "uyuyan": 21,
+  "calisan": 28,
+  "uyuyan": 0,
   "taze": true,
   "su_uyuyan": null
  },
@@ -75,13 +75,6 @@
    "neden": "02:00 kârlı saat; su ~19 °C → %95 hash 15 dk + yayılım 6 dk + emniyet 3 dk"
   },
   "takvim": [
-   {
-    "t_komut": "2026-10-07T18:57:12+03:00",
-    "eylem": "sleep",
-    "hedef": "2026-10-07T19:00:00+03:00",
-    "neden": "19:00 zararlı saat",
-    "oncu_dk": 2.8
-   },
    {
     "t_komut": "2026-10-08T01:36:00+03:00",
     "eylem": "wake",
@@ -131,12 +124,12 @@
    "t": "2026-10-07 18:00",
    "ptf": 4437.98,
    "yekdem": 526.39,
-   "gunes_tahmini": true,
+   "gunes_tahmini": false,
    "gunes_kaynak": "anlık",
    "maliyet": 28.7221072905,
    "gelir": 22.334638977942838,
-   "karar": "calis",
-   "karar_ham": "calis"
+   "karar": "uyut",
+   "karar_ham": "uyut"
   },
   {
    "t": "2026-10-07 19:00",
@@ -525,6 +518,16 @@
    "istenen": "calis",
    "eylem": "wake",
    "neden": "güneş üretimi var",
+   "not": "",
+   "gonderildi": true,
+   "mod": "otomatik"
+  },
+  {
+   "t": "2026-10-07 18:20",
+   "karar": "uyut",
+   "istenen": "uyut",
+   "eylem": "sleep",
+   "neden": "maliyet 29 ₺ > gelir 22 ₺ (cihaz/saat)",
    "not": "",
    "gonderildi": true,
    "mod": "otomatik"
