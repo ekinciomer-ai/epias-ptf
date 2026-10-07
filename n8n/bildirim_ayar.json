@@ -1,5 +1,5 @@
 {
- "aciklama": "WhatsApp bildirimleri: kim hangi konuyu alır. Panelde Bildirimler sayfasından düzenlenir. Numaralar burada YOK: her kişinin numarası GitHub gizli değişkeni BILDIRIM_<anahtar> (ör. BILDIRIM_K3 = +905xxxxxxxxx).",
+ "aciklama": "WhatsApp bildirimleri: kim hangi konuyu alır. Panelde Bildirimler sayfasından düzenlenir. Numaralar burada YOK: her kişinin numarası GitHub gizli değişkeni BILDIRIM_<anahtar> (ör. BILDIRIM_K5 = +905xxxxxxxxx). K3 = PAY_1, K4 = ARIZA_1 adıyla tanımlı.",
  "konular": [
   {
    "id": "plan",
@@ -60,8 +60,32 @@
     "ges",
     "sistem"
    ]
+  },
+  {
+   "anahtar": "K3",
+   "ad": "Pay 1",
+   "son4": "",
+   "aktif": true,
+   "konular": [
+    "pay",
+    "cihaz"
+   ]
+  },
+  {
+   "anahtar": "K4",
+   "ad": "Arıza 1",
+   "son4": "",
+   "aktif": true,
+   "konular": [
+    "ges",
+    "ges_gunluk",
+    "sistem"
+   ]
   }
  ],
- "test": [],
+ "test": [
+  "K3",
+  "K4"
+ ],
  "ornek": []
 }
