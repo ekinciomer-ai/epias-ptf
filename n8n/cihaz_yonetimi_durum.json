@@ -1,5 +1,5 @@
 {
- "guncellendi": "2026-10-07T07:05:01+03:00",
+ "guncellendi": "2026-10-07T07:35:02+03:00",
  "mod": "izleme",
  "ayarlar": {
   "mod": "izleme",
@@ -18,8 +18,8 @@
   "cihaz_th_kaynak": "F2Pool son 7 gün, 28 cihaz medyanı",
   "cihaz_guc_kaynak": "antminer arşivi 2026-08-13 11:50, 29 cihaz ortalaması"
  },
- "uretim_kw": 18.83,
- "uretim": false,
+ "uretim_kw": 146.68,
+ "uretim": true,
  "fs_taze": true,
  "ptf": 3560.91,
  "yekdem": 526.39,
@@ -33,8 +33,8 @@
  "maliyet_tl_saat": 23.647687245,
  "gelir_tl_saat": 23.01137597202709,
  "basabas_ptf": 3450.929051796616,
- "karar": "uyut",
- "neden": "maliyet 24 ₺ > gelir 23 ₺ (cihaz/saat)",
+ "karar": "calis",
+ "neden": "güneş üretimi var",
  "istenen": "calis",
  "eylem": null,
  "eylem_not": "cihaz durumu okunamıyor (toplayıcı saha ağında değil ya da veri eski)",
@@ -103,13 +103,12 @@
    "t": "2026-10-07 07:00",
    "ptf": 3560.91,
    "yekdem": 526.39,
-   "gunes_tahmini": false,
+   "gunes_tahmini": true,
    "gunes_kaynak": "anlık",
    "maliyet": 23.647687245,
    "gelir": 23.01137597202709,
    "karar": "calis",
-   "karar_ham": "uyut",
-   "not": "kısa duruş kârsız: uyutmak -7 ₺, çalışmak -3 ₺ (cihaz başı; su ~30 °C'ye düşer, 18 dk önce uyandırma gerekir)"
+   "karar_ham": "calis"
   },
   {
    "t": "2026-10-07 08:00",
@@ -457,6 +456,16 @@
    "istenen": "calis",
    "eylem": "-",
    "neden": "maliyet 26 ₺ > gelir 23 ₺ (cihaz/saat)",
+   "not": "cihaz durumu okunamıyor (toplayıcı saha ağında değil ya da veri eski)",
+   "gonderildi": false,
+   "mod": "izleme"
+  },
+  {
+   "t": "2026-10-07 07:35",
+   "karar": "calis",
+   "istenen": "calis",
+   "eylem": "-",
+   "neden": "güneş üretimi var",
    "not": "cihaz durumu okunamıyor (toplayıcı saha ağında değil ya da veri eski)",
    "gonderildi": false,
    "mod": "izleme"
