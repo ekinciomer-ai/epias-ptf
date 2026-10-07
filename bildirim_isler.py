@@ -495,7 +495,9 @@ def test_isi(durum):
             l = k.get("konular") or []
             B.gonder("test", "👋 *AEMonitoring bildirim testi*\nBu numaraya şu konularda mesaj gelecek:\n"
                      + ("\n".join("• " + ad.get(x, x) for x in l) if l else "• (konu seçilmemiş)"), kisiler=[k])
-    ay["test"] = []
+    kalan = [x["anahtar"] for x in ((oku(B.KAYIT, {}) or {}).get("kayit") or [])[-len(istek) * 2:]
+             if x.get("konu") == "test" and x.get("kod") in (63038, 63018)]       # sınır doldu: sonra tekrar dene
+    ay["test"] = sorted(set(kalan))
     if not KURU:
         json.dump(ay, open(B.AYAR, "w"), ensure_ascii=False, indent=1)
     return True
