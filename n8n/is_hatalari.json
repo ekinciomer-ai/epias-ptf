@@ -9,6 +9,11 @@
    "son": "2026-10-08T03:28:50+03:00",
    "son_kod": 0,
    "son_basari": "2026-10-08T03:28:50+03:00"
+  },
+  "EPİAŞ PTF (3 saatte bir)": {
+   "son": "2026-10-08T03:37:32+03:00",
+   "son_kod": 1,
+   "son_hata": "2026-10-08T03:37:32+03:00"
   }
  },
  "hatalar": [
@@ -55,6 +60,42 @@
     "  File \"/opt/hostedtoolcache/Python/3.10.21/x64/lib/python3.10/urllib/request.py\", line 496, in _call_chain",
     "    result = func(*args)",
     "  File \"/opt/hostedtoolcache/Python/3.10.21/x64/lib/python3.10/urllib/request.py\", line 643, in http_error_default",
+    "    raise HTTPError(req.full_url, code, msg, hdrs, fp)",
+    "urllib.error.HTTPError: HTTP Error 401: Unauthorized"
+   ]
+  },
+  {
+   "is": "EPİAŞ PTF (3 saatte bir)",
+   "zaman": "2026-10-08T03:37:32+03:00",
+   "kod": 1,
+   "cikti": [
+    "pandas is not installed. Some functionalities may not work properly. Postprocessing is disabled. To disable postprocessing just set 'postprocess' parameter to False when calling EPTR2 class.",
+    "Dotenv file not found at .env.",
+    "[CDN OK] son_gonderim.json",
+    "2026-10-09 verisi yok: Request failed with status code: 400",
+    "{\"status\":\"400 BAD_REQUEST\",\"correlationId\":\"4ddb7a60-ae55-4828-be65-8643f15a8878\",\"spanIds\":\"(electricity-service)55440\",\"hostName\":\"*********171\",\"clientIp\":\"52.161.46.114\",\"userName\":\"ekinci.omer@gmail.com\",\"successMessage\":null,\"errors\":[{\"errorCode\":\"(BUS)SEF1124\",\"errorMessage\":\"2026-10-09T00:",
+    "EPiAS PTF beklemede: yarin (2026-10-09) verisi henuz yok (03:37). Uyari bildirim_isler.py'den (konu: sistem).",
+    "Traceback (most recent call last):",
+    "  File \"/home/runner/work/epias-ptf/epias-ptf/main.py\", line 208, in <module>",
+    "    dosya_yaz(\"son_gonderim.json\", yeni_gonderim, sha)",
+    "  File \"/home/runner/work/epias-ptf/epias-ptf/main.py\", line 113, in dosya_yaz",
+    "    urllib.request.urlopen(req)",
+    "  File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/urllib/request.py\", line 216, in urlopen",
+    "    return opener.open(url, data, timeout)",
+    "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+    "  File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/urllib/request.py\", line 525, in open",
+    "    response = meth(req, response)",
+    "               ^^^^^^^^^^^^^^^^^^^",
+    "  File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/urllib/request.py\", line 634, in http_response",
+    "    response = self.parent.error(",
+    "               ^^^^^^^^^^^^^^^^^^",
+    "  File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/urllib/request.py\", line 563, in error",
+    "    return self._call_chain(*args)",
+    "           ^^^^^^^^^^^^^^^^^^^^^^^",
+    "  File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/urllib/request.py\", line 496, in _call_chain",
+    "    result = func(*args)",
+    "             ^^^^^^^^^^^",
+    "  File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/urllib/request.py\", line 643, in http_error_default",
     "    raise HTTPError(req.full_url, code, msg, hdrs, fp)",
     "urllib.error.HTTPError: HTTP Error 401: Unauthorized"
    ]
