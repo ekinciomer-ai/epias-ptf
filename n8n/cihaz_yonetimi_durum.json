@@ -1,5 +1,5 @@
 {
- "guncellendi": "2026-10-08T14:15:02+03:00",
+ "guncellendi": "2026-10-08T14:25:03+03:00",
  "mod": "otomatik",
  "ayarlar": {
   "mod": "otomatik",
@@ -97,9 +97,30 @@
     "neden": "22:00 kârlı saat; su ~28 °C → %95 hash 15 dk + yayılım 11 dk + emniyet 7 dk"
    },
    {
-    "t_komut": "2026-10-08T22:54:38+03:00",
+    "t_komut": "2026-10-09T16:54:38+03:00",
     "eylem": "sleep",
-    "hedef": "2026-10-08T23:00:00+03:00",
+    "hedef": "2026-10-09T17:00:00+03:00",
+    "neden": "17:00 zararlı saat",
+    "oncu_dk": 5.4
+   },
+   {
+    "t_komut": "2026-10-09T21:27:00+03:00",
+    "eylem": "wake",
+    "hedef": "2026-10-09T22:00:00+03:00",
+    "oncu_dk": 33.0,
+    "oncu_hazir_dk": 26,
+    "oncu_ekonomik_dk": 0,
+    "politika": "hazir",
+    "on_isitma_bedeli_tl": 24.3,
+    "su_tahmin": 28.5,
+    "su_kaynak": "öğrenilmiş (4–12 sa uyku, 2 olay)",
+    "t95_tahmin": 14.6,
+    "neden": "22:00 kârlı saat; su ~28 °C → %95 hash 15 dk + yayılım 11 dk + emniyet 7 dk"
+   },
+   {
+    "t_komut": "2026-10-09T22:54:38+03:00",
+    "eylem": "sleep",
+    "hedef": "2026-10-09T23:00:00+03:00",
     "neden": "23:00 zararlı saat",
     "oncu_dk": 5.4
    }
@@ -213,272 +234,275 @@
    "gunes_kaynak": "doğuş/batış",
    "maliyet": 23.502120291,
    "gelir": 22.294471349569218,
-   "karar": "uyut",
-   "karar_ham": "uyut"
+   "karar": "calis",
+   "karar_ham": "uyut",
+   "not": "kısa duruş kârsız: uyutmak -5 ₺, çalışmak -1 ₺ (cihaz başı; su ~30 °C'ye düşer, 26 dk önce uyandırma gerekir)"
   },
   {
    "t": "2026-10-09 00:00",
-   "ptf": null,
+   "ptf": 3682.99,
    "yekdem": 526.39,
    "gunes_tahmini": false,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 24.353999397,
    "gelir": 22.294471349569218,
-   "karar": null,
-   "karar_ham": null
+   "karar": "calis",
+   "karar_ham": "uyut",
+   "not": "kısa duruş kârsız: uyutmak -5 ₺, çalışmak -1 ₺ (cihaz başı; su ~30 °C'ye düşer, 26 dk önce uyandırma gerekir)"
   },
   {
    "t": "2026-10-09 01:00",
-   "ptf": null,
+   "ptf": 2900,
    "yekdem": 526.39,
    "gunes_tahmini": false,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 19.823893303499997,
    "gelir": 22.294471349569218,
-   "karar": null,
-   "karar_ham": null
+   "karar": "calis",
+   "karar_ham": "calis"
   },
   {
    "t": "2026-10-09 02:00",
-   "ptf": null,
+   "ptf": 2400.01,
    "yekdem": 526.39,
    "gunes_tahmini": false,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 16.931126159999998,
    "gelir": 22.294471349569218,
-   "karar": null,
-   "karar_ham": null
+   "karar": "calis",
+   "karar_ham": "calis"
   },
   {
    "t": "2026-10-09 03:00",
-   "ptf": null,
+   "ptf": 2694.01,
    "yekdem": 526.39,
    "gunes_tahmini": false,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 18.632107259999998,
    "gelir": 22.294471349569218,
-   "karar": null,
-   "karar_ham": null
+   "karar": "calis",
+   "karar_ham": "calis"
   },
   {
    "t": "2026-10-09 04:00",
-   "ptf": null,
+   "ptf": 2455,
    "yekdem": 526.39,
    "gunes_tahmini": false,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 17.249279053499997,
    "gelir": 22.294471349569218,
-   "karar": null,
-   "karar_ham": null
+   "karar": "calis",
+   "karar_ham": "calis"
   },
   {
    "t": "2026-10-09 05:00",
-   "ptf": null,
+   "ptf": 2900.01,
    "yekdem": 526.39,
    "gunes_tahmini": false,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 19.82395116,
    "gelir": 22.294471349569218,
-   "karar": null,
-   "karar_ham": null
+   "karar": "calis",
+   "karar_ham": "calis"
   },
   {
    "t": "2026-10-09 06:00",
-   "ptf": null,
+   "ptf": 3597.24,
    "yekdem": 526.39,
    "gunes_tahmini": false,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 23.8578799095,
    "gelir": 22.294471349569218,
-   "karar": null,
-   "karar_ham": null
+   "karar": "calis",
+   "karar_ham": "uyut",
+   "not": "kısa duruş kârsız: uyutmak -6 ₺, çalışmak -1 ₺ (cihaz başı; su ~30 °C'ye düşer, 26 dk önce uyandırma gerekir)"
   },
   {
    "t": "2026-10-09 07:00",
-   "ptf": null,
+   "ptf": 3153.4,
    "yekdem": 526.39,
    "gunes_tahmini": false,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 21.2899770135,
    "gelir": 22.294471349569218,
-   "karar": null,
-   "karar_ham": null
+   "karar": "calis",
+   "karar_ham": "calis"
   },
   {
    "t": "2026-10-09 08:00",
-   "ptf": null,
+   "ptf": 2699.99,
    "yekdem": 526.39,
    "gunes_tahmini": true,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 18.666705447,
    "gelir": 22.294471349569218,
    "karar": "calis",
    "karar_ham": "calis"
   },
   {
    "t": "2026-10-09 09:00",
-   "ptf": null,
+   "ptf": 2274.4,
    "yekdem": 526.39,
    "gunes_tahmini": true,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 16.2043906635,
    "gelir": 22.294471349569218,
    "karar": "calis",
    "karar_ham": "calis"
   },
   {
    "t": "2026-10-09 10:00",
-   "ptf": null,
+   "ptf": 1800.01,
    "yekdem": 526.39,
    "gunes_tahmini": true,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 13.459736159999999,
    "gelir": 22.294471349569218,
    "karar": "calis",
    "karar_ham": "calis"
   },
   {
    "t": "2026-10-09 11:00",
-   "ptf": null,
+   "ptf": 2274.4,
    "yekdem": 526.39,
    "gunes_tahmini": true,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 16.2043906635,
    "gelir": 22.294471349569218,
    "karar": "calis",
    "karar_ham": "calis"
   },
   {
    "t": "2026-10-09 12:00",
-   "ptf": null,
+   "ptf": 315.01,
    "yekdem": 526.39,
    "gunes_tahmini": true,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 4.868045909999999,
    "gelir": 22.294471349569218,
    "karar": "calis",
    "karar_ham": "calis"
   },
   {
    "t": "2026-10-09 13:00",
-   "ptf": null,
+   "ptf": 1000,
    "yekdem": 526.39,
    "gunes_tahmini": true,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 8.831158303499999,
    "gelir": 22.294471349569218,
    "karar": "calis",
    "karar_ham": "calis"
   },
   {
    "t": "2026-10-09 14:00",
-   "ptf": null,
+   "ptf": 2300,
    "yekdem": 526.39,
    "gunes_tahmini": true,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 16.352503303499997,
    "gelir": 22.294471349569218,
    "karar": "calis",
    "karar_ham": "calis"
   },
   {
    "t": "2026-10-09 15:00",
-   "ptf": null,
+   "ptf": 2249.99,
    "yekdem": 526.39,
    "gunes_tahmini": true,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 16.063162946999995,
    "gelir": 22.294471349569218,
    "karar": "calis",
    "karar_ham": "calis"
   },
   {
    "t": "2026-10-09 16:00",
-   "ptf": null,
+   "ptf": 3400,
    "yekdem": 526.39,
    "gunes_tahmini": true,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 22.7167183035,
    "gelir": 22.294471349569218,
    "karar": "calis",
    "karar_ham": "calis"
   },
   {
    "t": "2026-10-09 17:00",
-   "ptf": null,
+   "ptf": 4140,
    "yekdem": 526.39,
    "gunes_tahmini": false,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 26.998099303500002,
    "gelir": 22.294471349569218,
-   "karar": null,
-   "karar_ham": null
+   "karar": "uyut",
+   "karar_ham": "uyut"
   },
   {
    "t": "2026-10-09 18:00",
-   "ptf": null,
+   "ptf": 4500,
    "yekdem": 526.39,
    "gunes_tahmini": false,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 29.080933303499997,
    "gelir": 22.294471349569218,
-   "karar": null,
-   "karar_ham": null
+   "karar": "uyut",
+   "karar_ham": "uyut"
   },
   {
    "t": "2026-10-09 19:00",
-   "ptf": null,
+   "ptf": 4500,
    "yekdem": 526.39,
    "gunes_tahmini": false,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 29.080933303499997,
    "gelir": 22.294471349569218,
-   "karar": null,
-   "karar_ham": null
+   "karar": "uyut",
+   "karar_ham": "uyut"
   },
   {
    "t": "2026-10-09 20:00",
-   "ptf": null,
+   "ptf": 4000,
    "yekdem": 526.39,
    "gunes_tahmini": false,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 26.188108303499998,
    "gelir": 22.294471349569218,
-   "karar": null,
-   "karar_ham": null
+   "karar": "uyut",
+   "karar_ham": "uyut"
   },
   {
    "t": "2026-10-09 21:00",
-   "ptf": null,
+   "ptf": 3600,
    "yekdem": 526.39,
    "gunes_tahmini": false,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 23.8738483035,
    "gelir": 22.294471349569218,
-   "karar": null,
-   "karar_ham": null
+   "karar": "uyut",
+   "karar_ham": "uyut"
   },
   {
    "t": "2026-10-09 22:00",
-   "ptf": null,
+   "ptf": 3309.21,
    "yekdem": 526.39,
    "gunes_tahmini": false,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 22.191439139999996,
    "gelir": 22.294471349569218,
-   "karar": null,
-   "karar_ham": null
+   "karar": "calis",
+   "karar_ham": "calis"
   },
   {
    "t": "2026-10-09 23:00",
-   "ptf": null,
+   "ptf": 3445.48,
    "yekdem": 526.39,
    "gunes_tahmini": false,
    "gunes_kaynak": "doğuş/batış",
-   "maliyet": null,
+   "maliyet": 22.979849665499998,
    "gelir": 22.294471349569218,
-   "karar": null,
-   "karar_ham": null
+   "karar": "uyut",
+   "karar_ham": "uyut"
   }
  ],
  "gecmis": [
