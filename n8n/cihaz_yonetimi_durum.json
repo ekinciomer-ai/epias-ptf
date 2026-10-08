@@ -1,5 +1,5 @@
 {
- "guncellendi": "2026-10-08T17:20:02+03:00",
+ "guncellendi": "2026-10-08T17:25:02+03:00",
  "mod": "otomatik",
  "ayarlar": {
   "mod": "otomatik",
@@ -36,14 +36,14 @@
  "karar": "calis",
  "neden": "güneş üretimi var",
  "istenen": "calis",
- "eylem": "wake",
- "eylem_not": "",
- "gonderildi": true,
+ "eylem": null,
+ "eylem_not": "aynı komut 15 dk içinde gönderilmişti, bekleniyor",
+ "gonderildi": false,
  "cihaz": {
   "toplam": 31,
   "ulasilan": 29,
-  "calisan": 0,
-  "uyuyan": 29,
+  "calisan": 5,
+  "uyuyan": 23,
   "taze": true,
   "su_uyuyan": null
  },
@@ -59,7 +59,7 @@
    "sn_cihaz": 29.6,
    "n": 101
   },
-  "yayilim_dk": 14.3,
+  "yayilim_dk": 13.8,
   "sonraki_uyandirma": {
    "t_komut": "2026-10-08T21:24:00+03:00",
    "eylem": "wake",
@@ -68,7 +68,7 @@
    "oncu_hazir_dk": 29,
    "oncu_ekonomik_dk": 0,
    "politika": "hazir",
-   "on_isitma_bedeli_tl": 29.4,
+   "on_isitma_bedeli_tl": 28.4,
    "su_tahmin": 28.0,
    "su_kaynak": "öğrenilmiş (4–12 sa uyku, 3 olay)",
    "t95_tahmin": 14.3,
@@ -76,11 +76,11 @@
   },
   "takvim": [
    {
-    "t_komut": "2026-10-08T17:52:50+03:00",
+    "t_komut": "2026-10-08T17:53:05+03:00",
     "eylem": "sleep",
     "hedef": "2026-10-08T18:00:00+03:00",
     "neden": "18:00 zararlı saat",
-    "oncu_dk": 7.2
+    "oncu_dk": 6.9
    },
    {
     "t_komut": "2026-10-08T21:24:00+03:00",
@@ -90,18 +90,18 @@
     "oncu_hazir_dk": 29,
     "oncu_ekonomik_dk": 0,
     "politika": "hazir",
-    "on_isitma_bedeli_tl": 29.4,
+    "on_isitma_bedeli_tl": 28.4,
     "su_tahmin": 28.0,
     "su_kaynak": "öğrenilmiş (4–12 sa uyku, 3 olay)",
     "t95_tahmin": 14.3,
     "neden": "22:00 kârlı saat; su ~28 °C → %95 hash 14 dk + yayılım 14 dk + emniyet 7 dk"
    },
    {
-    "t_komut": "2026-10-09T16:52:50+03:00",
+    "t_komut": "2026-10-09T16:53:05+03:00",
     "eylem": "sleep",
     "hedef": "2026-10-09T17:00:00+03:00",
     "neden": "17:00 zararlı saat",
-    "oncu_dk": 7.2
+    "oncu_dk": 6.9
    },
    {
     "t_komut": "2026-10-09T21:24:00+03:00",
@@ -111,18 +111,18 @@
     "oncu_hazir_dk": 29,
     "oncu_ekonomik_dk": 0,
     "politika": "hazir",
-    "on_isitma_bedeli_tl": 29.2,
+    "on_isitma_bedeli_tl": 28.2,
     "su_tahmin": 28.0,
     "su_kaynak": "öğrenilmiş (4–12 sa uyku, 3 olay)",
     "t95_tahmin": 14.3,
     "neden": "22:00 kârlı saat; su ~28 °C → %95 hash 14 dk + yayılım 14 dk + emniyet 7 dk"
    },
    {
-    "t_komut": "2026-10-09T22:52:50+03:00",
+    "t_komut": "2026-10-09T22:53:05+03:00",
     "eylem": "sleep",
     "hedef": "2026-10-09T23:00:00+03:00",
     "neden": "23:00 zararlı saat",
-    "oncu_dk": 7.2
+    "oncu_dk": 6.9
    }
   ]
  },
@@ -203,7 +203,7 @@
    "gelir": 22.193415517092088,
    "karar": "calis",
    "karar_ham": "uyut",
-   "not": "kısa duruş kârsız: uyutmak -6 ₺, çalışmak -1 ₺ (cihaz başı; su ~30 °C'ye düşer, 29 dk önce uyandırma gerekir)"
+   "not": "kısa duruş kârsız: uyutmak -5 ₺, çalışmak -1 ₺ (cihaz başı; su ~30 °C'ye düşer, 28 dk önce uyandırma gerekir)"
   },
   {
    "t": "2026-10-09 00:00",
@@ -215,7 +215,7 @@
    "gelir": 22.193415517092088,
    "karar": "calis",
    "karar_ham": "uyut",
-   "not": "kısa duruş kârsız: uyutmak -6 ₺, çalışmak -1 ₺ (cihaz başı; su ~30 °C'ye düşer, 29 dk önce uyandırma gerekir)"
+   "not": "kısa duruş kârsız: uyutmak -5 ₺, çalışmak -1 ₺ (cihaz başı; su ~30 °C'ye düşer, 28 dk önce uyandırma gerekir)"
   },
   {
    "t": "2026-10-09 01:00",
@@ -282,7 +282,7 @@
    "gelir": 22.193415517092088,
    "karar": "calis",
    "karar_ham": "uyut",
-   "not": "kısa duruş kârsız: uyutmak -7 ₺, çalışmak -1 ₺ (cihaz başı; su ~30 °C'ye düşer, 29 dk önce uyandırma gerekir)"
+   "not": "kısa duruş kârsız: uyutmak -7 ₺, çalışmak -1 ₺ (cihaz başı; su ~30 °C'ye düşer, 28 dk önce uyandırma gerekir)"
   },
   {
    "t": "2026-10-09 07:00",
