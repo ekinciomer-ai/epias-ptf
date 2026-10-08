@@ -4,7 +4,9 @@ name: Bildirimler (WhatsApp)
 # Kim hangi konuyu alır: n8n/bildirim_ayar.json (panel → Bildirimler). Numaralar: gizli değişken BILDIRIM_K1 ... BILDIRIM_K8.
 on:
   schedule:
-    - cron: '7,22,37,52 * * * *'
+    - cron: '7,22,37,52 * * * *'     # yedek: GitHub zamanlaması saatlerce gecikebiliyor
+  repository_dispatch:
+    types: [bildirim]                # asıl tetik: saha Pi'si 15 dk'da bir (aesun/pi/ortak.py bildirim_tetikle)
   workflow_dispatch:
 
 permissions:
