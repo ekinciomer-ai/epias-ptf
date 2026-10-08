@@ -1,8 +1,8 @@
 {
- "zaman": "2026-10-08T16:03:01+03:00",
+ "zaman": "2026-10-08T16:18:01+03:00",
  "alt_ag": "192.168.0.0/24",
  "pi_ip": "192.168.0.132",
- "acik_adres": 31,
+ "acik_adres": 30,
  "madenci_sayisi": 29,
  "madenciler": [
   {
@@ -321,25 +321,15 @@
    "havuz_kullanici": "mehmetas.016",
    "model": "S21e Hyd.",
    "mac": "A2:ED:87:03:64:F4",
-   "toplayici_goruyor": false,
-   "toplayici_listesinde": false
+   "toplayici_goruyor": true,
+   "toplayici_listesinde": true
   }
  ],
  "toplayici_yanitsiz_ip": [
   "192.168.0.100",
   "192.168.0.129"
  ],
- "eksik": [
-  {
-   "worker": "016",
-   "serial": "PIEMGBUBEJEBF01RZ",
-   "mac": "A2:ED:87:03:64:F4",
-   "model": "S21e Hyd",
-   "eski_ip": null,
-   "yeni_ip": "192.168.0.133",
-   "durum": "agda_var_liste_disi"
-  }
- ],
+ "eksik": [],
  "web_adaylari": [
   {
    "ip": "192.168.0.1",
@@ -354,7 +344,7 @@
   "ip_satirlari": [
    "/home/pi/SAHA/antminer/antminer_panel.py:6: Sahadaki PC uzerinde calisir, 192.168.0.100-128 araligindaki 29 cihazi",
    "/home/pi/SAHA/antminer/antminer_panel.py:34: IP_BASE = \"192.168.0\"",
-   "/home/pi/SAHA/antminer/antminer_panel.py:35: IP_RANGE = list(range(100, 130))  # 100-128 (29 cihaz)",
+   "/home/pi/SAHA/antminer/antminer_panel.py:35: IP_RANGE = list(range(100, 130)) + [133]  # aesun: aralık dışı cihazlar",
    "/home/pi/SAHA/antminer/antminer_panel.py:196: target_list = list(IP_RANGE)",
    "/home/pi/SAHA/antminer/antminer_panel.py:239: ip = f\"{IP_BASE}.{suffix}\"",
    "/home/pi/SAHA/antminer/antminer_panel.py:1141: ip = f\"{IP_BASE}.{ip_suffix}\"",
