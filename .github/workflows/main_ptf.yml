@@ -1,9 +1,8 @@
 name: EPİAŞ PTF - main.py
 
 on:
-  schedule:
-    # Her 3 saatte bir (gece dahil, gün boyu)
-    - cron: '0 */3 * * *'
+  # KAPATILDI (08.10.2026): eski sistem, yeni Pi cihaz yönetimi + bildirim_isler.py ile mükerrer.
+  # Eski zamanlama: '0 */3 * * *'. Yalnız elle çalıştırılabilir.
   workflow_dispatch:
 
 permissions:

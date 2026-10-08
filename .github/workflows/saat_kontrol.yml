@@ -1,8 +1,7 @@
 name: Saat Kontrol (Mining)
 on:
-  schedule:
-    # Her saat 50. dakikada - bir sonraki saatten 10 dk once
-    - cron: '50 * * * *'
+  # KAPATILDI (08.10.2026): eski sistem, yeni Pi cihaz yönetimi + bildirim_isler.py ile mükerrer.
+  # Eski zamanlama: '50 * * * *'. Yalnız elle çalıştırılabilir.
   workflow_dispatch:  # Manuel calistirma
 
 jobs:

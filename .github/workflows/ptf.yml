@@ -1,8 +1,8 @@
 name: EPİAŞ PTF Sinyal
 
 on:
-  schedule:
-    - cron: '*/30 10-15 * * *'  # Her 30 dakika, 13:00-18:00 Türkiye saati
+  # KAPATILDI (08.10.2026): eski sistem, yeni Pi cihaz yönetimi + bildirim_isler.py ile mükerrer.
+  # Eski zamanlama: '*/30 10-15 * * *'. Yalnız elle çalıştırılabilir.
   workflow_dispatch:  # Manuel çalıştırma
 
 permissions:
