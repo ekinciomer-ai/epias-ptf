@@ -1,5 +1,5 @@
 {
- "guncellendi": "2026-10-08T10:15:03+03:00",
+ "guncellendi": "2026-10-08T10:20:02+03:00",
  "mod": "otomatik",
  "ayarlar": {
   "mod": "otomatik",
@@ -36,16 +36,16 @@
  "karar": "calis",
  "neden": "güneş üretimi var",
  "istenen": "calis",
- "eylem": null,
+ "eylem": "wake",
  "eylem_not": "",
- "gonderildi": false,
+ "gonderildi": true,
  "cihaz": {
   "toplam": 30,
-  "ulasilan": 25,
+  "ulasilan": 28,
   "calisan": 25,
-  "uyuyan": 0,
+  "uyuyan": 3,
   "taze": true,
-  "su_uyuyan": null
+  "su_uyuyan": 34.3
  },
  "zamanlama": {
   "model": {
@@ -59,49 +59,49 @@
    "sn_cihaz": 22.9,
    "n": 81
   },
-  "yayilim_dk": 9.5,
+  "yayilim_dk": 10.7,
   "sonraki_uyandirma": {
-   "t_komut": "2026-10-08T21:29:00+03:00",
+   "t_komut": "2026-10-08T21:28:00+03:00",
    "eylem": "wake",
    "hedef": "2026-10-08T22:00:00+03:00",
-   "oncu_dk": 31.0,
-   "oncu_hazir_dk": 24,
+   "oncu_dk": 32.0,
+   "oncu_hazir_dk": 25,
    "oncu_ekonomik_dk": 0,
    "politika": "hazir",
-   "on_isitma_bedeli_tl": 19.1,
+   "on_isitma_bedeli_tl": 22.1,
    "su_tahmin": 28.5,
    "su_kaynak": "öğrenilmiş (4–12 sa uyku, 2 olay)",
    "t95_tahmin": 14.2,
-   "neden": "22:00 kârlı saat; su ~28 °C → %95 hash 14 dk + yayılım 10 dk + emniyet 7 dk"
+   "neden": "22:00 kârlı saat; su ~28 °C → %95 hash 14 dk + yayılım 11 dk + emniyet 7 dk"
   },
   "takvim": [
    {
-    "t_komut": "2026-10-08T16:55:13+03:00",
+    "t_komut": "2026-10-08T16:54:39+03:00",
     "eylem": "sleep",
     "hedef": "2026-10-08T17:00:00+03:00",
     "neden": "17:00 zararlı saat",
-    "oncu_dk": 4.8
+    "oncu_dk": 5.3
    },
    {
-    "t_komut": "2026-10-08T21:29:00+03:00",
+    "t_komut": "2026-10-08T21:28:00+03:00",
     "eylem": "wake",
     "hedef": "2026-10-08T22:00:00+03:00",
-    "oncu_dk": 31.0,
-    "oncu_hazir_dk": 24,
+    "oncu_dk": 32.0,
+    "oncu_hazir_dk": 25,
     "oncu_ekonomik_dk": 0,
     "politika": "hazir",
-    "on_isitma_bedeli_tl": 19.1,
+    "on_isitma_bedeli_tl": 22.1,
     "su_tahmin": 28.5,
     "su_kaynak": "öğrenilmiş (4–12 sa uyku, 2 olay)",
     "t95_tahmin": 14.2,
-    "neden": "22:00 kârlı saat; su ~28 °C → %95 hash 14 dk + yayılım 10 dk + emniyet 7 dk"
+    "neden": "22:00 kârlı saat; su ~28 °C → %95 hash 14 dk + yayılım 11 dk + emniyet 7 dk"
    },
    {
-    "t_komut": "2026-10-08T22:55:13+03:00",
+    "t_komut": "2026-10-08T22:54:39+03:00",
     "eylem": "sleep",
     "hedef": "2026-10-08T23:00:00+03:00",
     "neden": "23:00 zararlı saat",
-    "oncu_dk": 4.8
+    "oncu_dk": 5.3
    }
   ]
  },
@@ -693,6 +693,16 @@
    "neden": "gelir 22 ₺ ≥ maliyet 19 ₺ (cihaz/saat)",
    "not": "",
    "gonderildi": false,
+   "mod": "otomatik"
+  },
+  {
+   "t": "2026-10-08 10:20",
+   "karar": "calis",
+   "istenen": "calis",
+   "eylem": "wake",
+   "neden": "güneş üretimi var",
+   "not": "",
+   "gonderildi": true,
    "mod": "otomatik"
   }
  ]
