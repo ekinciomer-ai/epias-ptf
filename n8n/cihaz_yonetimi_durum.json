@@ -1,5 +1,5 @@
 {
- "guncellendi": "2026-10-08T18:25:03+03:00",
+ "guncellendi": "2026-10-08T18:30:03+03:00",
  "mod": "otomatik",
  "ayarlar": {
   "mod": "otomatik",
@@ -18,7 +18,7 @@
   "cihaz_th_kaynak": "F2Pool son 7 gün, 28 cihaz medyanı",
   "cihaz_guc_kaynak": "antminer arşivi 2026-08-13 11:50, 29 cihaz ortalaması"
  },
- "uretim_kw": 13.370000000000001,
+ "uretim_kw": 1.76,
  "uretim": false,
  "fs_taze": true,
  "ptf": 4500,
@@ -36,16 +36,16 @@
  "karar": "uyut",
  "neden": "maliyet 29 ₺ > gelir 22 ₺ (cihaz/saat)",
  "istenen": "uyut",
- "eylem": null,
- "eylem_not": "aynı komut 15 dk içinde gönderilmişti, bekleniyor",
- "gonderildi": false,
+ "eylem": "sleep",
+ "eylem_not": "",
+ "gonderildi": true,
  "cihaz": {
   "toplam": 31,
   "ulasilan": 29,
-  "calisan": 9,
-  "uyuyan": 19,
+  "calisan": 2,
+  "uyuyan": 27,
   "taze": true,
-  "su_uyuyan": 35.8
+  "su_uyuyan": 45.5
  },
  "zamanlama": {
   "model": {
@@ -59,42 +59,42 @@
    "sn_cihaz": 28.1,
    "n": 130
   },
-  "yayilim_dk": 13.1,
+  "yayilim_dk": 13.6,
   "sonraki_uyandirma": {
-   "t_komut": "2026-10-08T21:25:00+03:00",
+   "t_komut": "2026-10-08T21:27:00+03:00",
    "eylem": "wake",
    "hedef": "2026-10-08T22:00:00+03:00",
-   "oncu_dk": 35.0,
-   "oncu_hazir_dk": 26,
+   "oncu_dk": 33.0,
+   "oncu_hazir_dk": 24,
    "oncu_ekonomik_dk": 0,
    "politika": "hazir",
-   "on_isitma_bedeli_tl": 33.2,
-   "su_tahmin": 35.8,
+   "on_isitma_bedeli_tl": 32.4,
+   "su_tahmin": 45.5,
    "su_kaynak": "canlı (uyuyan cihazlar)",
-   "t95_tahmin": 12.4,
-   "neden": "22:00 kârlı saat; su ~36 °C → %95 hash 12 dk + yayılım 13 dk + emniyet 9 dk"
+   "t95_tahmin": 10.1,
+   "neden": "22:00 kârlı saat; su ~46 °C → %95 hash 10 dk + yayılım 14 dk + emniyet 9 dk"
   },
   "takvim": [
    {
-    "t_komut": "2026-10-08T21:25:00+03:00",
+    "t_komut": "2026-10-08T21:27:00+03:00",
     "eylem": "wake",
     "hedef": "2026-10-08T22:00:00+03:00",
-    "oncu_dk": 35.0,
-    "oncu_hazir_dk": 26,
+    "oncu_dk": 33.0,
+    "oncu_hazir_dk": 24,
     "oncu_ekonomik_dk": 0,
     "politika": "hazir",
-    "on_isitma_bedeli_tl": 33.2,
-    "su_tahmin": 35.8,
+    "on_isitma_bedeli_tl": 32.4,
+    "su_tahmin": 45.5,
     "su_kaynak": "canlı (uyuyan cihazlar)",
-    "t95_tahmin": 12.4,
-    "neden": "22:00 kârlı saat; su ~36 °C → %95 hash 12 dk + yayılım 13 dk + emniyet 9 dk"
+    "t95_tahmin": 10.1,
+    "neden": "22:00 kârlı saat; su ~46 °C → %95 hash 10 dk + yayılım 14 dk + emniyet 9 dk"
    },
    {
-    "t_komut": "2026-10-09T16:53:26+03:00",
+    "t_komut": "2026-10-09T16:53:12+03:00",
     "eylem": "sleep",
     "hedef": "2026-10-09T17:00:00+03:00",
     "neden": "17:00 zararlı saat",
-    "oncu_dk": 6.6
+    "oncu_dk": 6.8
    }
   ]
  },
@@ -164,7 +164,7 @@
    "gelir": 21.855206576420766,
    "karar": "calis",
    "karar_ham": "uyut",
-   "not": "kısa duruş kârsız: uyutmak -6 ₺, çalışmak -2 ₺ (cihaz başı; su ~30 °C'ye düşer, 27 dk önce uyandırma gerekir)"
+   "not": "kısa duruş kârsız: uyutmak -6 ₺, çalışmak -2 ₺ (cihaz başı; su ~30 °C'ye düşer, 28 dk önce uyandırma gerekir)"
   },
   {
    "t": "2026-10-09 00:00",
@@ -176,7 +176,7 @@
    "gelir": 21.855206576420766,
    "karar": "calis",
    "karar_ham": "uyut",
-   "not": "kısa duruş kârsız: uyutmak -6 ₺, çalışmak -2 ₺ (cihaz başı; su ~30 °C'ye düşer, 27 dk önce uyandırma gerekir)"
+   "not": "kısa duruş kârsız: uyutmak -6 ₺, çalışmak -2 ₺ (cihaz başı; su ~30 °C'ye düşer, 28 dk önce uyandırma gerekir)"
   },
   {
    "t": "2026-10-09 01:00",
@@ -243,7 +243,7 @@
    "gelir": 21.855206576420766,
    "karar": "calis",
    "karar_ham": "uyut",
-   "not": "kısa duruş kârsız: uyutmak -7 ₺, çalışmak -1 ₺ (cihaz başı; su ~30 °C'ye düşer, 27 dk önce uyandırma gerekir)"
+   "not": "kısa duruş kârsız: uyutmak -7 ₺, çalışmak -1 ₺ (cihaz başı; su ~30 °C'ye düşer, 28 dk önce uyandırma gerekir)"
   },
   {
    "t": "2026-10-09 07:00",
@@ -655,6 +655,16 @@
   },
   {
    "t": "2026-10-08 18:15",
+   "karar": "uyut",
+   "istenen": "uyut",
+   "eylem": "sleep",
+   "neden": "maliyet 29 ₺ > gelir 22 ₺ (cihaz/saat)",
+   "not": "",
+   "gonderildi": true,
+   "mod": "otomatik"
+  },
+  {
+   "t": "2026-10-08 18:30",
    "karar": "uyut",
    "istenen": "uyut",
    "eylem": "sleep",
