@@ -2,7 +2,7 @@
 
   plan        yarının 24 saati Pi planında (cihaz_yonetimi_durum.json) belli olunca: grafik (PNG) + çalış/uyut saatleri
   pay         F2Pool dünün gelirini yazınca: BTC, 16/13 pay, çalışma, enerji, çalışmayan/eksik çalışan cihazlar
-  cihaz       madenci 60 dk'dır ağda yok · bekçi onaramadı · takılı (hash 0) 60 dk
+  cihaz       15 dk'da bir: madenci durumu değişince (çalışıyor/yavaş/uyku/hash yok/ağda yok, plana aykırıysa ⚠️) · bekçi onaramadı
   ges_gunluk  her akşam 20:30'dan sonra: santral bazında üretim, inverter sayısı, üretmeyen/düşük inverter
   ges         gündüz üretmeyen inverter (30 dk), kritik santral uyarısı, FusionSolar kritik alarmı
   sistem      saha verisi gelmiyor (Pi/internet), cihaz yönetimi durdu, kaynak verisi alınamıyor, PTF yayınlanmadı
@@ -177,25 +177,79 @@ def sistem_ve_cihaz(S, simdi, durum):
     if pi_sessiz:
         S.koru("cihaz:")                       # saha verisi yokken cihazlar hakkında hüküm verme
         return
+    cihaz_takip(simdi, durum, mad, y)
+
+
+# ---------- cihaz durum takibi (15 dk'da bir; durum değişince mesaj) ----------
+CD_AD = {"calisiyor": "Çalışıyor", "yavas": "Yavaş", "uyku": "Uyku", "gecis": "Açık, hash yok", "yok": "Ağda yok"}
+
+
+def cihaz_takip(simdi, durum, mad, y):
+    """Her çalıştırmada (Pi 15 dk'da bir tetikler) her madencinin durumunu bulur, öncekiyle kıyaslar; değişen varsa
+    tek mesajda bildirir. "Açık, hash yok" (uyanırken ısınma) ancak iki turdur sürerse bildirilir. Plana aykırı
+    durum (plan çalış derken uyku/hash yok, plan uyut derken çalışıyor) ⚠️ ile işaretlenir.
+    Planlı toplu uyut/çalıştır geçişinde cihaz cihaz değil, tek satır özet yazılır."""
     kim, kodlar = filo_kodlari()
-    gorunen = set()
+    canli = {}
     for d in mad.get("devices") or []:
         if not (d.get("online") or d.get("sleeping")):
             continue
         w = str(d.get("actual_worker") or "").split(".")[-1]
         if not w:
             w = next((k for k, v in kim.items() if v.get("son_ip") == d.get("ip")), "")
-        gorunen.add(w)
+        if w:
+            canli[w] = d
+    simdiki = {}
     for w in kodlar:
-        if w not in gorunen:
-            v = kim.get(w, {})
-            S.var("cihaz:yok:" + w, "cihaz", f"{w} ağda yok — seri {v.get('serial', '?')}, son IP {v.get('son_ip', '?')}. Kapalı, kablosu çıkmış ya da IP değişmiş olabilir.", 60)
-    det = oku("n8n/cihaz_detay.json", {}) or {}
-    for s in ((det.get("bekci") or {}).get("sorunlu") or []):
-        if s.get("sorun") == "takili" and (s.get("sure_dk") or 0) >= 60:
-            S.var("cihaz:takili:" + s["cihaz"], "cihaz", f"{s['cihaz']} açık ama hash vermiyor ({s['sure_dk']} dk) — bekçi yeniden başlatmayı denedi.")
-        elif s.get("sorun") == "takili":
-            S.koru("cihaz:takili:" + s["cihaz"])
+        d = canli.get(w)
+        if not d:
+            simdiki[w] = "yok"
+        elif d.get("sleeping"):
+            simdiki[w] = "uyku"
+        elif not (d.get("hashrate_TH") or 0) > 0:
+            simdiki[w] = "gecis"
+        elif d.get("target_hashrate_TH") and d["hashrate_TH"] < 0.85 * d["target_hashrate_TH"]:
+            simdiki[w] = "yavas"
+        else:
+            simdiki[w] = "calisiyor"
+    eski = durum.get("cihaz_durum") or {}
+    bekleyen = durum.get("cihaz_bekleyen") or {}
+    istenen = y.get("istenen")
+    if not eski:                                   # ilk tur: yalnız kaydet
+        durum["cihaz_durum"], durum["cihaz_bekleyen"] = simdiki, {}
+        return
+    degisen, yeni_bekleyen, kayit = [], {}, dict(eski)
+    for w, st in simdiki.items():
+        once = eski.get(w)
+        if st == once:
+            continue
+        if st == "gecis" and once != "gecis" and bekleyen.get(w) != "gecis":
+            yeni_bekleyen[w] = "gecis"             # ısınıyor olabilir: bir tur bekle
+            continue
+        degisen.append((w, once, st))
+        kayit[w] = st
+    for w in list(kayit):
+        if w not in simdiki:
+            kayit.pop(w)
+    durum["cihaz_durum"], durum["cihaz_bekleyen"] = kayit, yeni_bekleyen
+    if not degisen:
+        return
+    def aykiri(st):
+        return (istenen == "calis" and st in ("uyku", "gecis", "yok")) or (istenen == "uyut" and st in ("calisiyor", "yavas"))
+    satir = []
+    # planlı toplu geçiş: filonun yarısından çoğu aynı yöne, plana uygun
+    for hedef, kosul in (("uyku", istenen == "uyut"), ("calisiyor", istenen == "calis")):
+        grup = [x for x in degisen if x[2] == hedef]
+        if kosul and len(grup) >= max(5, len(kodlar) // 2):
+            satir.append(f"• Plan gereği {len(grup)} cihaz: {CD_AD[hedef]} ({'uyutuldu' if hedef == 'uyku' else 'çalıştırıldı'})")
+            degisen = [x for x in degisen if x not in grup]
+    for w, once, st in sorted(degisen):
+        satir.append(f"• {w}: {CD_AD.get(once, '—')} → *{CD_AD[st]}*" + (" ⚠️ plan: " + ("çalış" if istenen == "calis" else "uyut") if aykiri(st) else ""))
+    say = {k: sum(1 for v in kayit.values() if v == k) for k in CD_AD}
+    ozet = " · ".join(f"{n} {CD_AD[k].lower()}" for k, n in say.items() if n)
+    uyar = any(aykiri(st) or st in ("yok", "yavas") for _, _, st in degisen)
+    B.gonder("cihaz", f"{'⚠️' if uyar else '🔄'} *⛏️ Cihaz durumu değişti* ({simdi:%H:%M})\n" + "\n".join(satir)
+             + f"\nŞu an: {ozet}" + (f" · plan: {'çalış' if istenen == 'calis' else 'uyut'}" if istenen else ""))
 
 
 def ges_anlik(S, simdi, durum):
