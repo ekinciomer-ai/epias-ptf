@@ -215,6 +215,23 @@ def cihaz_takip(simdi, durum, mad, y):
     eski = durum.get("cihaz_durum") or {}
     bekleyen = durum.get("cihaz_bekleyen") or {}
     istenen = y.get("istenen")
+    # yeniden başlama: önceki turda çalışıyordu, uyut komutu yok, çalışma süresi sıfırlandı → enerji kesintisi / reset
+    sure_eski = durum.get("cihaz_sure") or {}
+    sure = {w: d.get("elapsed_hours") for w, d in canli.items() if d.get("elapsed_hours") is not None}
+    # uyut/çalıştır komutu da çalışma süresini sıfırlar: son kontrolden bu yana komut uygulandıysa yeniden başlama sayılmaz
+    once_k = durum.get("kontrol")
+    komut_var = False
+    if once_k:
+        for x in (oku("antminer_command_results.json", {}) or {}).get("results") or []:
+            try:
+                if zaman(x.get("executed_at") or "2000-01-01") > zaman(once_k) - timedelta(minutes=2):
+                    komut_var = True
+            except Exception:
+                pass
+    reset = [] if komut_var or not once_k else sorted(
+        w for w, h in sure.items() if eski.get(w) in ("calisiyor", "yavas") and sure_eski.get(w) is not None
+        and h + 0.25 < sure_eski[w] and h < 0.75 and istenen != "uyut")
+    durum["cihaz_sure"] = {**{w: h for w, h in sure_eski.items() if w in kodlar}, **sure}
     if not eski:                                   # ilk tur: yalnız kaydet
         durum["cihaz_durum"], durum["cihaz_bekleyen"] = simdiki, {}
         return
@@ -232,7 +249,7 @@ def cihaz_takip(simdi, durum, mad, y):
         if w not in simdiki:
             kayit.pop(w)
     durum["cihaz_durum"], durum["cihaz_bekleyen"] = kayit, yeni_bekleyen
-    if not degisen:
+    if not degisen and not reset:
         return
     def aykiri(st):
         return (istenen == "calis" and st in ("uyku", "gecis", "yok")) or (istenen == "uyut" and st in ("calisiyor", "yavas"))
@@ -243,11 +260,17 @@ def cihaz_takip(simdi, durum, mad, y):
         if kosul and len(grup) >= max(5, len(kodlar) // 2):
             satir.append(f"• Plan gereği {len(grup)} cihaz: {CD_AD[hedef]} ({'uyutuldu' if hedef == 'uyku' else 'çalıştırıldı'})")
             degisen = [x for x in degisen if x not in grup]
+    if reset:
+        ipler = ", ".join(str((canli.get(w) or {}).get("ip", "?")).split(".")[-1] for w in reset)
+        satir.append(f"• ⚡ *{', '.join(reset)}* yeniden başladı (çalışma süresi sıfırlandı, uyut komutu yok"
+                     + (f"; {len(reset)} cihaz aynı anda — ortak hatta enerji kesintisi / sigorta olabilir" if len(reset) > 1 else "")
+                     + f"; IP .{ipler.replace(', ', ', .')})")
+        degisen = [x for x in degisen if x[0] not in reset or x[2] not in ("uyku", "gecis")]
     for w, once, st in sorted(degisen):
         satir.append(f"• {w}: {CD_AD.get(once, '—')} → *{CD_AD[st]}*" + (" ⚠️ plan: " + ("çalış" if istenen == "calis" else "uyut") if aykiri(st) else ""))
     say = {k: sum(1 for v in kayit.values() if v == k) for k in CD_AD}
     ozet = " · ".join(f"{n} {CD_AD[k].lower()}" for k, n in say.items() if n)
-    uyar = any(aykiri(st) or st in ("yok", "yavas") for _, _, st in degisen)
+    uyar = bool(reset) or any(aykiri(st) or st in ("yok", "yavas") for _, _, st in degisen)
     B.gonder("cihaz", f"{'⚠️' if uyar else '🔄'} *⛏️ Cihaz durumu değişti* ({simdi:%H:%M})\n" + "\n".join(satir)
              + f"\nŞu an: {ozet}" + (f" · plan: {'çalış' if istenen == 'calis' else 'uyut'}" if istenen else ""))
 
