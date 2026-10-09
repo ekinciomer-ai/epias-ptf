@@ -1,5 +1,5 @@
 {
- "guncellendi": "2026-10-09T18:00:03+03:00",
+ "guncellendi": "2026-10-09T18:05:02+03:00",
  "mod": "otomatik",
  "ayarlar": {
   "mod": "otomatik",
@@ -40,14 +40,14 @@
  "karar": "uyut",
  "neden": "PTF 4500 > eşik 2744 (başabaş 2196 +%25) · maliyet 36 ₺ / gelir 22 ₺",
  "istenen": "uyut",
- "eylem": "sleep",
- "eylem_not": "",
- "gonderildi": true,
+ "eylem": null,
+ "eylem_not": "aynı komut 15 dk içinde gönderilmişti, bekleniyor",
+ "gonderildi": false,
  "cihaz": {
   "toplam": 31,
   "ulasilan": 29,
-  "calisan": 29,
-  "uyuyan": 0,
+  "calisan": 20,
+  "uyuyan": 8,
   "taze": true,
   "su_uyuyan": null
  },
@@ -63,7 +63,7 @@
    "sn_cihaz": 26.5,
    "n": 176
   },
-  "yayilim_dk": 12.8,
+  "yayilim_dk": 12.4,
   "sonraki_uyandirma": {
    "t_komut": "2026-10-10T07:20:00+03:00",
    "eylem": "wake",
@@ -72,11 +72,11 @@
    "oncu_hazir_dk": 30,
    "oncu_ekonomik_dk": 0,
    "politika": "hazir",
-   "on_isitma_bedeli_tl": 170.6,
+   "on_isitma_bedeli_tl": 164.7,
    "su_tahmin": 19.0,
    "su_kaynak": "öğrenilmiş (>12 sa uyku, 25 olay)",
    "t95_tahmin": 16.7,
-   "neden": "08:00 kârlı saat; su ~19 °C → %95 hash 17 dk + yayılım 13 dk + emniyet 10 dk"
+   "neden": "08:00 kârlı saat; su ~19 °C → %95 hash 17 dk + yayılım 12 dk + emniyet 10 dk"
   },
   "takvim": [
    {
@@ -87,18 +87,18 @@
     "oncu_hazir_dk": 30,
     "oncu_ekonomik_dk": 0,
     "politika": "hazir",
-    "on_isitma_bedeli_tl": 170.6,
+    "on_isitma_bedeli_tl": 164.7,
     "su_tahmin": 19.0,
     "su_kaynak": "öğrenilmiş (>12 sa uyku, 25 olay)",
     "t95_tahmin": 16.7,
-    "neden": "08:00 kârlı saat; su ~19 °C → %95 hash 17 dk + yayılım 13 dk + emniyet 10 dk"
+    "neden": "08:00 kârlı saat; su ~19 °C → %95 hash 17 dk + yayılım 12 dk + emniyet 10 dk"
    },
    {
-    "t_komut": "2026-10-10T16:53:35+03:00",
+    "t_komut": "2026-10-10T16:53:49+03:00",
     "eylem": "sleep",
     "hedef": "2026-10-10T17:00:00+03:00",
     "neden": "17:00 zararlı saat",
-    "oncu_dk": 6.4
+    "oncu_dk": 6.2
    }
   ]
  },
