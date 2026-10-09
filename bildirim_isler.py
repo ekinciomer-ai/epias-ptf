@@ -559,6 +559,7 @@ def pay_isi(simdi, durum):
 # ---------- madencilik maliyeti (T2 faturası esasında) ----------
 KOMISYON, DAGITIM_TL_MWH, BTV, KDV = 1.025, 1182.457, 0.01, 0.20     # Erkim faturası birimleri (Eylül 2026)
 MALIYET = "n8n/maden_maliyet.json"
+MALIYET_BAS = "2026-03-09"          # ilk madencilik geliri; pay dağılımı DAG_BAS'tan başlar
 
 
 def maliyet_hesapla(simdi):
@@ -569,7 +570,7 @@ def maliyet_hesapla(simdi):
     ep = oku("n8n/epias_gecmis.json", {}) or {}
     osos_y, fat = {}, {}
     out = {}
-    g = DAG_BAS
+    g = MALIYET_BAS
     bugun = simdi.strftime("%Y-%m-%d")
     while g < bugun:
         ay = g[:7]
@@ -614,7 +615,7 @@ def maliyet_hesapla(simdi):
                       "saat_kwh": s_kwh, "saat_tl": s_tl}
         g = (date.fromisoformat(g) + timedelta(days=1)).isoformat()
     veri = {"aciklama": "Tek Yıldız 2 (madencilik sahası): güneşin olmadığı / yetmediği saatlerde şebekeden çekilen elektriğin fatura bedeli. "
-                        "Fatura gelen ayda faturanın saatlik verisi, gelmeyen ayda OSOS + EPİAŞ (tahmini). toplam_tl KDV dahil.",
+                        "Fatura gelen ayda faturanın saatlik verisi, gelmeyen ayda OSOS + EPİAŞ (tahmini, aynı Erkim formülü; Eylül öncesi tedarikçi MEDAŞ'tı). toplam_tl KDV dahil.",
             "dagilim": {"bas": DAG_BAS, "oran": list(DAG)}, "maliyet_payi": {**MAL_INDIRIM, "aciklama": "bu aralıkta 16'ya düşen maliyetin oran16 kadarı 16'ya, kalanı 13'e"},
             "gun": out}
     if not KURU:
@@ -630,10 +631,10 @@ def aylik_maliyet_isi(simdi, durum):
     mal = maliyet_hesapla(simdi)
     gel = oku("arsiv_f2pool_gelir.json", {}) or {}
     fyt = (oku("arsiv_btc_fiyat.json", {}) or {}).get("gun", {})
-    for ay in sorted({g[:7] for g in mal}):
+    for ay in sorted({g[:7] for g in mal if g >= DAG_BAS}):
         if ay >= simdi.strftime("%Y-%m"):
             continue                                   # ay bitmedi
-        gunler = [g for g in mal if g.startswith(ay)]
+        gunler = [g for g in mal if g.startswith(ay) and g >= DAG_BAS]
         kaynak = "fatura" if all(mal[g]["kaynak"] == "fatura" for g in gunler) else "tahmini"
         anahtar = f"{ay}:{kaynak}"
         if gd.get("maliyet_" + ay) == anahtar + ":p2":
