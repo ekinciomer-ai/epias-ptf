@@ -263,7 +263,7 @@ def cihaz_takip(simdi, durum, mad, y):
     if reset:
         ipler = ", ".join(str((canli.get(w) or {}).get("ip", "?")).split(".")[-1] for w in reset)
         satir.append(f"• ⚡ *{', '.join(reset)}* yeniden başladı (çalışma süresi sıfırlandı, uyut komutu yok"
-                     + (f"; {len(reset)} cihaz aynı anda — ortak hatta enerji kesintisi / sigorta olabilir" if len(reset) > 1 else "")
+                     + (f"; {len(reset)} cihaz aynı anda — elle aç-kapa ya da ortak hatta kesinti" if len(reset) > 1 else "")
                      + f"; IP .{ipler.replace(', ', ', .')})")
         degisen = [x for x in degisen if x[0] not in reset or x[2] not in ("uyku", "gecis")]
     for w, once, st in sorted(degisen):
