@@ -428,7 +428,8 @@ def plan_isi(simdi, durum):
     except Exception as e:
         print("grafik hatası:", e)
     B.gonder("plan", metin, gorsel)
-    gd["plan"] = yarin
+    if not B.SINIR:                                  # günlük sınır doldu: işaretleme, sonraki turda tekrar dene
+        gd["plan"] = yarin
 
 
 # ---------- madencilik günlük raporu ve pay ----------
@@ -553,7 +554,8 @@ def pay_isi(simdi, durum):
              + (f"\n🔧 Bekçi: {len(bek_ol)} işlem (" + ", ".join(f"{o['cihaz']} {o['olay'].split(' (')[0]} {'✓' if o.get('sonuc') == 'ok' else '✗'}" for o in bek_ol[:5]) + ")" if bek_ol else "")
              + ("" if veri >= 20 else f"\n_F2Pool saatlik verisi eksik ({veri}/24 saat)_"))
     B.gonder("pay", metin)
-    gd["pay"] = g
+    if not B.SINIR:
+        gd["pay"] = g
 
 
 # ---------- madencilik maliyeti (T2 faturası esasında) ----------
@@ -660,7 +662,8 @@ def aylik_maliyet_isi(simdi, durum):
         # maliyet payı kuralı değişti: bir kez yeniden gönder
         anahtar += ":p2"
         B.gonder("pay", metin)
-        gd["maliyet_" + ay] = anahtar
+        if not B.SINIR:
+            gd["maliyet_" + ay] = anahtar
 
 # ---------- GES günlük ----------
 def ges_gunluk_isi(simdi, durum):

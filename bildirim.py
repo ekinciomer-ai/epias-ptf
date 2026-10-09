@@ -59,8 +59,14 @@ def _kayit(o):
     json.dump({"guncellendi": datetime.now(TR).isoformat(timespec="seconds"), "kayit": l[-300:]}, open(KAYIT, "w"), ensure_ascii=False, indent=1)
 
 
+SINIR = False        # son gonder() çağrısında hiçbir alıcıya gitmedi ve en az biri "günlük sınır" (63038) aldı
+
+
 def gonder(konu, metin, gorsel=None, kisiler=None):
-    """konu: bildirim_ayar konularından biri. gorsel: herkese açık https görsel adresi (WhatsApp'ta resim olarak gelir)."""
+    """konu: bildirim_ayar konularından biri. gorsel: herkese açık https görsel adresi (WhatsApp'ta resim olarak gelir).
+    Sonra B.SINIR True ise mesaj sınır yüzünden kimseye gitmedi: çağıran 'gönderildi' işaretlemesin, sonraki turda tekrar denesin."""
+    global SINIR
+    sonuc = []
     hedef = kisiler if kisiler is not None else alicilar(konu)
     print(f"--- [{konu}] → {', '.join(k['ad'] for k in hedef) or 'alıcı yok'}\n{metin}" + (f"\n(görsel {gorsel})" if gorsel else ""))
     c = _client()
@@ -86,6 +92,8 @@ def gonder(konu, metin, gorsel=None, kisiler=None):
         if not o["ok"]:
             print("  !", k["ad"], o.get("hata"))
         _kayit(o)
+        sonuc.append(o)
+    SINIR = bool(sonuc) and not any(o["ok"] for o in sonuc) and any(o.get("kod") == 63038 for o in sonuc)
     return hedef
 
 
