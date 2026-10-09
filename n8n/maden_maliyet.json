@@ -1,5 +1,5 @@
 {
- "aciklama": "Tek Yıldız 2 (madencilik sahası) şebeke maliyeti, KDV hariç. Enerji: mahsup sonrası net çekiş × (PTF+YEKDEM) × 1,025; dağıtım: toplam çekiş × 1.182,457 TL/MWh; BTV enerjinin %1'i. Kaynak: OSOS saatlik sayaç + EPİAŞ.",
+ "aciklama": "Tek Yıldız 2 (madencilik sahası): güneşin olmadığı / yetmediği saatlerde şebekeden çekilen elektriğin fatura bedeli. Fatura gelen ayda faturanın saatlik verisi, gelmeyen ayda OSOS + EPİAŞ (tahmini). toplam_tl KDV dahil.",
  "dagilim": {
   "bas": "2026-09-14",
   "oran": [
@@ -10,228 +10,278 @@
  "gun": {
   "2026-09-14": {
    "saat": 24,
-   "cekis_kwh": 251.4,
-   "net_kwh": 109.6,
-   "enerji_tl": 477.67,
+   "kaynak": "fatura",
+   "kwh": 251.37,
+   "enerji_tl": 961.77,
    "dagitim_tl": 297.23,
-   "btv_tl": 4.78,
-   "toplam_tl": 779.68
+   "btv_tl": 9.62,
+   "kdv_tl": 253.72,
+   "kdvsiz_tl": 1268.62,
+   "toplam_tl": 1522.35
   },
   "2026-09-15": {
    "saat": 24,
-   "cekis_kwh": 241.9,
-   "net_kwh": 94.5,
-   "enerji_tl": 407.05,
+   "kaynak": "fatura",
+   "kwh": 241.92,
+   "enerji_tl": 1006.53,
    "dagitim_tl": 286.06,
-   "btv_tl": 4.07,
-   "toplam_tl": 697.18
+   "btv_tl": 10.07,
+   "kdv_tl": 260.53,
+   "kdvsiz_tl": 1302.66,
+   "toplam_tl": 1563.19
   },
   "2026-09-16": {
    "saat": 24,
-   "cekis_kwh": 374.2,
-   "net_kwh": 232.5,
-   "enerji_tl": 958.87,
+   "kaynak": "fatura",
+   "kwh": 374.22,
+   "enerji_tl": 1490.41,
    "dagitim_tl": 442.5,
-   "btv_tl": 9.59,
-   "toplam_tl": 1410.96
+   "btv_tl": 14.9,
+   "kdv_tl": 389.56,
+   "kdvsiz_tl": 1947.81,
+   "toplam_tl": 2337.37
   },
   "2026-09-17": {
    "saat": 24,
-   "cekis_kwh": 542.4,
-   "net_kwh": 296.7,
-   "enerji_tl": 1138.23,
+   "kaynak": "fatura",
+   "kwh": 542.43,
+   "enerji_tl": 2164.99,
    "dagitim_tl": 641.4,
-   "btv_tl": 11.38,
-   "toplam_tl": 1791.01
+   "btv_tl": 21.65,
+   "kdv_tl": 565.61,
+   "kdvsiz_tl": 2828.04,
+   "toplam_tl": 3393.65
   },
   "2026-09-18": {
    "saat": 24,
-   "cekis_kwh": 631.3,
-   "net_kwh": 393.1,
-   "enerji_tl": 1601.85,
-   "dagitim_tl": 746.44,
-   "btv_tl": 16.02,
-   "toplam_tl": 2364.31
+   "kaynak": "fatura",
+   "kwh": 633.15,
+   "enerji_tl": 2516.02,
+   "dagitim_tl": 748.67,
+   "btv_tl": 25.16,
+   "kdv_tl": 657.97,
+   "kdvsiz_tl": 3289.85,
+   "toplam_tl": 3947.82
   },
   "2026-09-19": {
    "saat": 24,
-   "cekis_kwh": 258.9,
-   "net_kwh": 130.4,
-   "enerji_tl": 589.64,
+   "kaynak": "fatura",
+   "kwh": 258.93,
+   "enerji_tl": 989.0,
    "dagitim_tl": 306.17,
-   "btv_tl": 5.9,
-   "toplam_tl": 901.71
+   "btv_tl": 9.89,
+   "kdv_tl": 261.01,
+   "kdvsiz_tl": 1305.06,
+   "toplam_tl": 1566.08
   },
   "2026-09-20": {
    "saat": 24,
-   "cekis_kwh": 75.6,
-   "net_kwh": 17.0,
-   "enerji_tl": 53.15,
+   "kaynak": "fatura",
+   "kwh": 75.6,
+   "enerji_tl": 244.34,
    "dagitim_tl": 89.39,
-   "btv_tl": 0.53,
-   "toplam_tl": 143.08
+   "btv_tl": 2.44,
+   "kdv_tl": 67.24,
+   "kdvsiz_tl": 336.18,
+   "toplam_tl": 403.42
   },
   "2026-09-21": {
    "saat": 24,
-   "cekis_kwh": 217.3,
-   "net_kwh": 153.1,
-   "enerji_tl": 466.63,
-   "dagitim_tl": 257.01,
-   "btv_tl": 4.67,
-   "toplam_tl": 728.3
+   "kaynak": "fatura",
+   "kwh": 219.24,
+   "enerji_tl": 650.65,
+   "dagitim_tl": 259.24,
+   "btv_tl": 6.51,
+   "kdv_tl": 183.28,
+   "kdvsiz_tl": 916.4,
+   "toplam_tl": 1099.68
   },
   "2026-09-22": {
    "saat": 24,
-   "cekis_kwh": 281.6,
-   "net_kwh": 158.8,
-   "enerji_tl": 709.84,
-   "dagitim_tl": 332.99,
-   "btv_tl": 7.1,
-   "toplam_tl": 1049.93
+   "kaynak": "fatura",
+   "kwh": 279.72,
+   "enerji_tl": 1113.33,
+   "dagitim_tl": 330.76,
+   "btv_tl": 11.13,
+   "kdv_tl": 291.04,
+   "kdvsiz_tl": 1455.22,
+   "toplam_tl": 1746.26
   },
   "2026-09-23": {
    "saat": 24,
-   "cekis_kwh": 415.8,
-   "net_kwh": 175.8,
-   "enerji_tl": 709.26,
-   "dagitim_tl": 491.67,
-   "btv_tl": 7.09,
-   "toplam_tl": 1208.02
+   "kaynak": "fatura",
+   "kwh": 417.69,
+   "enerji_tl": 1584.32,
+   "dagitim_tl": 493.9,
+   "btv_tl": 15.84,
+   "kdv_tl": 418.81,
+   "kdvsiz_tl": 2094.07,
+   "toplam_tl": 2512.88
   },
   "2026-09-24": {
    "saat": 24,
-   "cekis_kwh": 550.0,
-   "net_kwh": 253.3,
-   "enerji_tl": 1157.55,
-   "dagitim_tl": 650.34,
-   "btv_tl": 11.58,
-   "toplam_tl": 1819.46
+   "kaynak": "fatura",
+   "kwh": 548.1,
+   "enerji_tl": 2457.23,
+   "dagitim_tl": 648.1,
+   "btv_tl": 24.57,
+   "kdv_tl": 625.98,
+   "kdvsiz_tl": 3129.91,
+   "toplam_tl": 3755.89
   },
   "2026-09-25": {
    "saat": 24,
-   "cekis_kwh": 285.4,
-   "net_kwh": 156.9,
-   "enerji_tl": 658.29,
+   "kaynak": "fatura",
+   "kwh": 285.39,
+   "enerji_tl": 1150.08,
    "dagitim_tl": 337.46,
-   "btv_tl": 6.58,
-   "toplam_tl": 1002.34
+   "btv_tl": 11.5,
+   "kdv_tl": 299.81,
+   "kdvsiz_tl": 1499.04,
+   "toplam_tl": 1798.85
   },
   "2026-09-26": {
    "saat": 24,
-   "cekis_kwh": 351.5,
-   "net_kwh": 253.3,
-   "enerji_tl": 1189.47,
+   "kaynak": "fatura",
+   "kwh": 351.54,
+   "enerji_tl": 1515.92,
    "dagitim_tl": 415.68,
-   "btv_tl": 11.89,
-   "toplam_tl": 1617.05
+   "btv_tl": 15.16,
+   "kdv_tl": 389.35,
+   "kdvsiz_tl": 1946.76,
+   "toplam_tl": 2336.12
   },
   "2026-09-27": {
    "saat": 24,
-   "cekis_kwh": 442.3,
-   "net_kwh": 257.0,
-   "enerji_tl": 839.37,
+   "kaynak": "fatura",
+   "kwh": 442.26,
+   "enerji_tl": 1190.35,
    "dagitim_tl": 522.95,
-   "btv_tl": 8.39,
-   "toplam_tl": 1370.72
+   "btv_tl": 11.9,
+   "kdv_tl": 345.04,
+   "kdvsiz_tl": 1725.21,
+   "toplam_tl": 2070.25
   },
   "2026-09-28": {
    "saat": 24,
-   "cekis_kwh": 461.2,
-   "net_kwh": 262.7,
-   "enerji_tl": 700.71,
+   "kaynak": "fatura",
+   "kwh": 461.16,
+   "enerji_tl": 1263.67,
    "dagitim_tl": 545.3,
-   "btv_tl": 7.01,
-   "toplam_tl": 1253.02
+   "btv_tl": 12.64,
+   "kdv_tl": 364.32,
+   "kdvsiz_tl": 1821.61,
+   "toplam_tl": 2185.93
   },
   "2026-09-29": {
    "saat": 24,
-   "cekis_kwh": 877.0,
-   "net_kwh": 432.8,
-   "enerji_tl": 1789.76,
-   "dagitim_tl": 1036.97,
-   "btv_tl": 17.9,
-   "toplam_tl": 2844.63
+   "kaynak": "fatura",
+   "kwh": 878.85,
+   "enerji_tl": 3378.64,
+   "dagitim_tl": 1039.2,
+   "btv_tl": 33.79,
+   "kdv_tl": 890.33,
+   "kdvsiz_tl": 4451.63,
+   "toplam_tl": 5341.95
   },
   "2026-09-30": {
    "saat": 24,
-   "cekis_kwh": 470.6,
-   "net_kwh": 285.4,
-   "enerji_tl": 950.04,
+   "kaynak": "fatura",
+   "kwh": 470.61,
+   "enerji_tl": 1543.42,
    "dagitim_tl": 556.48,
-   "btv_tl": 9.5,
-   "toplam_tl": 1516.02
+   "btv_tl": 15.43,
+   "kdv_tl": 423.07,
+   "kdvsiz_tl": 2115.33,
+   "toplam_tl": 2538.39
   },
   "2026-10-01": {
    "saat": 24,
-   "cekis_kwh": 304.3,
-   "net_kwh": 100.2,
-   "enerji_tl": 435.66,
+   "kaynak": "tahmini",
+   "kwh": 304.29,
+   "enerji_tl": 1184.43,
    "dagitim_tl": 359.81,
-   "btv_tl": 4.36,
-   "toplam_tl": 799.83
+   "btv_tl": 11.84,
+   "kdv_tl": 311.22,
+   "kdvsiz_tl": 1556.09,
+   "toplam_tl": 1867.3
   },
   "2026-10-02": {
    "saat": 24,
-   "cekis_kwh": 455.5,
-   "net_kwh": 240.0,
-   "enerji_tl": 644.81,
+   "kaynak": "tahmini",
+   "kwh": 455.49,
+   "enerji_tl": 1387.6,
    "dagitim_tl": 538.6,
-   "btv_tl": 6.45,
-   "toplam_tl": 1189.86
+   "btv_tl": 13.88,
+   "kdv_tl": 388.01,
+   "kdvsiz_tl": 1940.07,
+   "toplam_tl": 2328.08
   },
   "2026-10-03": {
    "saat": 24,
-   "cekis_kwh": 470.6,
-   "net_kwh": 304.3,
-   "enerji_tl": 881.76,
+   "kaynak": "tahmini",
+   "kwh": 470.61,
+   "enerji_tl": 1339.68,
    "dagitim_tl": 556.48,
-   "btv_tl": 8.82,
-   "toplam_tl": 1447.05
+   "btv_tl": 13.4,
+   "kdv_tl": 381.91,
+   "kdvsiz_tl": 1909.55,
+   "toplam_tl": 2291.46
   },
   "2026-10-04": {
    "saat": 24,
-   "cekis_kwh": 393.1,
-   "net_kwh": 196.6,
-   "enerji_tl": 799.82,
+   "kaynak": "tahmini",
+   "kwh": 393.12,
+   "enerji_tl": 1239.3,
    "dagitim_tl": 464.85,
-   "btv_tl": 8.0,
-   "toplam_tl": 1272.66
+   "btv_tl": 12.39,
+   "kdv_tl": 343.31,
+   "kdvsiz_tl": 1716.54,
+   "toplam_tl": 2059.85
   },
   "2026-10-05": {
    "saat": 24,
-   "cekis_kwh": 238.1,
-   "net_kwh": 134.2,
-   "enerji_tl": 618.08,
+   "kaynak": "tahmini",
+   "kwh": 238.14,
+   "enerji_tl": 1078.8,
    "dagitim_tl": 281.59,
-   "btv_tl": 6.18,
-   "toplam_tl": 905.85
+   "btv_tl": 10.79,
+   "kdv_tl": 274.24,
+   "kdvsiz_tl": 1371.18,
+   "toplam_tl": 1645.42
   },
   "2026-10-06": {
    "saat": 24,
-   "cekis_kwh": 432.8,
-   "net_kwh": 260.8,
-   "enerji_tl": 974.72,
+   "kaynak": "tahmini",
+   "kwh": 432.81,
+   "enerji_tl": 1677.28,
    "dagitim_tl": 511.78,
-   "btv_tl": 9.75,
-   "toplam_tl": 1496.25
+   "btv_tl": 16.77,
+   "kdv_tl": 441.17,
+   "kdvsiz_tl": 2205.83,
+   "toplam_tl": 2647.0
   },
   "2026-10-07": {
    "saat": 24,
-   "cekis_kwh": 578.3,
-   "net_kwh": 464.9,
-   "enerji_tl": 2009.3,
+   "kaynak": "tahmini",
+   "kwh": 578.34,
+   "enerji_tl": 2527.29,
    "dagitim_tl": 683.86,
-   "btv_tl": 20.09,
-   "toplam_tl": 2713.25
+   "btv_tl": 25.27,
+   "kdv_tl": 647.29,
+   "kdvsiz_tl": 3236.43,
+   "toplam_tl": 3883.71
   },
   "2026-10-08": {
    "saat": 24,
-   "cekis_kwh": 1903.2,
-   "net_kwh": 1753.9,
-   "enerji_tl": 6744.57,
+   "kaynak": "tahmini",
+   "kwh": 1903.23,
+   "enerji_tl": 7291.9,
    "dagitim_tl": 2250.49,
-   "btv_tl": 67.45,
-   "toplam_tl": 9062.5
+   "btv_tl": 72.92,
+   "kdv_tl": 1923.06,
+   "kdvsiz_tl": 9615.31,
+   "toplam_tl": 11538.37
   }
  }
 }
