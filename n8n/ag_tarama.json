@@ -1,9 +1,9 @@
 {
- "zaman": "2026-10-09T09:48:01+03:00",
+ "zaman": "2026-10-09T10:03:01+03:00",
  "alt_ag": "192.168.0.0/24",
  "pi_ip": "192.168.0.132",
- "acik_adres": 32,
- "madenci_sayisi": 29,
+ "acik_adres": 28,
+ "madenci_sayisi": 26,
  "madenciler": [
   {
    "ip": "192.168.0.101",
@@ -35,17 +35,6 @@
    "havuz_kullanici": "mehmetas.026",
    "model": "S21e Hyd.",
    "mac": "EC:84:39:41:52:A1",
-   "toplayici_goruyor": true,
-   "toplayici_listesinde": true
-  },
-  {
-   "ip": "192.168.0.104",
-   "api": true,
-   "web": true,
-   "worker": "010",
-   "havuz_kullanici": "mehmetas.010",
-   "model": "S21e Hyd.",
-   "mac": "EC:84:39:4C:7A:D8",
    "toplayici_goruyor": true,
    "toplayici_listesinde": true
   },
@@ -139,13 +128,12 @@
   },
   {
    "ip": "192.168.0.113",
-   "api": true,
-   "web": true,
-   "worker": "012",
-   "havuz_kullanici": "mehmetas.012",
+   "api": false,
+   "web": false,
    "model": "S21e Hyd.",
    "mac": "EC:84:39:FD:4B:DF",
-   "toplayici_goruyor": true,
+   "worker": "012",
+   "toplayici_goruyor": false,
    "toplayici_listesinde": true
   },
   {
@@ -178,17 +166,6 @@
    "havuz_kullanici": "mehmetas.013",
    "model": "S21e Hyd.",
    "mac": "EC:84:39:7F:F2:40",
-   "toplayici_goruyor": true,
-   "toplayici_listesinde": true
-  },
-  {
-   "ip": "192.168.0.117",
-   "api": true,
-   "web": true,
-   "worker": "009",
-   "havuz_kullanici": "mehmetas.009",
-   "model": "S21e Hyd.",
-   "mac": "52:08:9D:36:A8:D3",
    "toplayici_goruyor": true,
    "toplayici_listesinde": true
   },
@@ -281,17 +258,6 @@
    "toplayici_listesinde": true
   },
   {
-   "ip": "192.168.0.126",
-   "api": true,
-   "web": true,
-   "worker": "001",
-   "havuz_kullanici": "mehmetas.001",
-   "model": "S21e Hyd.",
-   "mac": "EC:84:39:64:10:A2",
-   "toplayici_goruyor": true,
-   "toplayici_listesinde": true
-  },
-  {
    "ip": "192.168.0.127",
    "api": true,
    "web": true,
@@ -327,9 +293,50 @@
  ],
  "toplayici_yanitsiz_ip": [
   "192.168.0.100",
+  "192.168.0.104",
+  "192.168.0.113",
+  "192.168.0.117",
+  "192.168.0.126",
   "192.168.0.129"
  ],
- "eksik": [],
+ "eksik": [
+  {
+   "worker": "001",
+   "serial": "OLTTGBUBEAAAA01W4",
+   "mac": "EC:84:39:64:10:A2",
+   "model": "S21e Hyd",
+   "eski_ip": "192.168.0.126",
+   "yeni_ip": null,
+   "durum": "agda_yok"
+  },
+  {
+   "worker": "009",
+   "serial": "PIEMGBUBEJEBF01DR",
+   "mac": "52:08:9D:36:A8:D3",
+   "model": "S21e Hyd",
+   "eski_ip": "192.168.0.117",
+   "yeni_ip": null,
+   "durum": "agda_yok"
+  },
+  {
+   "worker": "010",
+   "serial": "OLTTGBUBEAAAA01PB",
+   "mac": "EC:84:39:4C:7A:D8",
+   "model": "S21e Hyd",
+   "eski_ip": "192.168.0.104",
+   "yeni_ip": null,
+   "durum": "agda_yok"
+  },
+  {
+   "worker": "012",
+   "serial": "OLTTGBUBEAAAA00GD",
+   "mac": "EC:84:39:FD:4B:DF",
+   "model": "S21e Hyd",
+   "eski_ip": null,
+   "yeni_ip": "192.168.0.113",
+   "durum": "agda_var_yanitsiz"
+  }
+ ],
  "web_adaylari": [
   {
    "ip": "192.168.0.1",
