@@ -1,5 +1,5 @@
 {
- "guncellendi": "2026-10-09T10:00:02+03:00",
+ "guncellendi": "2026-10-09T10:10:02+03:00",
  "mod": "otomatik",
  "ayarlar": {
   "mod": "otomatik",
@@ -36,16 +36,16 @@
  "karar": "calis",
  "neden": "güneş üretimi var",
  "istenen": "calis",
- "eylem": null,
+ "eylem": "wake",
  "eylem_not": "",
- "gonderildi": false,
+ "gonderildi": true,
  "cihaz": {
   "toplam": 31,
-  "ulasilan": 26,
-  "calisan": 26,
-  "uyuyan": 0,
+  "ulasilan": 29,
+  "calisan": 25,
+  "uyuyan": 4,
   "taze": true,
-  "su_uyuyan": null
+  "su_uyuyan": 35.0
  },
  "zamanlama": {
   "model": {
@@ -59,49 +59,49 @@
    "sn_cihaz": 26.9,
    "n": 161
   },
-  "yayilim_dk": 11.7,
+  "yayilim_dk": 13.0,
   "sonraki_uyandirma": {
-   "t_komut": "2026-10-09T21:23:00+03:00",
+   "t_komut": "2026-10-09T21:22:00+03:00",
    "eylem": "wake",
    "hedef": "2026-10-09T22:00:00+03:00",
-   "oncu_dk": 37.0,
-   "oncu_hazir_dk": 27,
+   "oncu_dk": 38.0,
+   "oncu_hazir_dk": 28,
    "oncu_ekonomik_dk": 0,
    "politika": "hazir",
-   "on_isitma_bedeli_tl": 26.8,
+   "on_isitma_bedeli_tl": 30.7,
    "su_tahmin": 28.0,
    "su_kaynak": "öğrenilmiş (4–12 sa uyku, 3 olay)",
    "t95_tahmin": 14.5,
-   "neden": "22:00 kârlı saat; su ~28 °C → %95 hash 14 dk + yayılım 12 dk + emniyet 10 dk"
+   "neden": "22:00 kârlı saat; su ~28 °C → %95 hash 14 dk + yayılım 13 dk + emniyet 10 dk"
   },
   "takvim": [
    {
-    "t_komut": "2026-10-09T16:54:10+03:00",
+    "t_komut": "2026-10-09T16:53:29+03:00",
     "eylem": "sleep",
     "hedef": "2026-10-09T17:00:00+03:00",
     "neden": "17:00 zararlı saat",
-    "oncu_dk": 5.8
+    "oncu_dk": 6.5
    },
    {
-    "t_komut": "2026-10-09T21:23:00+03:00",
+    "t_komut": "2026-10-09T21:22:00+03:00",
     "eylem": "wake",
     "hedef": "2026-10-09T22:00:00+03:00",
-    "oncu_dk": 37.0,
-    "oncu_hazir_dk": 27,
+    "oncu_dk": 38.0,
+    "oncu_hazir_dk": 28,
     "oncu_ekonomik_dk": 0,
     "politika": "hazir",
-    "on_isitma_bedeli_tl": 26.8,
+    "on_isitma_bedeli_tl": 30.7,
     "su_tahmin": 28.0,
     "su_kaynak": "öğrenilmiş (4–12 sa uyku, 3 olay)",
     "t95_tahmin": 14.5,
-    "neden": "22:00 kârlı saat; su ~28 °C → %95 hash 14 dk + yayılım 12 dk + emniyet 10 dk"
+    "neden": "22:00 kârlı saat; su ~28 °C → %95 hash 14 dk + yayılım 13 dk + emniyet 10 dk"
    },
    {
-    "t_komut": "2026-10-09T22:54:10+03:00",
+    "t_komut": "2026-10-09T22:53:29+03:00",
     "eylem": "sleep",
     "hedef": "2026-10-09T23:00:00+03:00",
     "neden": "23:00 zararlı saat",
-    "oncu_dk": 5.8
+    "oncu_dk": 6.5
    }
   ]
  },
@@ -837,6 +837,16 @@
   },
   {
    "t": "2026-10-09 08:25",
+   "karar": "calis",
+   "istenen": "calis",
+   "eylem": "wake",
+   "neden": "güneş üretimi var",
+   "not": "",
+   "gonderildi": true,
+   "mod": "otomatik"
+  },
+  {
+   "t": "2026-10-09 10:10",
    "karar": "calis",
    "istenen": "calis",
    "eylem": "wake",
