@@ -1,7 +1,7 @@
 """Bildirim işleri — GitHub Actions, 15 dakikada bir (saha_uyari.yml). Konuya göre alıcı: n8n/bildirim_ayar.json.
 
   plan        yarının 24 saati Pi planında (cihaz_yonetimi_durum.json) belli olunca: grafik (PNG) + çalış/uyut saatleri
-  pay         F2Pool dünün gelirini yazınca: BTC, 16/13 pay, çalışma, enerji, çalışmayan/eksik çalışan cihazlar
+  pay         F2Pool dünün gelirini yazınca: BTC, T2 şebeke maliyeti (mahsup sonrası), 16/13 pay ve net, çalışmayan/eksik çalışan cihazlar
   cihaz       15 dk'da bir: madenci durumu değişince (çalışıyor/yavaş/uyku/hash yok/ağda yok, plana aykırıysa ⚠️) · bekçi onaramadı
   ges_gunluk  her akşam 20:30'dan sonra: santral bazında üretim, inverter sayısı, üretmeyen/düşük inverter
   ges         gündüz üretmeyen inverter (30 dk), kritik santral uyarısı, FusionSolar kritik alarmı
@@ -395,6 +395,18 @@ def gun_saatleri_utc(g):
     return [(d0 + timedelta(hours=h)).astimezone(timezone.utc).strftime("%Y-%m-%dT%H:00") for h in range(24)]
 
 
+def ay_ozet(g, ay_g, ay_btc, ay_tl, mal):
+    mt = [mal[x]["toplam_tl"] for x in ay_g if x in mal and (mal[x].get("saat") or 0) >= 20]
+    m = sum(mt)
+    t = sum(DAG)
+    s = f"{AY[int(g[5:7]) - 1]} toplamı ({len(ay_g)} gün): {btc(ay_btc)} BTC ≈ {tl(ay_tl)} ₺"
+    if mt:
+        s += f" − maliyet {tl(m)} ₺ ({len(mt)} gün) = {isaret(ay_tl - m)} ₺"
+    s += f"\n→ 16: {btc(ay_btc * DAG[0] / t)} BTC" + (f" · net {isaret((ay_tl - m) * DAG[0] / t)} ₺" if mt else "")
+    s += f"\n→ 13: {btc(ay_btc * DAG[1] / t)} BTC" + (f" · net {isaret((ay_tl - m) * DAG[1] / t)} ₺" if mt else "") + "\n"
+    return s
+
+
 def pay_isi(simdi, durum):
     gel = oku("arsiv_f2pool_gelir.json", {}) or {}
     gunler = sorted(g for g in gel if len(g) == 10 and g[:2] == "20" and g >= DAG_BAS and (gel[g] or {}).get("btc") is not None)
@@ -449,6 +461,13 @@ def pay_isi(simdi, durum):
             enerji = sum(k * (p + yk) / 1000 * kat for k, p in zip(kws, ptf))
     gelir_tl = r["btc"] * ftry
     a_, b_ = r["btc"] * DAG[0] / sum(DAG), r["btc"] * DAG[1] / sum(DAG)
+    try:
+        mal = maliyet_hesapla(simdi)
+    except Exception as e:
+        print("maliyet hatası:", e); mal = {}
+    mg = mal.get(g) or {}
+    m_tl = mg.get("toplam_tl") if (mg.get("saat") or 0) >= 20 else None
+    pay_ = lambda pb, oran: (f"{btc(pb)} BTC ≈ {tl(pb * ftry)} ₺" + (f" − maliyet {tl(m_tl * oran)} ₺ = *{isaret(pb * ftry - m_tl * oran)} ₺*" if m_tl is not None else ""))
     # ay toplamı (dağılım başlangıcından itibaren)
     ay_g = [x for x in gunler if x[:7] == g[:7] and x <= g]
     fyt = (oku("arsiv_btc_fiyat.json", {}) or {}).get("gun", {})
@@ -479,18 +498,78 @@ def pay_isi(simdi, durum):
     bek_ol = [o for o in (oku("n8n/bekci.json", {}) or {}).get("olaylar") or [] if o.get("t", "").startswith(g) and o.get("olay") != "düzeldi"]
     metin = (f"⛏️ *Madencilik — {gun_ad(g)}*\n"
              f"Gelir: *{btc(r['btc'])} BTC* ≈ {tl(gelir_tl)} ₺" + (f" (${tl(r['btc'] * fusd)})" if fusd else "") + "\n"
-             + (f"Enerji ({kaynak}, PTF+YEKDEM): {tl(enerji)} ₺ · {tl(kwh)} kWh\nNet: *{isaret(gelir_tl - enerji)} ₺*\n" if enerji is not None else "")
+             + (f"Madencilik tüketimi ({kaynak}): {tl(kwh)} kWh\n" if enerji is not None else "")
              + f"Çalışma: {hs} saat · ort. {tl(n_eff, 1)} cihaz · {tl(r.get('hash_rate') or 0)} TH/s (24 saat ort.)\n"
              f"\n*Pay dağılımı*\n"
-             f"• 16 cihaz: {btc(a_)} BTC ≈ {tl(a_ * ftry)} ₺\n"
-             f"• 13 cihaz: {btc(b_)} BTC ≈ {tl(b_ * ftry)} ₺\n"
-             f"{AY[int(g[5:7]) - 1]} toplamı ({len(ay_g)} gün): {btc(ay_btc)} BTC ≈ {tl(ay_tl)} ₺ → 16: {btc(ay_btc * 16 / 29)} · 13: {btc(ay_btc * 13 / 29)}\n"
-             f"\n*Cihazlar* ({len(kodlar)} cihaz)\n"
+             + (f"Şebeke maliyeti (T2, mahsup sonrası, KDV hariç): {tl(m_tl)} ₺ · {tl(mg.get('net_kwh'))} kWh net / {tl(mg.get('cekis_kwh'))} kWh çekiş\n" if m_tl is not None else "Şebeke maliyeti: sayaç verisi eksik\n")
+             + f"• 16 cihaz: {pay_(a_, DAG[0] / sum(DAG))}\n"
+             f"• 13 cihaz: {pay_(b_, DAG[1] / sum(DAG))}\n"
+             + ay_ozet(g, ay_g, ay_btc, ay_tl, mal)
+             + f"\n*Cihazlar* ({len(kodlar)} cihaz)\n"
              + ("\n".join(notlar) if notlar else "✅ Hepsi çalıştığı saatlerde tam çalıştı")
              + (f"\n🔧 Bekçi: {len(bek_ol)} işlem (" + ", ".join(f"{o['cihaz']} {o['olay'].split(' (')[0]} {'✓' if o.get('sonuc') == 'ok' else '✗'}" for o in bek_ol[:5]) + ")" if bek_ol else "")
              + ("" if veri >= 20 else f"\n_F2Pool saatlik verisi eksik ({veri}/24 saat)_"))
     B.gonder("pay", metin)
     gd["pay"] = g
+
+
+# ---------- madencilik maliyeti (T2 sayacı, mahsup sonrası) ----------
+KOMISYON, DAGITIM_TL_MWH, BTV = 1.025, 1182.457, 0.01      # Erkim faturası birimleri (Eylül 2026)
+MALIYET = "n8n/maden_maliyet.json"
+
+
+def maliyet_hesapla(simdi):
+    """Madencilik sahasının (Tek Yıldız 2) şebeke maliyeti, gün gün. OSOS saatlik sayaç verisi:
+    T2 çekişinden aynı saatin mahsubu (kaynak takipli havuz: üretici büyükten, T2 → A3 → T1) düşülür.
+    Enerji = net kWh × (PTF + YEKDEM) × 1,025 · Dağıtım = toplam çekiş × 1.182,457 TL/MWh · BTV %1 (enerji) · KDV hariç."""
+    ep = oku("n8n/epias_gecmis.json", {}) or {}
+    osos_y = {}
+    out = {}
+    g = DAG_BAS
+    bugun = simdi.strftime("%Y-%m-%d")
+    while g < bugun:
+        o = osos_y.get(g[:4])
+        if o is None:
+            o = osos_y[g[:4]] = oku(f"{g[:4]}_osos_endeks.json", {}) or {}
+        ptf = (ep.get("ptf") or {}).get(g) or []
+        ykd = (ep.get("yekdem") or {}).get(g[:7]) or {}
+        yk = ykd.get("gercek") or ykd.get("ongoru")
+        def v(k, h, a):
+            x = (((o.get(k) or {}).get("veri") or {}).get(g) or {}).get(f"{h:02d}")
+            return None if x is None else float(x.get(a) or 0)
+        cek = net = enerji = 0.0; saat = 0
+        for h in range(24):
+            t2 = v("tekyildiz_2", h, "cekis")
+            if t2 is None or len(ptf) != 24 or yk is None:
+                continue
+            saat += 1
+            u = {"T1": v("tekyildiz_1", h, "veris") or 0, "T2": v("tekyildiz_2", h, "veris") or 0}
+            tuk = {"T1": v("tekyildiz_1", h, "cekis") or 0, "T2": t2, "A3": v("aksaray_3", h, "cekis") or 0}
+            m_t2 = 0.0
+            for ges, mik in sorted(u.items(), key=lambda x: -x[1]):
+                kal = mik
+                for ab in ("T2", "A3", "T1"):
+                    if kal <= 0 or tuk[ab] <= 0:
+                        continue
+                    x = min(kal, tuk[ab]); kal -= x; tuk[ab] -= x
+                    if ab == "T2":
+                        m_t2 += x
+            n = max(0.0, t2 - m_t2)
+            cek += t2; net += n
+            enerji += n / 1000 * (ptf[h] + yk) * KOMISYON
+        if saat:
+            dag = cek / 1000 * DAGITIM_TL_MWH
+            out[g] = {"saat": saat, "cekis_kwh": round(cek, 1), "net_kwh": round(net, 1), "enerji_tl": round(enerji, 2),
+                      "dagitim_tl": round(dag, 2), "btv_tl": round(enerji * BTV, 2), "toplam_tl": round(enerji * (1 + BTV) + dag, 2)}
+        g = (date.fromisoformat(g) + timedelta(days=1)).isoformat()
+    veri = {"aciklama": "Tek Yıldız 2 (madencilik sahası) şebeke maliyeti, KDV hariç. Enerji: mahsup sonrası net çekiş × (PTF+YEKDEM) × 1,025; "
+                        "dağıtım: toplam çekiş × 1.182,457 TL/MWh; BTV enerjinin %1'i. Kaynak: OSOS saatlik sayaç + EPİAŞ.",
+            "dagilim": {"bas": DAG_BAS, "oran": list(DAG)}, "gun": out}
+    if not KURU:
+        eski = oku(MALIYET, {}) or {}
+        if eski.get("gun") != out:
+            json.dump(veri, open(MALIYET, "w"), ensure_ascii=False, indent=1)
+    return out
 
 
 # ---------- GES günlük ----------
