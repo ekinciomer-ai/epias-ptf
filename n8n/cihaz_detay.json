@@ -1,5 +1,5 @@
 {
- "zaman": "2026-10-09T20:17:01+03:00",
+ "zaman": "2026-10-09T20:22:01+03:00",
  "cihaz": {
   "008": {
    "ip": "192.168.0.101",
@@ -145,24 +145,15 @@
    "ip": "192.168.0.111",
    "worker": "004",
    "model": "?",
-   "durum": "ONLINE",
-   "uyku": false,
+   "durum": "SLEEP",
+   "uyku": true,
    "hash_th": 0.0,
-   "stats_kod": 200,
-   "hiz": null,
-   "hiz_30dk": null,
-   "ort": null,
-   "ideal": null,
-   "birim": null,
-   "fan": null,
-   "mod": null,
-   "frek_seviye": null,
-   "hwp": null,
-   "sure_sn": null,
-   "kart": [],
-   "diger": {},
-   "ayar_kod": -1,
-   "ayar_saglam": false
+   "ayar_kod": 200,
+   "ayar_saglam": true,
+   "ayar_mod": "1",
+   "havuz_user": [
+    "mehmetas.004"
+   ]
   },
   "024": {
    "ip": "192.168.0.112",
@@ -220,16 +211,19 @@
     "mehmetas.002"
    ]
   },
-  "192.168.0.116": {
+  "013": {
    "ip": "192.168.0.116",
-   "worker": null,
+   "worker": "013",
    "model": "?",
-   "durum": "ONLINE",
-   "uyku": false,
+   "durum": "SLEEP",
+   "uyku": true,
    "hash_th": 0.0,
-   "stats_kod": -1,
-   "ayar_kod": -1,
-   "ayar_saglam": false
+   "ayar_kod": 200,
+   "ayar_saglam": true,
+   "ayar_mod": "1",
+   "havuz_user": [
+    "mehmetas.013"
+   ]
   },
   "009": {
    "ip": "192.168.0.117",
@@ -416,7 +410,7 @@
  },
  "bekci": {
   "istenen": "uyut",
-  "izlenen": 28,
+  "izlenen": 29,
   "sorunlu": [],
   "olaylar": []
  }
