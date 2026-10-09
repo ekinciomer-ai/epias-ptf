@@ -32,6 +32,11 @@ JTH = {"S21e Hyd": 17.5, "S19 XP+ Hyd": 21.5, "S19e XP Hyd": 34.5}
 
 
 # ---------- yardımcılar ----------
+def birim_maliyet(ptf, yk, a):
+    """Şebekeden 1 MWh'in KDV hariç bedeli (TL/MWh), Pi cihaz yönetimiyle aynı fatura formülü."""
+    return (ptf + yk) * (a.get("komisyon") or 1.025) * (1 + (a.get("btv") if a.get("btv") is not None else 0.01)) + (a.get("dagitim_tl_mwh") or 1182.457)
+
+
 def zaman(s):
     t = datetime.fromisoformat(str(s).replace("Z", "+00:00"))
     return t.replace(tzinfo=TR) if t.tzinfo is None else t.astimezone(TR)
@@ -366,13 +371,13 @@ def plan_isi(simdi, durum):
                 gd["ptf_bekleme"] = yarin
             return
         a = y.get("ayarlar") or {}
-        yk, kat, kw = y.get("yekdem") or 0, a.get("maliyet_carpani") or 1.035, a.get("cihaz_guc_kw") or 5.59
+        yk, kw = y.get("yekdem") or 0, a.get("cihaz_guc_kw") or 5.59
         gel = (y.get("hashprice_btc_th_gun") or 0) * (a.get("cihaz_th") or 285) / 24 * (y.get("btc_try") or 0)
         dog, bat = gunes_saatleri(date.fromisoformat(yarin))
         pi_pl, pl = pl, {}
         for h, p in enumerate(pt):
             gunes = (dog + 1.0) <= h and (h + 1) <= (bat - 1.0)
-            m = (p + yk) / 1000 * kat * kw
+            m = birim_maliyet(p, yk, a) / 1000 * kw
             pl[f"{h:02d}"] = pi_pl.get(f"{h:02d}") or {"ptf": p, "maliyet": m, "gelir": gel, "karar": "calis" if gunes or gel >= m else "uyut", "gunes_tahmini": gunes}
         kaynak = "Pi planı" if len(pi_pl) == 24 else "kural (Pi verisi yok)" if not pi_pl else f"{len(pi_pl)} saat Pi planı, kalanı aynı kural"
     _, kodlar = filo_kodlari()
@@ -470,7 +475,6 @@ def pay_isi(simdi, durum):
     ptf = (ep.get("ptf") or {}).get(g) or []
     ykd = ((ep.get("yekdem") or {}).get(g[:7]) or {})
     yk = ykd.get("gercek") or ykd.get("ongoru") or y.get("yekdem") or 0
-    kat = (y.get("ayarlar") or {}).get("maliyet_carpani") or 1.035
     enerji, kwh, kaynak = None, 0, ""
     if len(ptf) == 24:
         pi_s = [ss.get(f"{g} {h:02d}") for h in range(24)]
@@ -482,7 +486,7 @@ def pay_isi(simdi, durum):
             kws = None
         if kws:
             kwh = sum(kws)
-            enerji = sum(k * (p + yk) / 1000 * kat for k, p in zip(kws, ptf))
+            enerji = sum(k * birim_maliyet(p, yk, y.get("ayarlar") or {}) / 1000 for k, p in zip(kws, ptf))
     gelir_tl = r["btc"] * ftry
     a_, b_ = r["btc"] * DAG[0] / sum(DAG), r["btc"] * DAG[1] / sum(DAG)
     try:
