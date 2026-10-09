@@ -374,11 +374,13 @@ def plan_isi(simdi, durum):
         yk, kw = y.get("yekdem") or 0, a.get("cihaz_guc_kw") or 5.59
         gel = (y.get("hashprice_btc_th_gun") or 0) * (a.get("cihaz_th") or 285) / 24 * (y.get("btc_try") or 0)
         dog, bat = gunes_saatleri(date.fromisoformat(yarin))
+        bb = ((gel / kw * 1000 - (a.get("dagitim_tl_mwh") or 1182.457)) / ((a.get("komisyon") or 1.025) * (1 + (a.get("btv") or 0.01))) - yk) if kw else 0
+        esik = bb * (1 + (a.get("basabas_tolerans") or 0)) if bb > 0 else bb
         pi_pl, pl = pl, {}
         for h, p in enumerate(pt):
             gunes = (dog + 1.0) <= h and (h + 1) <= (bat - 1.0)
             m = birim_maliyet(p, yk, a) / 1000 * kw
-            pl[f"{h:02d}"] = pi_pl.get(f"{h:02d}") or {"ptf": p, "maliyet": m, "gelir": gel, "karar": "calis" if gunes or gel >= m else "uyut", "gunes_tahmini": gunes}
+            pl[f"{h:02d}"] = pi_pl.get(f"{h:02d}") or {"ptf": p, "maliyet": m, "gelir": gel, "karar": "calis" if gunes or p <= esik else "uyut", "gunes_tahmini": gunes}
         kaynak = "Pi planı" if len(pi_pl) == 24 else "kural (Pi verisi yok)" if not pi_pl else f"{len(pi_pl)} saat Pi planı, kalanı aynı kural"
     _, kodlar = filo_kodlari()
     n = len(kodlar) or 28
