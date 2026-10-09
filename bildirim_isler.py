@@ -558,12 +558,19 @@ def maliyet_hesapla(simdi):
             fat[ay] = oku(f"n8n/fatura/{ay}_T2.json")
         f = fat[ay]
         kwh = enerji = 0.0; saat = 0
+        s_kwh, s_tl = [None] * 24, [None] * 24
+
+        def ekle(h, k, p, yk):
+            e = k / 1000 * (p + yk) * KOMISYON
+            s_kwh[h] = round(k, 2)
+            s_tl[h] = round((e * (1 + BTV) + k / 1000 * DAGITIM_TL_MWH) * (1 + KDV), 2)
+            return e
         if f and g in (f.get("saat") or {}):
             yk = f.get("yekdem_tl_mwh") or 0
-            for x in f["saat"][g]:
+            for h, x in enumerate(f["saat"][g]):
                 if x is None:
                     continue
-                saat += 1; kwh += x[0]; enerji += x[0] / 1000 * (x[1] + yk) * KOMISYON
+                saat += 1; kwh += x[0]; enerji += ekle(h, x[0], x[1], yk)
             kaynak = "fatura"
         else:
             o = osos_y.get(g[:4])
@@ -578,13 +585,14 @@ def maliyet_hesapla(simdi):
                 if x is None or len(ptf) != 24 or yk is None:
                     continue
                 k = float(x.get("cekis") or 0)
-                saat += 1; kwh += k; enerji += k / 1000 * (ptf[h] + yk) * KOMISYON
+                saat += 1; kwh += k; enerji += ekle(h, k, ptf[h], yk)
             kaynak = "tahmini"
         if saat:
             dag = kwh / 1000 * DAGITIM_TL_MWH
             ara = enerji * (1 + BTV) + dag
             out[g] = {"saat": saat, "kaynak": kaynak, "kwh": round(kwh, 2), "enerji_tl": round(enerji, 2), "dagitim_tl": round(dag, 2),
-                      "btv_tl": round(enerji * BTV, 2), "kdv_tl": round(ara * KDV, 2), "kdvsiz_tl": round(ara, 2), "toplam_tl": round(ara * (1 + KDV), 2)}
+                      "btv_tl": round(enerji * BTV, 2), "kdv_tl": round(ara * KDV, 2), "kdvsiz_tl": round(ara, 2), "toplam_tl": round(ara * (1 + KDV), 2),
+                      "saat_kwh": s_kwh, "saat_tl": s_tl}
         g = (date.fromisoformat(g) + timedelta(days=1)).isoformat()
     veri = {"aciklama": "Tek Yıldız 2 (madencilik sahası): güneşin olmadığı / yetmediği saatlerde şebekeden çekilen elektriğin fatura bedeli. "
                         "Fatura gelen ayda faturanın saatlik verisi, gelmeyen ayda OSOS + EPİAŞ (tahmini). toplam_tl KDV dahil.",
