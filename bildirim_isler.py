@@ -21,6 +21,17 @@ ORNEK = False          # panelden "örnek mesajlar" istenince: zaman/gönderildi
 DURUM = "n8n/bildirim_durum.json"
 RAW = "https://raw.githubusercontent.com/ekinciomer-ai/epias-ptf/main/"
 DAG_BAS, DAG = "2026-09-14", (16, 13)
+# Elektrik maliyeti payı (9 Eki 2026 kararı): 14.09.2026–13.09.2027 arası 16 cihaza düşen maliyetin yarısı 16'ya,
+# kalan yarısı 13'e yazılır → maliyet 8/29 · 21/29. Sonrasında gelirle aynı 16/29 · 13/29.
+MAL_INDIRIM = {"bas": "2026-09-14", "bit": "2027-09-13", "oran16": 0.5}
+
+
+def maliyet_oran(g):
+    t = sum(DAG)
+    if MAL_INDIRIM["bas"] <= g <= MAL_INDIRIM["bit"]:
+        a = DAG[0] / t * MAL_INDIRIM["oran16"]
+        return a, 1 - a
+    return DAG[0] / t, DAG[1] / t
 GUN = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"]
 AY = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]
 SANTRAL = {"Tek Yıldız-1 GES": "Sera-1", "Tek Yıldız-2 GES": "Sera-2", "Darilmaz Ges": "Darılmaz (YD)",
@@ -427,14 +438,15 @@ def gun_saatleri_utc(g):
 
 
 def ay_ozet(g, ay_g, ay_btc, ay_tl, mal):
-    mt = [mal[x]["toplam_tl"] for x in ay_g if x in mal and (mal[x].get("saat") or 0) >= 20]
-    m = sum(mt)
+    gx = [x for x in ay_g if x in mal and (mal[x].get("saat") or 0) >= 20]
+    m = sum(mal[x]["toplam_tl"] for x in gx)
+    m16 = sum(mal[x]["toplam_tl"] * maliyet_oran(x)[0] for x in gx)
     t = sum(DAG)
     s = f"{AY[int(g[5:7]) - 1]} toplamı ({len(ay_g)} gün): {btc(ay_btc)} BTC ≈ {tl(ay_tl)} ₺"
-    if mt:
-        s += f" − maliyet {tl(m)} ₺ ({len(mt)} gün) = {isaret(ay_tl - m)} ₺"
-    s += f"\n→ 16: {btc(ay_btc * DAG[0] / t)} BTC" + (f" · net {isaret((ay_tl - m) * DAG[0] / t)} ₺" if mt else "")
-    s += f"\n→ 13: {btc(ay_btc * DAG[1] / t)} BTC" + (f" · net {isaret((ay_tl - m) * DAG[1] / t)} ₺" if mt else "") + "\n"
+    if gx:
+        s += f" − maliyet {tl(m)} ₺ ({len(gx)} gün) = {isaret(ay_tl - m)} ₺"
+    s += f"\n→ 16: {btc(ay_btc * DAG[0] / t)} BTC" + (f" · maliyet {tl(m16)} ₺ · net {isaret(ay_tl * DAG[0] / t - m16)} ₺" if gx else "")
+    s += f"\n→ 13: {btc(ay_btc * DAG[1] / t)} BTC" + (f" · maliyet {tl(m - m16)} ₺ · net {isaret(ay_tl * DAG[1] / t - (m - m16))} ₺" if gx else "") + "\n"
     return s
 
 
@@ -532,8 +544,9 @@ def pay_isi(simdi, durum):
              + f"Çalışma: {hs} saat · ort. {tl(n_eff, 1)} cihaz · {tl(r.get('hash_rate') or 0)} TH/s (24 saat ort.)\n"
              f"\n*Pay dağılımı*\n"
              + (f"Şebeke maliyeti (T2, güneş yokken çekilen {tl(mg.get('kwh'))} kWh, KDV dahil{', tahmini' if mg.get('kaynak') == 'tahmini' else ''}): {tl(m_tl)} ₺\n" if m_tl is not None else "Şebeke maliyeti: sayaç verisi eksik\n")
-             + f"• 16 cihaz: {pay_(a_, DAG[0] / sum(DAG))}\n"
-             f"• 13 cihaz: {pay_(b_, DAG[1] / sum(DAG))}\n"
+             + f"• 16 cihaz: {pay_(a_, maliyet_oran(g)[0])}\n"
+             f"• 13 cihaz: {pay_(b_, maliyet_oran(g)[1])}\n"
+             + ("_Maliyet payı: 16 cihaza düşenin yarısı 13'e yazılır (8/29 · 21/29, 13.09.2027'ye kadar)_\n" if maliyet_oran(g)[0] < DAG[0] / sum(DAG) else "")
              + ay_ozet(g, ay_g, ay_btc, ay_tl, mal)
              + f"\n*Cihazlar* ({len(kodlar)} cihaz)\n"
              + ("\n".join(notlar) if notlar else "✅ Hepsi çalıştığı saatlerde tam çalıştı")
@@ -602,10 +615,11 @@ def maliyet_hesapla(simdi):
         g = (date.fromisoformat(g) + timedelta(days=1)).isoformat()
     veri = {"aciklama": "Tek Yıldız 2 (madencilik sahası): güneşin olmadığı / yetmediği saatlerde şebekeden çekilen elektriğin fatura bedeli. "
                         "Fatura gelen ayda faturanın saatlik verisi, gelmeyen ayda OSOS + EPİAŞ (tahmini). toplam_tl KDV dahil.",
-            "dagilim": {"bas": DAG_BAS, "oran": list(DAG)}, "gun": out}
+            "dagilim": {"bas": DAG_BAS, "oran": list(DAG)}, "maliyet_payi": {**MAL_INDIRIM, "aciklama": "bu aralıkta 16'ya düşen maliyetin oran16 kadarı 16'ya, kalanı 13'e"},
+            "gun": out}
     if not KURU:
         eski = oku(MALIYET, {}) or {}
-        if eski.get("gun") != out:
+        if eski.get("gun") != out or eski.get("maliyet_payi") != veri["maliyet_payi"]:
             json.dump(veri, open(MALIYET, "w"), ensure_ascii=False, indent=1)
     return out
 
@@ -622,7 +636,7 @@ def aylik_maliyet_isi(simdi, durum):
         gunler = [g for g in mal if g.startswith(ay)]
         kaynak = "fatura" if all(mal[g]["kaynak"] == "fatura" for g in gunler) else "tahmini"
         anahtar = f"{ay}:{kaynak}"
-        if gd.get("maliyet_" + ay) == anahtar:
+        if gd.get("maliyet_" + ay) == anahtar + ":p2":
             continue
         top = {k: sum(mal[g][k] for g in gunler) for k in ("kwh", "enerji_tl", "dagitim_tl", "btv_tl", "kdv_tl", "kdvsiz_tl", "toplam_tl")}
         bg = [g for g in gel if g.startswith(ay) and g >= DAG_BAS and (gel[g] or {}).get("btc") is not None]
@@ -631,14 +645,19 @@ def aylik_maliyet_isi(simdi, durum):
         t = sum(DAG)
         bas, son = min(gunler), max(gunler)
         sat = []
-        for ad, o in (("16 cihaz", DAG[0] / t), ("13 cihaz", DAG[1] / t)):
-            sat.append(f"• *{ad}*: gelir {btc(btc_t * o)} BTC ≈ {tl(tl_t * o)} ₺ − maliyet {tl(top['toplam_tl'] * o)} ₺ = *{isaret(tl_t * o - top['toplam_tl'] * o)} ₺*")
+        m16 = sum(mal[g]["toplam_tl"] * maliyet_oran(g)[0] for g in gunler)
+        for ad, o, mp in (("16 cihaz", DAG[0] / t, m16), ("13 cihaz", DAG[1] / t, top["toplam_tl"] - m16)):
+            sat.append(f"• *{ad}*: gelir {btc(btc_t * o)} BTC ≈ {tl(tl_t * o)} ₺ − maliyet {tl(mp)} ₺ = *{isaret(tl_t * o - mp)} ₺*")
+        indirim = any(maliyet_oran(g)[0] < DAG[0] / t for g in gunler)
         metin = (f"🧾 *Aylık enerji maliyeti ve pay — {AY[int(ay[5:]) - 1]} {ay[:4]}* ({int(bas[8:])}–{int(son[8:])} {AY[int(ay[5:]) - 1]}"
                  + (", faturaya göre kesin" if kaynak == "fatura" else ", tahmini — fatura gelince kesinleşir") + ")\n"
                  f"Tek Yıldız 2 şebekeden çekiş (güneş yokken/yetmezken): {tl(top['kwh'])} kWh\n"
                  f"Enerji {tl(top['enerji_tl'])} ₺ · Dağıtım {tl(top['dagitim_tl'])} ₺ · BTV {tl(top['btv_tl'])} ₺ · KDV {tl(top['kdv_tl'])} ₺\n"
                  f"*Toplam maliyet: {tl(top['toplam_tl'])} ₺* (KDV hariç {tl(top['kdvsiz_tl'])} ₺)\n"
-                 f"Gelir: {btc(btc_t)} BTC ≈ {tl(tl_t)} ₺\n\n*Dağılım (16/29 · 13/29)*\n" + "\n".join(sat))
+                 f"Gelir: {btc(btc_t)} BTC ≈ {tl(tl_t)} ₺\n\n*Dağılım* (gelir 16/29 · 13/29"
+                 + ("; maliyet 8/29 · 21/29 — 16'ya düşenin yarısı 13'e" if indirim else "; maliyet 16/29 · 13/29") + ")\n" + "\n".join(sat))
+        # maliyet payı kuralı değişti: bir kez yeniden gönder
+        anahtar += ":p2"
         B.gonder("pay", metin)
         gd["maliyet_" + ay] = anahtar
 
