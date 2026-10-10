@@ -1,19 +1,21 @@
 {
-  "timestamp": "2026-10-10T07:29:26.025135",
+  "timestamp": "2026-10-10T07:30:53.375391",
   "source": "Tek Yildiz 2 GES - Saha PC",
   "summary": {
     "total": 31,
-    "online": 5,
-    "sleeping": 24,
+    "online": 6,
+    "sleeping": 23,
     "offline": 2,
     "total_hashrate_TH": 0.0,
-    "total_target_TH": 310.0,
-    "efficiency_pct": 0.0,
-    "avg_temp_C": 0,
-    "avg_water_temp_C": 0,
+    "total_target_TH": 0.0,
+    "efficiency_pct": 0,
+    "avg_temp_C": 27.0,
+    "avg_water_temp_C": 27.0,
     "models": {
-      "?": 20,
-      "S21e Hyd": 11
+      "?": 17,
+      "S21e Hyd": 12,
+      "S19 XP+ Hyd": 1,
+      "S19e XP Hyd": 1
     },
     "f2pool": {
       "enabled": true,
@@ -58,7 +60,7 @@
       "temp_water": null,
       "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "TIMEOUT",
+      "status": "OFFLINE",
       "online": false,
       "sleeping": false,
       "is_hydro": null,
@@ -88,15 +90,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "TIMEOUT",
-          "icon": "⏱",
-          "title": "Cevap Vermiyor (Timeout)",
-          "reason": "Network gecikmesi veya cihaz dondu",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
-            "Network kablosunu kontrol et",
-            "Switch portunun LED'i yaniyor mu bak",
-            "Ayni switche bagli diger cihazlari kontrol et"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -118,8 +120,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 36,
-      "temp_water": 28,
+      "temp_max": 44,
+      "temp_water": 36,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -584,7 +586,7 @@
         {
           "date": "2026-10-10",
           "avg_hash_TH": 0.0,
-          "uptime_pct": 0.7,
+          "uptime_pct": 0.6,
           "earn_btc": 0
         }
       ],
@@ -630,8 +632,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 32,
-      "temp_water": 26,
+      "temp_max": 40,
+      "temp_water": 32,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -886,8 +888,8 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 31,
-      "temp_water": 24,
+      "temp_max": 38,
+      "temp_water": 29,
       "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
@@ -1142,9 +1144,9 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 27,
-      "temp_water": 24,
-      "elapsed_hours": 0.0,
+      "temp_max": 34,
+      "temp_water": 30,
+      "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
       "online": true,
@@ -1398,9 +1400,9 @@
       "hashrate_TH": 0.0,
       "target_hashrate_TH": 310.0,
       "efficiency_pct": 0.0,
-      "temp_max": 29,
-      "temp_water": 25,
-      "elapsed_hours": 0.0,
+      "temp_max": 38,
+      "temp_water": 33,
+      "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
       "online": true,
@@ -1656,7 +1658,7 @@
       "efficiency_pct": 0.0,
       "temp_max": 0,
       "temp_water": null,
-      "elapsed_hours": 0.0,
+      "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
       "online": true,
@@ -1912,7 +1914,7 @@
       "efficiency_pct": 0.0,
       "temp_max": 0,
       "temp_water": null,
-      "elapsed_hours": 0.0,
+      "elapsed_hours": 0.1,
       "fan_avg_rpm": 0,
       "status": "SLEEP",
       "online": true,
@@ -2682,9 +2684,9 @@
       "temp_water": null,
       "elapsed_hours": 0.0,
       "fan_avg_rpm": 0,
-      "status": "ONLINE",
+      "status": "SLEEP",
       "online": true,
-      "sleeping": false,
+      "sleeping": true,
       "is_hydro": true,
       "accepted": 0,
       "rejected": 0,
@@ -2709,21 +2711,7 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [
-        {
-          "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
-          "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
-          ]
-        }
-      ],
+      "health_issues": [],
       "daily_history": [
         {
           "date": "2026-09-11",
@@ -2902,7 +2890,7 @@
         {
           "date": "2026-10-10",
           "avg_hash_TH": 0.0,
-          "uptime_pct": 0.7,
+          "uptime_pct": 0.6,
           "earn_btc": 0
         }
       ],
@@ -2938,27 +2926,27 @@
     {
       "ip": "192.168.0.112",
       "suffix": 112,
-      "name": "Miner-112",
-      "model": "?",
+      "name": "S19 XP+ Hyd-112",
+      "model": "S19 XP+ Hyd",
       "mac": "B2:7F:22:7A:A4:F9",
       "serial": "PIEMFCUBEJBBF02HF",
       "saha_worker": "saha.A4F9",
       "havuz_worker": "mehmetas.024",
       "actual_worker": "mehmetas.024",
       "hashrate_TH": 0.0,
-      "target_hashrate_TH": null,
+      "target_hashrate_TH": 0.0,
       "efficiency_pct": null,
-      "temp_max": null,
-      "temp_water": null,
+      "temp_max": 26,
+      "temp_water": 26,
       "elapsed_hours": 0.0,
-      "fan_avg_rpm": null,
-      "status": "ONLINE",
+      "fan_avg_rpm": 0,
+      "status": "SLEEP",
       "online": true,
-      "sleeping": false,
-      "is_hydro": null,
+      "sleeping": true,
+      "is_hydro": false,
       "accepted": 0,
       "rejected": 0,
-      "hw_errors_total": null,
+      "hw_errors_total": 0,
       "f2pool_name": "024",
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
@@ -2979,21 +2967,7 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [
-        {
-          "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
-          "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
-          ]
-        }
-      ],
+      "health_issues": [],
       "daily_history": [
         {
           "date": "2026-09-11",
@@ -3172,7 +3146,7 @@
         {
           "date": "2026-10-10",
           "avg_hash_TH": 0.0,
-          "uptime_pct": 0.3,
+          "uptime_pct": 0.5,
           "earn_btc": 0
         }
       ],
@@ -3208,27 +3182,27 @@
     {
       "ip": "192.168.0.113",
       "suffix": 113,
-      "name": "Miner-113",
-      "model": "?",
+      "name": "S21e Hyd-113",
+      "model": "S21e Hyd",
       "mac": "EC:84:39:FD:4B:DF",
       "serial": "OLTTGBUBEAAAA00GD",
       "saha_worker": "saha.4BDF",
       "havuz_worker": "mehmetas.012",
       "actual_worker": "mehmetas.012",
       "hashrate_TH": 0.0,
-      "target_hashrate_TH": null,
-      "efficiency_pct": null,
-      "temp_max": null,
-      "temp_water": null,
+      "target_hashrate_TH": 310.0,
+      "efficiency_pct": 0.0,
+      "temp_max": 22,
+      "temp_water": 22,
       "elapsed_hours": 0.0,
-      "fan_avg_rpm": null,
-      "status": "ONLINE",
+      "fan_avg_rpm": 0,
+      "status": "SLEEP",
       "online": true,
-      "sleeping": false,
-      "is_hydro": null,
+      "sleeping": true,
+      "is_hydro": true,
       "accepted": 0,
       "rejected": 0,
-      "hw_errors_total": null,
+      "hw_errors_total": 0,
       "f2pool_name": "012",
       "f2pool_hashrate_TH": 0.0,
       "f2pool_h1_TH": 0.0,
@@ -3249,21 +3223,7 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [
-        {
-          "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
-          "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
-          ]
-        }
-      ],
+      "health_issues": [],
       "daily_history": [
         {
           "date": "2026-09-11",
@@ -3442,7 +3402,7 @@
         {
           "date": "2026-10-10",
           "avg_hash_TH": 0.0,
-          "uptime_pct": 0.3,
+          "uptime_pct": 0.5,
           "earn_btc": 0
         }
       ],
@@ -3478,34 +3438,34 @@
     {
       "ip": "192.168.0.114",
       "suffix": 114,
-      "name": "Miner-114",
-      "model": "?",
+      "name": "S19e XP Hyd-114",
+      "model": "S19e XP Hyd",
       "mac": "EC:84:39:2D:17:25",
       "serial": "OLTTFLUBEAAAD04BY",
       "saha_worker": "saha.1725",
-      "havuz_worker": null,
-      "actual_worker": null,
-      "hashrate_TH": null,
-      "target_hashrate_TH": null,
+      "havuz_worker": "mehmetas.027",
+      "actual_worker": "mehmetas.027",
+      "hashrate_TH": 0.0,
+      "target_hashrate_TH": 0.0,
       "efficiency_pct": null,
-      "temp_max": null,
-      "temp_water": null,
-      "elapsed_hours": null,
-      "fan_avg_rpm": null,
-      "status": "ONLINE_HTTP",
+      "temp_max": 27,
+      "temp_water": 27,
+      "elapsed_hours": 0.0,
+      "fan_avg_rpm": 0,
+      "status": "ONLINE",
       "online": true,
       "sleeping": false,
-      "is_hydro": null,
-      "accepted": null,
-      "rejected": null,
-      "hw_errors_total": null,
-      "f2pool_name": null,
-      "f2pool_hashrate_TH": null,
-      "f2pool_h1_TH": null,
-      "f2pool_h24_TH": null,
-      "f2pool_last_share": null,
+      "is_hydro": true,
+      "accepted": 0,
+      "rejected": 0,
+      "hw_errors_total": 0,
+      "f2pool_name": "027",
+      "f2pool_hashrate_TH": 0.0,
+      "f2pool_h1_TH": 0.0,
+      "f2pool_h24_TH": 113.11,
+      "f2pool_last_share": 1791558458,
       "f2pool_state": null,
-      "f2pool_matched": false,
+      "f2pool_matched": true,
       "hashrate_diff_pct": null,
       "earn_today_btc": null,
       "earn_yesterday_btc": null,
@@ -3712,7 +3672,7 @@
         {
           "date": "2026-10-10",
           "avg_hash_TH": 0.0,
-          "uptime_pct": 0.2,
+          "uptime_pct": 0.5,
           "earn_btc": 0
         }
       ],
@@ -3753,29 +3713,29 @@
       "mac": "76:04:39:F7:82:A1",
       "serial": "PIEMGBUBEJEBF01PT",
       "saha_worker": "saha.82A1",
-      "havuz_worker": null,
-      "actual_worker": null,
-      "hashrate_TH": null,
+      "havuz_worker": "mehmetas.002",
+      "actual_worker": "mehmetas.002",
+      "hashrate_TH": 0.0,
       "target_hashrate_TH": null,
       "efficiency_pct": null,
       "temp_max": null,
       "temp_water": null,
-      "elapsed_hours": null,
+      "elapsed_hours": 0.0,
       "fan_avg_rpm": null,
-      "status": "ONLINE_HTTP",
+      "status": "ONLINE",
       "online": true,
       "sleeping": false,
       "is_hydro": null,
-      "accepted": null,
-      "rejected": null,
+      "accepted": 0,
+      "rejected": 0,
       "hw_errors_total": null,
-      "f2pool_name": null,
-      "f2pool_hashrate_TH": null,
-      "f2pool_h1_TH": null,
-      "f2pool_h24_TH": null,
-      "f2pool_last_share": null,
+      "f2pool_name": "002",
+      "f2pool_hashrate_TH": 0.0,
+      "f2pool_h1_TH": 0.0,
+      "f2pool_h24_TH": 138.39,
+      "f2pool_last_share": 1791558457,
       "f2pool_state": null,
-      "f2pool_matched": false,
+      "f2pool_matched": true,
       "hashrate_diff_pct": null,
       "earn_today_btc": null,
       "earn_yesterday_btc": null,
@@ -3982,7 +3942,7 @@
         {
           "date": "2026-10-10",
           "avg_hash_TH": 0.0,
-          "uptime_pct": 0.2,
+          "uptime_pct": 0.5,
           "earn_btc": 0
         }
       ],
@@ -4032,9 +3992,9 @@
       "temp_water": null,
       "elapsed_hours": 0.0,
       "fan_avg_rpm": null,
-      "status": "SLEEP",
+      "status": "ONLINE",
       "online": true,
-      "sleeping": true,
+      "sleeping": false,
       "is_hydro": null,
       "accepted": 0,
       "rejected": 0,
@@ -4059,7 +4019,21 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [],
+      "health_issues": [
+        {
+          "severity": "high",
+          "code": "ZERO_HASH",
+          "icon": "🚫",
+          "title": "Cihaz Acik Ama Hash Uretmiyor",
+          "reason": "Pool bagi kopuk veya yeni baslamis",
+          "solutions": [
+            "Pool URL ve worker adini kontrol et",
+            "Internet baglantisini test et",
+            "Cihazi yeniden baslat",
+            "5 dakika bekle (yeni baslamissa)"
+          ]
+        }
+      ],
       "daily_history": [
         {
           "date": "2026-09-11",
@@ -4238,7 +4212,7 @@
         {
           "date": "2026-10-10",
           "avg_hash_TH": 0.0,
-          "uptime_pct": 0.0,
+          "uptime_pct": 0.3,
           "earn_btc": 0
         }
       ],
@@ -4279,29 +4253,29 @@
       "mac": "52:08:9D:36:A8:D3",
       "serial": "PIEMGBUBEJEBF01DR",
       "saha_worker": "saha.A8D3",
-      "havuz_worker": "mehmetas.009",
-      "actual_worker": "mehmetas.009",
-      "hashrate_TH": 0.0,
+      "havuz_worker": null,
+      "actual_worker": null,
+      "hashrate_TH": null,
       "target_hashrate_TH": null,
       "efficiency_pct": null,
       "temp_max": null,
       "temp_water": null,
-      "elapsed_hours": 0.0,
+      "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "SLEEP",
+      "status": "ONLINE_HTTP",
       "online": true,
-      "sleeping": true,
+      "sleeping": false,
       "is_hydro": null,
-      "accepted": 0,
-      "rejected": 0,
+      "accepted": null,
+      "rejected": null,
       "hw_errors_total": null,
-      "f2pool_name": "009",
-      "f2pool_hashrate_TH": 0.0,
-      "f2pool_h1_TH": 0.0,
-      "f2pool_h24_TH": 135.57,
-      "f2pool_last_share": 1791558501,
+      "f2pool_name": null,
+      "f2pool_hashrate_TH": null,
+      "f2pool_h1_TH": null,
+      "f2pool_h24_TH": null,
+      "f2pool_last_share": null,
       "f2pool_state": null,
-      "f2pool_matched": true,
+      "f2pool_matched": false,
       "hashrate_diff_pct": null,
       "earn_today_btc": null,
       "earn_yesterday_btc": null,
@@ -4315,7 +4289,21 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [],
+      "health_issues": [
+        {
+          "severity": "high",
+          "code": "ZERO_HASH",
+          "icon": "🚫",
+          "title": "Cihaz Acik Ama Hash Uretmiyor",
+          "reason": "Pool bagi kopuk veya yeni baslamis",
+          "solutions": [
+            "Pool URL ve worker adini kontrol et",
+            "Internet baglantisini test et",
+            "Cihazi yeniden baslat",
+            "5 dakika bekle (yeni baslamissa)"
+          ]
+        }
+      ],
       "daily_history": [
         {
           "date": "2026-09-11",
@@ -4494,7 +4482,7 @@
         {
           "date": "2026-10-10",
           "avg_hash_TH": 0.0,
-          "uptime_pct": 0.0,
+          "uptime_pct": 0.3,
           "earn_btc": 0
         }
       ],
@@ -4544,9 +4532,9 @@
       "temp_water": null,
       "elapsed_hours": 0.0,
       "fan_avg_rpm": null,
-      "status": "SLEEP",
+      "status": "ONLINE",
       "online": true,
-      "sleeping": true,
+      "sleeping": false,
       "is_hydro": null,
       "accepted": 0,
       "rejected": 0,
@@ -4571,7 +4559,21 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [],
+      "health_issues": [
+        {
+          "severity": "high",
+          "code": "ZERO_HASH",
+          "icon": "🚫",
+          "title": "Cihaz Acik Ama Hash Uretmiyor",
+          "reason": "Pool bagi kopuk veya yeni baslamis",
+          "solutions": [
+            "Pool URL ve worker adini kontrol et",
+            "Internet baglantisini test et",
+            "Cihazi yeniden baslat",
+            "5 dakika bekle (yeni baslamissa)"
+          ]
+        }
+      ],
       "daily_history": [
         {
           "date": "2026-09-11",
@@ -4750,7 +4752,7 @@
         {
           "date": "2026-10-10",
           "avg_hash_TH": 0.0,
-          "uptime_pct": 0.0,
+          "uptime_pct": 0.2,
           "earn_btc": 0
         }
       ],
@@ -4791,29 +4793,29 @@
       "mac": "F4:C7:5A:FE:7F:A4",
       "serial": "PIEMGBUBEJEBF01A0",
       "saha_worker": "saha.7FA4",
-      "havuz_worker": "mehmetas.019",
-      "actual_worker": "mehmetas.019",
-      "hashrate_TH": 0.0,
+      "havuz_worker": null,
+      "actual_worker": null,
+      "hashrate_TH": null,
       "target_hashrate_TH": null,
       "efficiency_pct": null,
       "temp_max": null,
       "temp_water": null,
-      "elapsed_hours": 0.0,
+      "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "SLEEP",
+      "status": "ONLINE_HTTP",
       "online": true,
-      "sleeping": true,
+      "sleeping": false,
       "is_hydro": null,
-      "accepted": 0,
-      "rejected": 0,
+      "accepted": null,
+      "rejected": null,
       "hw_errors_total": null,
-      "f2pool_name": "019",
-      "f2pool_hashrate_TH": 0.0,
-      "f2pool_h1_TH": 0.0,
-      "f2pool_h24_TH": 140.15,
-      "f2pool_last_share": 1791558542,
+      "f2pool_name": null,
+      "f2pool_hashrate_TH": null,
+      "f2pool_h1_TH": null,
+      "f2pool_h24_TH": null,
+      "f2pool_last_share": null,
       "f2pool_state": null,
-      "f2pool_matched": true,
+      "f2pool_matched": false,
       "hashrate_diff_pct": null,
       "earn_today_btc": null,
       "earn_yesterday_btc": null,
@@ -4827,7 +4829,21 @@
       "earn_yesterday_try": null,
       "earn_7d_try": null,
       "earn_total_try": null,
-      "health_issues": [],
+      "health_issues": [
+        {
+          "severity": "high",
+          "code": "ZERO_HASH",
+          "icon": "🚫",
+          "title": "Cihaz Acik Ama Hash Uretmiyor",
+          "reason": "Pool bagi kopuk veya yeni baslamis",
+          "solutions": [
+            "Pool URL ve worker adini kontrol et",
+            "Internet baglantisini test et",
+            "Cihazi yeniden baslat",
+            "5 dakika bekle (yeni baslamissa)"
+          ]
+        }
+      ],
       "daily_history": [
         {
           "date": "2026-09-11",
@@ -5006,7 +5022,7 @@
         {
           "date": "2026-10-10",
           "avg_hash_TH": 0.0,
-          "uptime_pct": 0.0,
+          "uptime_pct": 0.2,
           "earn_btc": 0
         }
       ],
