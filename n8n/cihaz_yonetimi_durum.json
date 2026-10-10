@@ -1,5 +1,5 @@
 {
- "guncellendi": "2026-10-10T15:50:03+03:00",
+ "guncellendi": "2026-10-10T15:55:03+03:00",
  "mod": "otomatik",
  "ayarlar": {
   "mod": "otomatik",
@@ -47,11 +47,27 @@
  "esik_ptf": 2723.5220299673556,
  "karar": "calis",
  "neden": "PTF 2300 ≤ eşik 2724 (başabaş 2179 +%25) · zararına ama tolerans içinde · maliyet 23 ₺ / gelir 22 ₺",
- "istenen": "calis",
+ "istenen": "uyut",
  "eylem": null,
- "eylem_not": "",
+ "eylem_not": "yük üretimle dengede (29 cihaz, 168 kW / üretim 410 kW)",
  "gonderildi": false,
- "gunes_takip": null,
+ "gunes_takip": {
+  "uretim_kw": 410.41,
+  "kw_cihaz": 5.81,
+  "calisan": 29,
+  "uyuyan": 0,
+  "okumalar": [
+   [
+    "2026-10-10T15:49:10+03:00",
+    410.4
+   ]
+  ],
+  "eylem": null,
+  "hedefler": [],
+  "neden": "yük üretimle dengede (29 cihaz, 168 kW / üretim 410 kW)",
+  "hedef_kapat": 71,
+  "hedef_ac": 29
+ },
  "toplam_uretim_kw": 909.77,
  "cihaz": {
   "toplam": 31,
@@ -916,6 +932,16 @@
    "neden": "güneş üretimi var",
    "not": "",
    "gonderildi": true,
+   "mod": "otomatik"
+  },
+  {
+   "t": "2026-10-10 15:55",
+   "karar": "calis",
+   "istenen": "uyut",
+   "eylem": "-",
+   "neden": "yük üretimle dengede (29 cihaz, 168 kW / üretim 410 kW)",
+   "not": "yük üretimle dengede (29 cihaz, 168 kW / üretim 410 kW)",
+   "gonderildi": false,
    "mod": "otomatik"
   }
  ]
