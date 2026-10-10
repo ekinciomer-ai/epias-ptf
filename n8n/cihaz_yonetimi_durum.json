@@ -1,5 +1,5 @@
 {
- "guncellendi": "2026-10-10T17:40:02+03:00",
+ "guncellendi": "2026-10-10T17:45:02+03:00",
  "mod": "otomatik",
  "ayarlar": {
   "mod": "otomatik",
@@ -48,14 +48,14 @@
  "karar": "uyut",
  "neden": "PTF 4200 > eşik 2762 (başabaş 2210 +%25) · maliyet 34 ₺ / gelir 22 ₺",
  "istenen": "uyut",
- "eylem": "sleep",
- "eylem_not": "güneş takibi: Sera-2 63 kW, 16 cihaz × 5.71 kW = 91 kW → 5 cihaz uyut",
- "gonderildi": true,
+ "eylem": null,
+ "eylem_not": "yük üretimle dengede (11 cihaz, 63 kW / üretim 63 kW)",
+ "gonderildi": false,
  "gunes_takip": {
   "uretim_kw": 63.4,
   "kw_cihaz": 5.71,
-  "calisan": 16,
-  "uyuyan": 13,
+  "calisan": 11,
+  "uyuyan": 18,
   "okumalar": [
    [
     "2026-10-10T17:09:25+03:00",
@@ -70,15 +70,9 @@
     63.4
    ]
   ],
-  "eylem": "sleep",
-  "hedefler": [
-   110,
-   117,
-   121,
-   122,
-   133
-  ],
-  "neden": "güneş takibi: Sera-2 63 kW, 16 cihaz × 5.71 kW = 91 kW → 5 cihaz uyut",
+  "eylem": null,
+  "hedefler": [],
+  "neden": "yük üretimle dengede (11 cihaz, 63 kW / üretim 63 kW)",
   "hedef_kapat": 11,
   "hedef_ac": 10
  },
@@ -86,8 +80,8 @@
  "cihaz": {
   "toplam": 31,
   "ulasilan": 29,
-  "calisan": 16,
-  "uyuyan": 13,
+  "calisan": 11,
+  "uyuyan": 18,
   "taze": true,
   "su_uyuyan": null
  },
@@ -105,33 +99,33 @@
   },
   "yayilim_dk": 12.8,
   "sonraki_uyandirma": {
-   "t_komut": "2026-10-11T06:17:00+03:00",
+   "t_komut": "2026-10-11T06:19:00+03:00",
    "eylem": "wake",
    "hedef": "2026-10-11T07:00:00+03:00",
-   "oncu_dk": 43.0,
-   "oncu_hazir_dk": 29,
+   "oncu_dk": 41.0,
+   "oncu_hazir_dk": 27,
    "oncu_ekonomik_dk": 0,
    "politika": "hazir",
-   "on_isitma_bedeli_tl": 107.1,
-   "su_tahmin": 22.0,
-   "su_kaynak": "öğrenilmiş (>12 sa uyku, 54 olay)",
-   "t95_tahmin": 15.6,
-   "neden": "07:00 kârlı saat; su ~22 °C → %95 hash 16 dk + yayılım 13 dk + emniyet 14 dk"
+   "on_isitma_bedeli_tl": 102.1,
+   "su_tahmin": 31.0,
+   "su_kaynak": "genel medyan",
+   "t95_tahmin": 13.6,
+   "neden": "07:00 kârlı saat; su ~31 °C → %95 hash 14 dk + yayılım 13 dk + emniyet 14 dk"
   },
   "takvim": [
    {
-    "t_komut": "2026-10-11T06:17:00+03:00",
+    "t_komut": "2026-10-11T06:19:00+03:00",
     "eylem": "wake",
     "hedef": "2026-10-11T07:00:00+03:00",
-    "oncu_dk": 43.0,
-    "oncu_hazir_dk": 29,
+    "oncu_dk": 41.0,
+    "oncu_hazir_dk": 27,
     "oncu_ekonomik_dk": 0,
     "politika": "hazir",
-    "on_isitma_bedeli_tl": 107.1,
-    "su_tahmin": 22.0,
-    "su_kaynak": "öğrenilmiş (>12 sa uyku, 54 olay)",
-    "t95_tahmin": 15.6,
-    "neden": "07:00 kârlı saat; su ~22 °C → %95 hash 16 dk + yayılım 13 dk + emniyet 14 dk"
+    "on_isitma_bedeli_tl": 102.1,
+    "su_tahmin": 31.0,
+    "su_kaynak": "genel medyan",
+    "t95_tahmin": 13.6,
+    "neden": "07:00 kârlı saat; su ~31 °C → %95 hash 14 dk + yayılım 13 dk + emniyet 14 dk"
    },
    {
     "t_komut": "2026-10-11T16:53:35+03:00",
