@@ -1,5 +1,5 @@
 {
- "guncellendi": "2026-10-10T17:30:03+03:00",
+ "guncellendi": "2026-10-10T17:35:02+03:00",
  "mod": "otomatik",
  "ayarlar": {
   "mod": "otomatik",
@@ -48,14 +48,14 @@
  "karar": "uyut",
  "neden": "PTF 4200 > eşik 2762 (başabaş 2210 +%25) · maliyet 34 ₺ / gelir 22 ₺",
  "istenen": "uyut",
- "eylem": "sleep",
- "eylem_not": "güneş takibi: Sera-2 94 kW, 18 cihaz × 5.74 kW = 103 kW → 2 cihaz uyut",
- "gonderildi": true,
+ "eylem": null,
+ "eylem_not": "yük üretimle dengede (16 cihaz, 92 kW / üretim 94 kW)",
+ "gonderildi": false,
  "gunes_takip": {
   "uretim_kw": 93.86,
-  "kw_cihaz": 5.74,
-  "calisan": 18,
-  "uyuyan": 11,
+  "kw_cihaz": 5.72,
+  "calisan": 16,
+  "uyuyan": 13,
   "okumalar": [
    [
     "2026-10-10T16:59:03+03:00",
@@ -70,12 +70,9 @@
     93.9
    ]
   ],
-  "eylem": "sleep",
-  "hedefler": [
-   104,
-   107
-  ],
-  "neden": "güneş takibi: Sera-2 94 kW, 18 cihaz × 5.74 kW = 103 kW → 2 cihaz uyut",
+  "eylem": null,
+  "hedefler": [],
+  "neden": "yük üretimle dengede (16 cihaz, 92 kW / üretim 94 kW)",
   "hedef_kapat": 16,
   "hedef_ac": 15
  },
@@ -83,8 +80,8 @@
  "cihaz": {
   "toplam": 31,
   "ulasilan": 29,
-  "calisan": 18,
-  "uyuyan": 11,
+  "calisan": 16,
+  "uyuyan": 13,
   "taze": true,
   "su_uyuyan": null
  },
