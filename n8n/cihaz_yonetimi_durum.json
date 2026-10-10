@@ -1,5 +1,5 @@
 {
- "guncellendi": "2026-10-10T07:35:02+03:00",
+ "guncellendi": "2026-10-10T07:40:02+03:00",
  "mod": "otomatik",
  "ayarlar": {
   "mod": "otomatik",
@@ -40,16 +40,16 @@
  "karar": "calis",
  "neden": "güneş üretimi var",
  "istenen": "calis",
- "eylem": null,
- "eylem_not": "aynı komut 15 dk içinde gönderilmişti, bekleniyor",
- "gonderildi": false,
+ "eylem": "wake",
+ "eylem_not": "",
+ "gonderildi": true,
  "cihaz": {
   "toplam": 31,
   "ulasilan": 29,
-  "calisan": 7,
-  "uyuyan": 21,
+  "calisan": 9,
+  "uyuyan": 20,
   "taze": true,
-  "su_uyuyan": 35.1
+  "su_uyuyan": 34.4
  },
  "zamanlama": {
   "model": {
@@ -63,15 +63,15 @@
    "sn_cihaz": 26.6,
    "n": 176
   },
-  "yayilim_dk": 12.4,
+  "yayilim_dk": 12.9,
   "sonraki_uyandirma": null,
   "takvim": [
    {
-    "t_komut": "2026-10-10T16:53:47+03:00",
+    "t_komut": "2026-10-10T16:53:34+03:00",
     "eylem": "sleep",
     "hedef": "2026-10-10T17:00:00+03:00",
     "neden": "17:00 zararlı saat",
-    "oncu_dk": 6.2
+    "oncu_dk": 6.4
    }
   ]
  },
@@ -916,6 +916,16 @@
    "neden": "güneş üretimi var",
    "not": "aynı komut 15 dk içinde gönderilmişti, bekleniyor",
    "gonderildi": false,
+   "mod": "otomatik"
+  },
+  {
+   "t": "2026-10-10 07:40",
+   "karar": "calis",
+   "istenen": "calis",
+   "eylem": "wake",
+   "neden": "güneş üretimi var",
+   "not": "",
+   "gonderildi": true,
    "mod": "otomatik"
   }
  ]
