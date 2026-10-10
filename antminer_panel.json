@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-10-10T20:15:52.832035",
+  "timestamp": "2026-10-10T20:17:23.943952",
   "source": "Tek Yildiz 2 GES - Saha PC",
   "summary": {
     "total": 31,
-    "online": 2,
+    "online": 0,
     "sleeping": 26,
-    "offline": 3,
-    "total_hashrate_TH": 0.0,
+    "offline": 5,
+    "total_hashrate_TH": 0,
     "total_target_TH": 0,
     "efficiency_pct": 0,
     "avg_temp_C": 0,
@@ -27,8 +27,8 @@
       "total_btc": 0.0,
       "balance_btc": 0.0,
       "paid_btc": 0.0,
-      "btc_price_usd": 82993.0,
-      "usd_try": 49.22150060848505,
+      "btc_price_usd": 82989.0,
+      "usd_try": 49.22106544240803,
       "today_usd": 0.0,
       "yesterday_usd": 0.0,
       "last7days_usd": 0.0,
@@ -326,8 +326,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 151.8,
-          "uptime_pct": 47.9,
+          "avg_hash_TH": 151.6,
+          "uptime_pct": 47.8,
           "earn_btc": 0
         }
       ],
@@ -582,8 +582,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 149.0,
-          "uptime_pct": 47.0,
+          "avg_hash_TH": 148.8,
+          "uptime_pct": 46.9,
           "earn_btc": 0
         }
       ],
@@ -838,8 +838,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 152.5,
-          "uptime_pct": 47.9,
+          "avg_hash_TH": 152.3,
+          "uptime_pct": 47.8,
           "earn_btc": 0
         }
       ],
@@ -1094,8 +1094,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 157.2,
-          "uptime_pct": 49.5,
+          "avg_hash_TH": 157.0,
+          "uptime_pct": 49.4,
           "earn_btc": 0
         }
       ],
@@ -1350,7 +1350,7 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 151.6,
+          "avg_hash_TH": 151.4,
           "uptime_pct": 47.8,
           "earn_btc": 0
         }
@@ -1606,7 +1606,7 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 163.5,
+          "avg_hash_TH": 163.3,
           "uptime_pct": 51.0,
           "earn_btc": 0
         }
@@ -1862,8 +1862,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 142.8,
-          "uptime_pct": 45.5,
+          "avg_hash_TH": 142.6,
+          "uptime_pct": 45.4,
           "earn_btc": 0
         }
       ],
@@ -2118,15 +2118,15 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 152.0,
-          "uptime_pct": 47.8,
+          "avg_hash_TH": 151.8,
+          "uptime_pct": 47.7,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 282.3,
+          "avg_hash_TH": 282.2,
           "earn_btc": 0,
           "days": 10
         },
@@ -2374,7 +2374,7 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 136.0,
+          "avg_hash_TH": 135.9,
           "uptime_pct": 43.7,
           "earn_btc": 0
         }
@@ -2382,7 +2382,7 @@
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 270.4,
+          "avg_hash_TH": 270.3,
           "earn_btc": 0,
           "days": 10
         },
@@ -2630,8 +2630,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 146.0,
-          "uptime_pct": 46.1,
+          "avg_hash_TH": 145.8,
+          "uptime_pct": 46.0,
           "earn_btc": 0
         }
       ],
@@ -2674,19 +2674,19 @@
       "saha_worker": null,
       "havuz_worker": null,
       "actual_worker": null,
-      "hashrate_TH": 0.0,
+      "hashrate_TH": null,
       "target_hashrate_TH": null,
       "efficiency_pct": null,
       "temp_max": null,
       "temp_water": null,
-      "elapsed_hours": 0.0,
+      "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "ONLINE",
-      "online": true,
+      "status": "OFFLINE",
+      "online": false,
       "sleeping": false,
       "is_hydro": null,
-      "accepted": 0,
-      "rejected": 0,
+      "accepted": null,
+      "rejected": null,
       "hw_errors_total": null,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
@@ -2711,15 +2711,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -2950,8 +2950,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 130.7,
-          "uptime_pct": 44.1,
+          "avg_hash_TH": 130.5,
+          "uptime_pct": 44.0,
           "earn_btc": 0
         }
       ],
@@ -3206,8 +3206,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 174.3,
-          "uptime_pct": 54.2,
+          "avg_hash_TH": 174.1,
+          "uptime_pct": 54.1,
           "earn_btc": 0
         }
       ],
@@ -3526,8 +3526,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 150.6,
-          "uptime_pct": 47.8,
+          "avg_hash_TH": 150.4,
+          "uptime_pct": 47.7,
           "earn_btc": 0
         }
       ],
@@ -3570,19 +3570,19 @@
       "saha_worker": null,
       "havuz_worker": null,
       "actual_worker": null,
-      "hashrate_TH": 0.0,
+      "hashrate_TH": null,
       "target_hashrate_TH": null,
       "efficiency_pct": null,
       "temp_max": null,
       "temp_water": null,
-      "elapsed_hours": 0.0,
+      "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "ONLINE",
-      "online": true,
+      "status": "OFFLINE",
+      "online": false,
       "sleeping": false,
       "is_hydro": null,
-      "accepted": 0,
-      "rejected": 0,
+      "accepted": null,
+      "rejected": null,
       "hw_errors_total": null,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
@@ -3607,15 +3607,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
+          "code": "OFFLINE",
+          "icon": "🔌",
+          "title": "Erisilemiyor (Offline)",
+          "reason": "Elektrik yok, network kopuk veya cihaz kapali",
           "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
+            "Elektrik anahtarini kontrol et",
+            "Ethernet kablosunu fiziksel kontrol et",
+            "Sigorta atti mi bak",
+            "PSU calisip calismadigini dinle"
           ]
         }
       ],
@@ -3846,8 +3846,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 158.8,
-          "uptime_pct": 49.9,
+          "avg_hash_TH": 158.6,
+          "uptime_pct": 49.8,
           "earn_btc": 0
         }
       ],
@@ -4102,8 +4102,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 162.3,
-          "uptime_pct": 50.7,
+          "avg_hash_TH": 162.2,
+          "uptime_pct": 50.6,
           "earn_btc": 0
         }
       ],
@@ -4358,7 +4358,7 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 148.7,
+          "avg_hash_TH": 148.6,
           "uptime_pct": 47.0,
           "earn_btc": 0
         }
@@ -4366,7 +4366,7 @@
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 280.7,
+          "avg_hash_TH": 280.6,
           "earn_btc": 0,
           "days": 10
         },
@@ -4614,8 +4614,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 131.4,
-          "uptime_pct": 44.4,
+          "avg_hash_TH": 131.3,
+          "uptime_pct": 44.3,
           "earn_btc": 0
         }
       ],
@@ -4870,8 +4870,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 158.4,
-          "uptime_pct": 49.7,
+          "avg_hash_TH": 158.2,
+          "uptime_pct": 49.6,
           "earn_btc": 0
         }
       ],
@@ -5126,8 +5126,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 145.8,
-          "uptime_pct": 46.3,
+          "avg_hash_TH": 145.7,
+          "uptime_pct": 46.2,
           "earn_btc": 0
         }
       ],
@@ -5382,7 +5382,7 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 167.4,
+          "avg_hash_TH": 167.2,
           "uptime_pct": 52.0,
           "earn_btc": 0
         }
@@ -5638,8 +5638,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 149.7,
-          "uptime_pct": 47.3,
+          "avg_hash_TH": 149.5,
+          "uptime_pct": 47.2,
           "earn_btc": 0
         }
       ],
@@ -5894,8 +5894,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 143.3,
-          "uptime_pct": 47.8,
+          "avg_hash_TH": 143.1,
+          "uptime_pct": 47.7,
           "earn_btc": 0
         }
       ],
@@ -6150,8 +6150,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 161.3,
-          "uptime_pct": 50.6,
+          "avg_hash_TH": 161.1,
+          "uptime_pct": 50.5,
           "earn_btc": 0
         }
       ],
@@ -6406,7 +6406,7 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 150.7,
+          "avg_hash_TH": 150.5,
           "uptime_pct": 47.5,
           "earn_btc": 0
         }
@@ -6414,7 +6414,7 @@
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 265.7,
+          "avg_hash_TH": 265.6,
           "earn_btc": 0,
           "days": 9
         },
@@ -6662,8 +6662,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 150.3,
-          "uptime_pct": 47.6,
+          "avg_hash_TH": 150.1,
+          "uptime_pct": 47.5,
           "earn_btc": 0
         }
       ],
@@ -6982,15 +6982,15 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 156.3,
-          "uptime_pct": 49.5,
+          "avg_hash_TH": 156.1,
+          "uptime_pct": 49.4,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 88.5,
+          "avg_hash_TH": 88.4,
           "earn_btc": 0,
           "days": 3
         },
@@ -7194,7 +7194,7 @@
     },
     {
       "date": "2026-10-10",
-      "total_hash_TH": 4375.4,
+      "total_hash_TH": 4370.6,
       "total_earn_btc": 0,
       "online_avg": 14.0
     }
@@ -7202,7 +7202,7 @@
   "monthly_history": [
     {
       "month": "2026-10",
-      "avg_hash_TH": 7392.1,
+      "avg_hash_TH": 7391.6,
       "earn_btc": 0,
       "days": 10
     },
