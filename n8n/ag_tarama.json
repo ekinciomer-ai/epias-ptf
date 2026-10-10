@@ -1,5 +1,5 @@
 {
- "zaman": "2026-10-10T07:18:02+03:00",
+ "zaman": "2026-10-10T07:33:02+03:00",
  "alt_ag": "192.168.0.0/24",
  "pi_ip": "192.168.0.132",
  "acik_adres": 30,
@@ -238,12 +238,10 @@
   },
   {
    "ip": "192.168.0.122",
-   "api": true,
+   "api": false,
    "web": true,
-   "worker": "014",
-   "havuz_kullanici": "mehmetas.014",
-   "model": "S21e Hyd.",
    "mac": "EC:84:39:06:14:03",
+   "worker": "014",
    "toplayici_goruyor": true,
    "toplayici_listesinde": true
   },
@@ -329,7 +327,17 @@
   "192.168.0.100",
   "192.168.0.129"
  ],
- "eksik": [],
+ "eksik": [
+  {
+   "worker": "014",
+   "serial": "OLTTGBUBEAAAA01PJ",
+   "mac": "EC:84:39:06:14:03",
+   "model": "?",
+   "eski_ip": null,
+   "yeni_ip": "192.168.0.122",
+   "durum": "agda_var_yanitsiz"
+  }
+ ],
  "web_adaylari": [
   {
    "ip": "192.168.0.1",
@@ -368,9 +376,9 @@
    "/home/pi/SAHA/antminer/antminer_inventory.json:5: \"first_ip\": \"192.168.0.104\",",
    "/home/pi/SAHA/antminer/antminer_inventory.json:11: \"ip\": \"192.168.0.104\",",
    "/home/pi/SAHA/antminer/antminer_inventory.json:16: \"ip\": \"192.168.0.104\",",
-   "/home/pi/SAHA/antminer/antminer_inventory.json:21: \"ip\": \"192.168.0.104\",",
-   "/home/pi/SAHA/antminer/antminer_inventory.json:26: \"ip\": \"192.168.0.123\",",
-   "/home/pi/SAHA/antminer/antminer_inventory.json:31: \"ip\": \"192.168.0.104\",",
+   "/home/pi/SAHA/antminer/antminer_inventory.json:21: \"ip\": \"192.168.0.123\",",
+   "/home/pi/SAHA/antminer/antminer_inventory.json:26: \"ip\": \"192.168.0.104\",",
+   "/home/pi/SAHA/antminer/antminer_inventory.json:31: \"ip\": \"192.168.0.116\",",
    "/home/pi/SAHA/antminer/antminer_inventory.json:36: \"ip\": \"192.168.0.116\","
   ]
  }
