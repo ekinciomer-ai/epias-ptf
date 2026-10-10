@@ -1,5 +1,5 @@
 {
- "guncellendi": "2026-10-10T07:30:02+03:00",
+ "guncellendi": "2026-10-10T07:35:02+03:00",
  "mod": "otomatik",
  "ayarlar": {
   "mod": "otomatik",
@@ -21,8 +21,8 @@
   "cihaz_th_kaynak": "F2Pool son 7 gün, 29 cihaz medyanı",
   "cihaz_guc_kaynak": "antminer arşivi 2026-08-13 11:50, 29 cihaz ortalaması"
  },
- "uretim_kw": 36.769999999999996,
- "uretim": false,
+ "uretim_kw": 139.14999999999998,
+ "uretim": true,
  "fs_taze": true,
  "ptf": 3720,
  "yekdem": 526.39,
@@ -37,19 +37,19 @@
  "gelir_tl_saat": 22.302212689239443,
  "basabas_ptf": 2185.2307460262673,
  "esik_ptf": 2731.538432532834,
- "karar": "uyut",
- "neden": "PTF 3720 > eşik 2732 (başabaş 2185 +%25) · maliyet 31 ₺ / gelir 22 ₺",
+ "karar": "calis",
+ "neden": "güneş üretimi var",
  "istenen": "calis",
  "eylem": null,
- "eylem_not": "komut gönderildi, cihazlar ısınıyor/geçişte",
+ "eylem_not": "aynı komut 15 dk içinde gönderilmişti, bekleniyor",
  "gonderildi": false,
  "cihaz": {
   "toplam": 31,
   "ulasilan": 29,
-  "calisan": 3,
-  "uyuyan": 24,
+  "calisan": 7,
+  "uyuyan": 21,
   "taze": true,
-  "su_uyuyan": 25.4
+  "su_uyuyan": 35.1
  },
  "zamanlama": {
   "model": {
@@ -63,42 +63,15 @@
    "sn_cihaz": 26.6,
    "n": 176
   },
-  "yayilim_dk": 12.0,
-  "sonraki_uyandirma": {
-   "t_komut": "2026-10-10T07:22:00+03:00",
-   "eylem": "wake",
-   "hedef": "2026-10-10T08:00:00+03:00",
-   "oncu_dk": 38.0,
-   "oncu_hazir_dk": 28,
-   "oncu_ekonomik_dk": 0,
-   "politika": "hazir",
-   "on_isitma_bedeli_tl": 151.9,
-   "su_tahmin": 25.4,
-   "su_kaynak": "canlı (uyuyan cihazlar)",
-   "t95_tahmin": 15.1,
-   "neden": "08:00 kârlı saat; su ~25 °C → %95 hash 15 dk + yayılım 12 dk + emniyet 10 dk"
-  },
+  "yayilim_dk": 12.4,
+  "sonraki_uyandirma": null,
   "takvim": [
    {
-    "t_komut": "2026-10-10T07:22:00+03:00",
-    "eylem": "wake",
-    "hedef": "2026-10-10T08:00:00+03:00",
-    "oncu_dk": 38.0,
-    "oncu_hazir_dk": 28,
-    "oncu_ekonomik_dk": 0,
-    "politika": "hazir",
-    "on_isitma_bedeli_tl": 151.9,
-    "su_tahmin": 25.4,
-    "su_kaynak": "canlı (uyuyan cihazlar)",
-    "t95_tahmin": 15.1,
-    "neden": "08:00 kârlı saat; su ~25 °C → %95 hash 15 dk + yayılım 12 dk + emniyet 10 dk"
-   },
-   {
-    "t_komut": "2026-10-10T16:54:00+03:00",
+    "t_komut": "2026-10-10T16:53:47+03:00",
     "eylem": "sleep",
     "hedef": "2026-10-10T17:00:00+03:00",
     "neden": "17:00 zararlı saat",
-    "oncu_dk": 6.0
+    "oncu_dk": 6.2
    }
   ]
  },
@@ -107,12 +80,12 @@
    "t": "2026-10-10 07:00",
    "ptf": 3720,
    "yekdem": 526.39,
-   "gunes_tahmini": false,
+   "gunes_tahmini": true,
    "gunes_kaynak": "anlık",
    "maliyet": 31.183995263525,
    "gelir": 22.302212689239443,
-   "karar": "uyut",
-   "karar_ham": "uyut"
+   "karar": "calis",
+   "karar_ham": "calis"
   },
   {
    "t": "2026-10-10 08:00",
@@ -932,6 +905,16 @@
    "eylem": "-",
    "neden": "08:00 kârlı saat; su ~32 °C → %95 hash 14 dk + yayılım 12 dk + emniyet 10 dk",
    "not": "komut gönderildi, cihazlar ısınıyor/geçişte",
+   "gonderildi": false,
+   "mod": "otomatik"
+  },
+  {
+   "t": "2026-10-10 07:35",
+   "karar": "calis",
+   "istenen": "calis",
+   "eylem": "-",
+   "neden": "güneş üretimi var",
+   "not": "aynı komut 15 dk içinde gönderilmişti, bekleniyor",
    "gonderildi": false,
    "mod": "otomatik"
   }
