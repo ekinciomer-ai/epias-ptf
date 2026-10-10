@@ -1,5 +1,5 @@
 {
- "guncellendi": "2026-10-10T18:35:02+03:00",
+ "guncellendi": "2026-10-10T18:40:02+03:00",
  "mod": "otomatik",
  "ayarlar": {
   "mod": "otomatik",
@@ -29,8 +29,8 @@
   "cihaz_th_kaynak": "F2Pool son 7 gün, 29 cihaz medyanı",
   "cihaz_guc_kaynak": "antminer arşivi 2026-08-13 11:50, 29 cihaz ortalaması"
  },
- "uretim_kw": 2.63,
- "uretim": true,
+ "uretim_kw": 0.0,
+ "uretim": false,
  "fs_taze": true,
  "ptf": 4500,
  "yekdem": 526.39,
@@ -49,18 +49,14 @@
  "neden": "PTF 4500 > eşik 2754 (başabaş 2203 +%25) · maliyet 36 ₺ / gelir 22 ₺",
  "istenen": "uyut",
  "eylem": null,
- "eylem_not": "yük üretimle dengede (0 cihaz, 0 kW / üretim 3 kW)",
+ "eylem_not": "yük üretimle dengede (0 cihaz, 0 kW / üretim 0 kW)",
  "gonderildi": false,
  "gunes_takip": {
-  "uretim_kw": 2.63,
+  "uretim_kw": 0.0,
   "kw_cihaz": 5.59,
   "calisan": 0,
   "uyuyan": 29,
   "okumalar": [
-   [
-    "2026-10-10T17:59:20+03:00",
-    17.4
-   ],
    [
     "2026-10-10T18:09:26+03:00",
     8.8
@@ -68,15 +64,19 @@
    [
     "2026-10-10T18:29:03+03:00",
     2.6
+   ],
+   [
+    "2026-10-10T18:39:21+03:00",
+    0.0
    ]
   ],
   "eylem": null,
   "hedefler": [],
-  "neden": "yük üretimle dengede (0 cihaz, 0 kW / üretim 3 kW)",
+  "neden": "yük üretimle dengede (0 cihaz, 0 kW / üretim 0 kW)",
   "hedef_kapat": 0,
   "hedef_ac": 0
  },
- "toplam_uretim_kw": 5.18,
+ "toplam_uretim_kw": 0.0,
  "cihaz": {
   "toplam": 31,
   "ulasilan": 29,
@@ -155,7 +155,7 @@
    "t": "2026-10-10 18:00",
    "ptf": 4500,
    "yekdem": 526.39,
-   "gunes_tahmini": true,
+   "gunes_tahmini": false,
    "gunes_kaynak": "anlık",
    "maliyet": 35.697892313525,
    "gelir": 22.40506816973566,
