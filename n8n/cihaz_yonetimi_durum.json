@@ -1,5 +1,5 @@
 {
- "guncellendi": "2026-10-10T17:35:02+03:00",
+ "guncellendi": "2026-10-10T17:40:02+03:00",
  "mod": "otomatik",
  "ayarlar": {
   "mod": "otomatik",
@@ -29,7 +29,7 @@
   "cihaz_th_kaynak": "F2Pool son 7 gün, 29 cihaz medyanı",
   "cihaz_guc_kaynak": "antminer arşivi 2026-08-13 11:50, 29 cihaz ortalaması"
  },
- "uretim_kw": 93.86,
+ "uretim_kw": 63.4,
  "uretim": true,
  "fs_taze": true,
  "ptf": 4200,
@@ -48,19 +48,15 @@
  "karar": "uyut",
  "neden": "PTF 4200 > eşik 2762 (başabaş 2210 +%25) · maliyet 34 ₺ / gelir 22 ₺",
  "istenen": "uyut",
- "eylem": null,
- "eylem_not": "yük üretimle dengede (16 cihaz, 92 kW / üretim 94 kW)",
- "gonderildi": false,
+ "eylem": "sleep",
+ "eylem_not": "güneş takibi: Sera-2 63 kW, 16 cihaz × 5.71 kW = 91 kW → 5 cihaz uyut",
+ "gonderildi": true,
  "gunes_takip": {
-  "uretim_kw": 93.86,
-  "kw_cihaz": 5.72,
+  "uretim_kw": 63.4,
+  "kw_cihaz": 5.71,
   "calisan": 16,
   "uyuyan": 13,
   "okumalar": [
-   [
-    "2026-10-10T16:59:03+03:00",
-    208.1
-   ],
    [
     "2026-10-10T17:09:25+03:00",
     110.3
@@ -68,15 +64,25 @@
    [
     "2026-10-10T17:28:50+03:00",
     93.9
+   ],
+   [
+    "2026-10-10T17:39:10+03:00",
+    63.4
    ]
   ],
-  "eylem": null,
-  "hedefler": [],
-  "neden": "yük üretimle dengede (16 cihaz, 92 kW / üretim 94 kW)",
-  "hedef_kapat": 16,
-  "hedef_ac": 15
+  "eylem": "sleep",
+  "hedefler": [
+   110,
+   117,
+   121,
+   122,
+   133
+  ],
+  "neden": "güneş takibi: Sera-2 63 kW, 16 cihaz × 5.71 kW = 91 kW → 5 cihaz uyut",
+  "hedef_kapat": 11,
+  "hedef_ac": 10
  },
- "toplam_uretim_kw": 211.0,
+ "toplam_uretim_kw": 140.14,
  "cihaz": {
   "toplam": 31,
   "ulasilan": 29,
@@ -950,6 +956,16 @@
    "eylem": "sleep",
    "neden": "güneş takibi: Sera-2 94 kW, 18 cihaz × 5.74 kW = 103 kW → 2 cihaz uyut",
    "not": "güneş takibi: Sera-2 94 kW, 18 cihaz × 5.74 kW = 103 kW → 2 cihaz uyut",
+   "gonderildi": true,
+   "mod": "otomatik"
+  },
+  {
+   "t": "2026-10-10 17:40",
+   "karar": "uyut",
+   "istenen": "uyut",
+   "eylem": "sleep",
+   "neden": "güneş takibi: Sera-2 63 kW, 16 cihaz × 5.71 kW = 91 kW → 5 cihaz uyut",
+   "not": "güneş takibi: Sera-2 63 kW, 16 cihaz × 5.71 kW = 91 kW → 5 cihaz uyut",
    "gonderildi": true,
    "mod": "otomatik"
   }
