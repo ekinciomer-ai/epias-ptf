@@ -1,5 +1,5 @@
 {
- "guncellendi": "2026-10-10T15:30:02+03:00",
+ "guncellendi": "2026-10-10T15:35:02+03:00",
  "mod": "otomatik",
  "ayarlar": {
   "mod": "otomatik",
@@ -11,6 +11,14 @@
   "dagitim_tl_mwh": 1182.457,
   "basabas_tolerans": 0.25,
   "uretim_esik_kw": 50,
+  "gunes_takip": true,
+  "gunes_kaynak": "Sera-2",
+  "gunes_pay_kw": 3.0,
+  "kapatma_tolerans_kw": 3.0,
+  "acma_adim": 3,
+  "en_az_calisma_dk": 20,
+  "en_az_uyku_dk": 10,
+  "uyanma_bekleme_dk": 25,
   "hashprice_gun": 7,
   "komut_arasi_dk": 15,
   "sirali_gecikme_sn": 10,
@@ -21,7 +29,7 @@
   "cihaz_th_kaynak": "F2Pool son 7 gün, 29 cihaz medyanı",
   "cihaz_guc_kaynak": "antminer arşivi 2026-08-13 11:50, 29 cihaz ortalaması"
  },
- "uretim_kw": 1012.43,
+ "uretim_kw": 457.64,
  "uretim": true,
  "fs_taze": true,
  "ptf": 2300,
@@ -38,11 +46,13 @@
  "basabas_ptf": 2178.8176239738846,
  "esik_ptf": 2723.5220299673556,
  "karar": "calis",
- "neden": "güneş üretimi var",
+ "neden": "PTF 2300 ≤ eşik 2724 (başabaş 2179 +%25) · zararına ama tolerans içinde · maliyet 23 ₺ / gelir 22 ₺",
  "istenen": "calis",
  "eylem": null,
  "eylem_not": "",
  "gonderildi": false,
+ "gunes_takip": null,
+ "toplam_uretim_kw": 1012.43,
  "cihaz": {
   "toplam": 31,
   "ulasilan": 29,
@@ -80,10 +90,10 @@
   },
   "takvim": [
    {
-    "t_komut": "2026-10-10T16:53:35+03:00",
+    "t_komut": "2026-10-10T15:53:35+03:00",
     "eylem": "sleep",
-    "hedef": "2026-10-10T17:00:00+03:00",
-    "neden": "17:00 zararlı saat",
+    "hedef": "2026-10-10T16:00:00+03:00",
+    "neden": "16:00 zararlı saat",
     "oncu_dk": 6.4
    },
    {
@@ -143,8 +153,8 @@
    "gunes_kaynak": "doğuş/batış",
    "maliyet": 29.829826148525,
    "gelir": 22.265099647299007,
-   "karar": "calis",
-   "karar_ham": "calis"
+   "karar": "uyut",
+   "karar_ham": "uyut"
   },
   {
    "t": "2026-10-10 17:00",
