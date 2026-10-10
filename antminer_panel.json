@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-10-10T20:44:22.084959",
+  "timestamp": "2026-10-10T20:45:59.192250",
   "source": "Tek Yildiz 2 GES - Saha PC",
   "summary": {
     "total": 31,
-    "online": 3,
+    "online": 0,
     "sleeping": 26,
-    "offline": 2,
-    "total_hashrate_TH": 0.0,
+    "offline": 5,
+    "total_hashrate_TH": 0,
     "total_target_TH": 0,
     "efficiency_pct": 0,
     "avg_temp_C": 0,
@@ -326,7 +326,7 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 148.4,
+          "avg_hash_TH": 148.3,
           "uptime_pct": 46.8,
           "earn_btc": 0
         }
@@ -582,7 +582,7 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 145.6,
+          "avg_hash_TH": 145.5,
           "uptime_pct": 45.9,
           "earn_btc": 0
         }
@@ -838,7 +838,7 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 149.1,
+          "avg_hash_TH": 148.9,
           "uptime_pct": 46.8,
           "earn_btc": 0
         }
@@ -1094,8 +1094,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 153.7,
-          "uptime_pct": 48.4,
+          "avg_hash_TH": 153.5,
+          "uptime_pct": 48.3,
           "earn_btc": 0
         }
       ],
@@ -1350,8 +1350,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 148.2,
-          "uptime_pct": 46.8,
+          "avg_hash_TH": 148.1,
+          "uptime_pct": 46.7,
           "earn_btc": 0
         }
       ],
@@ -1606,8 +1606,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 159.8,
-          "uptime_pct": 49.9,
+          "avg_hash_TH": 159.6,
+          "uptime_pct": 49.8,
           "earn_btc": 0
         }
       ],
@@ -1862,7 +1862,7 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 139.6,
+          "avg_hash_TH": 139.4,
           "uptime_pct": 44.4,
           "earn_btc": 0
         }
@@ -2118,8 +2118,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 148.6,
-          "uptime_pct": 46.7,
+          "avg_hash_TH": 148.4,
+          "uptime_pct": 46.6,
           "earn_btc": 0
         }
       ],
@@ -2374,15 +2374,15 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 133.0,
-          "uptime_pct": 42.8,
+          "avg_hash_TH": 132.8,
+          "uptime_pct": 42.7,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 270.1,
+          "avg_hash_TH": 270.0,
           "earn_btc": 0,
           "days": 10
         },
@@ -2630,7 +2630,7 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 142.7,
+          "avg_hash_TH": 142.5,
           "uptime_pct": 45.0,
           "earn_btc": 0
         }
@@ -2674,19 +2674,19 @@
       "saha_worker": null,
       "havuz_worker": null,
       "actual_worker": null,
-      "hashrate_TH": 0.0,
+      "hashrate_TH": null,
       "target_hashrate_TH": null,
       "efficiency_pct": null,
       "temp_max": null,
       "temp_water": null,
-      "elapsed_hours": 0.0,
+      "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "ONLINE",
-      "online": true,
+      "status": "TIMEOUT",
+      "online": false,
       "sleeping": false,
       "is_hydro": null,
-      "accepted": 0,
-      "rejected": 0,
+      "accepted": null,
+      "rejected": null,
       "hw_errors_total": null,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
@@ -2711,15 +2711,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
+          "code": "TIMEOUT",
+          "icon": "⏱",
+          "title": "Cevap Vermiyor (Timeout)",
+          "reason": "Network gecikmesi veya cihaz dondu",
           "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
+            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
+            "Network kablosunu kontrol et",
+            "Switch portunun LED'i yaniyor mu bak",
+            "Ayni switche bagli diger cihazlari kontrol et"
           ]
         }
       ],
@@ -2950,8 +2950,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 127.7,
-          "uptime_pct": 43.1,
+          "avg_hash_TH": 127.6,
+          "uptime_pct": 43.0,
           "earn_btc": 0
         }
       ],
@@ -3206,7 +3206,7 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 170.4,
+          "avg_hash_TH": 170.2,
           "uptime_pct": 52.9,
           "earn_btc": 0
         }
@@ -3250,19 +3250,19 @@
       "saha_worker": null,
       "havuz_worker": null,
       "actual_worker": null,
-      "hashrate_TH": 0.0,
+      "hashrate_TH": null,
       "target_hashrate_TH": null,
       "efficiency_pct": null,
       "temp_max": null,
       "temp_water": null,
-      "elapsed_hours": 0.0,
+      "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "ONLINE",
-      "online": true,
+      "status": "TIMEOUT",
+      "online": false,
       "sleeping": false,
       "is_hydro": null,
-      "accepted": 0,
-      "rejected": 0,
+      "accepted": null,
+      "rejected": null,
       "hw_errors_total": null,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
@@ -3287,15 +3287,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
+          "code": "TIMEOUT",
+          "icon": "⏱",
+          "title": "Cevap Vermiyor (Timeout)",
+          "reason": "Network gecikmesi veya cihaz dondu",
           "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
+            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
+            "Network kablosunu kontrol et",
+            "Switch portunun LED'i yaniyor mu bak",
+            "Ayni switche bagli diger cihazlari kontrol et"
           ]
         }
       ],
@@ -3526,7 +3526,7 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 147.3,
+          "avg_hash_TH": 147.1,
           "uptime_pct": 46.7,
           "earn_btc": 0
         }
@@ -3570,19 +3570,19 @@
       "saha_worker": null,
       "havuz_worker": null,
       "actual_worker": null,
-      "hashrate_TH": 0.0,
+      "hashrate_TH": null,
       "target_hashrate_TH": null,
       "efficiency_pct": null,
       "temp_max": null,
       "temp_water": null,
-      "elapsed_hours": 0.0,
+      "elapsed_hours": null,
       "fan_avg_rpm": null,
-      "status": "ONLINE",
-      "online": true,
+      "status": "TIMEOUT",
+      "online": false,
       "sleeping": false,
       "is_hydro": null,
-      "accepted": 0,
-      "rejected": 0,
+      "accepted": null,
+      "rejected": null,
       "hw_errors_total": null,
       "f2pool_name": null,
       "f2pool_hashrate_TH": null,
@@ -3607,15 +3607,15 @@
       "health_issues": [
         {
           "severity": "high",
-          "code": "ZERO_HASH",
-          "icon": "🚫",
-          "title": "Cihaz Acik Ama Hash Uretmiyor",
-          "reason": "Pool bagi kopuk veya yeni baslamis",
+          "code": "TIMEOUT",
+          "icon": "⏱",
+          "title": "Cevap Vermiyor (Timeout)",
+          "reason": "Network gecikmesi veya cihaz dondu",
           "solutions": [
-            "Pool URL ve worker adini kontrol et",
-            "Internet baglantisini test et",
-            "Cihazi yeniden baslat",
-            "5 dakika bekle (yeni baslamissa)"
+            "Cihazi yeniden baslat (guc dugmesi 10 sn basili tut)",
+            "Network kablosunu kontrol et",
+            "Switch portunun LED'i yaniyor mu bak",
+            "Ayni switche bagli diger cihazlari kontrol et"
           ]
         }
       ],
@@ -3846,8 +3846,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 155.2,
-          "uptime_pct": 48.8,
+          "avg_hash_TH": 155.0,
+          "uptime_pct": 48.7,
           "earn_btc": 0
         }
       ],
@@ -4102,7 +4102,7 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 158.7,
+          "avg_hash_TH": 158.5,
           "uptime_pct": 49.5,
           "earn_btc": 0
         }
@@ -4358,8 +4358,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 145.4,
-          "uptime_pct": 46.0,
+          "avg_hash_TH": 145.3,
+          "uptime_pct": 45.9,
           "earn_btc": 0
         }
       ],
@@ -4614,8 +4614,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 128.5,
-          "uptime_pct": 43.4,
+          "avg_hash_TH": 128.3,
+          "uptime_pct": 43.3,
           "earn_btc": 0
         }
       ],
@@ -4870,8 +4870,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 154.8,
-          "uptime_pct": 48.6,
+          "avg_hash_TH": 154.7,
+          "uptime_pct": 48.5,
           "earn_btc": 0
         }
       ],
@@ -5126,8 +5126,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 142.6,
-          "uptime_pct": 45.3,
+          "avg_hash_TH": 142.4,
+          "uptime_pct": 45.2,
           "earn_btc": 0
         }
       ],
@@ -5382,8 +5382,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 163.6,
-          "uptime_pct": 50.9,
+          "avg_hash_TH": 163.4,
+          "uptime_pct": 50.8,
           "earn_btc": 0
         }
       ],
@@ -5638,8 +5638,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 146.3,
-          "uptime_pct": 46.2,
+          "avg_hash_TH": 146.2,
+          "uptime_pct": 46.1,
           "earn_btc": 0
         }
       ],
@@ -5894,7 +5894,7 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 140.1,
+          "avg_hash_TH": 139.9,
           "uptime_pct": 46.7,
           "earn_btc": 0
         }
@@ -6150,15 +6150,15 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 157.6,
-          "uptime_pct": 49.5,
+          "avg_hash_TH": 157.5,
+          "uptime_pct": 49.4,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 281.5,
+          "avg_hash_TH": 281.4,
           "earn_btc": 0,
           "days": 10
         },
@@ -6406,8 +6406,8 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 147.3,
-          "uptime_pct": 46.5,
+          "avg_hash_TH": 147.1,
+          "uptime_pct": 46.4,
           "earn_btc": 0
         }
       ],
@@ -6662,7 +6662,7 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 146.9,
+          "avg_hash_TH": 146.7,
           "uptime_pct": 46.5,
           "earn_btc": 0
         }
@@ -6982,15 +6982,15 @@
         },
         {
           "date": "2026-10-10",
-          "avg_hash_TH": 152.8,
-          "uptime_pct": 48.4,
+          "avg_hash_TH": 152.6,
+          "uptime_pct": 48.3,
           "earn_btc": 0
         }
       ],
       "monthly_history": [
         {
           "month": "2026-10",
-          "avg_hash_TH": 87.3,
+          "avg_hash_TH": 87.2,
           "earn_btc": 0,
           "days": 3
         },
@@ -7194,7 +7194,7 @@
     },
     {
       "date": "2026-10-10",
-      "total_hash_TH": 4281.0,
+      "total_hash_TH": 4276.5,
       "total_earn_btc": 0,
       "online_avg": 13.7
     }
@@ -7202,7 +7202,7 @@
   "monthly_history": [
     {
       "month": "2026-10",
-      "avg_hash_TH": 7382.7,
+      "avg_hash_TH": 7382.2,
       "earn_btc": 0,
       "days": 10
     },
