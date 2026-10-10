@@ -1,9 +1,9 @@
 {
- "zaman": "2026-10-10T20:33:02+03:00",
+ "zaman": "2026-10-10T20:48:01+03:00",
  "alt_ag": "192.168.0.0/24",
  "pi_ip": "192.168.0.132",
- "acik_adres": 30,
- "madenci_sayisi": 29,
+ "acik_adres": 27,
+ "madenci_sayisi": 26,
  "madenciler": [
   {
    "ip": "192.168.0.101",
@@ -116,17 +116,6 @@
    "toplayici_listesinde": true
   },
   {
-   "ip": "192.168.0.111",
-   "api": true,
-   "web": true,
-   "worker": "004",
-   "havuz_kullanici": "mehmetas.004",
-   "model": "S21e Hyd.",
-   "mac": "EC:84:39:B5:70:19",
-   "toplayici_goruyor": true,
-   "toplayici_listesinde": true
-  },
-  {
    "ip": "192.168.0.112",
    "api": true,
    "web": true,
@@ -149,17 +138,6 @@
    "toplayici_listesinde": true
   },
   {
-   "ip": "192.168.0.114",
-   "api": true,
-   "web": true,
-   "worker": "027",
-   "havuz_kullanici": "mehmetas.027",
-   "model": "S19e XP Hyd.",
-   "mac": "EC:84:39:2D:17:25",
-   "toplayici_goruyor": true,
-   "toplayici_listesinde": true
-  },
-  {
    "ip": "192.168.0.115",
    "api": true,
    "web": true,
@@ -167,17 +145,6 @@
    "havuz_kullanici": "mehmetas.002",
    "model": "S21e Hyd.",
    "mac": "76:04:39:F7:82:A1",
-   "toplayici_goruyor": true,
-   "toplayici_listesinde": true
-  },
-  {
-   "ip": "192.168.0.116",
-   "api": true,
-   "web": true,
-   "worker": "013",
-   "havuz_kullanici": "mehmetas.013",
-   "model": "S21e Hyd.",
-   "mac": "EC:84:39:7F:F2:40",
    "toplayici_goruyor": true,
    "toplayici_listesinde": true
   },
@@ -327,9 +294,40 @@
  ],
  "toplayici_yanitsiz_ip": [
   "192.168.0.100",
+  "192.168.0.111",
+  "192.168.0.114",
+  "192.168.0.116",
   "192.168.0.129"
  ],
- "eksik": [],
+ "eksik": [
+  {
+   "worker": "004",
+   "serial": "OLTTGBUBEAAAA00CC",
+   "mac": "EC:84:39:B5:70:19",
+   "model": "?",
+   "eski_ip": "192.168.0.111",
+   "yeni_ip": null,
+   "durum": "agda_yok"
+  },
+  {
+   "worker": "013",
+   "serial": "OLTTGBUBEAAAA01ZH",
+   "mac": "EC:84:39:7F:F2:40",
+   "model": "?",
+   "eski_ip": "192.168.0.116",
+   "yeni_ip": null,
+   "durum": "agda_yok"
+  },
+  {
+   "worker": "027",
+   "serial": "OLTTFLUBEAAAD04BY",
+   "mac": "EC:84:39:2D:17:25",
+   "model": "?",
+   "eski_ip": "192.168.0.114",
+   "yeni_ip": null,
+   "durum": "agda_yok"
+  }
+ ],
  "web_adaylari": [
   {
    "ip": "192.168.0.1",
