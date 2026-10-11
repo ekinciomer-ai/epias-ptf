@@ -1,5 +1,5 @@
 {
- "guncellendi": "2026-10-11T05:50:02+03:00",
+ "guncellendi": "2026-10-11T06:00:03+03:00",
  "mod": "otomatik",
  "ayarlar": {
   "mod": "otomatik",
@@ -32,7 +32,7 @@
  "uretim_kw": 0.0,
  "uretim": false,
  "fs_taze": true,
- "ptf": 3200.01,
+ "ptf": 3100,
  "yekdem": 526.39,
  "btc_try": 4088568.0,
  "btc_tarih": "2026-10-11",
@@ -41,12 +41,12 @@
   "2026-10-04",
   "2026-10-10"
  ],
- "maliyet_tl_saat": 28.174788434,
+ "maliyet_tl_saat": 27.596025813524996,
  "gelir_tl_saat": 22.483156794278607,
  "basabas_ptf": 2216.4978308461446,
  "esik_ptf": 2770.622288557681,
  "karar": "uyut",
- "neden": "PTF 3200 > eşik 2771 (başabaş 2216 +%25) · maliyet 28 ₺ / gelir 22 ₺",
+ "neden": "PTF 3100 > eşik 2771 (başabaş 2216 +%25) · maliyet 28 ₺ / gelir 22 ₺",
  "istenen": "uyut",
  "eylem": null,
  "eylem_not": "yük üretimle dengede (0 cihaz, 0 kW / üretim 0 kW)",
@@ -152,22 +152,11 @@
  },
  "plan": [
   {
-   "t": "2026-10-11 05:00",
-   "ptf": 3200.01,
-   "yekdem": 526.39,
-   "gunes_tahmini": false,
-   "gunes_kaynak": "anlık",
-   "maliyet": 28.174788434,
-   "gelir": 22.483156794278607,
-   "karar": "uyut",
-   "karar_ham": "uyut"
-  },
-  {
    "t": "2026-10-11 06:00",
    "ptf": 3100,
    "yekdem": 526.39,
    "gunes_tahmini": false,
-   "gunes_kaynak": "doğuş/batış",
+   "gunes_kaynak": "anlık",
    "maliyet": 27.596025813524996,
    "gelir": 22.483156794278607,
    "karar": "uyut",
